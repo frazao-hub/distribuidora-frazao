@@ -1,6 +1,103 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setor de Higiene - Distribuidora Frazão</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; color: #333; }
+        h1 { color: #004085; text-align: center; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-top: 20px; }
+        .card { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; font-weight: bold; }
+        .pagination { display: flex; justify-content: center; margin-top: 30px; gap: 8px; }
+        .page-btn { padding: 8px 14px; background-color: #004085; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; }
+        .page-btn.active { background-color: #002752; }
+        .page-btn:hover { background-color: #002752; }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <h1>Distribuidora Frazão - Setor de Higiene</h1>
+
+    <!-- PÁGINA 1 -->
+    <div id="pagina-1" class="page-content active">
+        <div class="grid">
+            <div class="card">Ab Intimus Gel</div>
+            <div class="card">Acetona Bruna</div>
+            <div class="card">Acetona Farmax</div>
+            <div class="card">Algodão Apolo</div>
+            <div class="card">Algodão Nathy</div>
+            <div class="card">Amônia Stork</div>
+            <div class="card">Aparelho Prestobarba</div>
+            <div class="card">Aparelho Probak</div>
+            <div class="card">Band-Aid</div>
+            <div class="card">Chupeta Silicone</div>
+        </div>
+    </div>
+
+    <!-- PÁGINA 2 -->
+    <div id="pagina-2" class="page-content">
+        <div class="grid">
+            <div class="card">Cortador de Unha Grande</div>
+            <div class="card">Cortador de Unha Pequeno</div>
+            <div class="card">Cotonetes Nathy</div>
+            <div class="card">Creme Dental Oral-B</div>
+            <div class="card">Descolorante Márcia</div>
+            <div class="card">Desodorante Leite de Rosas 60ml</div>
+            <div class="card">Escova Dental Condor</div>
+            <div class="card">Escova Pata Pata</div>
+            <div class="card">Lâmina Lord</div>
+            <div class="card">Lâmina Super Maxi</div>
+        </div>
+    </div>
+
+    <!-- PÁGINA 3 -->
+    <div id="pagina-3" class="page-content">
+        <div class="grid">
+            <div class="card">Lâmina Wilkinson</div>
+            <div class="card">Papel Higiênico Belisoft Gold</div>
+            <div class="card">Papel Higiênico Silver</div>
+            <div class="card">Pente Carioca</div>
+            <div class="card">Pente CP Luxo</div>
+            <div class="card">Pinça Merheje</div>
+            <div class="card">Ralo Calo Plástico</div>
+            <div class="card">Sabonete Francis</div>
+            <div class="card">Sabonete Lux</div>
+            <div class="card">Água Oxigenada Márcia 30 Vol</div>
+        </div>
+    </div>
+
+    <!-- PÁGINA 4 -->
+    <div id="pagina-4" class="page-content">
+        <div class="grid">
+            <div class="card">Água Oxigenada Márcia 40 Vol</div>
+        </div>
+    </div>
+
+    <!-- NAVEGAÇÃO DE PÁGINAS -->
+    <div class="pagination">
+        <button class="page-btn active" onclick="mudarPagina(1)">1</button>
+        <button class="page-btn" onclick="mudarPagina(2)">2</button>
+        <button class="page-btn" onclick="mudarPagina(3)">3</button>
+        <button class="page-btn" onclick="mudarPagina(4)">4</button>
+    </div>
+
+    <script>
+        function mudarPagina(numPagina) {
+            document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.page-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('pagina-' + numPagina).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Higiene - Distribuidora Frazão</title>

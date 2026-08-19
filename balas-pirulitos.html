@@ -1,398 +1,287 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Balas e Pirulitos - Cotação WhatsApp</title>
-    <link rel="stylesheet" href="./style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Balas e Pirulitos - Distribuidora Frazão</title>
+  <style>
+    :root {
+      --primary-color: #0056b3;
+      --secondary-color: #25d366;
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      color: var(--primary-color);
+      margin: 25px 0 15px 0;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 5px;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .product-card {
+      background-color: var(--card-bg);
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .product-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+
+    .btn-whatsapp {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--secondary-color);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      transition: background-color 0.2s;
+    }
+
+    .btn-whatsapp:hover {
+      background-color: #1ebc57;
+    }
+
+    @media (max-width: 600px) {
+      .grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+      }
+      
+      .product-card {
+        padding: 10px;
+      }
+
+      .product-name {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <header class="header">
-        <h1>Catálogo de Balas e Pirulitos</h1>
-        <p>Selecione os itens para solicitar cotação no atacado</p>
-    </header>
+  <header>
+    <h1>Balas e Pirulitos</h1>
+    <p class="subtitle">Distribuidora Frazão — Cotar produtos via WhatsApp</p>
+  </header>
 
-    <main class="container">
-        <!-- Grid Horizontal em 7 Colunas -->
-        <section class="galeria-grid" id="galeria">
+  <main>
+    <!-- BALAS -->
+    <h2 class="section-title">Balas</h2>
+    <div class="grid-container">
+      <div class="product-card">
+        <div class="product-name">Bala 7 Belo</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%207%20Belo" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Berbau</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Berbau" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Bolete</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Bolete" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala de Banana</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20de%20Banana" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala de Café</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20de%20Caf%C3%A9" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala de Coco</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20de%20Coco" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Erva Cidreira</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Erva%20Cidreira" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Frutsy</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Frutsy" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Hortelã</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Hortel%C3%A3" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Juquinha</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Juquinha" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Maçã Verde</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Ma%C3%A7%C3%A3%20Verde" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Mel Recheada</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Mel%20Recheada" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Milho Verde</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Milho%20Verde" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Moranguinho</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Moranguinho" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Paçoquita</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Pa%C3%A7oquita" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Sortida</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Sortida" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Tamarindo</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Tamarindo" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Toffee Chocolate</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Toffee%20Chocolate" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Toffee Coco</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Toffee%20Coco" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Toffee Leite</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Toffee%20Leite" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Toffee Maracujá</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Toffee%20Maracuj%C3%A1" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Yogurt</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Yogurt" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+    </div>
 
-            <!-- ================= PÁGINA 1 ================= -->
-            <article class="card-galeria" data-pagina="1">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-7-belo.jpg" alt="Bala 7 Belo" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala 7 Belo</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%207%20Belo" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
+    <!-- CARAMELOS E DOCES -->
+    <h2 class="section-title">Caramelos e Doces</h2>
+    <div class="grid-container">
+      <div class="product-card">
+        <div class="product-name">Caramelo Embaré</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Caramelo%20Embar%C3%A9" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Gamadinho</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Gamadinho" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+    </div>
 
-            <article class="card-galeria" data-pagina="1">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-de-banana.jpg" alt="Bala de Banana" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala de Banana</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20de%20Banana" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="1">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-de-cafe.jpg" alt="Bala de Café" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala de Café</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20de%20Café" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="1">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-bolete.jpg" alt="Bala Bolete" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala Bolete</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Bolete" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="1">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-frutsy.jpg" alt="Bala Frutsy" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala Frutsy</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Frutsy" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="1">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-hortela.jpg" alt="Bala Hortelã" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala Hortelã</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Hortelã" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="1">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-yogurt.jpg" alt="Bala Yogurt" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala Yogurt</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Yogurt" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-
-            <!-- ================= PÁGINA 2 ================= -->
-            <article class="card-galeria" data-pagina="2">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-juquinha.jpg" alt="Bala Juquinha" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala Juquinha</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Juquinha" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="2">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-moranguinho.jpg" alt="Bala Moranguinho" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala Moranguinho</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Moranguinho" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="2">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-sortida.jpg" alt="Bala Sortida" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala Sortida</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Sortida" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="2">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-tamarindo.jpg" alt="Bala Tamarindo" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala Tamarindo</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Tamarindo" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="2">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/toffee-chocolate.jpg" alt="Bala Toffee Chocolate" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Toffee Chocolate</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Toffee%20Chocolate" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="2">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/toffee-maracuja.jpg" alt="Toffee Maracujá" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Toffee Maracujá</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Toffee%20Maracujá" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="2">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/toffee-leite.jpg" alt="Toffee Leite" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Toffee Leite</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Toffee%20Leite" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-
-            <!-- ================= PÁGINA 3 ================= -->
-            <article class="card-galeria" data-pagina="3">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/toffee-coco-gamadinho.jpg" alt="Toffee Coco Gamadinho" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Toffee Coco Gamadinho</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Toffee%20Coco%20Gamadinho" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="3">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/pirulito-blong-sabores.jpg" alt="Pirulito Blong Sabores" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Pirulito Blong Sabores</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Pirulito%20Blong%20Sabores" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="3">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/pirulito-cherry-pop.jpg" alt="Pirulito Cherry Pop" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Pirulito Cherry Pop</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Pirulito%20Cherry%20Pop" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="3">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/pirulito-maca-do-amor.jpg" alt="Pirulito Maçã do Amor" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Pirulito Maçã do Amor</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Pirulito%20Maçã%20do%20Amor" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="3">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/pirulito-uva-do-amor.jpg" alt="Pirulito Uva do Amor" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Pirulito Uva do Amor</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Pirulito%20Uva%20do%20Amor" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="3">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/pirulito-flopito-coracao.jpg" alt="Pirulito Flopito Coração" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Pirulito Flopito Coração</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Pirulito%20Flopito%20Coração" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-            <article class="card-galeria" data-pagina="3">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/pirulito-pop-kiss.jpg" alt="Pirulito Pop Kiss" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Pirulito Pop Kiss</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Pirulito%20Pop%20Kiss" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
-                </div>
-            </article>
-
-        </section>
-
-        <!-- Navegação entre as 3 Páginas -->
-        <nav class="paginacao">
-            <button class="btn-pag ativa" onclick="mudarPagina(1)">Página 1</button>
-            <button class="btn-pag" onclick="mudarPagina(2)">Página 2</button>
-            <button class="btn-pag" onclick="mudarPagina(3)">Página 3</button>
-        </nav>
-    </main>
-
-    <!-- Script de Troca de Páginas -->
-    <script>
-        function mudarPagina(numeroPagina) {
-            const cards = document.querySelectorAll('.card-galeria');
-            cards.forEach(card => {
-                if (card.getAttribute('data-pagina') == numeroPagina) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-
-            const botoes = document.querySelectorAll('.btn-pag');
-            botoes.forEach((btn, index) => {
-                if (index + 1 === numeroPagina) {
-                    btn.classList.add('ativa');
-                } else {
-                    btn.classList.remove('ativa');
-                }
-            });
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        mudarPagina(1);
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeria de Balas - Cotação WhatsApp</title>
-    <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-
-    <header class="header">
-        <h1>Galeria de Balas</h1>
-        <p>Selecione os itens para solicitar cotação no atacado</p>
-    </header>
-
-    <main class="container">
-        <section class="galeria-grid">
-
-            <!-- 1. Bala 7 Belo -->
-            <article class="card-galeria">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-7-belo.jpg" alt="Bala 7 Belo" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala 7 Belo</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%207%20Belo" target="_blank" class="btn-whatsapp">
-                        Cotar via WhatsApp
-                    </a>
-                </div>
-            </article>
-
-            <!-- 2. Bala de Banana -->
-            <article class="card-galeria">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-de-banana.jpg" alt="Bala de Banana" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala de Banana</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20de%20Banana" target="_blank" class="btn-whatsapp">
-                        Cotar via WhatsApp
-                    </a>
-                </div>
-            </article>
-
-            <!-- 3. Bala de Café -->
-            <article class="card-galeria">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-de-cafe.jpg" alt="Bala de Café" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala de Café</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20de%20Café" target="_blank" class="btn-whatsapp">
-                        Cotar via WhatsApp
-                    </a>
-                </div>
-            </article>
-
-            <!-- 4. Bala Bolete -->
-            <article class="card-galeria">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-bolete.jpg" alt="Bala Bolete" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala Bolete</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Bolete" target="_blank" class="btn-whatsapp">
-                        Cotar via WhatsApp
-                    </a>
-                </div>
-            </article>
-
-            <!-- 5. Bala Frutsy -->
-            <article class="card-galeria">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-frutsy.jpg" alt="Bala Frutsy" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala Frutsy</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Frutsy" target="_blank" class="btn-whatsapp">
-                        Cotar via WhatsApp
-                    </a>
-                </div>
-            </article>
-
-            <!-- 6. Bala Hortelã -->
-            <article class="card-galeria">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-hortela.jpg" alt="Bala Hortelã" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala Hortelã</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Hortelã" target="_blank" class="btn-whatsapp">
-                        Cotar via WhatsApp
-                    </a>
-                </div>
-            </article>
-
-            <!-- 7. Bala Yogurt -->
-            <article class="card-galeria">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-yogurt.jpg" alt="Bala Yogurt" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala Yogurt</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Yogurt" target="_blank" class="btn-whatsapp">
-                        Cotar via WhatsApp
-                    </a>
-                </div>
-            </article>
-
-            <!-- 8. Bala Juquinha -->
-            <article class="card-galeria">
-                <div class="foto-box">
-                    <img src="./imagens/balas-e-pirulitos/bala-juquinha.jpg" alt="Bala Juquinha" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <h3>Bala Juquinha</h3>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Juquinha" target="_blank" class="btn-whatsapp">
-                        Cotar via WhatsApp
-                    </a>
-                </div>
-            </article>
-
-        </section>
-    </main>
+    <!-- PIRULITOS -->
+    <h2 class="section-title">Pirulitos</h2>
+    <div class="grid-container">
+      <div class="product-card">
+        <div class="product-name">Pirulito Blong Azul</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Azul" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Blong Melancia</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Melancia" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Blong Morango</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Morango" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Blong Preto</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Preto" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Blong Tutti</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Tutti" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Blong Uva</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Uva" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Ch. Pop Cereja</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Ch.%20Pop%20Cereja" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Ch. Pop Morango</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Ch.%20Pop%20Morango" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Flopito Coração Color</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Flopito%20Cora%C3%A7%C3%A3o%20Color" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Flopito Coração Vermelho</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Flopito%20Cora%C3%A7%C3%A3o%20Vermelho" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Maçã do Amor</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Ma%C3%A7%C3%A3%20do%20Amor" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Pop Kiss</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Pop%20Kiss" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Uva do Amor</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Uva%20do%20Amor" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+    </div>
+  </main>
 
 </body>
 </html>

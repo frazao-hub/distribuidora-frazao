@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Higiene - Distribuidora Frazão</title>
+    <title>Higiene - Distribuidora Frazão</title>
     <style>
         :root {
             --primary: #25d366;
@@ -14,127 +14,193 @@
             --text-muted: #64748b;
             --border: #e2e8f0;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: var(--bg); color: var(--text); padding: 2rem 1rem; }
+
         .header { text-align: center; margin-bottom: 2rem; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto; }
-        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
-        .img-container { width: 100%; height: 180px; background-color: #f1f5f9; display: flex; align-items: center; justify-content: center; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; }
-        .card-body { padding: 1rem; flex-grow: 1; }
-        .badge { background: #e0e7ff; color: #3730a3; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 10px; }
-        .card-title { font-size: 1rem; margin: 0.4rem 0; }
-        .card-desc { font-size: 0.85rem; color: var(--text-muted); }
-        .card-footer { padding: 0.8rem 1rem; border-top: 1px solid var(--border); background: #fafafa; display: flex; justify-content: space-between; align-items: center; }
-        .code { font-family: monospace; background: #e2e8f0; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.8rem; }
-        .btn-wa { color: var(--primary-dark); font-weight: bold; text-decoration: none; font-size: 0.85rem; }
+        .header h1 { font-size: 1.8rem; color: var(--text); margin-bottom: 0.5rem; }
+        .header p { color: var(--text-muted); font-size: 0.95rem; }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
+
+        .card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border); 
+            border-radius: 12px; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+
+        .img-container { 
+            width: 100%; 
+            height: 200px; 
+            background-color: #f1f5f9; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* CONFIGURAÇÃO DA IMAGEM COM SRC LOCAL OU REMOTO */
+        .img-container img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
+
+        .card-body { padding: 1.2rem; flex-grow: 1; }
+        .badge { background: #e0e7ff; color: #3730a3; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.6rem; border-radius: 9999px; display: inline-block; }
+        .card-title { font-size: 1.05rem; margin: 0.5rem 0 0.3rem 0; font-weight: 600; }
+        .card-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+
+        .card-footer { 
+            padding: 0.8rem 1.2rem; 
+            border-top: 1px solid var(--border); 
+            background: #fafafa; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+
+        .code { font-family: monospace; background: #e2e8f0; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; color: #475569; font-weight: 600; }
+        
+        .btn-wa { 
+            background-color: var(--primary);
+            color: #ffffff;
+            font-weight: 600; 
+            text-decoration: none; 
+            font-size: 0.85rem; 
+            padding: 0.5rem 0.8rem;
+            border-radius: 6px;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-wa:hover {
+            background-color: var(--primary-dark);
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>Catálogo de Produtos - Higiene</h1>
-        <p>Cole a URL da imagem diretamente dentro de <strong>src="..."</strong></p>
+        <h1>Distribuidora Frazão — Setor de Higiene</h1>
+        <p>Selecione um item abaixo para solicitar cotação direta pelo WhatsApp</p>
     </div>
 
-    <div class="grid">
+    <div class="container">
+        <div class="grid">
 
-        <!-- PRODUTO 1 -->
-        <div class="card">
-            <div class="img-container">
-                <img src="https://picsum.photos/300/200?random=1" alt="Absorvente Intimus Gel">
+            <!-- PRODUTO 1 -->
+            <div class="card">
+                <div class="img-container">
+                    <img src="images/hig-001.jpg" alt="Absorvente Intimus Gel" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
+                </div>
+                <div class="card-body">
+                    <span class="badge">Higiene Feminina</span>
+                    <h3 class="card-title">Absorvente Intimus Gel</h3>
+                    <p class="card-desc">Absorvente higiênico com abas e gel de alta absorção.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="code">HIG-001</span>
+                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Absorvente%20Intimus%20Gel%20(HIG-001)" target="_blank" class="btn-wa">📲 Cotar</a>
+                </div>
             </div>
-            <div class="card-body">
-                <span class="badge">Higiene Feminina</span>
-                <h3 class="card-title">Absorvente Intimus Gel</h3>
-                <p class="card-desc">Absorvente higiênico com abas e gel de alta absorção.</p>
+
+            <!-- PRODUTO 2 -->
+            <div class="card">
+                <div class="img-container">
+                    <img src="images/hig-002.jpg" alt="Acetona Bruna 100ml" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
+                </div>
+                <div class="card-body">
+                    <span class="badge">Cuidados Pessoais</span>
+                    <h3 class="card-title">Acetona Bruna 100ml</h3>
+                    <p class="card-desc">Removedor de esmalte tradicional para uso diário e profissional.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="code">HIG-002</span>
+                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Acetona%20Bruna%20100ml%20(HIG-002)" target="_blank" class="btn-wa">📲 Cotar</a>
+                </div>
             </div>
-            <div class="card-footer">
-                <span class="code">HIG-001</span>
-                <a href="https://wa.me/5521968659086?text=Cotação:%20HIG-001%20-%20Absorvente%20Intimus%20Gel" target="_blank" class="btn-wa">📲 Cotar</a>
+
+            <!-- PRODUTO 3 -->
+            <div class="card">
+                <div class="img-container">
+                    <img src="images/hig-009.jpg" alt="Aparelho Prestobarba UltraGrip" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
+                </div>
+                <div class="card-body">
+                    <span class="badge">Barbeamento</span>
+                    <h3 class="card-title">Aparelho Prestobarba UltraGrip</h3>
+                    <p class="card-desc">Aparelho descartável para barbear com fita lubrificante.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="code">HIG-009</span>
+                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Prestobarba%20UltraGrip%20(HIG-009)" target="_blank" class="btn-wa">📲 Cotar</a>
+                </div>
             </div>
+
+            <!-- PRODUTO 4 -->
+            <div class="card">
+                <div class="img-container">
+                    <img src="images/hig-016.jpg" alt="Creme Dental Oral-B 70g" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
+                </div>
+                <div class="card-body">
+                    <span class="badge">Higiene Bucal</span>
+                    <h3 class="card-title">Creme Dental Oral-B 70g</h3>
+                    <p class="card-desc">Proteção diária anticáries com sabor refrescante de menta.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="code">HIG-016</span>
+                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Creme%20Dental%20Oral-B%20(HIG-016)" target="_blank" class="btn-wa">📲 Cotar</a>
+                </div>
+            </div>
+
+            <!-- PRODUTO 5 -->
+            <div class="card">
+                <div class="img-container">
+                    <img src="images/hig-030.jpg" alt="Sabonete Francis Barra" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
+                </div>
+                <div class="card-body">
+                    <span class="badge">Sabonetes</span>
+                    <h3 class="card-title">Sabonete Francis Barra</h3>
+                    <p class="card-desc">Sabonete perfumado com óleos florais e sensação de frescor.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="code">HIG-030</span>
+                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Sabonete%20Francis%20(HIG-030)" target="_blank" class="btn-wa">📲 Cotar</a>
+                </div>
+            </div>
+
+            <!-- PRODUTO 6 -->
+            <div class="card">
+                <div class="img-container">
+                    <img src="images/hig-031.jpg" alt="Sabonete Lux Barra" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
+                </div>
+                <div class="card-body">
+                    <span class="badge">Sabonetes</span>
+                    <h3 class="card-title">Sabonete Lux Barra</h3>
+                    <p class="card-desc">Sabonete com fragrância de longa duração e alta hidratação.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="code">HIG-031</span>
+                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Sabonete%20Lux%20(HIG-031)" target="_blank" class="btn-wa">📲 Cotar</a>
+                </div>
+            </div>
+
         </div>
-
-        <!-- PRODUTO 2 -->
-        <div class="card">
-            <div class="img-container">
-                <img src="https://picsum.photos/300/200?random=2" alt="Acetona Bruna">
-            </div>
-            <div class="card-body">
-                <span class="badge">Cuidados Pessoais</span>
-                <h3 class="card-title">Acetona Bruna</h3>
-                <p class="card-desc">Removedor de esmalte tradicional para uso diário.</p>
-            </div>
-            <div class="card-footer">
-                <span class="code">HIG-002</span>
-                <a href="https://wa.me/5521968659086?text=Cotação:%20HIG-002%20-%20Acetona%20Bruna" target="_blank" class="btn-wa">📲 Cotar</a>
-            </div>
-        </div>
-
-        <!-- PRODUTO 3 -->
-        <div class="card">
-            <div class="img-container">
-                <img src="https://picsum.photos/300/200?random=3" alt="Aparelho Prestobarba">
-            </div>
-            <div class="card-body">
-                <span class="badge">Barbeamento</span>
-                <h3 class="card-title">Aparelho Prestobarba</h3>
-                <p class="card-desc">Aparelho descartável para barbear com lâminas alinhadas.</p>
-            </div>
-            <div class="card-footer">
-                <span class="code">HIG-009</span>
-                <a href="https://wa.me/5521968659086?text=Cotação:%20HIG-009%20-%20Prestobarba" target="_blank" class="btn-wa">📲 Cotar</a>
-            </div>
-        </div>
-
-        <!-- PRODUTO 4 -->
-        <div class="card">
-            <div class="img-container">
-                <img src="https://picsum.photos/300/200?random=4" alt="Creme Dental Oral-B">
-            </div>
-            <div class="card-body">
-                <span class="badge">Higiene Bucal</span>
-                <h3 class="card-title">Creme Dental Oral-B</h3>
-                <p class="card-desc">Creme dental para proteção diária contra cáries e placas.</p>
-            </div>
-            <div class="card-footer">
-                <span class="code">HIG-016</span>
-                <a href="https://wa.me/5521968659086?text=Cotação:%20HIG-016%20-%20Oral-B" target="_blank" class="btn-wa">📲 Cotar</a>
-            </div>
-        </div>
-
-        <!-- PRODUTO 5 -->
-        <div class="card">
-            <div class="img-container">
-                <img src="https://picsum.photos/300/200?random=5" alt="Sabonete Francis">
-            </div>
-            <div class="card-body">
-                <span class="badge">Sabonetes</span>
-                <h3 class="card-title">Sabonete Francis</h3>
-                <p class="card-desc">Sabonete em barra perfumado com óleos florais.</p>
-            </div>
-            <div class="card-footer">
-                <span class="code">HIG-030</span>
-                <a href="https://wa.me/5521968659086?text=Cotação:%20HIG-030%20-%20Sabonete%20Francis" target="_blank" class="btn-wa">📲 Cotar</a>
-            </div>
-        </div>
-
-        <!-- PRODUTO 6 -->
-        <div class="card">
-            <div class="img-container">
-                <img src="https://picsum.photos/300/200?random=6" alt="Sabonete Lux">
-            </div>
-            <div class="card-body">
-                <span class="badge">Sabonetes</span>
-                <h3 class="card-title">Sabonete Lux</h3>
-                <p class="card-desc">Sabonete em barra de fragrância intensa e hidratação.</p>
-            </div>
-            <div class="card-footer">
-                <span class="code">HIG-031</span>
-                <a href="https://wa.me/5521968659086?text=Cotação:%20HIG-031%20-%20Sabonete%20Lux" target="_blank" class="btn-wa">📲 Cotar</a>
-            </div>
-        </div>
-
     </div>
 
 </body>

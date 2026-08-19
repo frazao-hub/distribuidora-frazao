@@ -1,4 +1,147 @@
-/* Reset e rolagem suave */
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria de Balas - Cotação WhatsApp</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <header class="header">
+        <h1>Galeria de Balas</h1>
+        <p>Selecione os itens para solicitar cotação no atacado</p>
+    </header>
+
+    <main class="container">
+        <!-- Grid de Produtos em Colunas -->
+        <section class="galeria-grid" id="galeria">
+
+            <!-- PÁGINA 1 -->
+            <article class="card-galeria" data-pagina="1">
+                <div class="foto-box">
+                    <img src="./imagens/balas-e-pirulitos/bala-7-belo.jpg" alt="Bala 7 Belo" loading="lazy">
+                </div>
+                <div class="card-body">
+                    <h3>Bala 7 Belo</h3>
+                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%207%20Belo" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
+                </div>
+            </article>
+
+            <article class="card-galeria" data-pagina="1">
+                <div class="foto-box">
+                    <img src="./imagens/balas-e-pirulitos/bala-de-banana.jpg" alt="Bala de Banana" loading="lazy">
+                </div>
+                <div class="card-body">
+                    <h3>Bala de Banana</h3>
+                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20de%20Banana" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
+                </div>
+            </article>
+
+            <article class="card-galeria" data-pagina="1">
+                <div class="foto-box">
+                    <img src="./imagens/balas-e-pirulitos/bala-de-cafe.jpg" alt="Bala de Café" loading="lazy">
+                </div>
+                <div class="card-body">
+                    <h3>Bala de Café</h3>
+                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20de%20Café" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
+                </div>
+            </article>
+
+            <!-- PÁGINA 2 -->
+            <article class="card-galeria" data-pagina="2">
+                <div class="foto-box">
+                    <img src="./imagens/balas-e-pirulitos/bala-bolete.jpg" alt="Bala Bolete" loading="lazy">
+                </div>
+                <div class="card-body">
+                    <h3>Bala Bolete</h3>
+                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Bolete" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
+                </div>
+            </article>
+
+            <article class="card-galeria" data-pagina="2">
+                <div class="foto-box">
+                    <img src="./imagens/balas-e-pirulitos/bala-frutsy.jpg" alt="Bala Frutsy" loading="lazy">
+                </div>
+                <div class="card-body">
+                    <h3>Bala Frutsy</h3>
+                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Frutsy" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
+                </div>
+            </article>
+
+            <article class="card-galeria" data-pagina="2">
+                <div class="foto-box">
+                    <img src="./imagens/balas-e-pirulitos/bala-hortela.jpg" alt="Bala Hortelã" loading="lazy">
+                </div>
+                <div class="card-body">
+                    <h3>Bala Hortelã</h3>
+                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Hortelã" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
+                </div>
+            </article>
+
+            <!-- PÁGINA 3 -->
+            <article class="card-galeria" data-pagina="3">
+                <div class="foto-box">
+                    <img src="./imagens/balas-e-pirulitos/bala-yogurt.jpg" alt="Bala Yogurt" loading="lazy">
+                </div>
+                <div class="card-body">
+                    <h3>Bala Yogurt</h3>
+                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Yogurt" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
+                </div>
+            </article>
+
+            <article class="card-galeria" data-pagina="3">
+                <div class="foto-box">
+                    <img src="./imagens/balas-e-pirulitos/bala-juquinha.jpg" alt="Bala Juquinha" loading="lazy">
+                </div>
+                <div class="card-body">
+                    <h3>Bala Juquinha</h3>
+                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20fazer%20uma%20cotação%20para:%20Bala%20Juquinha" target="_blank" class="btn-whatsapp">Cotar via WhatsApp</a>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- Botões de Navegação das 3 Páginas -->
+        <nav class="paginacao">
+            <button class="btn-pag ativa" onclick="mudarPagina(1)">Página 1</button>
+            <button class="btn-pag" onclick="mudarPagina(2)">Página 2</button>
+            <button class="btn-pag" onclick="mudarPagina(3)">Página 3</button>
+        </nav>
+    </main>
+
+    <!-- Script de Troca de Páginas -->
+    <script>
+        function mudarPagina(numeroPagina) {
+            // Esconde ou exibe os produtos correspondentes
+            const cards = document.querySelectorAll('.card-galeria');
+            cards.forEach(card => {
+                if (card.getAttribute('data-pagina') == numeroPagina) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Atualiza o botão ativo
+            const botoes = document.querySelectorAll('.btn-pag');
+            botoes.forEach((btn, index) => {
+                if (index + 1 === numeroPagina) {
+                    btn.classList.add('ativa');
+                } else {
+                    btn.classList.remove('ativa');
+                }
+            });
+
+            // Sobe suavemente para o topo do catálogo ao mudar de página
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Inicializa mostrando a Página 1
+        mudarPagina(1);
+    </script>
+</body>
+</html>/* Reset e rolagem suave */
 html {
     scroll-behavior: smooth;
 }

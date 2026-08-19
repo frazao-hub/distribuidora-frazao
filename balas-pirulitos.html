@@ -28,12 +28,12 @@
 
     header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
 
     h1 {
       color: var(--primary-color);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .subtitle {
@@ -41,18 +41,11 @@
       font-size: 0.95rem;
     }
 
-    .section-title {
-      font-size: 1.4rem;
-      color: var(--primary-color);
-      margin: 25px 0 15px 0;
-      border-bottom: 2px solid var(--primary-color);
-      padding-bottom: 5px;
-    }
-
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 15px;
+      min-height: 480px;
     }
 
     .product-card {
@@ -95,9 +88,51 @@
       background-color: #1ebc57;
     }
 
+    /* Paginação */
+    .pagination-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 30px;
+    }
+
+    .page-btn {
+      background-color: #ffffff;
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+
+    .page-btn:hover:not(:disabled) {
+      background-color: var(--primary-color);
+      color: #ffffff;
+    }
+
+    .page-btn.active {
+      background-color: var(--primary-color);
+      color: #ffffff;
+    }
+
+    .page-btn:disabled {
+      border-color: #ccc;
+      color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .page-info {
+      font-size: 0.9rem;
+      color: #666;
+      margin: 0 10px;
+    }
+
     @media (max-width: 600px) {
       .grid-container {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 10px;
       }
       
@@ -119,169 +154,98 @@
   </header>
 
   <main>
-    <!-- BALAS -->
-    <h2 class="section-title">Balas</h2>
-    <div class="grid-container">
-      <div class="product-card">
-        <div class="product-name">Bala 7 Belo</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%207%20Belo" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Berbau</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Berbau" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Bolete</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Bolete" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala de Banana</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20de%20Banana" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala de Café</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20de%20Caf%C3%A9" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala de Coco</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20de%20Coco" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Erva Cidreira</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Erva%20Cidreira" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Frutsy</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Frutsy" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Hortelã</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Hortel%C3%A3" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Juquinha</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Juquinha" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Maçã Verde</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Ma%C3%A7%C3%A3%20Verde" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Mel Recheada</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Mel%20Recheada" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Milho Verde</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Milho%20Verde" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Moranguinho</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Moranguinho" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Paçoquita</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Pa%C3%A7oquita" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Sortida</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Sortida" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Tamarindo</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Tamarindo" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Toffee Chocolate</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Toffee%20Chocolate" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Toffee Coco</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Toffee%20Coco" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Toffee Leite</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Toffee%20Leite" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Toffee Maracujá</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Toffee%20Maracuj%C3%A1" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Bala Yogurt</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Yogurt" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-    </div>
+    <div class="grid-container" id="productGrid"></div>
 
-    <!-- CARAMELOS E DOCES -->
-    <h2 class="section-title">Caramelos e Doces</h2>
-    <div class="grid-container">
-      <div class="product-card">
-        <div class="product-name">Caramelo Embaré</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Caramelo%20Embar%C3%A9" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Gamadinho</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Gamadinho" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-    </div>
-
-    <!-- PIRULITOS -->
-    <h2 class="section-title">Pirulitos</h2>
-    <div class="grid-container">
-      <div class="product-card">
-        <div class="product-name">Pirulito Blong Azul</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Azul" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Pirulito Blong Melancia</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Melancia" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Pirulito Blong Morango</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Morango" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Pirulito Blong Preto</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Preto" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Pirulito Blong Tutti</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Tutti" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Pirulito Blong Uva</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Uva" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Pirulito Ch. Pop Cereja</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Ch.%20Pop%20Cereja" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Pirulito Ch. Pop Morango</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Ch.%20Pop%20Morango" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Pirulito Flopito Coração Color</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Flopito%20Cora%C3%A7%C3%A3o%20Color" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Pirulito Flopito Coração Vermelho</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Flopito%20Cora%C3%A7%C3%A3o%20Vermelho" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Pirulito Maçã do Amor</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Ma%C3%A7%C3%A3%20do%20Amor" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Pirulito Pop Kiss</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Pop%20Kiss" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
-      <div class="product-card">
-        <div class="product-name">Pirulito Uva do Amor</div>
-        <a href="https://wa.me/5521968659086?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Uva%20do%20Amor" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-      </div>
+    <div class="pagination-container">
+      <button class="page-btn" id="prevBtn" onclick="changePage(-1)">Anterior</button>
+      <span class="page-info" id="pageInfo"></span>
+      <button class="page-btn" id="nextBtn" onclick="changePage(1)">Próxima</button>
     </div>
   </main>
+
+  <script>
+    const whatsappNumber = "5521968659086";
+
+    const products = [
+      "Bala 7 Belo",
+      "Bala Berbau",
+      "Bala Bolete",
+      "Bala de Banana",
+      "Bala de Café",
+      "Bala de Coco",
+      "Bala Erva Cidreira",
+      "Bala Frutsy",
+      "Bala Hortelã",
+      "Bala Juquinha",
+      "Bala Maçã Verde",
+      "Bala Mel Recheada",
+      "Bala Milho Verde",
+      "Bala Moranguinho",
+      "Bala Paçoquita",
+      "Bala Sortida",
+      "Bala Tamarindo",
+      "Bala Toffee Chocolate",
+      "Bala Toffee Coco",
+      "Bala Toffee Leite",
+      "Bala Toffee Maracujá",
+      "Bala Yogurt",
+      "Caramelo Embaré",
+      "Gamadinho",
+      "Pirulito Blong Azul",
+      "Pirulito Blong Melancia",
+      "Pirulito Blong Morango",
+      "Pirulito Blong Preto",
+      "Pirulito Blong Tutti",
+      "Pirulito Blong Uva",
+      "Pirulito Ch. Pop Cereja",
+      "Pirulito Ch. Pop Morango",
+      "Pirulito Flopito Coração Color",
+      "Pirulito Flopito Coração Vermelho",
+      "Pirulito Maçã do Amor",
+      "Pirulito Pop Kiss",
+      "Pirulito Uva do Amor"
+    ];
+
+    const itemsPerPage = 12;
+    let currentPage = 1;
+    const totalPages = Math.ceil(products.length / itemsPerPage);
+
+    function renderProducts(page) {
+      const grid = document.getElementById("productGrid");
+      grid.innerHTML = "";
+
+      const start = (page - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const pageItems = products.slice(start, end);
+
+      pageItems.forEach(item => {
+        const encodedText = encodeURIComponent(`Olá, gostaria de cotar: ${item}`);
+        const link = `https://wa.me/${whatsappNumber}?text=${encodedText}`;
+
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.innerHTML = `
+          <div class="product-name">${item}</div>
+          <a href="${link}" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+        `;
+        grid.appendChild(card);
+      });
+
+      document.getElementById("pageInfo").innerText = `Página ${page} de ${totalPages}`;
+      document.getElementById("prevBtn").disabled = page === 1;
+      document.getElementById("nextBtn").disabled = page === totalPages;
+    }
+
+    function changePage(direction) {
+      currentPage += direction;
+      if (currentPage < 1) currentPage = 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+      renderProducts(currentPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    renderProducts(currentPage);
+  </script>
 
 </body>
 </html>

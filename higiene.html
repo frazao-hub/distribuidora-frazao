@@ -1,5 +1,6 @@
 import json
 
+# Product list
 products = [
     {"id": "HIG-001", "nome": "Absorvente Intimus Gel", "categoria": "Higiene Feminina", "descricao": "Absorvente higiênico com abas e gel de alta absorção.", "unidade": "Unidade / Pacote"},
     {"id": "HIG-002", "nome": "Acetona Bruna", "categoria": "Cuidados Pessoais & Unhas", "descricao": "Removedor de esmalte tradicional para uso diário.", "unidade": "Frasco"},
@@ -34,51 +35,19 @@ products = [
     {"id": "HIG-031", "nome": "Sabonete Lux", "categoria": "Sabonetes & Banho", "descricao": "Sabonete em barra de fragrância intensa e hidratação.", "unidade": "Unidade"}
 ]
 
-# Build Markdown version (README.md)
 whatsapp_number = "5521968659086"
 
-md_content = """# 📋 Catálogo de Produtos - Higiene e Cuidados Pessoais
-
-Catálogo completo com espaço para imagens e canal de cotação direta via WhatsApp.
-
----
-
-## 🗂️ Categorias de Produtos
-
-"""
-
-# Group products by category
-categories = {}
-for p in products:
-    cat = p["categoria"]
-    if cat not in categories:
-        categories[cat] = []
-    categories[cat].append(p)
-
-for cat, items in categories.items():
-    md_content += f"### {cat}\n\n"
-    md_content += "| Foto | Código | Produto | Descrição | Embalagem | Cotar via WhatsApp |\n"
-    md_content += "| :---: | :--- | :--- | :--- | :--- | :---: |\n"
-    for item in items:
-        msg = f"Olá, gostaria de fazer uma cotação do produto {item['nome']} (Código: {item['id']})."
-        encoded_msg = json.dumps(msg)[1:-1].replace(" ", "%20")
-        wa_link = f"https://wa.me/{whatsapp_number}?text={encoded_msg}"
-        img_placeholder = f"![{item['nome']}](images/{item['id'].lower()}.jpg)"
-        md_content += f"| {img_placeholder} | `{item['id']}` | **{item['nome']}** | {item['descricao']} | {item['unidade']} | [📲 Cotar]({wa_link}) |\n"
-    md_content += "\n---\n\n"
-
-# Interactive HTML Catalog (index.html)
-html_content = f"""<!DOCTYPE html>
+html_paginated = f"""<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Interativo & Cotação WhatsApp</title>
+    <title>Catálogo Interativo - Cotação via WhatsApp</title>
     <style>
         :root {{
             --primary: #25d366;
             --primary-dark: #128c7e;
-            --bg: #f8fafc;
+            --bg: #f1f5f9;
             --card-bg: #ffffff;
             --text: #0f172a;
             --text-muted: #64748b;
@@ -93,26 +62,32 @@ html_content = f"""<!DOCTYPE html>
         body {{
             background-color: var(--bg);
             color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             padding: 1.5rem;
         }}
         .header {{
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }}
         .header h1 {{
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: #0f172a;
-            margin-bottom: 0.5rem;
         }}
         .header p {{
             color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 0.25rem;
         }}
         .grid {{
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.25rem;
             max-width: 1200px;
             margin: 0 auto;
+            width: 100%;
         }}
         .card {{
             background: var(--card-bg);
@@ -122,21 +97,27 @@ html_content = f"""<!DOCTYPE html>
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
             transition: transform 0.2s, box-shadow 0.2s;
         }}
         .card:hover {{
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }}
+        .product-link {{
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            cursor: pointer;
         }}
         .img-container {{
             width: 100%;
-            height: 180px;
-            background-color: #f1f5f9;
+            height: 200px;
+            background-color: #f8fafc;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            position: relative;
             border-bottom: 1px solid var(--border);
         }}
         .img-container img {{
@@ -145,108 +126,189 @@ html_content = f"""<!DOCTYPE html>
             object-fit: cover;
         }}
         .img-placeholder {{
+            text-align: center;
             color: #94a3b8;
             font-size: 0.85rem;
-            text-align: center;
             padding: 1rem;
         }}
+        .hover-overlay {{
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(37, 211, 102, 0.85);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }}
+        .card:hover .hover-overlay {{
+            opacity: 1;
+        }}
         .card-body {{
-            padding: 1.25rem;
-            flex-grow: 1;
+            padding: 1rem;
         }}
         .badge {{
             display: inline-block;
             background: #e0e7ff;
             color: #3730a3;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
-            padding: 0.25rem 0.5rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 9999px;
-            margin-bottom: 0.5rem;
-        }}
-        .card-title {{
-            font-size: 1.1rem;
-            font-weight: 600;
             margin-bottom: 0.4rem;
         }}
+        .card-title {{
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: #0f172a;
+        }}
         .card-desc {{
-            font-size: 0.875rem;
+            font-size: 0.825rem;
             color: var(--text-muted);
-            margin-bottom: 1rem;
         }}
         .card-footer {{
-            padding: 1rem 1.25rem;
+            padding: 0.75rem 1rem;
             border-top: 1px solid var(--border);
             background: #fafafa;
             display: flex;
             align-items: center;
             justify-content: space-between;
-        }}
-        .btn-cotar {{
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background-color: var(--primary);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: background 0.2s;
-        }}
-        .btn-cotar:hover {{
-            background-color: var(--primary-dark);
+            font-size: 0.8rem;
         }}
         .code {{
             font-family: monospace;
-            font-size: 0.8rem;
+            background: #f1f5f9;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            color: #475569;
+        }}
+        .wa-action {{
+            color: var(--primary-dark);
+            font-weight: 600;
+        }}
+        /* Pagination Controls */
+        .pagination {{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }}
+        .page-btn {{
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #334155;
+            transition: all 0.2s;
+        }}
+        .page-btn:hover:not(:disabled) {{
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }}
+        .page-btn:disabled {{
+            opacity: 0.4;
+            cursor: not-allowed;
+        }}
+        .page-info {{
+            font-size: 0.9rem;
             color: var(--text-muted);
+            margin: 0 0.5rem;
         }}
     </style>
 </head>
 <body>
+
     <div class="header">
         <h1>Catálogo de Produtos</h1>
-        <p>Selecione os itens e solicite sua cotação diretamente via WhatsApp</p>
+        <p>Clique em qualquer item para solicitar a cotação no WhatsApp</p>
     </div>
-    <div class="grid">
-"""
 
-for p in products:
-    msg = f"Olá! Gostaria de cotar o seguinte produto:\n- *Item:* {p['nome']}\n- *Código:* {p['id']}\n- *Embalagem:* {p['unidade']}"
-    encoded_msg = json.dumps(msg)[1:-1].replace(" ", "%20").replace("\\n", "%0A")
-    wa_link = f"https://wa.me/{whatsapp_number}?text={encoded_msg}"
-    img_filename = f"images/{p['id'].lower()}.jpg"
+    <div class="grid" id="catalog-grid">
+        <!-- Items injected dynamically via JS -->
+    </div>
 
-    html_content += f"""        <div class="card">
-            <div class="img-container">
-                <!-- Para exibir a foto, adicione a imagem na pasta 'images/' com o nome {p['id'].lower()}.jpg -->
-                <img src="{img_filename}" alt="{p['nome']}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <div class="img-placeholder" style="display:none;">📷 Adicionar Foto<br><small>({img_filename})</small></div>
-            </div>
-            <div class="card-body">
-                <span class="badge">{p['categoria']}</span>
-                <h2 class="card-title">{p['nome']}</h2>
-                <p class="card-desc">{p['descricao']}</p>
-            </div>
-            <div class="card-footer">
-                <span class="code">{p['id']}</span>
-                <a href="{wa_link}" target="_blank" class="btn-cotar">💬 Cotar no WhatsApp</a>
-            </div>
-        </div>
-"""
+    <div class="pagination">
+        <button class="page-btn" id="prev-btn" onclick="changePage(-1)">◀ Anterior</button>
+        <span class="page-info" id="page-info">Página 1 de 1</span>
+        <button class="page-btn" id="next-btn" onclick="changePage(1)">Próxima ▶</button>
+    </div>
 
-html_content += """    </div>
+    <script>
+        const products = {json.dumps(products, ensure_ascii=False)};
+        const whatsappNumber = "{whatsapp_number}";
+        const itemsPerPage = 8; // 8 itens por página
+        let currentPage = 1;
+
+        function renderCatalog() {{
+            const grid = document.getElementById('catalog-grid');
+            grid.innerHTML = '';
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageProducts = products.slice(start, end);
+
+            pageProducts.forEach(p => {{
+                const msg = `Olá! Gostaria de cotar o seguinte produto:\\n- *Item:* ${{p.nome}}\\n- *Código:* ${{p.id}}\\n- *Embalagem:* ${{p.unidade}}`;
+                const waLink = `https://wa.me/${{whatsappNumber}}?text=${{encodeURIComponent(msg)}}`;
+                const imgPath = `images/${{p.id.toLowerCase()}}.jpg`;
+
+                const cardHtml = `
+                    <div class="card">
+                        <a href="${{waLink}}" target="_blank" class="product-link">
+                            <div class="img-container">
+                                <img src="${{imgPath}}" alt="${{p.nome}}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                <div class="img-placeholder" style="display:none;">
+                                    📷 Clique para Cotar<br><small>(${{p.id}})</small>
+                                </div>
+                                <div class="hover-overlay">
+                                    💬 Pedir Cotação
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <span class="badge">${{p.categoria}}</span>
+                                <h2 class="card-title">${{p.nome}}</h2>
+                                <p class="card-desc">${{p.descricao}}</p>
+                            </div>
+                        </a>
+                        <div class="card-footer">
+                            <span class="code">${{p.id}}</span>
+                            <a href="${{waLink}}" target="_blank" class="wa-action" style="text-decoration:none;">📲 Cotar</a>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHtml;
+            }});
+
+            // Update Pagination UI
+            const totalPages = Math.ceil(products.length / itemsPerPage);
+            document.getElementById('page-info').innerText = `Página ${{currentPage}} de ${{totalPages}}`;
+            document.getElementById('prev-btn').disabled = (currentPage === 1);
+            document.getElementById('next-btn').disabled = (currentPage === totalPages);
+            window.scrollTo({{ top: 0, behavior: 'smooth' }});
+        }}
+
+        function changePage(direction) {{
+            currentPage += direction;
+            renderCatalog();
+        }}
+
+        // Initial Load
+        renderCatalog();
+    </script>
 </body>
 </html>
 """
 
-# Write updated files
-with open("README.md-v2", "w", encoding="utf-8") as f:
-    f.write(md_content)
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_paginated)
 
-with open("index.html-v2", "w", encoding="utf-8") as f:
-    f.write(html_content)
-
-print("Versão v2 do catálogo criada com sucesso!")
+print("Novo catálogo paginado criado com sucesso!")

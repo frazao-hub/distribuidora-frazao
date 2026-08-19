@@ -1,302 +1,33 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Interativo - Cotação via WhatsApp</title>
-    <style>
-        :root {
-            --primary: #25d366;
-            --primary-dark: #128c7e;
-            --bg: #f1f5f9;
-            --card-bg: #ffffff;
-            --text: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-        }
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 1.5rem;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-        .header h1 {
-            font-size: 1.8rem;
-            color: #0f172a;
-        }
-        .header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-top: 0.25rem;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.25rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-        }
-        .product-link {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            cursor: pointer;
-        }
-        .img-container {
-            width: 100%;
-            height: 200px;
-            background-color: #f8fafc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            border-bottom: 1px solid var(--border);
-        }
-        .img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .img-placeholder {
-            text-align: center;
-            color: #94a3b8;
-            font-size: 0.85rem;
-            padding: 1rem;
-        }
-        .hover-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(37, 211, 102, 0.85);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-        .card:hover .hover-overlay {
-            opacity: 1;
-        }
-        .card-body {
-            padding: 1rem;
-        }
-        .badge {
-            display: inline-block;
-            background: #e0e7ff;
-            color: #3730a3;
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 0.2rem 0.5rem;
-            border-radius: 9999px;
-            margin-bottom: 0.4rem;
-        }
-        .card-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-            color: #0f172a;
-        }
-        .card-desc {
-            font-size: 0.825rem;
-            color: var(--text-muted);
-        }
-        .card-footer {
-            padding: 0.75rem 1rem;
-            border-top: 1px solid var(--border);
-            background: #fafafa;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.8rem;
-        }
-        .code {
-            font-family: monospace;
-            background: #f1f5f9;
-            padding: 0.15rem 0.4rem;
-            border-radius: 4px;
-            color: #475569;
-        }
-        .wa-action {
-            color: var(--primary-dark);
-            font-weight: 600;
-        }
-        /* Pagination Controls */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
-        }
-        .page-btn {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #334155;
-            transition: all 0.2s;
-        }
-        .page-btn:hover:not(:disabled) {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        .page-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-        .page-info {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin: 0 0.5rem;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="header">
-        <h1>Catálogo de Produtos</h1>
-        <p>Clique em qualquer item para solicitar a cotação no WhatsApp</p>
-    </div>
-
-    <div class="grid" id="catalog-grid">
-        <!-- Items injected dynamically via JS -->
-    </div>
-
-    <div class="pagination">
-        <button class="page-btn" id="prev-btn" onclick="changePage(-1)">◀ Anterior</button>
-        <span class="page-info" id="page-info">Página 1 de 1</span>
-        <button class="page-btn" id="next-btn" onclick="changePage(1)">Próxima ▶</button>
-    </div>
-
-    <script>
-        const products = [
-            {"id": "HIG-001", "nome": "Absorvente Intimus Gel", "categoria": "Higiene Feminina", "descricao": "Absorvente higiênico com abas e gel de alta absorção.", "unidade": "Unidade / Pacote"},
-            {"id": "HIG-002", "nome": "Acetona Bruna", "categoria": "Cuidados Pessoais & Unhas", "descricao": "Removedor de esmalte tradicional para uso diário.", "unidade": "Frasco"},
-            {"id": "HIG-003", "nome": "Acetona Farmax", "categoria": "Cuidados Pessoais & Unhas", "descricao": "Removedor de esmalte com fórmula rápida e eficiente.", "unidade": "Frasco"},
-            {"id": "HIG-004", "nome": "Água Oxigenada Márcia 30 Vol", "categoria": "Capilar & Descoloração", "descricao": "Água oxigenada cremosa 30 volumes para descoloração e tintura.", "unidade": "Frasco"},
-            {"id": "HIG-005", "nome": "Água Oxigenada Márcia 40 Vol", "categoria": "Capilar & Descoloração", "descricao": "Água oxigenada cremosa 40 volumes para abertura rápida de tom.", "unidade": "Frasco"},
-            {"id": "HIG-006", "nome": "Algodão Apolo", "categoria": "Cuidados Pessoais & Unhas", "descricao": "Algodão hidrófilo macio e absorvente.", "unidade": "Pacote"},
-            {"id": "HIG-007", "nome": "Algodão Nathy", "categoria": "Cuidados Pessoais & Unhas", "descricao": "Algodão macio de alta qualidade para higiene e cosmética.", "unidade": "Pacote"},
-            {"id": "HIG-008", "nome": "Amônia Radar", "categoria": "Capilar & Descoloração", "descricao": "Solução de amônia para auxílio na descoloração de pelos e cabelos.", "unidade": "Frasco"},
-            {"id": "HIG-009", "nome": "Aparelho Prestobarba", "categoria": "Barbeamento & Cuidado Masculino", "descricao": "Aparelho descartável para barbear com lâminas alinhadas.", "unidade": "Unidade / Pacote"},
-            {"id": "HIG-010", "nome": "Aparelho Probak", "categoria": "Barbeamento & Cuidado Masculino", "descricao": "Aparelho de barbear descartável e econômico.", "unidade": "Unidade / Pacote"},
-            {"id": "HIG-011", "nome": "Band-Aid", "categoria": "Primeiros Socorros", "descricao": "Curativos adesivos protetores para pequenos ferimentos.", "unidade": "Caixa / Pacote"},
-            {"id": "HIG-012", "nome": "Chupeta Silicone", "categoria": "Infantil & Bebê", "descricao": "Chupeta anatômica em silicone atóxico.", "unidade": "Unidade"},
-            {"id": "HIG-013", "nome": "Cortador de Unha Pequeno", "categoria": "Acessórios de Beleza & Cutelaria", "descricao": "Cortador de unha compacto em aço inox.", "unidade": "Unidade"},
-            {"id": "HIG-014", "nome": "Cortador de Unha Grande", "categoria": "Acessórios de Beleza & Cutelaria", "descricao": "Cortador de unha resistente para pés e mãos.", "unidade": "Unidade"},
-            {"id": "HIG-015", "nome": "Cotonetes Nathy", "categoria": "Higiene Pessoal", "descricao": "Hastes flexíveis com pontas de algodão puro.", "unidade": "Caixa"},
-            {"id": "HIG-016", "nome": "Creme Dental Oral-B", "categoria": "Higiene Bucal", "descricao": "Creme dental para proteção diária contra cáries e placas.", "unidade": "Tubo"},
-            {"id": "HIG-017", "nome": "Descolorante Márcia", "categoria": "Capilar & Descoloração", "descricao": "Pó descolorante de rápida ação e clareamento uniforme.", "unidade": "Sachê / Pote"},
-            {"id": "HIG-018", "nome": "Desodorante Leite de Rosas", "categoria": "Higiene Pessoal", "descricao": "Desodorante e desinfetante corporal clássico.", "unidade": "Frasco"},
-            {"id": "HIG-019", "nome": "Escova de Dente Condor", "categoria": "Higiene Bucal", "descricao": "Escova dental com cerdas macias e cabo anatômico.", "unidade": "Unidade"},
-            {"id": "HIG-020", "nome": "Escova Pata-Pata", "categoria": "Acessórios de Beleza & Limpeza", "descricao": "Escova multiuso para limpeza de unhas e mãos.", "unidade": "Unidade"},
-            {"id": "HIG-021", "nome": "Lâmina Lord", "categoria": "Barbeamento & Cutelaria", "descricao": "Lâmina de barbear em aço inox de alta precisão.", "unidade": "Caixa / Cartela"},
-            {"id": "HIG-022", "nome": "Lâmina Super Maxi", "categoria": "Barbeamento & Cutelaria", "descricao": "Lâmina de corte afiada e durável.", "unidade": "Caixa / Cartela"},
-            {"id": "HIG-023", "nome": "Lâmina Wilkinson", "categoria": "Barbeamento & Cutelaria", "descricao": "Lâmina tradicional de alto desempenho para barbear.", "unidade": "Caixa / Cartela"},
-            {"id": "HIG-024", "nome": "Papel Higiênico Belisoft Gold", "categoria": "Papelaria & Descartáveis", "descricao": "Papel higiênico folha dupla de alta maciez.", "unidade": "Pacote"},
-            {"id": "HIG-025", "nome": "Papel Higiênico Silver", "categoria": "Papelaria & Descartáveis", "descricao": "Papel higiênico neutro e econômico.", "unidade": "Pacote"},
-            {"id": "HIG-026", "nome": "Pente Carioca", "categoria": "Acessórios de Beleza", "descricao": "Pente de cabelo tradicional em plástico resistente.", "unidade": "Unidade"},
-            {"id": "HIG-027", "nome": "Pente CP Luxo", "categoria": "Acessórios de Beleza", "descricao": "Pente fino reforçado para pentear e alinhar cabelos.", "unidade": "Unidade"},
-            {"id": "HIG-028", "nome": "Pinça Merheje", "categoria": "Acessórios de Beleza & Cutelaria", "descricao": "Pinça depilatória em aço para sobrancelhas e precisão.", "unidade": "Unidade"},
-            {"id": "HIG-029", "nome": "Rala Calo Plástico", "categoria": "Cuidados Pessoais & Unhas", "descricao": "Lixa/ralador de calcanhar anatômico para esfoliação dos pés.", "unidade": "Unidade"},
-            {"id": "HIG-030", "nome": "Sabonete Francis", "categoria": "Sabonetes & Banho", "descricao": "Sabonete em barra perfumado com óleos florais.", "unidade": "Unidade"},
-            {"id": "HIG-031", "nome": "Sabonete Lux", "categoria": "Sabonetes & Banho", "descricao": "Sabonete em barra de fragrância intensa e hidratação.", "unidade": "Unidade"}
-        ];
-
-        const whatsappNumber = "5521968659086";
-        const itemsPerPage = 8; // 8 itens por página
-        let currentPage = 1;
-
-        function renderCatalog() {
-            const grid = document.getElementById('catalog-grid');
-            grid.innerHTML = '';
-
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageProducts = products.slice(start, end);
-
-            pageProducts.forEach(p => {
-                const msg = `Olá! Gostaria de cotar o seguinte produto:\n- *Item:* ${p.nome}\n- *Código:* ${p.id}\n- *Embalagem:* ${p.unidade}`;
-                const waLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`;
-                const imgPath = `images/${p.id.toLowerCase()}.jpg`;
-
-                const cardHtml = `
-                    <div class="card">
-                        <a href="${waLink}" target="_blank" class="product-link">
-                            <div class="img-container">
-                                <img src="${imgPath}" alt="${p.nome}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                <div class="img-placeholder" style="display:none;">
-                                    📷 Clique para Cotar<br><small>(${p.id})</small>
-                                </div>
-                                <div class="hover-overlay">
-                                    💬 Pedir Cotação
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <span class="badge">${p.categoria}</span>
-                                <h2 class="card-title">${p.nome}</h2>
-                                <p class="card-desc">${p.descricao}</p>
-                            </div>
-                        </a>
-                        <div class="card-footer">
-                            <span class="code">${p.id}</span>
-                            <a href="${waLink}" target="_blank" class="wa-action" style="text-decoration:none;">📲 Cotar</a>
-                        </div>
-                    </div>
-                `;
-                grid.innerHTML += cardHtml;
-            });
-
-            // Update Pagination UI
-            const totalPages = Math.ceil(products.length / itemsPerPage);
-            document.getElementById('page-info').innerText = `Página ${currentPage} de ${totalPages}`;
-            document.getElementById('prev-btn').disabled = (currentPage === 1);
-            document.getElementById('next-btn').disabled = (currentPage === totalPages);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function changePage(direction) {
-            currentPage += direction;
-            renderCatalog();
-        }
-
-        // Initial Load
-        renderCatalog();
-    </script>
-</body>
-</html>
+const products = [
+    {"id": "HIG-001", "nome": "Absorvente Intimus Gel", "categoria": "Higiene Feminina", "descricao": "Absorvente higiênico com abas e gel de alta absorção.", "unidade": "Unidade / Pacote", "imagem": ""},
+    {"id": "HIG-002", "nome": "Acetona Bruna", "categoria": "Cuidados Pessoais & Unhas", "descricao": "Removedor de esmalte tradicional para uso diário.", "unidade": "Frasco", "imagem": ""},
+    {"id": "HIG-003", "nome": "Acetona Farmax", "categoria": "Cuidados Pessoais & Unhas", "descricao": "Removedor de esmalte com fórmula rápida e eficiente.", "unidade": "Frasco", "imagem": ""},
+    {"id": "HIG-004", "nome": "Água Oxigenada Márcia 30 Vol", "categoria": "Capilar & Descoloração", "descricao": "Água oxigenada cremosa 30 volumes para descoloração e tintura.", "unidade": "Frasco", "imagem": ""},
+    {"id": "HIG-005", "nome": "Água Oxigenada Márcia 40 Vol", "categoria": "Capilar & Descoloração", "descricao": "Água oxigenada cremosa 40 volumes para abertura rápida de tom.", "unidade": "Frasco", "imagem": ""},
+    {"id": "HIG-006", "nome": "Algodão Apolo", "categoria": "Cuidados Pessoais & Unhas", "descricao": "Algodão hidrófilo macio e absorvente.", "unidade": "Pacote", "imagem": ""},
+    {"id": "HIG-007", "nome": "Algodão Nathy", "categoria": "Cuidados Pessoais & Unhas", "descricao": "Algodão macio de alta qualidade para higiene e cosmética.", "unidade": "Pacote", "imagem": ""},
+    {"id": "HIG-008", "nome": "Amônia Radar", "categoria": "Capilar & Descoloração", "descricao": "Solução de amônia para auxílio na descoloração de pelos e cabelos.", "unidade": "Frasco", "imagem": ""},
+    {"id": "HIG-009", "nome": "Aparelho Prestobarba", "categoria": "Barbeamento & Cuidado Masculino", "descricao": "Aparelho descartável para barbear com lâminas alinhadas.", "unidade": "Unidade / Pacote", "imagem": ""},
+    {"id": "HIG-010", "nome": "Aparelho Probak", "categoria": "Barbeamento & Cuidado Masculino", "descricao": "Aparelho de barbear descartável e econômico.", "unidade": "Unidade / Pacote", "imagem": ""},
+    {"id": "HIG-011", "nome": "Band-Aid", "categoria": "Primeiros Socorros", "descricao": "Curativos adesivos protetores para pequenos ferimentos.", "unidade": "Caixa / Pacote", "imagem": ""},
+    {"id": "HIG-012", "nome": "Chupeta Silicone", "categoria": "Infantil & Bebê", "descricao": "Chupeta anatômica em silicone atóxico.", "unidade": "Unidade", "imagem": ""},
+    {"id": "HIG-013", "nome": "Cortador de Unha Pequeno", "categoria": "Acessórios de Beleza & Cutelaria", "descricao": "Cortador de unha compacto em aço inox.", "unidade": "Unidade", "imagem": ""},
+    {"id": "HIG-014", "nome": "Cortador de Unha Grande", "categoria": "Acessórios de Beleza & Cutelaria", "descricao": "Cortador de unha resistente para pés e mãos.", "unidade": "Unidade", "imagem": ""},
+    {"id": "HIG-015", "nome": "Cotonetes Nathy", "categoria": "Higiene Pessoal", "descricao": "Hastes flexíveis com pontas de algodão puro.", "unidade": "Caixa", "imagem": ""},
+    {"id": "HIG-016", "nome": "Creme Dental Oral-B", "categoria": "Higiene Bucal", "descricao": "Creme dental para proteção diária contra cáries e placas.", "unidade": "Tubo", "imagem": ""},
+    {"id": "HIG-017", "nome": "Descolorante Márcia", "categoria": "Capilar & Descoloração", "descricao": "Pó descolorante de rápida ação e clareamento uniforme.", "unidade": "Sachê / Pote", "imagem": ""},
+    {"id": "HIG-018", "nome": "Desodorante Leite de Rosas", "categoria": "Higiene Pessoal", "descricao": "Desodorante e desinfetante corporal clássico.", "unidade": "Frasco", "imagem": ""},
+    {"id": "HIG-019", "nome": "Escova de Dente Condor", "categoria": "Higiene Bucal", "descricao": "Escova dental com cerdas macias e cabo anatômico.", "unidade": "Unidade", "imagem": ""},
+    {"id": "HIG-020", "nome": "Escova Pata-Pata", "categoria": "Acessórios de Beleza & Limpeza", "descricao": "Escova multiuso para limpeza de unhas e mãos.", "unidade": "Unidade", "imagem": ""},
+    {"id": "HIG-021", "nome": "Lâmina Lord", "categoria": "Barbeamento & Cutelaria", "descricao": "Lâmina de barbear em aço inox de alta precisão.", "unidade": "Caixa / Cartela", "imagem": ""},
+    {"id": "HIG-022", "nome": "Lâmina Super Maxi", "categoria": "Barbeamento & Cutelaria", "descricao": "Lâmina de corte afiada e durável.", "unidade": "Caixa / Cartela", "imagem": ""},
+    {"id": "HIG-023", "nome": "Lâmina Wilkinson", "categoria": "Barbeamento & Cutelaria", "descricao": "Lâmina tradicional de alto desempenho para barbear.", "unidade": "Caixa / Cartela", "imagem": ""},
+    {"id": "HIG-024", "nome": "Papel Higiênico Belisoft Gold", "categoria": "Papelaria & Descartáveis", "descricao": "Papel higiênico folha dupla de alta maciez.", "unidade": "Pacote", "imagem": ""},
+    {"id": "HIG-025", "nome": "Papel Higiênico Silver", "categoria": "Papelaria & Descartáveis", "descricao": "Papel higiênico neutro e econômico.", "unidade": "Pacote", "imagem": ""},
+    {"id": "HIG-026", "nome": "Pente Carioca", "categoria": "Acessórios de Beleza", "descricao": "Pente de cabelo tradicional em plástico resistente.", "unidade": "Unidade", "imagem": ""},
+    {"id": "HIG-027", "nome": "Pente CP Luxo", "categoria": "Acessórios de Beleza", "descricao": "Pente fino reforçado para pentear e alinhar cabelos.", "unidade": "Unidade", "imagem": ""},
+    {"id": "HIG-028", "nome": "Pinça Merheje", "categoria": "Acessórios de Beleza & Cutelaria", "descricao": "Pinça depilatória em aço para sobrancelhas e precisão.", "unidade": "Unidade", "imagem": ""},
+    {"id": "HIG-029", "nome": "Rala Calo Plástico", "categoria": "Cuidados Pessoais & Unhas", "descricao": "Lixa/ralador de calcanhar anatômico para esfoliação dos pés.", "unidade": "Unidade", "imagem": ""},
+    {"id": "HIG-030", "nome": "Sabonete Francis", "categoria": "Sabonetes & Banho", "descricao": "Sabonete em barra perfumado com óleos florais.", "unidade": "Unidade", "imagem": ""},
+    {"id": "HIG-031", "nome": "Sabonete Lux", "categoria": "Sabonetes & Banho", "descricao": "Sabonete em barra de fragrância intensa e hidratação.", "unidade": "Unidade", "imagem": ""}
+];

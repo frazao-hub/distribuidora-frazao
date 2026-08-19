@@ -37,10 +37,7 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
 
         .img-container { 
             width: 100%; 
@@ -52,11 +49,7 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .img-container img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-        }
+        .img-container img { width: 100%; height: 100%; object-fit: cover; }
 
         .card-body { padding: 1rem; flex-grow: 1; }
         .badge { background: #e0e7ff; color: #3730a3; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 9999px; display: inline-block; }
@@ -87,8 +80,23 @@
             gap: 4px;
         }
 
-        .btn-wa:hover {
-            background-color: var(--primary-dark);
+        .btn-wa:hover { background-color: var(--primary-dark); }
+
+        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 2.5rem; }
+        .page-btn {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 0.5rem 0.9rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        .page-btn.active, .page-btn:hover {
+            background: var(--primary-dark);
+            color: #ffffff;
+            border-color: var(--primary-dark);
         }
     </style>
 </head>
@@ -96,479 +104,103 @@
 
     <div class="header">
         <h1>Distribuidora Frazão — Setor de Higiene</h1>
-        <p>Catálogo completo com 31 itens do setor de higiene e cuidados pessoais</p>
+        <p>Catálogo com os 31 itens exatos divididos em páginas</p>
     </div>
 
     <div class="container">
-        <div class="grid">
-
-            <!-- 01 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-001.jpg" alt="Absorvente Intimus Gel" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Higiene Feminina</span>
-                    <h3 class="card-title">Absorvente Intimus Gel</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-001</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Absorvente%20Intimus%20Gel%20(HIG-001)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 02 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-002.jpg" alt="Acetona Bruna" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Cuidados Pessoais</span>
-                    <h3 class="card-title">Acetona Bruna</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-002</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Acetona%20Bruna%20(HIG-002)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 03 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-003.jpg" alt="Água Oxigenada Farmax" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Cuidados Pessoais</span>
-                    <h3 class="card-title">Água Oxigenada Farmax</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-003</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Água%20Oxigenada%20Farmax%20(HIG-003)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 04 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-004.jpg" alt="Água Oxigenada Márcia" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Cuidados Pessoais</span>
-                    <h3 class="card-title">Água Oxigenada Márcia</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-004</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Água%20Oxigenada%20Márcia%20(HIG-004)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 05 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-005.jpg" alt="Algodão Apolo" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Cuidados Pessoais</span>
-                    <h3 class="card-title">Algodão Apolo</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-005</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Algodão%20Apolo%20(HIG-005)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 06 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-006.jpg" alt="Algodão Nathya" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Cuidados Pessoais</span>
-                    <h3 class="card-title">Algodão Nathya</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-006</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Algodão%20Nathya%20(HIG-006)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 07 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-007.jpg" alt="Amônia Farmax" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Cuidados Pessoais</span>
-                    <h3 class="card-title">Amônia Farmax</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-007</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Amônia%20Farmax%20(HIG-007)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 08 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-008.jpg" alt="Amônia Márcia" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Cuidados Pessoais</span>
-                    <h3 class="card-title">Amônia Márcia</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-008</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Amônia%20Márcia%20(HIG-008)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 09 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-009.jpg" alt="Aparelho Prestobarba" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Barbeamento</span>
-                    <h3 class="card-title">Aparelho Prestobarba</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-009</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Aparelho%20Prestobarba%20(HIG-009)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 10 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-010.jpg" alt="Band-Aid Sanifill" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Primeiros Socorros</span>
-                    <h3 class="card-title">Band-Aid Sanifill</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-010</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Band-Aid%20Sanifill%20(HIG-010)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 11 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-011.jpg" alt="Chupeta Ortodôntica" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Infantil</span>
-                    <h3 class="card-title">Chupeta Ortodôntica</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-011</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Chupeta%20Ortodôntica%20(HIG-011)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 12 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-012.jpg" alt="Cortador de Unha" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Acessórios</span>
-                    <h3 class="card-title">Cortador de Unha</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-012</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cortador%20de%20Unha%20(HIG-012)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 13 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-013.jpg" alt="Cotonete Bellacotton" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Higiene Pessoal</span>
-                    <h3 class="card-title">Cotonete Bellacotton</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-013</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cotonete%20Bellacotton%20(HIG-013)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 14 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-014.jpg" alt="Cotonete Cotonetes" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Higiene Pessoal</span>
-                    <h3 class="card-title">Cotonete Cotonetes</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-014</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cotonete%20Cotonetes%20(HIG-014)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 15 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-015.jpg" alt="Creme Dental Colgate" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Higiene Bucal</span>
-                    <h3 class="card-title">Creme Dental Colgate</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-015</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Creme%20Dental%20Colgate%20(HIG-015)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 16 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-016.jpg" alt="Creme Dental Oral-B" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Higiene Bucal</span>
-                    <h3 class="card-title">Creme Dental Oral-B</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-016</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Creme%20Dental%20Oral-B%20(HIG-016)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 17 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-017.jpg" alt="Creme Dental Sorriso" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Higiene Bucal</span>
-                    <h3 class="card-title">Creme Dental Sorriso</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-017</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Creme%20Dental%20Sorriso%20(HIG-017)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 18 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-018.jpg" alt="Descolorante Márcia" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Cuidados Pessoais</span>
-                    <h3 class="card-title">Descolorante Márcia</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-018</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Descolorante%20Márcia%20(HIG-018)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 19 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-019.jpg" alt="Desodorante Above" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Perfumaria</span>
-                    <h3 class="card-title">Desodorante Above</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-019</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Desodorante%20Above%20(HIG-019)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 20 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-020.jpg" alt="Desodorante Monange" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Perfumaria</span>
-                    <h3 class="card-title">Desodorante Monange</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-020</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Desodorante%20Monange%20(HIG-020)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 21 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-021.jpg" alt="Desodorante Rexona" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Perfumaria</span>
-                    <h3 class="card-title">Desodorante Rexona</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-021</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Desodorante%20Rexona%20(HIG-021)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 22 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-022.jpg" alt="Escova Dental Colgate" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Higiene Bucal</span>
-                    <h3 class="card-title">Escova Dental Colgate</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-022</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Escova%20Dental%20Colgate%20(HIG-022)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 23 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-023.jpg" alt="Escova Dental Oral-B" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Higiene Bucal</span>
-                    <h3 class="card-title">Escova Dental Oral-B</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-023</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Escova%20Dental%20Oral-B%20(HIG-023)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 24 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-024.jpg" alt="Lâmina de Barbear" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Barbeamento</span>
-                    <h3 class="card-title">Lâmina de Barbear</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-024</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Lâmina%20de%20Barbear%20(HIG-024)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 25 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-025.jpg" alt="Papel Higiênico Folha Dupla" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Papelaria & Higiene</span>
-                    <h3 class="card-title">Papel Higiênico Folha Dupla</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-025</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Papel%20Higiênico%20Folha%20Dupla%20(HIG-025)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 26 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-026.jpg" alt="Papel Higiênico Folha Simples" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Papelaria & Higiene</span>
-                    <h3 class="card-title">Papel Higiênico Folha Simples</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-026</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Papel%20Higiênico%20Folha%20Simples%20(HIG-026)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 27 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-027.jpg" alt="Pente de Cabelo" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Acessórios</span>
-                    <h3 class="card-title">Pente de Cabelo</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-027</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pente%20de%20Cabelo%20(HIG-027)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 28 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-028.jpg" alt="Pinça de Sobrancelha" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Acessórios</span>
-                    <h3 class="card-title">Pinça de Sobrancelha</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-028</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pinça%20de%20Sobrancelha%20(HIG-028)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 29 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-029.jpg" alt="Ralador de Calo" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Acessórios</span>
-                    <h3 class="card-title">Ralador de Calo</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-029</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Ralador%20de%20Calo%20(HIG-029)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 30 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-030.jpg" alt="Sabonete Francis" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Sabonetes</span>
-                    <h3 class="card-title">Sabonete Francis</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-030</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Sabonete%20Francis%20(HIG-030)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-            <!-- 31 -->
-            <div class="card">
-                <div class="img-container">
-                    <img src="images/hig-031.jpg" alt="Sabonete Lux" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                </div>
-                <div class="card-body">
-                    <span class="badge">Sabonetes</span>
-                    <h3 class="card-title">Sabonete Lux</h3>
-                </div>
-                <div class="card-footer">
-                    <span class="code">HIG-031</span>
-                    <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Sabonete%20Lux%20(HIG-031)" target="_blank" class="btn-wa">📲 Cotar</a>
-                </div>
-            </div>
-
-        </div>
+        <div id="product-grid" class="grid"></div>
+        <div id="pagination" class="pagination"></div>
     </div>
+
+    <script>
+        const produtos = [
+            {"id": "HIG-001", "nome": "Absorvente Intimus Gel", "categoria": "Higiene Feminina"},
+            {"id": "HIG-002", "nome": "Acetona Bruna", "categoria": "Cuidados Pessoais"},
+            {"id": "HIG-003", "nome": "Acetona Farmax", "categoria": "Cuidados Pessoais"},
+            {"id": "HIG-004", "nome": "Água Oxigenada Márcia 30 Vol", "categoria": "Cuidados Pessoais"},
+            {"id": "HIG-005", "nome": "Água Oxigenada Márcia 40 Vol", "categoria": "Cuidados Pessoais"},
+            {"id": "HIG-006", "nome": "Algodão Apolo", "categoria": "Cuidados Pessoais"},
+            {"id": "HIG-007", "nome": "Algodão Nathy", "categoria": "Cuidados Pessoais"},
+            {"id": "HIG-008", "nome": "Amônia Radar", "categoria": "Cuidados Pessoais"},
+            {"id": "HIG-009", "nome": "Aparelho Prestobarba", "categoria": "Barbeamento"},
+            {"id": "HIG-010", "nome": "Aparelho Probak", "categoria": "Barbeamento"},
+            {"id": "HIG-011", "nome": "Chupeta Silicone", "categoria": "Infantil"},
+            {"id": "HIG-012", "nome": "Cortador de Unha Pequeno", "categoria": "Acessórios"},
+            {"id": "HIG-013", "nome": "Cortador de Unha Grande", "categoria": "Acessórios"},
+            {"id": "HIG-014", "nome": "Cotonetes Nathy", "categoria": "Higiene Pessoal"},
+            {"id": "HIG-015", "nome": "Creme Dental Oral-B", "categoria": "Higiene Bucal"},
+            {"id": "HIG-016", "nome": "Band-Aid", "categoria": "Primeiros Socorros"},
+            {"id": "HIG-017", "nome": "Descolorante Márcia", "categoria": "Cuidados Pessoais"},
+            {"id": "HIG-018", "nome": "Desodorante Leite de Rosas", "categoria": "Perfumaria"},
+            {"id": "HIG-019", "nome": "Escova de Dente Condor", "categoria": "Higiene Bucal"},
+            {"id": "HIG-020", "nome": "Escova Pata-Pata", "categoria": "Acessórios"},
+            {"id": "HIG-021", "nome": "Lâmina Lord", "categoria": "Barbeamento"},
+            {"id": "HIG-022", "nome": "Lâmina Super Maxi", "categoria": "Barbeamento"},
+            {"id": "HIG-023", "nome": "Lâmina Wilkinson", "categoria": "Barbeamento"},
+            {"id": "HIG-024", "nome": "Papel Higiênico Belisoft Gold", "categoria": "Papelaria & Higiene"},
+            {"id": "HIG-025", "nome": "Papel Higiênico Silver", "categoria": "Papelaria & Higiene"},
+            {"id": "HIG-026", "nome": "Pente Carioca", "categoria": "Acessórios"},
+            {"id": "HIG-027", "nome": "Pente CP Luxo", "categoria": "Acessórios"},
+            {"id": "HIG-028", "nome": "Pinça Merheje", "categoria": "Acessórios"},
+            {"id": "HIG-029", "nome": "Rala Calo Plástico", "categoria": "Acessórios"},
+            {"id": "HIG-030", "nome": "Sabonete Francis", "categoria": "Sabonetes"},
+            {"id": "HIG-031", "nome": "Sabonete Lux", "categoria": "Sabonetes"}
+        ];
+
+        const itensPorPagina = 10;
+        let paginaAtual = 1;
+
+        function renderizarProdutos(pagina) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            const inicio = (pagina - 1) * itensPorPagina;
+            const fim = inicio + itensPorPagina;
+            const produtosPagina = produtos.slice(inicio, fim);
+
+            produtosPagina.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="img-container">
+                        <img src="images/${prod.id.toLowerCase()}.jpg" alt="${prod.nome}" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
+                    </div>
+                    <div class="card-body">
+                        <span class="badge">${prod.categoria}</span>
+                        <h3 class="card-title">${prod.nome}</h3>
+                    </div>
+                    <div class="card-footer">
+                        <span class="code">${prod.id}</span>
+                        <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20${encodeURIComponent(prod.nome)}%20(${prod.id})" target="_blank" class="btn-wa">📲 Cotar</a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderizarPaginacao() {
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = '';
+
+            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${i === paginaAtual ? 'active' : ''}`;
+                btn.innerText = i;
+                btn.onclick = () => {
+                    paginaAtual = i;
+                    renderizarProdutos(paginaAtual);
+                    renderizarPaginacao();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                paginationContainer.appendChild(btn);
+            }
+        }
+
+        renderizarProdutos(paginaAtual);
+        renderizarPaginacao();
+    </script>
 
 </body>
 </html>

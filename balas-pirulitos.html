@@ -43,7 +43,7 @@
 
     .grid-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 15px;
       min-height: 480px;
     }
@@ -52,10 +52,12 @@
       background-color: var(--card-bg);
       border: 1px solid #e0e0e0;
       border-radius: 8px;
-      padding: 15px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      align-items: center;
+      text-align: center;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
@@ -64,13 +66,27 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
+    .product-img {
+      width: 100%;
+      height: 140px;
+      object-fit: contain;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      background-color: #fff;
+    }
+
     .product-name {
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       margin-bottom: 12px;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn-whatsapp {
+      width: 100%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -135,13 +151,18 @@
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 10px;
       }
+
+      .product-img {
+        height: 100px;
+      }
       
       .product-card {
-        padding: 10px;
+        padding: 8px;
       }
 
       .product-name {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
+        min-height: 32px;
       }
     }
   </style>
@@ -166,44 +187,236 @@
   <script>
     const whatsappNumber = "5521968659086";
 
+    // Estrutura atualizada contendo nome e nome da imagem
     const products = [
-      "Bala 7 Belo",
-      "Bala Berbau",
-      "Bala Bolete",
-      "Bala de Banana",
-      "Bala de Café",
-      "Bala de Coco",
-      "Bala Erva Cidreira",
-      "Bala Frutsy",
-      "Bala Hortelã",
-      "Bala Juquinha",
-      "Bala Maçã Verde",
-      "Bala Mel Recheada",
-      "Bala Milho Verde",
-      "Bala Moranguinho",
-      "Bala Paçoquita",
-      "Bala Sortida",
-      "Bala Tamarindo",
-      "Bala Toffee Chocolate",
-      "Bala Toffee Coco",
-      "Bala Toffee Leite",
-      "Bala Toffee Maracujá",
-      "Bala Yogurt",
-      "Caramelo Embaré",
-      "Gamadinho",
-      "Pirulito Blong Azul",
-      "Pirulito Blong Melancia",
-      "Pirulito Blong Morango",
-      "Pirulito Blong Preto",
-      "Pirulito Blong Tutti",
-      "Pirulito Blong Uva",
-      "Pirulito Ch. Pop Cereja",
-      "Pirulito Ch. Pop Morango",
-      "Pirulito Flopito Coração Color",
-      "Pirulito Flopito Coração Vermelho",
-      "Pirulito Maçã do Amor",
-      "Pirulito Pop Kiss",
-      "Pirulito Uva do Amor"
+      { name: "Bala 7 Belo", img: "<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Balas e Pirulitos - Distribuidora Frazão</title>
+  <style>
+    :root {
+      --primary-color: #0056b3;
+      --secondary-color: #25d366;
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      color: var(--primary-color);
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      min-height: 480px;
+    }
+
+    .product-card {
+      background-color: var(--card-bg);
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .product-img {
+      width: 100%;
+      height: 140px;
+      object-fit: contain;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      background-color: #fff;
+    }
+
+    .product-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-whatsapp {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--secondary-color);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      transition: background-color 0.2s;
+    }
+
+    .btn-whatsapp:hover {
+      background-color: #1ebc57;
+    }
+
+    /* Paginação */
+    .pagination-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 30px;
+    }
+
+    .page-btn {
+      background-color: #ffffff;
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+
+    .page-btn:hover:not(:disabled) {
+      background-color: var(--primary-color);
+      color: #ffffff;
+    }
+
+    .page-btn.active {
+      background-color: var(--primary-color);
+      color: #ffffff;
+    }
+
+    .page-btn:disabled {
+      border-color: #ccc;
+      color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .page-info {
+      font-size: 0.9rem;
+      color: #666;
+      margin: 0 10px;
+    }
+
+    @media (max-width: 600px) {
+      .grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+      }
+
+      .product-img {
+        height: 100px;
+      }
+      
+      .product-card {
+        padding: 8px;
+      }
+
+      .product-name {
+        font-size: 0.8rem;
+        min-height: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Balas e Pirulitos</h1>
+    <p class="subtitle">Distribuidora Frazão — Cotar produtos via WhatsApp</p>
+  </header>
+
+  <main>
+    <div class="grid-container" id="productGrid"></div>
+
+    <div class="pagination-container">
+      <button class="page-btn" id="prevBtn" onclick="changePage(-1)">Anterior</button>
+      <span class="page-info" id="pageInfo"></span>
+      <button class="page-btn" id="nextBtn" onclick="changePage(1)">Próxima</button>
+    </div>
+  </main>
+
+  <script>
+    const whatsappNumber = "5521968659086";
+
+    // Estrutura atualizada contendo nome e nome da imagem
+    const products = [
+      { name: "Bala 7 Belo", img: "bala-7-belo.jpg" },
+      { name: "Bala Berbau", img: "bala-berbau.jpg" },
+      { name: "Bala Bolete", img: "bala-bolete.jpg" },
+      { name: "Bala de Banana", img: "bala-de-banana.jpg" },
+      { name: "Bala de Café", img: "bala-de-cafe.jpg" },
+      { name: "Bala de Coco", img: "bala-de-coco.jpg" },
+      { name: "Bala Erva Cidreira", img: "bala-erva-cidreira.jpg" },
+      { name: "Bala Frutsy", img: "bala-frutsy.jpg" },
+      { name: "Bala Hortelã", img: "bala-hortela.jpg" },
+      { name: "Bala Juquinha", img: "bala-juquinha.jpg" },
+      { name: "Bala Maçã Verde", img: "bala-maca-verde.jpg" },
+      { name: "Bala Mel Recheada", img: "bala-mel-recheada.jpg" },
+      { name: "Bala Milho Verde", img: "bala-milho-verde.jpg" },
+      { name: "Bala Moranguinho", img: "bala-moranguinho.jpg" },
+      { name: "Bala Paçoquita", img: "bala-pacoquita.jpg" },
+      { name: "Bala Sortida", img: "bala-sortida.jpg" },
+      { name: "Bala Tamarindo", img: "bala-tamarindo.jpg" },
+      { name: "Bala Toffee Chocolate", img: "bala-toffee-chocolate.jpg" },
+      { name: "Bala Toffee Coco", img: "bala-toffee-coco.jpg" },
+      { name: "Bala Toffee Leite", img: "bala-toffee-leite.jpg" },
+      { name: "Bala Toffee Maracujá", img: "bala-toffee-maracuja.jpg" },
+      { name: "Bala Yogurt", img: "bala-yogurt.jpg" },
+      { name: "Caramelo Embaré", img: "caramelo-embare.jpg" },
+      { name: "Gamadinho", img: "gamadinho.jpg" },
+      { name: "Pirulito Blong Azul", img: "pirulito-blong-azul.jpg" },
+      { name: "Pirulito Blong Melancia", img: "pirulito-blong-melancia.jpg" },
+      { name: "Pirulito Blong Morango", img: "pirulito-blong-morango.jpg" },
+      { name: "Pirulito Blong Preto", img: "pirulito-blong-preto.jpg" },
+      { name: "Pirulito Blong Tutti", img: "pirulito-blong-tutti.jpg" },
+      { name: "Pirulito Blong Uva", img: "pirulito-blong-uva.jpg" },
+      { name: "Pirulito Ch. Pop Cereja", img: "pirulito-ch-pop-cereja.jpg" },
+      { name: "Pirulito Ch. Pop Morango", img: "pirulito-ch-pop-morango.jpg" },
+      { name: "Pirulito Flopito Coração Color", img: "pirulito-flopito-coracao-color.jpg" },
+      { name: "Pirulito Flopito Coração Vermelho", img: "pirulito-flopito-coracao-vermelho.jpg" },
+      { name: "Pirulito Maçã do Amor", img: "pirulito-maca-do-amor.jpg" },
+      { name: "Pirulito Pop Kiss", img: "pirulito-pop-kiss.jpg" },
+      { name: "Pirulito Uva do Amor", img: "pirulito-uva-do-amor.jpg" }
     ];
 
     const itemsPerPage = 12;
@@ -219,13 +432,96 @@
       const pageItems = products.slice(start, end);
 
       pageItems.forEach(item => {
-        const encodedText = encodeURIComponent(`Olá, gostaria de cotar: ${item}`);
+        const encodedText = encodeURIComponent(`Olá, gostaria de cotar: ${item.name}`);
         const link = `https://wa.me/${whatsappNumber}?text=${encodedText}`;
 
         const card = document.createElement("div");
         card.className = "product-card";
         card.innerHTML = `
-          <div class="product-name">${item}</div>
+          <img src="img/${item.img}" alt="${item.name}" class="product-img" onerror="this.src='https://via.placeholder.com/150?text=Sem+Foto'">
+          <div class="product-name">${item.name}</div>
+          <a href="${link}" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+        `;
+        grid.appendChild(card);
+      });
+
+      document.getElementById("pageInfo").innerText = `Página ${page} de ${totalPages}`;
+      document.getElementById("prevBtn").disabled = page === 1;
+      document.getElementById("nextBtn").disabled = page === totalPages;
+    }
+
+    function changePage(direction) {
+      currentPage += direction;
+      if (currentPage < 1) currentPage = 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+      renderProducts(currentPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    renderProducts(currentPage);
+  </script>
+
+</body>
+</html>" },
+      { name: "Bala Berbau", img: "bala-berbau.jpg" },
+      { name: "Bala Bolete", img: "bala-bolete.jpg" },
+      { name: "Bala de Banana", img: "bala-de-banana.jpg" },
+      { name: "Bala de Café", img: "bala-de-cafe.jpg" },
+      { name: "Bala de Coco", img: "bala-de-coco.jpg" },
+      { name: "Bala Erva Cidreira", img: "bala-erva-cidreira.jpg" },
+      { name: "Bala Frutsy", img: "bala-frutsy.jpg" },
+      { name: "Bala Hortelã", img: "bala-hortela.jpg" },
+      { name: "Bala Juquinha", img: "bala-juquinha.jpg" },
+      { name: "Bala Maçã Verde", img: "bala-maca-verde.jpg" },
+      { name: "Bala Mel Recheada", img: "bala-mel-recheada.jpg" },
+      { name: "Bala Milho Verde", img: "bala-milho-verde.jpg" },
+      { name: "Bala Moranguinho", img: "bala-moranguinho.jpg" },
+      { name: "Bala Paçoquita", img: "bala-pacoquita.jpg" },
+      { name: "Bala Sortida", img: "bala-sortida.jpg" },
+      { name: "Bala Tamarindo", img: "bala-tamarindo.jpg" },
+      { name: "Bala Toffee Chocolate", img: "bala-toffee-chocolate.jpg" },
+      { name: "Bala Toffee Coco", img: "bala-toffee-coco.jpg" },
+      { name: "Bala Toffee Leite", img: "bala-toffee-leite.jpg" },
+      { name: "Bala Toffee Maracujá", img: "bala-toffee-maracuja.jpg" },
+      { name: "Bala Yogurt", img: "bala-yogurt.jpg" },
+      { name: "Caramelo Embaré", img: "caramelo-embare.jpg" },
+      { name: "Gamadinho", img: "gamadinho.jpg" },
+      { name: "Pirulito Blong Azul", img: "pirulito-blong-azul.jpg" },
+      { name: "Pirulito Blong Melancia", img: "pirulito-blong-melancia.jpg" },
+      { name: "Pirulito Blong Morango", img: "pirulito-blong-morango.jpg" },
+      { name: "Pirulito Blong Preto", img: "pirulito-blong-preto.jpg" },
+      { name: "Pirulito Blong Tutti", img: "pirulito-blong-tutti.jpg" },
+      { name: "Pirulito Blong Uva", img: "pirulito-blong-uva.jpg" },
+      { name: "Pirulito Ch. Pop Cereja", img: "pirulito-ch-pop-cereja.jpg" },
+      { name: "Pirulito Ch. Pop Morango", img: "pirulito-ch-pop-morango.jpg" },
+      { name: "Pirulito Flopito Coração Color", img: "pirulito-flopito-coracao-color.jpg" },
+      { name: "Pirulito Flopito Coração Vermelho", img: "pirulito-flopito-coracao-vermelho.jpg" },
+      { name: "Pirulito Maçã do Amor", img: "pirulito-maca-do-amor.jpg" },
+      { name: "Pirulito Pop Kiss", img: "pirulito-pop-kiss.jpg" },
+      { name: "Pirulito Uva do Amor", img: "pirulito-uva-do-amor.jpg" }
+    ];
+
+    const itemsPerPage = 12;
+    let currentPage = 1;
+    const totalPages = Math.ceil(products.length / itemsPerPage);
+
+    function renderProducts(page) {
+      const grid = document.getElementById("productGrid");
+      grid.innerHTML = "";
+
+      const start = (page - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const pageItems = products.slice(start, end);
+
+      pageItems.forEach(item => {
+        const encodedText = encodeURIComponent(`Olá, gostaria de cotar: ${item.name}`);
+        const link = `https://wa.me/${whatsappNumber}?text=${encodedText}`;
+
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.innerHTML = `
+          <img src="img/${item.img}" alt="${item.name}" class="product-img" onerror="this.src='https://via.placeholder.com/150?text=Sem+Foto'">
+          <div class="product-name">${item.name}</div>
           <a href="${link}" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
         `;
         grid.appendChild(card);

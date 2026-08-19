@@ -28,12 +28,12 @@
 
     header {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
 
     h1 {
       color: var(--primary-color);
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .subtitle {
@@ -41,23 +41,28 @@
       font-size: 0.95rem;
     }
 
+    .section-title {
+      font-size: 1.4rem;
+      color: var(--primary-color);
+      margin: 25px 0 15px 0;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 5px;
+    }
+
     .grid-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 15px;
-      min-height: 480px;
     }
 
     .product-card {
       background-color: var(--card-bg);
       border: 1px solid #e0e0e0;
       border-radius: 8px;
-      padding: 12px;
+      padding: 15px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      align-items: center;
-      text-align: center;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
@@ -66,27 +71,13 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
-    .product-img {
-      width: 100%;
-      height: 140px;
-      object-fit: contain;
-      border-radius: 5px;
-      margin-bottom: 10px;
-      background-color: #fff;
-    }
-
     .product-name {
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       margin-bottom: 12px;
-      min-height: 38px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .btn-whatsapp {
-      width: 100%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -104,65 +95,18 @@
       background-color: #1ebc57;
     }
 
-    /* Paginação */
-    .pagination-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      margin-top: 30px;
-    }
-
-    .page-btn {
-      background-color: #ffffff;
-      border: 1px solid var(--primary-color);
-      color: var(--primary-color);
-      padding: 8px 14px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.2s;
-    }
-
-    .page-btn:hover:not(:disabled) {
-      background-color: var(--primary-color);
-      color: #ffffff;
-    }
-
-    .page-btn.active {
-      background-color: var(--primary-color);
-      color: #ffffff;
-    }
-
-    .page-btn:disabled {
-      border-color: #ccc;
-      color: #ccc;
-      cursor: not-allowed;
-    }
-
-    .page-info {
-      font-size: 0.9rem;
-      color: #666;
-      margin: 0 10px;
-    }
-
     @media (max-width: 600px) {
       .grid-container {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 10px;
-      }
-
-      .product-img {
-        height: 100px;
       }
       
       .product-card {
-        padding: 8px;
+        padding: 10px;
       }
 
       .product-name {
-        font-size: 0.8rem;
-        min-height: 32px;
+        font-size: 0.85rem;
       }
     }
   </style>
@@ -175,373 +119,169 @@
   </header>
 
   <main>
-    <div class="grid-container" id="productGrid"></div>
+    <!-- BALAS -->
+    <h2 class="section-title">Balas</h2>
+    <div class="grid-container">
+      <div class="product-card">
+        <div class="product-name">Bala 7 Belo</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%207%20Belo" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Berbau</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Berbau" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Bolete</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Bolete" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala de Banana</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20de%20Banana" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala de Café</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20de%20Caf%C3%A9" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala de Coco</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20de%20Coco" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Erva Cidreira</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Erva%20Cidreira" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Frutsy</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Frutsy" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Hortelã</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Hortel%C3%A3" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Juquinha</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Juquinha" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Maçã Verde</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Ma%C3%A7%C3%A3%20Verde" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Mel Recheada</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Mel%20Recheada" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Milho Verde</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Milho%20Verde" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Moranguinho</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Moranguinho" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Paçoquita</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Pa%C3%A7oquita" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Sortida</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Sortida" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Tamarindo</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Tamarindo" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Toffee Chocolate</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Toffee%20Chocolate" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Toffee Coco</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Toffee%20Coco" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Toffee Leite</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Toffee%20Leite" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Toffee Maracujá</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Toffee%20Maracuj%C3%A1" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Bala Yogurt</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Bala%20Yogurt" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+    </div>
 
-    <div class="pagination-container">
-      <button class="page-btn" id="prevBtn" onclick="changePage(-1)">Anterior</button>
-      <span class="page-info" id="pageInfo"></span>
-      <button class="page-btn" id="nextBtn" onclick="changePage(1)">Próxima</button>
+    <!-- CARAMELOS E DOCES -->
+    <h2 class="section-title">Caramelos e Doces</h2>
+    <div class="grid-container">
+      <div class="product-card">
+        <div class="product-name">Caramelo Embaré</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Caramelo%20Embar%C3%A9" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Gamadinho</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Gamadinho" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+    </div>
+
+    <!-- PIRULITOS -->
+    <h2 class="section-title">Pirulitos</h2>
+    <div class="grid-container">
+      <div class="product-card">
+        <div class="product-name">Pirulito Blong Azul</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Azul" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Blong Melancia</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Melancia" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Blong Morango</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Morango" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Blong Preto</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Preto" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Blong Tutti</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Tutti" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Blong Uva</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Uva" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Ch. Pop Cereja</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Ch.%20Pop%20Cereja" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Ch. Pop Morango</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Ch.%20Pop%20Morango" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Flopito Coração Color</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Flopito%20Cora%C3%A7%C3%A3o%20Color" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Flopito Coração Vermelho</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Flopito%20Cora%C3%A7%C3%A3o%20Vermelho" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Maçã do Amor</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Ma%C3%A7%C3%A3%20do%20Amor" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Pop Kiss</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Pop%20Kiss" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
+      <div class="product-card">
+        <div class="product-name">Pirulito Uva do Amor</div>
+        <a href="https://wa.me/5521999999999?text=Ol%C3%A1,%20gostaria%20de%20cotar:%20Pirulito%20Uva%20do%20Amor" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
+      </div>
     </div>
   </main>
-
-  <script>
-    const whatsappNumber = "5521968659086";
-
-    // Estrutura atualizada contendo nome e nome da imagem
-    const products = [
-      { name: "Bala 7 Belo", img: "<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Balas e Pirulitos - Distribuidora Frazão</title>
-  <style>
-    :root {
-      --primary-color: #0056b3;
-      --secondary-color: #25d366;
-      --bg-color: #f8f9fa;
-      --card-bg: #ffffff;
-      --text-color: #333333;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      padding: 20px;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    h1 {
-      color: var(--primary-color);
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      color: #666;
-      font-size: 0.95rem;
-    }
-
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 15px;
-      min-height: 480px;
-    }
-
-    .product-card {
-      background-color: var(--card-bg);
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      text-align: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .product-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .product-img {
-      width: 100%;
-      height: 140px;
-      object-fit: contain;
-      border-radius: 5px;
-      margin-bottom: 10px;
-      background-color: #fff;
-    }
-
-    .product-name {
-      font-weight: 600;
-      font-size: 0.9rem;
-      margin-bottom: 12px;
-      min-height: 38px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .btn-whatsapp {
-      width: 100%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background-color: var(--secondary-color);
-      color: #ffffff;
-      text-decoration: none;
-      padding: 8px 12px;
-      border-radius: 5px;
-      font-weight: bold;
-      font-size: 0.85rem;
-      transition: background-color 0.2s;
-    }
-
-    .btn-whatsapp:hover {
-      background-color: #1ebc57;
-    }
-
-    /* Paginação */
-    .pagination-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      margin-top: 30px;
-    }
-
-    .page-btn {
-      background-color: #ffffff;
-      border: 1px solid var(--primary-color);
-      color: var(--primary-color);
-      padding: 8px 14px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.2s;
-    }
-
-    .page-btn:hover:not(:disabled) {
-      background-color: var(--primary-color);
-      color: #ffffff;
-    }
-
-    .page-btn.active {
-      background-color: var(--primary-color);
-      color: #ffffff;
-    }
-
-    .page-btn:disabled {
-      border-color: #ccc;
-      color: #ccc;
-      cursor: not-allowed;
-    }
-
-    .page-info {
-      font-size: 0.9rem;
-      color: #666;
-      margin: 0 10px;
-    }
-
-    @media (max-width: 600px) {
-      .grid-container {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 10px;
-      }
-
-      .product-img {
-        height: 100px;
-      }
-      
-      .product-card {
-        padding: 8px;
-      }
-
-      .product-name {
-        font-size: 0.8rem;
-        min-height: 32px;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <header>
-    <h1>Balas e Pirulitos</h1>
-    <p class="subtitle">Distribuidora Frazão — Cotar produtos via WhatsApp</p>
-  </header>
-
-  <main>
-    <div class="grid-container" id="productGrid"></div>
-
-    <div class="pagination-container">
-      <button class="page-btn" id="prevBtn" onclick="changePage(-1)">Anterior</button>
-      <span class="page-info" id="pageInfo"></span>
-      <button class="page-btn" id="nextBtn" onclick="changePage(1)">Próxima</button>
-    </div>
-  </main>
-
-  <script>
-    const whatsappNumber = "5521968659086";
-
-    // Estrutura atualizada contendo nome e nome da imagem
-    const products = [
-      { name: "Bala 7 Belo", img: "bala-7-belo.jpg" },
-      { name: "Bala Berbau", img: "bala-berbau.jpg" },
-      { name: "Bala Bolete", img: "bala-bolete.jpg" },
-      { name: "Bala de Banana", img: "bala-de-banana.jpg" },
-      { name: "Bala de Café", img: "bala-de-cafe.jpg" },
-      { name: "Bala de Coco", img: "bala-de-coco.jpg" },
-      { name: "Bala Erva Cidreira", img: "bala-erva-cidreira.jpg" },
-      { name: "Bala Frutsy", img: "bala-frutsy.jpg" },
-      { name: "Bala Hortelã", img: "bala-hortela.jpg" },
-      { name: "Bala Juquinha", img: "bala-juquinha.jpg" },
-      { name: "Bala Maçã Verde", img: "bala-maca-verde.jpg" },
-      { name: "Bala Mel Recheada", img: "bala-mel-recheada.jpg" },
-      { name: "Bala Milho Verde", img: "bala-milho-verde.jpg" },
-      { name: "Bala Moranguinho", img: "bala-moranguinho.jpg" },
-      { name: "Bala Paçoquita", img: "bala-pacoquita.jpg" },
-      { name: "Bala Sortida", img: "bala-sortida.jpg" },
-      { name: "Bala Tamarindo", img: "bala-tamarindo.jpg" },
-      { name: "Bala Toffee Chocolate", img: "bala-toffee-chocolate.jpg" },
-      { name: "Bala Toffee Coco", img: "bala-toffee-coco.jpg" },
-      { name: "Bala Toffee Leite", img: "bala-toffee-leite.jpg" },
-      { name: "Bala Toffee Maracujá", img: "bala-toffee-maracuja.jpg" },
-      { name: "Bala Yogurt", img: "bala-yogurt.jpg" },
-      { name: "Caramelo Embaré", img: "caramelo-embare.jpg" },
-      { name: "Gamadinho", img: "gamadinho.jpg" },
-      { name: "Pirulito Blong Azul", img: "pirulito-blong-azul.jpg" },
-      { name: "Pirulito Blong Melancia", img: "pirulito-blong-melancia.jpg" },
-      { name: "Pirulito Blong Morango", img: "pirulito-blong-morango.jpg" },
-      { name: "Pirulito Blong Preto", img: "pirulito-blong-preto.jpg" },
-      { name: "Pirulito Blong Tutti", img: "pirulito-blong-tutti.jpg" },
-      { name: "Pirulito Blong Uva", img: "pirulito-blong-uva.jpg" },
-      { name: "Pirulito Ch. Pop Cereja", img: "pirulito-ch-pop-cereja.jpg" },
-      { name: "Pirulito Ch. Pop Morango", img: "pirulito-ch-pop-morango.jpg" },
-      { name: "Pirulito Flopito Coração Color", img: "pirulito-flopito-coracao-color.jpg" },
-      { name: "Pirulito Flopito Coração Vermelho", img: "pirulito-flopito-coracao-vermelho.jpg" },
-      { name: "Pirulito Maçã do Amor", img: "pirulito-maca-do-amor.jpg" },
-      { name: "Pirulito Pop Kiss", img: "pirulito-pop-kiss.jpg" },
-      { name: "Pirulito Uva do Amor", img: "pirulito-uva-do-amor.jpg" }
-    ];
-
-    const itemsPerPage = 12;
-    let currentPage = 1;
-    const totalPages = Math.ceil(products.length / itemsPerPage);
-
-    function renderProducts(page) {
-      const grid = document.getElementById("productGrid");
-      grid.innerHTML = "";
-
-      const start = (page - 1) * itemsPerPage;
-      const end = start + itemsPerPage;
-      const pageItems = products.slice(start, end);
-
-      pageItems.forEach(item => {
-        const encodedText = encodeURIComponent(`Olá, gostaria de cotar: ${item.name}`);
-        const link = `https://wa.me/${whatsappNumber}?text=${encodedText}`;
-
-        const card = document.createElement("div");
-        card.className = "product-card";
-        card.innerHTML = `
-          <img src="img/${item.img}" alt="${item.name}" class="product-img" onerror="this.src='https://via.placeholder.com/150?text=Sem+Foto'">
-          <div class="product-name">${item.name}</div>
-          <a href="${link}" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-        `;
-        grid.appendChild(card);
-      });
-
-      document.getElementById("pageInfo").innerText = `Página ${page} de ${totalPages}`;
-      document.getElementById("prevBtn").disabled = page === 1;
-      document.getElementById("nextBtn").disabled = page === totalPages;
-    }
-
-    function changePage(direction) {
-      currentPage += direction;
-      if (currentPage < 1) currentPage = 1;
-      if (currentPage > totalPages) currentPage = totalPages;
-      renderProducts(currentPage);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    renderProducts(currentPage);
-  </script>
-
-</body>
-</html>" },
-      { name: "Bala Berbau", img: "bala-berbau.jpg" },
-      { name: "Bala Bolete", img: "bala-bolete.jpg" },
-      { name: "Bala de Banana", img: "bala-de-banana.jpg" },
-      { name: "Bala de Café", img: "bala-de-cafe.jpg" },
-      { name: "Bala de Coco", img: "bala-de-coco.jpg" },
-      { name: "Bala Erva Cidreira", img: "bala-erva-cidreira.jpg" },
-      { name: "Bala Frutsy", img: "bala-frutsy.jpg" },
-      { name: "Bala Hortelã", img: "bala-hortela.jpg" },
-      { name: "Bala Juquinha", img: "bala-juquinha.jpg" },
-      { name: "Bala Maçã Verde", img: "bala-maca-verde.jpg" },
-      { name: "Bala Mel Recheada", img: "bala-mel-recheada.jpg" },
-      { name: "Bala Milho Verde", img: "bala-milho-verde.jpg" },
-      { name: "Bala Moranguinho", img: "bala-moranguinho.jpg" },
-      { name: "Bala Paçoquita", img: "bala-pacoquita.jpg" },
-      { name: "Bala Sortida", img: "bala-sortida.jpg" },
-      { name: "Bala Tamarindo", img: "bala-tamarindo.jpg" },
-      { name: "Bala Toffee Chocolate", img: "bala-toffee-chocolate.jpg" },
-      { name: "Bala Toffee Coco", img: "bala-toffee-coco.jpg" },
-      { name: "Bala Toffee Leite", img: "bala-toffee-leite.jpg" },
-      { name: "Bala Toffee Maracujá", img: "bala-toffee-maracuja.jpg" },
-      { name: "Bala Yogurt", img: "bala-yogurt.jpg" },
-      { name: "Caramelo Embaré", img: "caramelo-embare.jpg" },
-      { name: "Gamadinho", img: "gamadinho.jpg" },
-      { name: "Pirulito Blong Azul", img: "pirulito-blong-azul.jpg" },
-      { name: "Pirulito Blong Melancia", img: "pirulito-blong-melancia.jpg" },
-      { name: "Pirulito Blong Morango", img: "pirulito-blong-morango.jpg" },
-      { name: "Pirulito Blong Preto", img: "pirulito-blong-preto.jpg" },
-      { name: "Pirulito Blong Tutti", img: "pirulito-blong-tutti.jpg" },
-      { name: "Pirulito Blong Uva", img: "pirulito-blong-uva.jpg" },
-      { name: "Pirulito Ch. Pop Cereja", img: "pirulito-ch-pop-cereja.jpg" },
-      { name: "Pirulito Ch. Pop Morango", img: "pirulito-ch-pop-morango.jpg" },
-      { name: "Pirulito Flopito Coração Color", img: "pirulito-flopito-coracao-color.jpg" },
-      { name: "Pirulito Flopito Coração Vermelho", img: "pirulito-flopito-coracao-vermelho.jpg" },
-      { name: "Pirulito Maçã do Amor", img: "pirulito-maca-do-amor.jpg" },
-      { name: "Pirulito Pop Kiss", img: "pirulito-pop-kiss.jpg" },
-      { name: "Pirulito Uva do Amor", img: "pirulito-uva-do-amor.jpg" }
-    ];
-
-    const itemsPerPage = 12;
-    let currentPage = 1;
-    const totalPages = Math.ceil(products.length / itemsPerPage);
-
-    function renderProducts(page) {
-      const grid = document.getElementById("productGrid");
-      grid.innerHTML = "";
-
-      const start = (page - 1) * itemsPerPage;
-      const end = start + itemsPerPage;
-      const pageItems = products.slice(start, end);
-
-      pageItems.forEach(item => {
-        const encodedText = encodeURIComponent(`Olá, gostaria de cotar: ${item.name}`);
-        const link = `https://wa.me/${whatsappNumber}?text=${encodedText}`;
-
-        const card = document.createElement("div");
-        card.className = "product-card";
-        card.innerHTML = `
-          <img src="img/${item.img}" alt="${item.name}" class="product-img" onerror="this.src='https://via.placeholder.com/150?text=Sem+Foto'">
-          <div class="product-name">${item.name}</div>
-          <a href="${link}" class="btn-whatsapp" target="_blank">Cotar no WhatsApp</a>
-        `;
-        grid.appendChild(card);
-      });
-
-      document.getElementById("pageInfo").innerText = `Página ${page} de ${totalPages}`;
-      document.getElementById("prevBtn").disabled = page === 1;
-      document.getElementById("nextBtn").disabled = page === totalPages;
-    }
-
-    function changePage(direction) {
-      currentPage += direction;
-      if (currentPage < 1) currentPage = 1;
-      if (currentPage > totalPages) currentPage = totalPages;
-      renderProducts(currentPage);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    renderProducts(currentPage);
-  </script>
 
 </body>
 </html>

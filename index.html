@@ -1,142 +1,85 @@
-/* --- CONFIGURAÇÕES GERAIS --- */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f6f8;
-    color: #333;
-    line-height: 1.6;
-}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribuidora Frazão - Catálogo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-/* --- CABEÇALHO --- */
-header {
-    background-color: #1e293b;
-    color: #ffffff;
-    text-align: center;
-    padding: 30px 20px;
-}
+    <header>
+        <h1>Distribuidora Frazão</h1>
+        <p>Seu atacado completo de entregas</p>
+    </header>
 
-header h1 {
-    margin: 0 0 10px 0;
-    font-size: 28px;
-}
+    <!-- Menu Principal -->
+    <nav class="menu-categorias">
+        <a href="#balas-pirulitos">Balas e Pirulitos</a>
+        <a href="#chiclete-drops">Chiclete e Drops</a>
+        <a href="#descartaveis">Descartáveis</a>
+        <a href="#doces">Doces</a>
+        <a href="#higiene">Higiene</a>
+        <a href="#limpeza">Limpeza</a>
+        <a href="#mercearia">Mercearia</a>
+        <a href="#material-escolar">Material Escolar</a>
+    </nav>
 
-header p {
-    margin: 0;
-    color: #94a3b8;
-    font-size: 16px;
-}
+    <main>
+        
+        <!-- Categoria 1 -->
+        <section id="balas-pirulitos" class="categoria-secao">
+            <div class="categoria-header">
+                <h2>Balas e Pirulitos</h2>
+                <!-- Link para abrir uma página infinita/completa desta categoria -->
+                <a href="balas-pirulitos.html" class="btn-ver-mais">Ver Todos &rarr;</a>
+            </div>
+            <div class="colunas-produtos">
+                <div class="produto-card">
+                    <h3>Bala Recheada Morango</h3>
+                    <p class="preco">R$ 15,90 / pct</p>
+                </div>
+                <div class="produto-card">
+                    <h3>Pirulito Colorido 50un</h3>
+                    <p class="preco">R$ 12,50 / pct</p>
+                </div>
+                <div class="produto-card">
+                    <h3>Bala de Hortelã</h3>
+                    <p class="preco">R$ 10,00 / pct</p>
+                </div>
+            </div>
+        </section>
 
-/* --- MENU DE CATEGORIAS (NAVEGAÇÃO RÁPIDA) --- */
-.menu-categorias {
-    background-color: #ffffff;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 15px 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
+        <!-- Categoria 2 -->
+        <section id="chiclete-drops" class="categoria-secao">
+            <div class="categoria-header">
+                <h2>Chiclete e Drops</h2>
+                <a href="chiclete-drops.html" class="btn-ver-mais">Ver Todos &rarr;</a>
+            </div>
+            <div class="colunas-produtos">
+                <div class="produto-card">
+                    <h3>Chiclete de Bola Tutti-Frutti</h3>
+                    <p class="preco">R$ 18,00</p>
+                </div>
+                <div class="produto-card">
+                    <h3>Drops de Mel</h3>
+                    <p class="preco">R$ 8,50</p>
+                </div>
+            </div>
+        </section>
 
-.menu-categorias a {
-    color: #1e293b;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 6px 12px;
-    border-radius: 4px;
-    background-color: #e2e8f0;
-    transition: background-color 0.3s, color 0.3s;
-}
+        <!-- Repita o mesmo padrão para as demais categorias... -->
 
-.menu-categorias a:hover {
-    background-color: #0284c7;
-    color: #ffffff;
-}
+    </main>
 
-/* --- CONTEÚDO E SEÇÕES DE PRODUTOS --- */
-main {
-    max-width: 1100px;
-    margin: 30px auto;
-    padding: 0 20px;
-}
+    <footer>
+        <div class="footer-links">
+            <a href="politica-privacidade.html">Política de Privacidade</a> |
+            <a href="regras-de-uso.html">Regras de Uso</a> |
+            <a href="politica-devolucao.html">Política de Devolução</a>
+        </div>
+        <p>&copy; 2026 Distribuidora Frazão. Todos os direitos reservados.</p>
+    </footer>
 
-.categoria-secao {
-    background-color: #ffffff;
-    padding: 25px;
-    margin-bottom: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.categoria-secao h2 {
-    color: #1e293b;
-    font-size: 22px;
-    border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 10px;
-    margin-top: 0;
-}
-
-/* --- GRID DE PRODUTOS --- */
-.lista-produtos {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.produto {
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
-    padding: 15px;
-    border-radius: 6px;
-    text-align: center;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.produto:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-/* --- RODAPÉ --- */
-footer {
-    background-color: #1e293b;
-    color: #ffffff;
-    text-align: center;
-    padding: 30px 20px;
-    margin-top: 50px;
-}
-
-.footer-links {
-    margin-bottom: 15px;
-}
-
-.footer-links a {
-    color: #94a3b8;
-    text-decoration: none;
-    margin: 0 10px;
-    font-size: 14px;
-}
-
-.footer-links a:hover {
-    color: #ffffff;
-    text-decoration: underline;
-}
-
-/* --- RESPONSIVIDADE (Celulares) --- */
-@media (max-width: 600px) {
-    .menu-categorias {
-        justify-content: flex-start;
-        overflow-x: auto;
-        white-space: nowrap;
-        padding: 10px;
-    }
-    
-    .menu-categorias a {
-        flex: 0 0 auto;
-    }
-}
+</body>
+</html>

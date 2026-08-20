@@ -1,39 +1,45 @@
-/* Estilo básico para a seção de produtos */
-#produtos {
-    padding: 40px 20px;
-    text-align: center;
-}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Distribuidora Frazão</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-.lista-produtos {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-top: 20px;
-}
+    <!-- CABEÇALHO -->
+    <header>
+        <h1>Distribuidora Frazão</h1>
+    </header>
 
-.produto {
-    border: 1px solid #ddd;
-    padding: 20px;
-    width: 250px;
-    border-radius: 8px;
-}
+    <!-- SEÇÃO DE PRODUTOS -->
+    <main>
+        <section id="produtos">
+            <h2>Nossos Produtos</h2>
+            <div class="lista-produtos">
+                <!-- SEUS PRODUTOS VÃO AQUI DENTRO -->
+                <div class="produto">
+                    <h3>Produto 01</h3>
+                    <p>Descrição curta do produto.</p>
+                </div>
+                <div class="produto">
+                    <h3>Produto 02</h3>
+                    <p>Descrição curta do produto.</p>
+                </div>
+                <!-- Adicione mais produtos conforme necessário -->
+            </div>
+        </section>
+    </main>
 
-/* Estilo do Rodapé */
-footer {
-    background-color: #2c3e50;
-    color: #ecf0f1;
-    padding: 30px 20px;
-    text-align: center;
-    margin-top: 50px;
-}
+    <!-- RODAPÉ (COM OS LINKS INSTITUCIONAIS) -->
+    <footer>
+        <div class="footer-links">
+            <a href="politica-privacidade.html">Política de Privacidade</a> |
+            <a href="regras-de-uso.html">Regras de Uso</a> |
+            <a href="politica-devolucao.html">Política de Devolução</a>
+        </div>
+        <p>&copy; 2026 Distribuidora Frazão.</p>
+    </footer>
 
-.footer-links {
-    margin-top: 10px;
-}
-
-.footer-links a {
-    color: #ffffff;
-    text-decoration: none;
-    margin: 0 10px;
-}
+</body>
+</html>

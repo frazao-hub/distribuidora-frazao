@@ -1,93 +1,8 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f1f5f9;
-    color: #1e293b;
-}
-
-header {
-    background-color: #0f172a;
-    color: white;
-    text-align: center;
-    padding: 40px 20px;
-}
-
-/* Menu fixo no topo */
-.menu-categorias {
-    background-color: #ffffff;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.menu-categorias a {
-    color: #334155;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: bold;
-    padding: 8px 14px;
-    border-radius: 20px;
-    background-color: #e2e8f0;
-    transition: 0.3s;
-}
-
-.menu-categorias a:hover {
-    background-color: #2563eb;
-    color: white;
-}
-
-main {
-    max-width: 1200px;
-    margin: 30px auto;
-    padding: 0 20px;
-}
-
-.categoria-secao {
-    background: white;
-    padding: 25px;
-    margin-bottom: 30px;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.categoria-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #f1f5f9;
-    padding-bottom: 12px;
-    margin-bottom: 20px;
-}
-
-.categoria-header h2 {
-    margin: 0;
-    font-size: 20px;
-    color: #0f172a;
-}
-
-.btn-ver-mais {
-    text-decoration: none;
-    color: #2563eb;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.btn-ver-mais:hover {
-    text-decoration: underline;
-}
-
-/* SISTEMA DE COLUNAS AUTOMÁTICAS */
+/* --- SISTEMA DE COLUNAS FIXAS (Lado a Lado) --- */
 .colunas-produtos {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 20px;
+    display: flex;             /* Deixa os produtos em linha */
+    flex-wrap: wrap;           /* Quebra para a linha de baixo se faltar espaço */
+    gap: 20px;                 /* Espaçamento entre os blocos */
 }
 
 .produto-card {
@@ -97,8 +12,12 @@ main {
     border-radius: 8px;
     text-align: center;
     transition: 0.2s;
+    
+    /* Configuração exata para ter exatamente 3 colunas por linha */
+    flex: 0 0 calc(33.333% - 14px); 
 }
 
+/* Efeito ao passar o mouse */
 .produto-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -118,17 +37,9 @@ main {
     margin: 0;
 }
 
-footer {
-    background-color: #0f172a;
-    color: white;
-    text-align: center;
-    padding: 30px;
-    margin-top: 50px;
-}
-
-.footer-links a {
-    color: #94a3b8;
-    text-decoration: none;
-    margin: 0 10px;
-    font-size: 14px;
+/* Responsivo para celulares: em telas menores, vira 1 coluna única para facilitar a leitura */
+@media (max-width: 768px) {
+    .produto-card {
+        flex: 0 0 100%; /* Ocupa 100% da largura no celular */
+    }
 }

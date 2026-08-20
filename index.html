@@ -1,85 +1,134 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distribuidora Frazão - Catálogo</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f1f5f9;
+    color: #1e293b;
+}
 
-    <header>
-        <h1>Distribuidora Frazão</h1>
-        <p>Seu atacado completo de entregas</p>
-    </header>
+header {
+    background-color: #0f172a;
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+}
 
-    <!-- Menu Principal -->
-    <nav class="menu-categorias">
-        <a href="#balas-pirulitos">Balas e Pirulitos</a>
-        <a href="#chiclete-drops">Chiclete e Drops</a>
-        <a href="#descartaveis">Descartáveis</a>
-        <a href="#doces">Doces</a>
-        <a href="#higiene">Higiene</a>
-        <a href="#limpeza">Limpeza</a>
-        <a href="#mercearia">Mercearia</a>
-        <a href="#material-escolar">Material Escolar</a>
-    </nav>
+/* Menu fixo no topo */
+.menu-categorias {
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
 
-    <main>
-        
-        <!-- Categoria 1 -->
-        <section id="balas-pirulitos" class="categoria-secao">
-            <div class="categoria-header">
-                <h2>Balas e Pirulitos</h2>
-                <!-- Link para abrir uma página infinita/completa desta categoria -->
-                <a href="balas-pirulitos.html" class="btn-ver-mais">Ver Todos &rarr;</a>
-            </div>
-            <div class="colunas-produtos">
-                <div class="produto-card">
-                    <h3>Bala Recheada Morango</h3>
-                    <p class="preco">R$ 15,90 / pct</p>
-                </div>
-                <div class="produto-card">
-                    <h3>Pirulito Colorido 50un</h3>
-                    <p class="preco">R$ 12,50 / pct</p>
-                </div>
-                <div class="produto-card">
-                    <h3>Bala de Hortelã</h3>
-                    <p class="preco">R$ 10,00 / pct</p>
-                </div>
-            </div>
-        </section>
+.menu-categorias a {
+    color: #334155;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 8px 14px;
+    border-radius: 20px;
+    background-color: #e2e8f0;
+    transition: 0.3s;
+}
 
-        <!-- Categoria 2 -->
-        <section id="chiclete-drops" class="categoria-secao">
-            <div class="categoria-header">
-                <h2>Chiclete e Drops</h2>
-                <a href="chiclete-drops.html" class="btn-ver-mais">Ver Todos &rarr;</a>
-            </div>
-            <div class="colunas-produtos">
-                <div class="produto-card">
-                    <h3>Chiclete de Bola Tutti-Frutti</h3>
-                    <p class="preco">R$ 18,00</p>
-                </div>
-                <div class="produto-card">
-                    <h3>Drops de Mel</h3>
-                    <p class="preco">R$ 8,50</p>
-                </div>
-            </div>
-        </section>
+.menu-categorias a:hover {
+    background-color: #2563eb;
+    color: white;
+}
 
-        <!-- Repita o mesmo padrão para as demais categorias... -->
+main {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
 
-    </main>
+.categoria-secao {
+    background: white;
+    padding: 25px;
+    margin-bottom: 30px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
 
-    <footer>
-        <div class="footer-links">
-            <a href="politica-privacidade.html">Política de Privacidade</a> |
-            <a href="regras-de-uso.html">Regras de Uso</a> |
-            <a href="politica-devolucao.html">Política de Devolução</a>
-        </div>
-        <p>&copy; 2026 Distribuidora Frazão. Todos os direitos reservados.</p>
-    </footer>
+.categoria-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+}
 
-</body>
-</html>
+.categoria-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #0f172a;
+}
+
+.btn-ver-mais {
+    text-decoration: none;
+    color: #2563eb;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.btn-ver-mais:hover {
+    text-decoration: underline;
+}
+
+/* SISTEMA DE COLUNAS AUTOMÁTICAS */
+.colunas-produtos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.produto-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    transition: 0.2s;
+}
+
+.produto-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-color: #cbd5e1;
+}
+
+.produto-card h3 {
+    font-size: 16px;
+    margin: 0 0 10px 0;
+    color: #334155;
+}
+
+.preco {
+    font-size: 15px;
+    font-weight: bold;
+    color: #16a34a;
+    margin: 0;
+}
+
+footer {
+    background-color: #0f172a;
+    color: white;
+    text-align: center;
+    padding: 30px;
+    margin-top: 50px;
+}
+
+.footer-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 14px;
+}

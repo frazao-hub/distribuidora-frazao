@@ -1,4 +1,7 @@
-# Lista completa dos itens já ordenada alfabeticamente
+# Como não tenho acesso direto ao arquivo "higiene.html" da Distribuidora Frazão, 
+# vou criar uma estrutura HTML limpa e profissional que segue um padrão comum de catálogos atacadistas.
+# Este formato usa um grid de cards, imagem superior, título, e botão CTA.
+
 items = [
     "Achocolatado Pirakids",
     "Aguardente 51",
@@ -28,54 +31,53 @@ items = [
     "Ypióca Ouro"
 ]
 
+items.sort()
+
 html_content = """<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Distribuidora Frazão - Bebidas</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
-        h1 { text-align: center; color: #333; }
-        .bebidas-container {
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 20px; }
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 30px; }
+        .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
-            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
         }
-        .product-card {
-            background: white;
-            border: 1px solid #ddd;
+        .card {
+            background: #fff;
+            border-radius: 10px;
             padding: 15px;
             text-align: center;
-            border-radius: 8px;
-            transition: transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: 0.3s;
         }
-        .product-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .product-card img {
-            max-width: 100%;
-            height: 150px;
-            object-fit: contain;
-            margin-bottom: 10px;
-            background-color: #eee;
-            border-radius: 4px;
-        }
-        .product-card h3 { font-size: 14px; margin: 10px 0; height: 40px; }
-        .btn-cotacao {
-            display: block;
+        .card:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .card img { width: 100%; height: 180px; object-fit: contain; border-radius: 5px; margin-bottom: 10px; }
+        .card h2 { font-size: 16px; color: #333; margin: 10px 0; height: 40px; }
+        .btn {
             background-color: #25d366;
-            color: white;
-            padding: 10px;
-            text-decoration: none;
+            color: #fff;
+            padding: 10px 20px;
             border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
             font-weight: bold;
+            margin-top: 10px;
         }
+        .btn:hover { background-color: #128c7e; }
     </style>
 </head>
 <body>
 
     <h1>Distribuidora Frazão - Bebidas</h1>
 
-    <div class="bebidas-container">
+    <div class="grid-container">
 """
 
 import urllib.parse
@@ -84,10 +86,10 @@ for item in items:
     whatsapp_url = f"https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20fazer%20uma%20cotação%20do%20produto:%20{encoded_item}"
     
     html_content += f"""
-        <div class="product-card">
+        <div class="card">
             <img src="LINK_DA_IMAGEM_AQUI" alt="{item}">
-            <h3>{item}</h3>
-            <a href="{whatsapp_url}" target="_blank" class="btn-cotacao">Cotar via WhatsApp</a>
+            <h2>{item}</h2>
+            <a href="{whatsapp_url}" class="btn" target="_blank">Cotar pelo WhatsApp</a>
         </div>
     """
 

@@ -1,43 +1,158 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distribuidora Frazão</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8fafc;
+    color: #1e293b;
+}
 
-    <!-- Título Principal -->
-    <header class="topo-principal">
-        <h1>Distribuidora Frazão</h1>
-    </header>
+/* Topo Principal e Interno */
+.topo-principal, .topo-interna {
+    background-color: #0f172a;
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+}
 
-    <!-- Categorias em Colunas na Página Inicial -->
-    <main class="container-categorias">
-        <h2>Selecione uma Categoria:</h2>
-        
-        <div class="colunas-home-categorias">
-            <a href="higiene.html" class="card-categoria">Higiene</a>
-            <a href="balas-pirulitos.html" class="card-categoria">Balas e Pirulitos</a>
-            <a href="chiclete-drops.html" class="card-categoria">Chiclete e Drops</a>
-            <a href="descartaveis.html" class="card-categoria">Descartáveis</a>
-            <a href="doces.html" class="card-categoria">Doces</a>
-            <a href="limpeza.html" class="card-categoria">Limpeza</a>
-            <a href="mercearia.html" class="card-categoria">Mercearia</a>
-            <a href="material-escolar.html" class="card-categoria">Material Escolar</a>
-        </div>
-    </main>
+.topo-principal h1, .topo-interna h1 {
+    margin: 0;
+    font-size: 26px;
+}
 
-    <!-- Rodapé com as Políticas -->
-    <footer>
-        <div class="footer-links">
-            <a href="politica-privacidade.html">Política de Privacidade</a> |
-            <a href="regras-de-uso.html">Regras de Uso</a> |
-            <a href="politica-devolucao.html">Política de Devolução</a>
-        </div>
-        <p>&copy; 2026 Distribuidora Frazão. Todos os direitos reservados.</p>
-    </footer>
+/* Categorias em Colunas na Home */
+.container-categorias {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+    text-align: center;
+}
 
-</body>
-</html>
+.container-categorias h2 {
+    color: #334155;
+    margin-bottom: 25px;
+}
+
+.colunas-home-categorias {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 colunas de links de categorias na home */
+    gap: 15px;
+}
+
+.card-categoria {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
+    text-decoration: none;
+    padding: 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    transition: 0.2s;
+}
+
+.card-categoria:hover {
+    background-color: #2563eb;
+    color: white;
+    border-color: #2563eb;
+    transform: translateY(-2px);
+}
+
+/* --- EXATAMENTE 4 PRODUTOS POR LINHA (Páginas Internas) --- */
+.container-produtos {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.grid-4-colunas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.produto-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: 0.2s;
+    
+    /* Configuração perfeita para 4 colunas (25% menos o espaço do gap) */
+    flex: 0 0 calc(25% - 15px); 
+    box-sizing: border-box;
+}
+
+.produto-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+}
+
+.produto-card h3 {
+    font-size: 15px;
+    color: #334155;
+    margin: 0 0 10px 0;
+}
+
+.preco {
+    font-size: 16px;
+    font-weight: bold;
+    color: #16a34a;
+    margin: 0;
+}
+
+/* Botões de Navegação e Rodapé */
+.btn-voltar {
+    display: inline-block;
+    margin-top: 10px;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 14px;
+}
+.btn-voltar:hover { color: white; }
+
+.paginacao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.btn-proximo {
+    background-color: #2563eb;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+}
+.btn-proximo:hover { background-color: #1d4ed8; }
+
+footer {
+    background-color: #0f172a;
+    color: white;
+    text-align: center;
+    padding: 30px;
+    margin-top: 50px;
+}
+
+.footer-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 14px;
+}
+.footer-links a:hover { color: white; }
+
+/* Responsivo para celulares (vira 1 coluna para não quebrar a tela do celular) */
+@media (max-width: 768px) {
+    .colunas-home-categorias {
+        grid-template-columns: 1fr;
+    }
+    .produto-card {
+        flex: 0 0 100%;
+    }
+}

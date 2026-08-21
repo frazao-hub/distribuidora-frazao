@@ -1,106 +1,72 @@
+# Lista de itens conforme solicitado
 items = [
-    "Achocolatado Pirakids",
-    "Aguardente 51",
-    "Aguardente 88",
-    "Aguardente Jararaca",
-    "Água Mineral Papucaia 1,5l c/gás",
-    "Água Mineral Papucaia 1,5l s/gás",
-    "Água Mineral Papucaia c/gás 500ml",
-    "Água Mineral Papucaia s/gás 500ml",
-    "Cachaça Cana Boa",
-    "Cachaça Caninha da Roca",
-    "Canelinha Reggiani",
-    "Cantina da Serra 1,5l Guaramor c/36",
-    "Catuaba Reggiani",
-    "Conhaque Alcatrão",
-    "Conhaque Dreher",
-    "Coquetel Melfort",
-    "Coquetel Menta Be Long",
-    "Fogo Paulista",
-    "Genebra",
-    "Licor de Bananinha",
-    "Paratudo Raízes",
-    "Ping Moon 600ml",
-    "Vinho Quinado",
-    "Vinho Tinto Suave Monte Carmo 2l",
-    "Whisky Old Eight",
-    "Ypióca Ouro"
+    "Achocolatado Pirakids", "Aguardente 51", "Aguardente 88", "Aguardente Jararaca",
+    "Água Mineral Papucaia 1,5l c/gás", "Água Mineral Papucaia 1,5l s/gás",
+    "Água Mineral Papucaia c/gás 500ml", "Água Mineral Papucaia s/gás 500ml",
+    "Cachaça Cana Boa", "Cachaça Caninha da Roca", "Canelinha Reggiani",
+    "Cantina da Serra 1,5l Guaramor c/36", "Catuaba Reggiani", "Conhaque Alcatrão",
+    "Conhaque Dreher", "Coquetel Melfort", "Coquetel Menta Be Long", "Fogo Paulista",
+    "Genebra", "Licor de Bananinha", "Paratudo Raízes", "Ping Moon 600ml",
+    "Vinho Quinado", "Vinho Tinto Suave Monte Carmo 2l", "Whisky Old Eight", "Ypióca Ouro"
 ]
-
 items.sort()
 
-# Gerando o HTML com o design solicitado
-html_template = """<!DOCTYPE html>
+# Estrutura HTML com grid e paginação (usando JS simples para ocultar/mostrar grupos)
+html_content = """<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <title>Distribuidora Frazão - Bebidas</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f4f4f9; padding: 20px; }
-        h1 { text-align: center; color: #333; margin-bottom: 30px; }
-        .catalog { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
-            gap: 20px; 
-            max-width: 1200px; 
-            margin: 0 auto; 
-        }
-        .item-card { 
-            background: white; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            padding: 15px; 
-            text-align: center; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .item-card img { 
-            width: 100%; 
-            height: 180px; 
-            object-fit: contain; 
-            margin-bottom: 15px; 
-            border-bottom: 1px solid #eee;
-        }
-        .item-card h2 { font-size: 16px; margin: 0 0 15px 0; color: #444; min-height: 40px; }
-        .btn-cotar { 
-            display: block; 
-            background-color: #25d366; 
-            color: white; 
-            padding: 10px; 
-            text-decoration: none; 
-            border-radius: 5px; 
-            font-weight: bold; 
-        }
-        .btn-cotar:hover { background-color: #128c7e; }
+        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+        h1 { text-align: center; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd; text-align: center; }
+        .card img { width: 100%; height: 150px; object-fit: contain; margin-bottom: 10px; border-bottom: 1px solid #eee; }
+        .btn { display: block; background: #25d366; color: white; padding: 10px; text-decoration: none; border-radius: 5px; margin-top: 10px; font-weight: bold; }
+        .pagination { text-align: center; margin-top: 20px; }
+        .pagination button { padding: 10px 15px; cursor: pointer; border: 1px solid #ddd; background: white; }
+        .page { display: none; }
+        .page.active { display: grid; }
     </style>
 </head>
 <body>
-
     <h1>Distribuidora Frazão - Bebidas</h1>
+    <div id="catalog-pages"></div>
+    <div class="pagination" id="pagination-controls"></div>
 
-    <div class="catalog">
-"""
-
-import urllib.parse
-for item in items:
-    # URL encoded para o link do WhatsApp
-    whatsapp_msg = f"Olá, gostaria de fazer uma cotação do produto: {item}"
-    encoded_msg = urllib.parse.quote(whatsapp_msg)
-    whatsapp_link = f"https://wa.me/5521968659086?text={encoded_msg}"
-    
-    html_template += f"""
-        <div class="item-card">
-            <img src="LINK_DA_IMAGEM_AQUI" alt="{item}">
-            <h2>{item}</h2>
-            <a href="{whatsapp_link}" target="_blank" class="btn-cotar">Cotação via WhatsApp</a>
-        </div>
-    """
-
-html_template += """
-    </div>
+    <script>
+        const items = """ + str(items) + """;
+        const itemsPerPage = 8;
+        const catalog = document.getElementById('catalog-pages');
+        const controls = document.getElementById('pagination-controls');
+        
+        for (let i = 0; i < Math.ceil(items.length / itemsPerPage); i++) {
+            const pageDiv = document.createElement('div');
+            pageDiv.className = 'page' + (i === 0 ? ' active' : '');
+            pageDiv.className += ' grid';
+            
+            items.slice(i * itemsPerPage, (i + 1) * itemsPerPage).forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<img src="LINK_DA_IMAGEM_AQUI" alt="${item}">
+                                  <h3>${item}</h3>
+                                  <a href="https://wa.me/5521968659086?text=Cotação:${encodeURIComponent(item)}" class="btn" target="_blank">Cotar WhatsApp</a>`;
+                pageDiv.appendChild(card);
+            });
+            catalog.appendChild(pageDiv);
+            
+            const btn = document.createElement('button');
+            btn.innerText = i + 1;
+            btn.onclick = () => {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                pageDiv.classList.add('active');
+            };
+            controls.appendChild(btn);
+        }
+    </script>
 </body>
-</html>
-"""
+</html>"""
 
-# Salva o arquivo
-with open("distribuidora-frazao-bebidas-catalogo.html", "w", encoding="utf-8") as f:
-    f.write(html_template)
+with open("distribuidora-frazao-bebidas-paginada.html", "w", encoding="utf-8") as f:
+    f.write(html_content)

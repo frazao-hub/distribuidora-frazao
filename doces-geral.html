@@ -3,207 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Higiene - Distribuidora Frazão</title>
-    <style>
-        :root {
-            --primary: #25d366;
-            --primary-dark: #128c7e;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 2rem 1rem; }
-
-        .header { text-align: center; margin-bottom: 2rem; }
-        .header h1 { font-size: 1.8rem; color: var(--text); margin-bottom: 0.5rem; }
-        .header p { color: var(--text-muted); font-size: 0.95rem; }
-
-        .container { max-width: 1200px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
-
-        .card { 
-            background: var(--card-bg); 
-            border: 1px solid var(--border); 
-            border-radius: 12px; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
-
-        .img-container { 
-            width: 100%; 
-            height: 180px; 
-            background-color: #f1f5f9; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .img-container img { width: 100%; height: 100%; object-fit: cover; }
-
-        .card-body { padding: 1rem; flex-grow: 1; }
-        .badge { background: #e0e7ff; color: #3730a3; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 9999px; display: inline-block; }
-        .card-title { font-size: 1rem; margin: 0.4rem 0 0.2rem 0; font-weight: 600; }
-
-        .card-footer { 
-            padding: 0.8rem 1rem; 
-            border-top: 1px solid var(--border); 
-            background: #fafafa; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-        }
-
-        .code { font-family: monospace; background: #e2e8f0; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.8rem; color: #475569; font-weight: 600; }
-        
-        .btn-wa { 
-            background-color: var(--primary);
-            color: #ffffff;
-            font-weight: 600; 
-            text-decoration: none; 
-            font-size: 0.85rem; 
-            padding: 0.4rem 0.7rem;
-            border-radius: 6px;
-            transition: background 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .btn-wa:hover { background-color: var(--primary-dark); }
-
-        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 2.5rem; }
-        .page-btn {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            padding: 0.5rem 0.9rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text);
-            transition: all 0.2s;
-        }
-        .page-btn.active, .page-btn:hover {
-            background: var(--primary-dark);
-            color: #ffffff;
-            border-color: var(--primary-dark);
-        }
-    </style>
+    <title>Doces - Distribuidora Frazão</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="header">
-        <h1>Distribuidora Frazão — Setor doces-geral</h1>
-        <p>Catálogo com links diretos de imagens da internet</p>
-    </div>
+    <header class="topo-interna">
+        <h1>Doces - Distribuidora Frazão</h1>
+        <a href="index.html" class="btn-voltar">&larr; Voltar para a Página Inicial</a>
+    </header>
 
-    <div class="container">
-        <div id="product-grid" class="grid"></div>
-        <div id="pagination" class="pagination"></div>
-    </div>
+    <main class="container-produtos">
+        
+        <div class="grid-4-colunas">
+            <!-- Produtos inseridos dinamicamente -->
+            <div class="produto-card"><h3>BANANINHA CREMOSA FAMOSO C/24</h3><p class="preco">R$ 36,10</p></div>
+            <div class="produto-card"><h3>BATATA OND. DEORA 30G ORIGINAL C/20</h3><p class="preco">R$ 47,60</p></div>
+            <div class="produto-card"><h3>BATON BRANCO C/ 30</h3><p class="preco">R$ 52,00</p></div>
+            <div class="produto-card"><h3>BATON PRETO C/30</h3><p class="preco">R$ 55,00</p></div>
+            <div class="produto-card"><h3>BIS AO LEITE 1UNX X 100,8</h3><p class="preco">R$ 5,88</p></div>
+            <div class="produto-card"><h3>BOMBOM SERENATA 1KG</h3><p class="preco">R$ 59,00</p></div>
+            <div class="produto-card"><h3>CAJUZINHO DA ALEGRIA C/20</h3><p class="preco">R$ 20,90</p></div>
+            <div class="produto-card"><h3>CH. ADAMS HORTELA C/100</h3><p class="preco">R$ 39,00</p></div>
+            <div class="produto-card"><h3>CHOCOLATE AO LEITE HERSEYS 18X20</h3><p class="preco">R$ 31,90</p></div>
+            <div class="produto-card"><h3>CHOKITO C/30</h3><p class="preco">R$ 86,80</p></div>
+            <div class="produto-card"><h3>CHUPÃO BIBA C/50 1,5KG</h3><p class="preco">R$ 31,20</p></div>
+            <div class="produto-card"><h3>CHUPÃO SOUVENIR C/50</h3><p class="preco">R$ 28,59</p></div>
+            <div class="produto-card"><h3>COCADA PINGADA BRANCA AURORA C/20</h3><p class="preco">R$ 28,70</p></div>
+            <div class="produto-card"><h3>COCADA PIRANGUÇU BRANCA C/20</h3><p class="preco">R$ 29,40</p></div>
+            <div class="produto-card"><h3>CROCK BARBECUE C/10</h3><p class="preco">R$ 22,10</p></div>
+            <div class="produto-card"><h3>CROKÍSSIMO C/36</h3><p class="preco">R$ 22,95</p></div>
+            <div class="produto-card"><h3>DISQUETI C/24</h3><p class="preco">R$ 38,95</p></div>
+            <div class="produto-card"><h3>DOCE DE ABOBORA AURORA C/20</h3><p class="preco">R$ 20,90</p></div>
+            <div class="produto-card"><h3>DOCE DE ABOBORA CORAÇÃO MISTO C/50</h3><p class="preco">R$ 14,29</p></div>
+            <div class="produto-card"><h3>DOCE DE ABOBORA RAPANUI C/20</h3><p class="preco">R$ 19,90</p></div>
+            <div class="produto-card"><h3>DOCE DE AMENDOIM CASEIRÃO 1,65KG C/30</h3><p class="preco">R$ 33,00</p></div>
+            <div class="produto-card"><h3>DOCE DE AMENDOIM FC GIBI 1,5 KG C/50</h3><p class="preco">R$ 29,90</p></div>
+            <div class="produto-card"><h3>DOCE DE AMENDOIM LISO AURORA C/20</h3><p class="preco">R$ 20,90</p></div>
+            <div class="produto-card"><h3>DOCE DE AMENDOIM MOLECÃO SANTA HELENA C/50</h3><p class="preco">R$ 24,99</p></div>
+            <div class="produto-card"><h3>DOCE DE AMENDOIM PÉ DE MOLEQUE AURORA C/20</h3><p class="preco">R$ 19,90</p></div>
+            <div class="produto-card"><h3>DOCE DE LEITE NINHO C/40</h3><p class="preco">R$ 23,50</p></div>
+            <div class="produto-card"><h3>DOCE DE LEITE PURO ALEGRIA C/20</h3><p class="preco">R$ 19,90</p></div>
+            <div class="produto-card"><h3>FAMOSO BEIJINHO C/ GOIABA C/21</h3><p class="preco">R$ 47,50</p></div>
+            <div class="produto-card"><h3>FAMOSO BEIJINHO DE COCO C/21</h3><p class="preco">R$ 47,50</p></div>
+            <div class="produto-card"><h3>FAMOSO BRIGADEIRO C/21</h3><p class="preco">R$ 47,50</p></div>
+            <div class="produto-card"><h3>FAMOSO LEITE C/ AMEIXA C/20</h3><p class="preco">R$ 47,50</p></div>
+            <div class="produto-card"><h3>FOFURAO CEBOLA 60G C/10</h3><p class="preco">R$ 20,90</p></div>
+            <div class="produto-card"><h3>FOFURAO CHURRASCO C/10</h3><p class="preco">R$ 20,90</p></div>
+            <div class="produto-card"><h3>FOFURAO PRESUNTO C/10</h3><p class="preco">R$ 20,90</p></div>
+            <div class="produto-card"><h3>FOFURAO QUEIJO 60G C/10</h3><p class="preco">R$ 20,90</p></div>
+            <div class="produto-card"><h3>GELADÃO C/20</h3><p class="preco">R$ 11,70</p></div>
+            <div class="produto-card"><h3>GELADINHO C/40</h3><p class="preco">R$ 11,70</p></div>
+            <div class="produto-card"><h3>GELEIA DE FRUTAS AURORA C/20</h3><p class="preco">R$ 20,90</p></div>
+            <div class="produto-card"><h3>GELEIA DE MOCOTO ALGACEL C/20</h3><p class="preco">R$ 19,90</p></div>
+            <div class="produto-card"><h3>GOMA DOCILE EUCALIPTO C/24</h3><p class="preco">R$ 14,40</p></div>
+            <div class="produto-card"><h3>GOMA DOCILE SORTIDA C/24</h3><p class="preco">R$ 14,40</p></div>
+            <div class="produto-card"><h3>GOMA FINI AMORA 15G C/12</h3><p class="preco">R$ 11,70</p></div>
+            <div class="produto-card"><h3>GOMA FINI BANANA 15G C/12</h3><p class="preco">R$ 11,70</p></div>
+            <div class="produto-card"><h3>GOMA FINI BEIJOS DE MORANGO 15G C/12</h3><p class="preco">R$ 11,70</p></div>
+            <div class="produto-card"><h3>GOMA FINI DENTADURA 15G C/12</h3><p class="preco">R$ 11,70</p></div>
+            <div class="produto-card"><h3>GOMA FINI MINHOCAS C/12</h3><p class="preco">R$ 11,70</p></div>
+            <div class="produto-card"><h3>GOMA FINI MORANGO CITRICO 15G C/12</h3><p class="preco">R$ 9,80</p></div>
+            <div class="produto-card"><h3>GOMA FINI MORANGO/LAR CITRUS C/12</h3><p class="preco">R$ 9,80</p></div>
+            <div class="produto-card"><h3>GOMA FINI TUBES MORANGO NOVO 15G C/12</h3><p class="preco">R$ 9,80</p></div>
+            <div class="produto-card"><h3>GOMA FINI TUBES PINTA LINGUA 15G C/12</h3><p class="preco">R$ 9,80</p></div>
+            <div class="produto-card"><h3>GOMA FINI TUBES SORTIDO C/12</h3><p class="preco">R$ 9,80</p></div>
+            <div class="produto-card"><h3>GOMA FINI TUBES TRES CORES 15G C/12</h3><p class="preco">R$ 9,80</p></div>
+            <div class="produto-card"><h3>GOMA FINI TUBES TWISTER 15G C/12</h3><p class="preco">R$ 9,80</p></div>
+            <div class="produto-card"><h3>GOMA FINI TUBES TWISTER ACIDO 15G C/12</h3><p class="preco">R$ 9,80</p></div>
+            <div class="produto-card"><h3>GOMA FINI TUBES UVA C/12</h3><p class="preco">R$ 9,80</p></div>
+            <div class="produto-card"><h3>GOMA FINI TUBES UVA CITRICO C/12</h3><p class="preco">R$ 9,80</p></div>
+            <div class="produto-card"><h3>GOMA FINI TUTTI FRUTTI 15G C/12</h3><p class="preco">R$ 9,80</p></div>
+            <div class="produto-card"><h3>GOMA FINI URSINHO C/12</h3><p class="preco">R$ 11,70</p></div>
+            <div class="produto-card"><h3>GOMA TUBO DORI C/30</h3><p class="preco">R$ 22,50</p></div>
+            <div class="produto-card"><h3>GRELHADITOS C/30</h3><p class="preco">R$ 20,90</p></div>
+            <div class="produto-card"><h3>KERUS BACON 43G C/10</h3><p class="preco">R$ 14,78</p></div>
+            <div class="produto-card"><h3>KERUS BACON 80G C/10</h3><p class="preco">R$ 23,95</p></div>
+            <div class="produto-card"><h3>KERUS CALABRESA 43G C/10</h3><p class="preco">R$ 14,78</p></div>
+            <div class="produto-card"><h3>KERUS CEBOLA E SALSA 43G C/10</h3><p class="preco">R$ 14,78</p></div>
+            <div class="produto-card"><h3>KERUS CEBOLA E SALSA 80G C/10</h3><p class="preco">R$ 23,95</p></div>
+            <div class="produto-card"><h3>KERUS CHEDDAR 43G C/10</h3><p class="preco">R$ 14,78</p></div>
+            <div class="produto-card"><h3>KERUS CHEDDAR 80G C/10</h3><p class="preco">R$ 23,95</p></div>
+            <div class="produto-card"><h3>KERUS CHURRASCO 43G C/10</h3><p class="preco">R$ 14,78</p></div>
+            <div class="produto-card"><h3>KERUS CHURRASCO 80G C/10</h3><p class="preco">R$ 23,95</p></div>
+            <div class="produto-card"><h3>KERUS PIZZA 43G C/10</h3><p class="preco">R$ 14,78</p></div>
+            <div class="produto-card"><h3>KERUS PIZZA 80G C/10</h3><p class="preco">R$ 23,95</p></div>
+            <div class="produto-card"><h3>KERUS PRESUNTO 43G C/10</h3><p class="preco">R$ 14,78</p></div>
+            <div class="produto-card"><h3>KERUS PRESUNTO 80G C/10</h3><p class="preco">R$ 23,95</p></div>
+            <div class="produto-card"><h3>KERUS QUEIJO BOLA 43G C/10</h3><p class="preco">R$ 14,78</p></div>
+            <div class="produto-card"><h3>KERUS QUEIJO BOLA 80G C/10</h3><p class="preco">R$ 23,95</p></div>
+            <div class="produto-card"><h3>KERUS REQUEIJÃO 43G C/10</h3><p class="preco">R$ 14,78</p></div>
+            <div class="produto-card"><h3>MARIOLA AÇUCARADA INGRID C/50</h3><p class="preco">R$ 15,95</p></div>
+            <div class="produto-card"><h3>MARIOLA CAMPISTA AÇUCARADA C/50</h3><p class="preco">R$ 15,99</p></div>
+            <div class="produto-card"><h3>MARIOLA LISA C/50</h3><p class="preco">R$ 14,80</p></div>
+            <div class="produto-card"><h3>MARIOLA LISA CAMPISTA 2,5 KG C/50</h3><p class="preco">R$ 37,99</p></div>
+            <div class="produto-card"><h3>MARIOLA LISA CAMPISTA 3 KG C/50</h3><p class="preco">R$ 43,49</p></div>
+            <div class="produto-card"><h3>MENDORATO C/30</h3><p class="preco">R$ 20,90</p></div>
+            <div class="produto-card"><h3>NUCITA CHOCOLATE C/ AVELÃ C/48</h3><p class="preco">R$ 20,70</p></div>
+            <div class="produto-card"><h3>NUCITA POTE NAPOLITANO C/60</h3><p class="preco">R$ 28,60</p></div>
+            <div class="produto-card"><h3>NUCITA SORTIDA C/48</h3><p class="preco">R$ 20,70</p></div>
+            <div class="produto-card"><h3>PAÇOCA DISPLAY C/50</h3><p class="preco">R$ 34,95</p></div>
+            <div class="produto-card"><h3>PAÇOCA ROLHA SANTA HELENA C/ 100</h3><p class="preco">R$ 37,60</p></div>
+            <div class="produto-card"><h3>PAÇOCA ROLHA UNIÃO C/100</h3><p class="preco">R$ 24,50</p></div>
+            <div class="produto-card"><h3>PAÇOCAO ROLHÃO UNIÃO C/20</h3><p class="preco">R$ 20,90</p></div>
+            <div class="produto-card"><h3>PASTILHA MINTY HORTELÃ C/40</h3><p class="preco">R$ 33,80</p></div>
+            <div class="produto-card"><h3>PÉ DE MOÇA UNIÃO C/20</h3><p class="preco">R$ 22,50</p></div>
+            <div class="produto-card"><h3>PEZAO AURORA CROCANTE C/20</h3><p class="preco">R$ 20,90</p></div>
+            <div class="produto-card"><h3>PEZÃO DE MOLEQUE DOCE SONHO C/20</h3><p class="preco">R$ 19,99</p></div>
+            <div class="produto-card"><h3>PINGO DE LEITE JAZAM C/50</h3><p class="preco">R$ 19,50</p></div>
+            <div class="produto-card"><h3>PIPOCA DE MILHO 80G FD C/10 UNID</h3><p class="preco">R$ 20,90</p></div>
+            <div class="produto-card"><h3>PIPOCA DOCE KI DELICIA 70g c/13</h3><p class="preco">R$ 20,50</p></div>
+            <div class="produto-card"><h3>PIPOCA FRANK DOCE C/13</h3><p class="preco">R$ 19,90</p></div>
+            <div class="produto-card"><h3>PIPOU BACON LISTRADA 40G C/10</h3><p class="preco">R$ 15,60</p></div>
+            <div class="produto-card"><h3>PRESTIGIO NESTLÊ C/30</h3><p class="preco">R$ 86,80</p></div>
+            <div class="produto-card"><h3>QUEBRA QUEIXÃO AURORA C/20</h3><p class="preco">R$ 28,70</p></div>
+            <div class="produto-card"><h3>QUEBRA QUEIXO C/50</h3><p class="preco">R$ 19,50</p></div>
+            <div class="produto-card"><h3>SALGADINHO KI GOSTOSO LISTRADO 40G C/10</h3><p class="preco">R$ 14,29</p></div>
+            <div class="produto-card"><h3>TIC TAC FRUTAS C/14</h3><p class="preco">R$ 28,00</h3></div>
+        </div>
 
-    <script>
-        // COLE O LINK DA IMAGEM COPIADO DA INTERNET ENTRE AS ASPAS DE "imagem"
-        const produtos = [
-            {"id": "HIG-001", "nome": "Absorvente Intimus Gel", "categoria": "Higiene Feminina", "imagem": "https://alexfarma.vteximg.com.br/arquivos/ids/157682-1000-1000/ABS-INTIMUS-GEL-COM-ABAS-SUAVE-8UND-min.jpg?v=637959040915400000"},
-            {"id": "HIG-002", "nome": "Acetona Bruna", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-003", "nome": "Acetona Farmax", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-004", "nome": "Água Oxigenada Márcia 30 Vol", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-005", "nome": "Água Oxigenada Márcia 40 Vol", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-006", "nome": "Algodão Apolo", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-007", "nome": "Algodão Nathy", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-008", "nome": "Amônia Radar", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-009", "nome": "Aparelho Prestobarba", "categoria": "Barbeamento", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-010", "nome": "Aparelho Probak", "categoria": "Barbeamento", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-011", "nome": "Chupeta Silicone", "categoria": "Infantil", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-012", "nome": "Cortador de Unha Pequeno", "categoria": "Acessórios", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-013", "nome": "Cortador de Unha Grande", "categoria": "Acessórios", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-014", "nome": "Cotonetes Nathy", "categoria": "Higiene Pessoal", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-015", "nome": "Creme Dental Oral-B", "categoria": "Higiene Bucal", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-016", "nome": "Band-Aid", "categoria": "Primeiros Socorros", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-017", "nome": "Descolorante Márcia", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-018", "nome": "Desodorante Leite de Rosas", "categoria": "Perfumaria", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-019", "nome": "Escova de Dente Condor", "categoria": "Higiene Bucal", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-020", "nome": "Escova Pata-Pata", "categoria": "Acessórios", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-021", "nome": "Lâmina Lord", "categoria": "Barbeamento", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-022", "nome": "Lâmina Super Maxi", "categoria": "Barbeamento", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-023", "nome": "Lâmina Wilkinson", "categoria": "Barbeamento", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-024", "nome": "Papel Higiênico Belisoft Gold", "categoria": "Papelaria & Higiene", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-025", "nome": "Papel Higiênico Silver", "categoria": "Papelaria & Higiene", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-026", "nome": "Pente Carioca", "categoria": "Acessórios", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-027", "nome": "Pente CP Luxo", "categoria": "Acessórios", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-028", "nome": "Pinça Merheje", "categoria": "Acessórios", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-029", "nome": "Rala Calo Plástico", "categoria": "Acessórios", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-030", "nome": "Sabonete Francis", "categoria": "Sabonetes", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-031", "nome": "Sabonete Lux", "categoria": "Sabonetes", "imagem": "COLE_O_LINK_AQUI"}
-        ];
+        <div class="paginacao">
+            <span class="pagina-atual">Página 1</span>
+        </div>
 
-        const itensPorPagina = 10;
-        let paginaAtual = 1;
+    </main>
 
-        function renderizarProdutos(pagina) {
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = '';
-
-            const inicio = (pagina - 1) * itensPorPagina;
-            const fim = inicio + itensPorPagina;
-            const produtosPagina = produtos.slice(inicio, fim);
-
-            produtosPagina.forEach(prod => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                
-                // O src abaixo carrega o link direto que você colou no array "imagem"
-                card.innerHTML = `
-                    <div class="img-container">
-                        <img src="${prod.imagem}" alt="${prod.nome}" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                    </div>
-                    <div class="card-body">
-                        <span class="badge">${prod.categoria}</span>
-                        <h3 class="card-title">${prod.nome}</h3>
-                    </div>
-                    <div class="card-footer">
-                        <span class="code">${prod.id}</span>
-                        <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20${encodeURIComponent(prod.nome)}%20(${prod.id})" target="_blank" class="btn-wa">📲 Cotar</a>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function renderizarPaginacao() {
-            const paginationContainer = document.getElementById('pagination');
-            paginationContainer.innerHTML = '';
-
-            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
-
-            for (let i = 1; i <= totalPaginas; i++) {
-                const btn = document.createElement('button');
-                btn.className = `page-btn ${i === paginaAtual ? 'active' : ''}`;
-                btn.innerText = i;
-                btn.onclick = () => {
-                    paginaAtual = i;
-                    renderizarProdutos(paginaAtual);
-                    renderizarPaginacao();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                };
-                paginationContainer.appendChild(btn);
-            }
-        }
-
-        renderizarProdutos(paginaAtual);
-        renderizarPaginacao();
-    </script>
+    <footer>
+        <div class="footer-links">
+            <a href="politica-privacidade.html">Política de Privacidade</a> |
+            <a href="regras-de-uso.html">Regras de Uso</a> |
+            <a href="politica-devolucao.html">Política de Devolução</a>
+        </div>
+        <p>&copy; 2026 Distribuidora Frazão.</p>
+    </footer>
 
 </body>
 </html>

@@ -1,121 +1,13 @@
-teste-carrinho.html
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste de Carrinho de Compras</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 20px; }
-        .container { display: flex; gap: 20px; max-width: 900px; margin: auto; }
-        .box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
-        th { background: #0f172a; color: white; }
-        button { background: #2563eb; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #1d4ed8; }
-        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 60%; }
-        .total-box { font-size: 1.1em; font-weight: bold; margin-top: 15px; text-align: right; }
-    </style>
-</head>
-<body>
-
-<h2 style="text-align: center;">Simulador de Teste de Carrinho</h2>
-
-<div class="container">
-    <div class="box">
-        <h3>Produtos do Pedido</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Produto</th>
-                    <th>Qtd</th>
-                    <th>Preço Un.</th>
-                    <th>Subtotal</th>
-                </tr>
-            </thead>
-            <tbody id="lista-carrinho">
-                <!-- Inserido via JS -->
-            </tbody>
-        </table>
-
-        <div style="margin-top: 15px;">
-            <input type="text" id="cupom" placeholder="Digite o cupom (ex: TESTE10)">
-            <button onclick="aplicarCupom()">Aplicar Cupom</button>
-        </div>
-    </div>
-
-    <div class="box">
-        <h3>Resumo da Compra</h3>
-        <p>Subtotal: <span id="subtotal-val">R$ 0,00</span></p>
-        <p>Desconto: <span id="desconto-val">R$ 0,00</span></p>
-        <p>Frete: <span id="frete-val">R$ 12,00</span></p>
-        <hr>
-        <div class="total-box">
-            Total: <span id="total-val" style="color: #2563eb;">R$ 0,00</span>
-        </div>
-        <br>
-        <button style="width: 100%; background: #16a34a;" onclick="finalizarTeste()">Ir para Checkout (Sandbox)</button>
-    </div>
-</div>
-
-<script>
-    const produtos = [
-        { nome: "Café Tradicional 500g", qtd: 2, preco: 10.00 },
-        { nome: "Pacote Bisnaguinha 300g", qtd: 3, preco: 5.00 },
-        { nome: "Caixa Bala de Goma", qtd: 1, preco: 20.00 },
-        { nome: "Detergente Neutro 500ml", qtd: 4, preco: 2.50 },
-        { nome: "Copo Descartável 180ml", qtd: 2, preco: 8.00 }
-    ];
-
-    let frete = 12.00;
-    let percentualDesconto = 0;
-
-    function renderizarCarrinho() {
-        const tbody = document.getElementById("lista-carrinho");
-        tbody.innerHTML = "";
-        let subtotal = 0;
-
-        produtos.forEach(p => {
-            const itemSubtotal = p.qtd * p.preco;
-            subtotal += itemSubtotal;
-
-            tbody.innerHTML += `
-                <tr>
-                    <td>${p.nome}</td>
-                    <td>${p.qtd}</td>
-                    <td>R$ ${p.preco.toFixed(2)}</td>
-                    <td>R$ ${itemSubtotal.toFixed(2)}</td>
-                </tr>
-            `;
-        });
-
-        const valorDesconto = subtotal * percentualDesconto;
-        const total = subtotal - valorDesconto + frete;
-
-        document.getElementById("subtotal-val").innerText = "R$ " + subtotal.toFixed(2);
-        document.getElementById("desconto-val").innerText = "R$ " + valorDesconto.toFixed(2);
-        document.getElementById("frete-val").innerText = "R$ " + frete.toFixed(2);
-        document.getElementById("total-val").innerText = "R$ " + total.toFixed(2);
-    }
-
-    function aplicarCupom() {
-        const cupomInput = document.getElementById("cupom").value.trim().toUpperCase();
-        if (cupomInput === "TESTE10") {
-            percentualDesconto = 0.10;
-            alert("Cupom TESTE10 aplicado com sucesso (10% de desconto)!");
-        } else {
-            alert("Cupom inválido! Use 'TESTE10'.");
-        }
-        renderizarCarrinho();
-    }
-
-    function finalizarTeste() {
-        alert("Simulação de Checkout enviada!\nSua estrutura de cálculo de carrinho está funcionando perfeitamente.");
-    }
-
-    renderizarCarrinho();
-</script>
-
-</body>
-</html>
+<!-- Estrutura de Menu de Categorias -->
+<nav class="menu-categorias">
+    <h3>Categorias de Produtos</h3>
+    <ul id="lista-categorias">
+        <li><a href="#" onclick="filtrarCategoria('todas')">Todas as Categorias</a></li>
+        <li><a href="#" onclick="filtrarCategoria('Mercearia')">Mercearia</a></li>
+        <li><a href="#" onclick="filtrarCategoria('Doces')">Doces</a></li>
+        <li><a href="#" onclick="filtrarCategoria('Bebidas')">Bebidas</a></li>
+        <li><a href="#" onclick="filtrarCategoria('Papelaria')">Papelaria / Escolar</a></li>
+        <li><a href="#" onclick="filtrarCategoria('Higiene e Limpeza')">Higiene e Limpeza</a></li>
+        <li><a href="#" onclick="filtrarCategoria('Descartaveis')">Descartáveis</a></li>
+    </ul>
+</nav>

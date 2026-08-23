@@ -1,78 +1,18 @@
-/* Container Principal */
-.catalogo-secao {
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 20px;
-  font-family: Arial, sans-serif;
+.grid-4-colunas {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
 }
 
-.titulo-secao {
-  text-align: center;
-  font-size: 28px;
-  color: #333;
-  margin-bottom: 30px;
+/* Responsividade para telas menores (Celulares e Tablets) */
+@media (max-width: 992px) {
+    .grid-4-colunas {
+        grid-template-columns: repeat(2, 1fr); /* 2 colunas no tablet */
+    }
 }
 
-/* Grid de Quadrados */
-.grid-categorias {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
-
-/* Cada Quadrado / Card da Categoria */
-.card-categoria {
-  flex: 1 1 250px;
-  max-width: 280px;
-  min-height: 220px;
-  background-color: #ffffff;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 24px;
-  text-decoration: none;
-  color: inherit;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease; /* Efeito suave de animação */
-  cursor: pointer;
-  display: block;
-}
-
-.icone-categoria {
-  font-size: 40px;
-  margin-bottom: 15px;
-}
-
-.card-categoria h3 {
-  margin: 0 0 10px 0;
-  font-size: 20px;
-  color: #1a202c;
-}
-
-.card-categoria p {
-  margin: 0 0 15px 0;
-  font-size: 14px;
-  color: #718096;
-  line-height: 1.4;
-}
-
-.btn-acessar {
-  font-size: 14px;
-  font-weight: bold;
-  color: #2563eb;
-  display: inline-block;
-  transition: color 0.2s ease;
-}
-
-/* EFETO AO PASSAR O MOUSE (HOVER) */
-.card-categoria:hover {
-  transform: translateY(-8px); /* Levanta o quadrado */
-  border-color: #2563eb; /* Muda a borda para a cor principal */
-  box-shadow: 0 12px 20px rgba(37, 99, 235, 0.15); /* Adiciona sombra destacada */
-  background-color: #f8fafc;
-}
-
-.card-categoria:hover .btn-acessar {
-  color: #1d4ed8;
-  text-decoration: underline;
+@media (max-width: 576px) {
+    .grid-4-colunas {
+        grid-template-columns: 1fr; /* 1 coluna no celular */
+    }
 }

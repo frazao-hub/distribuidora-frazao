@@ -12,16 +12,30 @@
     .btn-voltar { text-decoration: none; color: #2563eb; font-weight: bold; }
     .container { max-width: 1100px; margin: 20px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
     @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
-    .produtos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-    .card-produto { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; text-align: center; }
-    .card-produto h4 { font-size: 16px; margin: 10px 0 5px; }
-    .card-produto .unidade { font-size: 12px; color: #64748b; display: block; margin-bottom: 12px; }
-    .btn-add { background-color: #2563eb; color: #fff; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+    
+    .busca-box { margin-bottom: 20px; }
+    .busca-box input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; outline: none; }
+    .busca-box input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+    
+    .produtos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; min-height: 400px; }
+    .card-produto { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
+    .card-produto h4 { font-size: 15px; margin: 10px 0; color: #1e293b; text-transform: capitalize; }
+    .btn-add { background-color: #2563eb; color: #fff; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-top: auto; }
+    .btn-add:hover { background-color: #1d4ed8; }
+    
+    /* Controles de Paginação */
+    .paginacao { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 25px; }
+    .btn-pag { background: #ffffff; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #1e293b; }
+    .btn-pag:hover:not(:disabled) { background: #2563eb; color: #fff; border-color: #2563eb; }
+    .btn-pag:disabled { opacity: 0.4; cursor: not-allowed; }
+    .info-pagina { font-size: 14px; font-weight: bold; color: #64748b; }
+
     .carrinho-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; height: fit-content; position: sticky; top: 20px; }
-    .lista-carrinho { list-style: none; margin: 15px 0; max-height: 250px; overflow-y: auto; }
-    .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; }
+    .lista-carrinho { list-style: none; margin: 15px 0; max-height: 350px; overflow-y: auto; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; padding: 10px 0; }
+    .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; gap: 10px; }
     .btn-qtd { background: #e2e8f0; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; font-weight: bold; }
     .btn-whatsapp { background-color: #25d366; color: white; border: none; width: 100%; padding: 12px; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; }
+    .btn-whatsapp:hover { background-color: #1eb954; }
     .vazio-msg { font-size: 13px; color: #94a3b8; text-align: center; }
   </style>
 </head>
@@ -37,32 +51,17 @@
 
   <div class="container">
     <div>
-      <h2 style="margin-bottom: 20px;">Produtos de Mercearia</h2>
-      <div class="produtos-grid">
-        <div class="card-produto">
-          <div style="font-size: 36px;">🌾</div>
-          <h4>Arroz 5kg</h4>
-          <span class="unidade">Fardo c/ 6 un</span>
-          <button class="btn-add" onclick="adicionarAoCarrinho('Arroz 5kg (Fardo c/ 6)')">+ Adicionar</button>
-        </div>
-        <div class="card-produto">
-          <div style="font-size: 36px;">🫘</div>
-          <h4>Feijão Preto 1kg</h4>
-          <span class="unidade">Fardo c/ 10 un</span>
-          <button class="btn-add" onclick="adicionarAoCarrinho('Feijão Preto 1kg (Fardo c/ 10)')">+ Adicionar</button>
-        </div>
-        <div class="card-produto">
-          <div style="font-size: 36px;">🫙</div>
-          <h4>Óleo de Soja 900ml</h4>
-          <span class="unidade">Caixa c/ 20 un</span>
-          <button class="btn-add" onclick="adicionarAoCarrinho('Óleo de Soja 900ml (Caixa c/ 20)')">+ Adicionar</button>
-        </div>
-        <div class="card-produto">
-          <div style="font-size: 36px;">🍬</div>
-          <h4>Açúcar Refinado 1kg</h4>
-          <span class="unidade">Fardo c/ 10 un</span>
-          <button class="btn-add" onclick="adicionarAoCarrinho('Açúcar Refinado 1kg (Fardo c/ 10)')">+ Adicionar</button>
-        </div>
+      <div class="busca-box">
+        <input type="text" id="campo-busca" placeholder="🔍 Buscar produto de mercearia..." onkeyup="filtrarProdutos()">
+      </div>
+      <h2 style="margin-bottom: 20px; color: #1e293b;">Produtos de Mercearia</h2>
+      
+      <div class="produtos-grid" id="grid-produtos"></div>
+
+      <div class="paginacao" id="paginacao-controles">
+        <button class="btn-pag" id="btn-prev" onclick="mudarPagina(-1)">&larr; Anterior</button>
+        <span class="info-pagina" id="info-pagina">Página 1</span>
+        <button class="btn-pag" id="btn-next" onclick="mudarPagina(1)">Próxima &rarr;</button>
       </div>
     </div>
 
@@ -76,8 +75,101 @@
   </div>
 
   <script>
+    const listaProdutos = [
+      "Abridor de Garrafa", "Abridor de Lata", "Adoçante Assugrin", "Agulha de Fogão", 
+      "Agulha de Mão Nº 1", "Agulha de Mão Nº 2", "Agulha de Mão Nº 5", "Agulha de Mão Nº 6", 
+      "Agulha de Mão Nº 7", "Agulha de Máquina Nº 11", "Agulha de Máquina Nº 14", "Amido de Milho Apti", 
+      "Amolador de Faca 3x1", "Aroma de Baunilha Barreto", "Azeitona Zille", "Barbante Lyne 200m", 
+      "Batata Palha Rei", "Bateria 626A 1.55", "Bateria Elgin 2032", "Bateria Elgin AG13/LR41", 
+      "Bateria Elgin AG13/LR44", "Borracha Panela de Pressão 10L", "Borracha Panela de Pressão 4/7L", 
+      "Borracha Panela Silicone 3/7", "Cadeado 20-25-30mm", "Café Pimpinela 100g", "Caldo Arisco Carne", 
+      "Caldo Arisco Galinha", "Caldo Knorr Carne", "Caldo Knorr Galinha", "Carnê INSS", 
+      "Chá 7 Ervas Italianinho", "Chá Boldo Italianinho", "Chá Camomila Italianinho", "Chá Erva Doce Italianinho", 
+      "Chá Hortelã Italianinho", "Chá Maçã c/ Canela Italianinho", "Chá Preto", "Coador Flanelado Nº 7", 
+      "Coco Ralado Menina 50g", "Cola Tek Bonder 2g CT", "Cola Tek Bonder 793", "Colorau Chinezinho", 
+      "Condimento Bicarbonato", "Condimento Canela Casca", "Condimento Colorau", "Condimento Cominho Pó", 
+      "Condimento Cravo", "Condimento Erva Doce", "Condimento Louro Folha", "Condimento Orégano", 
+      "Condimento Pimenta Pó", "Condimento Tempero Misto", "Copo Americano", "Corda de Varal Nº5", 
+      "Creme de Leite Piracanjuba", "Durepoxi 100g", "Durepoxi 50g", "Ervilha Lata Pramesa", 
+      "Estalinhos Panda", "Fermento Apti 100g", "Filtro 102", "Filtro 103", "Filtro de Papel 103", 
+      "Fita Isolante 3M", "Fita Vedaflon", "Fósforo Gaboardi", "Fresh Abacaxi", "Fresh Caju", 
+      "Fresh Guaraná", "Fresh Laranja", "Fresh Limão", "Fresh Manga", "Fresh Maracujá", 
+      "Fresh Morango", "Fresh Uva", "Funil c/12", "Goiabada Predilecta", "Granulado Colorido", 
+      "Granulado Preto", "Isqueiro Bic Maxi", "Isqueiro Bic Mini", "Isqueiro Cricket Grande", 
+      "Isqueiro Eletrônico", "Isqueiro Mini Cricket", "Lâmpada 42w", "Lâmpada Halógena 70w", 
+      "Lâmpada Halógena 120w", "Lâmpada Halógena Ourolux 42w", "Lâmpada Ourolux 70w", "Lâmpada Ourolux LED 9w", 
+      "Lâmpada Ourolux LED 12w", "Lâmpada Ourolux LED 15w", "Lâmpada Ourolux LED 20w", "Lâmpada Ourolux LED 30w", 
+      "Lâmpada Ourolux LED 40w", "Lâmpada Presença LED 9w", "Leite Condensado 270g", "Leite de Coco Menina", 
+      "Linha Magna Azul Marinho", "Linha Magna Branca", "Linha Magna Preta", "Linha Magna Sortida", 
+      "Linha Magna Vermelha", "Milho de Pipoca 500g", "Milho Verde", "Miojo Carne", "Miojo Galinha", 
+      "Molho de Pimenta Gota", "Molho de Tomate Predilecta", "Palito de Dente", "Palito Churrasco", 
+      "Pilha 23A", "Pilha AAA Panasonic", "Pilha Alfacel AA c/60", "Pilha Alfacel AAA", 
+      "Pilha Panasonic AA", "Pilha Panasonic Grande", "Pilha Panasonic Grande D Alcalina", 
+      "Pilha Rayovac AA", "Pilha Rayovac Grande c/12", "Pregador de Roupa Grande", "Pregador de Roupa Pequeno", 
+      "Queijo Ralado Selete", "Refresco Tandy Laranja", "Refresco Tandy Maracujá", "Refresco Tandy Uva", 
+      "Sal Fino", "Sal Grosso", "Sal Refinado", "Salsicha Frisa", "Sardinha Óleo", "Sardinha Tomate", 
+      "Tang Abacaxi", "Tang Goiaba", "Tang Guaraná", "Tang Laranja", "Tang Limão", "Tang Manga", 
+      "Tang Maracujá", "Tang Morango", "Tang Uva", "Tempero Sazon Carne", "Vela Padroeira Nº 4", 
+      "Vela Padroeira Nº 5", "Vela Padroeira Nº 8", "Vinagre Bulnez 500ml"
+    ];
+
+    let paginaAtual = 1;
+    const itensPorPagina = 16;
+    let produtosFiltrados = [...listaProdutos];
+
     let carrinho = {};
-    const numeroWhatsApp = "5521999999999"; // Substitua pelo seu número com DDD
+    const numeroWhatsApp = "5521999999999"; // Substitua pelo seu numero real com DDD
+
+    function renderizarProdutos() {
+      const grid = document.getElementById("grid-produtos");
+      grid.innerHTML = "";
+
+      if (produtosFiltrados.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #64748b;">Nenhum produto encontrado.</p>';
+        document.getElementById("paginacao-controles").style.display = "none";
+        return;
+      }
+
+      document.getElementById("paginacao-controles").style.display = "flex";
+
+      const inicio = (paginaAtual - 1) * itensPorPagina;
+      const fim = inicio + itensPorPagina;
+      const paginaItens = produtosFiltrados.slice(inicio, fim);
+
+      paginaItens.forEach(prod => {
+        const card = document.createElement("div");
+        card.className = "card-produto";
+        card.innerHTML = `
+          <div style="font-size: 32px;">🛒</div>
+          <h4>${prod}</h4>
+          <button class="btn-add" onclick="adicionarAoCarrinho('${prod}')">+ Adicionar</button>
+        `;
+        grid.appendChild(card);
+      });
+
+      atualizarPaginacao();
+    }
+
+    function atualizarPaginacao() {
+      const totalPaginas = Math.ceil(produtosFiltrados.length / itensPorPagina);
+      document.getElementById("info-pagina").innerText = `Página ${paginaAtual} de ${totalPaginas}`;
+      
+      document.getElementById("btn-prev").disabled = paginaAtual === 1;
+      document.getElementById("btn-next").disabled = paginaAtual === totalPaginas || totalPaginas === 0;
+    }
+
+    function mudarPagina(delta) {
+      paginaAtual += delta;
+      renderizarProdutos();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function filtrarProdutos() {
+      const termo = document.getElementById("campo-busca").value.toLowerCase();
+      produtosFiltrados = listaProdutos.filter(p => p.toLowerCase().includes(termo));
+      paginaAtual = 1;
+      renderizarProdutos();
+    }
 
     function adicionarAoCarrinho(nome) {
       carrinho[nome] = (carrinho[nome] || 0) + 1;
@@ -103,7 +195,14 @@
       chaves.forEach(prod => {
         const li = document.createElement("li");
         li.className = "item-carrinho";
-        li.innerHTML = `<span>${prod}</span><div><button class="btn-qtd" onclick="alterarQtd('${prod}', -1)">-</button> <span>${carrinho[prod]}</span> <button class="btn-qtd" onclick="alterarQtd('${prod}', 1)">+</button></div>`;
+        li.innerHTML = `
+          <span>${prod}</span>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <button class="btn-qtd" onclick="alterarQtd('${prod}', -1)">-</button>
+            <span>${carrinho[prod]}</span>
+            <button class="btn-qtd" onclick="alterarQtd('${prod}', 1)">+</button>
+          </div>
+        `;
         listaHTML.appendChild(li);
       });
     }
@@ -111,10 +210,13 @@
     function enviarWhatsApp() {
       const chaves = Object.keys(carrinho);
       if (chaves.length === 0) return alert("Adicione ao menos um item!");
-      let msg = "Olá, gostaria de cotar os itens de *Mercearia*:\n\n";
-      chaves.forEach(p => msg += `• *${p}*: ${carrinho[p]} cx/fardo(s)\n`);
+      let msg = "Olá, gostaria de cotar os seguintes itens de *Mercearia*:\n\n";
+      chaves.forEach(p => msg += `• *${p}*: ${carrinho[p]} un/cx(s)\n`);
       window.open(`https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(msg)}`, "_blank");
     }
+
+    // Inicializar produtos na tela
+    renderizarProdutos();
   </script>
 </body>
 </html>

@@ -13,10 +13,12 @@
             --text: #0f172a;
             --text-muted: #64748b;
             --border: #e2e8f0;
+            --btn-cart: #007bff;
+            --btn-cart-hover: #0056b3;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 2rem 1rem; }
+        body { background-color: var(--bg); color: var(--text); padding: 2rem 1rem 5rem 1rem; }
 
         .header { text-align: center; margin-bottom: 2rem; }
         .header h1 { font-size: 1.8rem; color: var(--text); margin-bottom: 0.5rem; }
@@ -51,35 +53,73 @@
 
         .img-container img { width: 100%; height: 100%; object-fit: contain; }
 
-        .card-body { padding: 1rem; flex-grow: 1; }
-        .badge { background: #e0e7ff; color: #3730a3; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 9999px; display: inline-block; }
-        .card-title { font-size: 1rem; margin: 0.4rem 0 0.2rem 0; font-weight: 600; }
+        .card-body { padding: 1rem; flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
+        .badge { background: #e0e7ff; color: #3730a3; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 9999px; align-self: flex-start; }
+        .card-title { font-size: 1rem; margin: 0; font-weight: 600; }
+        
+        .qtd-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+        .input-qtd {
+            width: 60px;
+            padding: 4px 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 600;
+        }
 
         .card-footer { 
             padding: 0.8rem 1rem; 
             border-top: 1px solid var(--border); 
             background: #fafafa; 
             display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .code-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
         }
 
         .code { font-family: monospace; background: #e2e8f0; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.8rem; color: #475569; font-weight: 600; }
         
+        .btn-add-cart {
+            background-color: var(--btn-cart);
+            color: #ffffff;
+            font-weight: 600;
+            border: none;
+            font-size: 0.85rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            text-align: center;
+        }
+        .btn-add-cart:hover { background-color: var(--btn-cart-hover); }
+
         .btn-wa { 
             background-color: var(--primary);
             color: #ffffff;
             font-weight: 600; 
             text-decoration: none; 
             font-size: 0.85rem; 
-            padding: 0.4rem 0.7rem;
+            padding: 0.5rem;
             border-radius: 6px;
             transition: background 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+            text-align: center;
+            display: block;
+            width: 100%;
         }
-
         .btn-wa:hover { background-color: var(--primary-dark); }
 
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 2.5rem; }
@@ -98,6 +138,34 @@
             color: #ffffff;
             border-color: var(--primary-dark);
         }
+
+        /* Widget Fixo do Carrinho */
+        #carrinho-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            font-size: 0.9rem;
+        }
+        #carrinho-widget button {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #carrinho-widget button:hover { background-color: var(--primary-dark); }
     </style>
 </head>
 <body>
@@ -112,8 +180,13 @@
         <div id="pagination" class="pagination"></div>
     </div>
 
+    <!-- Widget Fixo de Finalização -->
+    <div id="carrinho-widget">
+        <span>Itens na cotação: <strong id="qtd-total-carrinho">0</strong></span>
+        <button onclick="enviarCarrinhoWhatsApp()">Enviar Cotação via WhatsApp</button>
+    </div>
+
     <script>
-        // COLE O LINK DA IMAGEM COPIADO DA INTERNET ENTRE AS ASPAS DE "imagem"
         const produtos = [
             {"id": "BEB-001", "nome": "Achocolatado Pirakids", "categoria": "Lácteos / Achocolatados", "imagem": "https://tse1.mm.bing.net/th/id/OIP.YB9Kli2hoASo4GpQSQcHZAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"},
             {"id": "BEB-002", "nome": "Aguardente 51", "categoria": "Destilados", "imagem": "COLE_O_LINK_AQUI"},
@@ -146,6 +219,35 @@
         const itensPorPagina = 10;
         let paginaAtual = 1;
 
+        function atualizarContadorCarrinho() {
+            let carrinho = JSON.parse(localStorage.getItem('carrinhoFrazao')) || [];
+            let totalItens = carrinho.reduce((sum, item) => sum + parseInt(item.quantidade), 0);
+            document.getElementById('qtd-total-carrinho').innerText = totalItens;
+        }
+
+        function adicionarAoCarrinho(id, nome) {
+            const inputQtd = document.getElementById(`qtd-${id}`);
+            const quantidade = parseInt(inputQtd.value);
+
+            if (isNaN(quantidade) || quantidade <= 0) {
+                alert('Insira uma quantidade válida.');
+                return;
+            }
+
+            let carrinho = JSON.parse(localStorage.getItem('carrinhoFrazao')) || [];
+            const itemExistente = carrinho.find(item => item.id === id);
+
+            if (itemExistente) {
+                itemExistente.quantidade += quantidade;
+            } else {
+                carrinho.push({ id: id, nome: nome, quantidade: quantidade });
+            }
+
+            localStorage.setItem('carrinhoFrazao', JSON.stringify(carrinho));
+            atualizarContadorCarrinho();
+            alert(`${quantidade}x "${nome}" adicionado(s) à cotação!`);
+        }
+
         function renderizarProdutos(pagina) {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
@@ -165,10 +267,17 @@
                     <div class="card-body">
                         <span class="badge">${prod.categoria}</span>
                         <h3 class="card-title">${prod.nome}</h3>
+                        <div class="qtd-container">
+                            <label for="qtd-${prod.id}">Qtd:</label>
+                            <input type="number" id="qtd-${prod.id}" class="input-qtd" value="1" min="1">
+                        </div>
                     </div>
                     <div class="card-footer">
-                        <span class="code">${prod.id}</span>
-                        <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20${encodeURIComponent(prod.nome)}%20(${prod.id})" target="_blank" class="btn-wa">📲 Cotar</a>
+                        <div class="code-row">
+                            <span class="code">${prod.id}</span>
+                        </div>
+                        <button type="button" class="btn-add-cart" onclick="adicionarAoCarrinho('${prod.id}', '${prod.nome.replace(/'/g, "\\'")}')">🛒 Adicionar ao Carrinho</button>
+                        <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20${encodeURIComponent(prod.nome)}%20(${prod.id})" target="_blank" class="btn-wa">📲 Cotar este item</a>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -195,8 +304,28 @@
             }
         }
 
-        renderizarProdutos(paginaAtual);
-        renderizarPaginacao();
+        function enviarCarrinhoWhatsApp() {
+            let carrinho = JSON.parse(localStorage.getItem('carrinhoFrazao')) || [];
+            
+            if (carrinho.length === 0) {
+                alert('Sua cotação está vazia! Adicione produtos antes de enviar.');
+                return;
+            }
+
+            let mensagem = "Olá! Gostaria de cotar a seguinte lista de produtos:\n\n";
+            carrinho.forEach(item => {
+                mensagem += `- ${item.quantidade}x ${item.nome} (${item.id})\n`;
+            });
+
+            let url = `https://wa.me/5521968659086?text=${encodeURIComponent(mensagem)}`;
+            window.open(url, '_blank');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarProdutos(paginaAtual);
+            renderizarPaginacao();
+            atualizarContadorCarrinho();
+        });
     </script>
 
 </body>

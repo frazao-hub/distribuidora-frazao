@@ -1,252 +1,46 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distribuidora Frazão - Catálogo Completo</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        body { background-color: #f4f6f9; color: #333; }
-        
-        header {
-            background-color: #1b365d;
-            color: #fff;
-            padding: 20px;
-            text-align: center;
-        }
+<!-- Seção do Catálogo de Categorias na Página Principal -->
+<section class="catalogo-secao">
+  <h2 class="titulo-secao">Nosso Catálogo</h2>
+  
+  <div class="grid-categorias">
+    <!-- Card de Mercearia -->
+    <a href="./mercearia" class="card-categoria">
+      <div class="conteudo-card">
+        <div class="icone-categoria">🛒</div>
+        <h3>Mercearia</h3>
+        <p>Arroz, feijão, óleo, molhos e mantimentos gerais no atacado</p>
+        <span class="btn-acessar">Acessar Categoria &rarr;</span>
+      </div>
+    </a>
 
-        /* Menu de Categorias no Topo */
-        .nav-categorias {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin: 20px auto;
-            flex-wrap: wrap;
-            max-width: 1200px;
-            padding: 0 10px;
-        }
-        .btn-categoria {
-            padding: 8px 14px;
-            border: 1px solid #1b365d;
-            background: #fff;
-            color: #1b365d;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: bold;
-            transition: all 0.2s;
-        }
-        .btn-categoria.ativo, .btn-categoria:hover {
-            background: #1b365d;
-            color: #fff;
-        }
+    <!-- Card de Bebidas -->
+    <a href="./bebidas" class="card-categoria">
+      <div class="conteudo-card">
+        <div class="icone-categoria">🥤</div>
+        <h3>Bebidas</h3>
+        <p>Refrigerantes, sucos, águas e bebidas diversas</p>
+        <span class="btn-acessar">Acessar Categoria &rarr;</span>
+      </div>
+    </a>
 
-        .container-catalogo {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px 40px;
-        }
+    <!-- Card de Doces -->
+    <a href="./doces" class="card-categoria">
+      <div class="conteudo-card">
+        <div class="icone-categoria">🍬</div>
+        <h3>Doces e Bomboniere</h3>
+        <p>Balas, chicletes, chocolates e guloseimas</p>
+        <span class="btn-acessar">Acessar Categoria &rarr;</span>
+      </div>
+    </a>
 
-        .secao-titulo {
-            width: 100%;
-            margin: 35px 0 15px 0;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #25d366;
-            color: #1b365d;
-            font-size: 20px;
-            text-transform: uppercase;
-        }
-
-        .grid-produtos {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .produto-card {
-            border: 1px solid #e0e0e0;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            background: #fff;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .produto-card img {
-            width: 100%;
-            height: 120px;
-            object-fit: contain;
-            margin-bottom: 10px;
-        }
-        .produto-card h3 {
-            font-size: 13px;
-            margin-bottom: 8px;
-            color: #222;
-            min-height: 32px;
-        }
-        .qtd-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            margin-bottom: 8px;
-            font-size: 12px;
-        }
-        .qtd-container input {
-            width: 45px;
-            text-align: center;
-            padding: 3px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .acoes-card {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .btn-carrinho {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 7px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .btn-whatsapp {
-            background-color: #25d366;
-            color: #fff;
-            padding: 7px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 11px;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1>Distribuidora Frazão</h1>
-        <p>Atacado e Varejo</p>
-    </header>
-
-    <!-- MENU DE FILTROS DAS 8 CATEGORIAS -->
-    <div class="nav-categorias">
-        <button class="btn-categoria ativo" onclick="filtrarCategoria('todas')">Todos</button>
-        <button class="btn-categoria" onclick="filtrarCategoria('balas-pirulitos')">Balas e Pirulitos</button>
-        <button class="btn-categoria" onclick="filtrarCategoria('bebidas')">Bebidas</button>
-        <button class="btn-categoria" onclick="filtrarCategoria('chicletes-drops')">Chicletes e Drops</button>
-        <button class="btn-categoria" onclick="filtrarCategoria('descartaveis')">Descartáveis</button>
-        <button class="btn-categoria" onclick="filtrarCategoria('higiene')">Higiene</button>
-        <button class="btn-categoria" onclick="filtrarCategoria('limpeza')">Limpeza</button>
-        <button class="btn-categoria" onclick="filtrarCategoria('mercearia')">Mercearia</button>
-        <button class="btn-categoria" onclick="filtrarCategoria('material-escolar')">Material Escolar</button>
-    </div>
-
-    <main class="container-catalogo">
-        
-        <!-- 1. BALAS E PIRULITOS -->
-        <div class="categoria-bloco" data-categoria="balas-pirulitos">
-            <h2 class="secao-titulo">Balas e Pirulitos</h2>
-            <div class="grid-produtos">
-                <div class="produto-card">
-                    <img src="LINK_DA_IMAGEM" alt="AZEDINHA MORANGO">
-                    <h3>AZEDINHA MORANGO</h3>
-                    <div class="qtd-container"><label>Qtd:</label><input type="number" value="1" min="1"></div>
-                    <div class="acoes-card">
-                        <button class="btn-carrinho" onclick="adicionarAoCarrinho('AZEDINHA MORANGO', this)">Adicionar ao Carrinho</button>
-                        <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar:%20AZEDINHA%20MORANGO" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 2. BEBIDAS -->
-        <div class="categoria-bloco" data-categoria="bebidas">
-            <h2 class="secao-titulo">Bebidas</h2>
-            <div class="grid-produtos">
-                <div class="produto-card">
-                    <img src="LINK_DA_IMAGEM" alt="PRODUTO BEBIDA">
-                    <h3>NOME DO PRODUTO</h3>
-                    <div class="qtd-container"><label>Qtd:</label><input type="number" value="1" min="1"></div>
-                    <div class="acoes-card">
-                        <button class="btn-carrinho" onclick="adicionarAoCarrinho('PRODUTO', this)">Adicionar ao Carrinho</button>
-                        <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar:%20PRODUTO" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. CHICLETES E DROPS -->
-        <div class="categoria-bloco" data-categoria="chicletes-drops">
-            <h2 class="secao-titulo">Chicletes e Drops</h2>
-            <div class="grid-produtos">
-                <!-- Adicionar Cards aqui -->
-            </div>
-        </div>
-
-        <!-- 4. DESCARTÁVEIS -->
-        <div class="categoria-bloco" data-categoria="descartaveis">
-            <h2 class="secao-titulo">Descartáveis</h2>
-            <div class="grid-produtos">
-                <!-- Adicionar Cards aqui -->
-            </div>
-        </div>
-
-        <!-- 5. HIGIENE -->
-        <div class="categoria-bloco" data-categoria="higiene">
-            <h2 class="secao-titulo">Higiene</h2>
-            <div class="grid-produtos">
-                <!-- Adicionar Cards aqui -->
-            </div>
-        </div>
-
-        <!-- 6. LIMPEZA -->
-        <div class="categoria-bloco" data-categoria="limpeza">
-            <h2 class="secao-titulo">Limpeza</h2>
-            <div class="grid-produtos">
-                <!-- Adicionar Cards aqui -->
-            </div>
-        </div>
-
-        <!-- 7. MERCEARIA -->
-        <div class="categoria-bloco" data-categoria="mercearia">
-            <h2 class="secao-titulo">Mercearia</h2>
-            <div class="grid-produtos">
-                <!-- Adicionar Cards aqui -->
-            </div>
-        </div>
-
-        <!-- 8. MATERIAL ESCOLAR -->
-        <div class="categoria-bloco" data-categoria="material-escolar">
-            <h2 class="secao-titulo">Material Escolar</h2>
-            <div class="grid-produtos">
-                <!-- Adicionar Cards aqui -->
-            </div>
-        </div>
-
-    </main>
-
-    <script>
-        function filtrarCategoria(categoria) {
-            const blocos = document.querySelectorAll('.categoria-bloco');
-            const botoes = document.querySelectorAll('.btn-categoria');
-
-            botoes.forEach(btn => btn.classList.remove('ativo'));
-            event.target.classList.add('ativo');
-
-            blocos.forEach(bloco => {
-                if (categoria === 'todas' || bloco.getAttribute('data-categoria') === categoria) {
-                    bloco.style.display = 'block';
-                } else {
-                    bloco.style.display = 'none';
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+    <!-- Card de Papelaria / Descartáveis / Limpeza (Exemplo) -->
+    <a href="./descartaveis" class="card-categoria">
+      <div class="conteudo-card">
+        <div class="icone-categoria">📦</div>
+        <h3>Descartáveis e Limpeza</h3>
+        <p>Embalagens, copos, pratos e produtos de higiene</p>
+        <span class="btn-acessar">Acessar Categoria &rarr;</span>
+      </div>
+    </a>
+  </div>
+</section>

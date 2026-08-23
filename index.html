@@ -1,46 +1,163 @@
-<!-- Seção do Catálogo de Categorias na Página Principal -->
-<section class="catalogo-secao">
-  <h2 class="titulo-secao">Nosso Catálogo</h2>
-  
-  <div class="grid-categorias">
-    <!-- Card de Mercearia -->
-    <a href="./mercearia" class="card-categoria">
-      <div class="conteudo-card">
-        <div class="icone-categoria">🛒</div>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Distribuidora Frazão - Catálogo de Produtos</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f9;
+      color: #333;
+    }
+
+    header {
+      background-color: #1e293b;
+      color: #ffffff;
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      font-size: 16px;
+      color: #cbd5e1;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .titulo-secao {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 30px;
+      color: #0f172a;
+    }
+
+    /* GRID DOS QUADRADOS / CATEGORIAS */
+    .grid-categorias {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    /* CADA QUADRADO DA CATEGORIA */
+    .card-categoria {
+      background-color: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 25px;
+      width: 240px;
+      min-height: 200px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .icone {
+      font-size: 42px;
+      margin-bottom: 15px;
+    }
+
+    .card-categoria h3 {
+      font-size: 20px;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+
+    .card-categoria p {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+
+    .btn-link {
+      font-size: 14px;
+      font-weight: bold;
+      color: #2563eb;
+    }
+
+    /* EFEITO AO PASSAR O MOUSE (HOVER) */
+    .card-categoria:hover {
+      transform: translateY(-8px);
+      border-color: #2563eb;
+      box-shadow: 0 12px 20px rgba(37, 99, 235, 0.2);
+      background-color: #ffffff;
+    }
+
+    .card-categoria:hover .btn-link {
+      color: #1d4ed8;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Distribuidora Frazão</h1>
+    <p>Selecione uma categoria abaixo para navegar pelo catálogo</p>
+  </header>
+
+  <div class="container">
+    <h2 class="titulo-secao">Categorias em Destaque</h2>
+
+    <div class="grid-categorias">
+      
+      <!-- Quadrado Mercearia -->
+      <a href="./mercearia" class="card-categoria">
+        <div class="icone">🛒</div>
         <h3>Mercearia</h3>
-        <p>Arroz, feijão, óleo, molhos e mantimentos gerais no atacado</p>
-        <span class="btn-acessar">Acessar Categoria &rarr;</span>
-      </div>
-    </a>
+        <p>Alimentos e mantimentos em geral</p>
+        <span class="btn-link">Acessar &rarr;</span>
+      </a>
 
-    <!-- Card de Bebidas -->
-    <a href="./bebidas" class="card-categoria">
-      <div class="conteudo-card">
-        <div class="icone-categoria">🥤</div>
+      <!-- Quadrado Bebidas -->
+      <a href="./bebidas" class="card-categoria">
+        <div class="icone">🥤</div>
         <h3>Bebidas</h3>
-        <p>Refrigerantes, sucos, águas e bebidas diversas</p>
-        <span class="btn-acessar">Acessar Categoria &rarr;</span>
-      </div>
-    </a>
+        <p>Refrigerantes, sucos e águas</p>
+        <span class="btn-link">Acessar &rarr;</span>
+      </a>
 
-    <!-- Card de Doces -->
-    <a href="./doces" class="card-categoria">
-      <div class="conteudo-card">
-        <div class="icone-categoria">🍬</div>
-        <h3>Doces e Bomboniere</h3>
-        <p>Balas, chicletes, chocolates e guloseimas</p>
-        <span class="btn-acessar">Acessar Categoria &rarr;</span>
-      </div>
-    </a>
+      <!-- Quadrado Doces -->
+      <a href="./doces" class="card-categoria">
+        <div class="icone">🍬</div>
+        <h3>Doces</h3>
+        <p>Chocolates, balas e bomboniere</p>
+        <span class="btn-link">Acessar &rarr;</span>
+      </a>
 
-    <!-- Card de Papelaria / Descartáveis / Limpeza (Exemplo) -->
-    <a href="./descartaveis" class="card-categoria">
-      <div class="conteudo-card">
-        <div class="icone-categoria">📦</div>
-        <h3>Descartáveis e Limpeza</h3>
-        <p>Embalagens, copos, pratos e produtos de higiene</p>
-        <span class="btn-acessar">Acessar Categoria &rarr;</span>
-      </div>
-    </a>
+      <!-- Quadrado Papelaria / Limpeza -->
+      <a href="./papelaria" class="card-categoria">
+        <div class="icone">✏️</div>
+        <h3>Papelaria e Limpeza</h3>
+        <p>Artigos de papelaria e higiene</p>
+        <span class="btn-link">Acessar &rarr;</span>
+      </a>
+
+    </div>
   </div>
-</section>
+
+</body>
+</html>

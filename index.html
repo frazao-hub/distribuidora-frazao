@@ -3,169 +3,418 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo & Cotação de Produtos</title>
+    <title>Catálogo Unificado - Distribuidora Frazão</title>
     <style>
-        * { box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background-color: #f1f5f9; margin: 0; padding: 20px; }
-        h1 { text-align: center; color: #0f172a; }
-        
-        .nav-categorias { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; justify-content: center; }
-        .btn-cat { background: #e2e8f0; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; }
-        .btn-cat:hover, .btn-cat.ativo { background: #2563eb; color: white; }
+        :root {
+            --primary: #25d366;
+            --primary-dark: #128c7e;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
 
-        .layout { display: flex; gap: 20px; max-width: 1100px; margin: auto; flex-wrap: wrap; }
-        .vitrine { flex: 2; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-        .card-produto { background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center; }
-        .card-produto h4 { margin: 10px 0 5px; color: #1e293b; }
-        .tag-cat { font-size: 0.75em; background: #f1f5f9; padding: 3px 8px; border-radius: 4px; color: #64748b; }
-        .btn-add { background: #2563eb; color: white; border: none; width: 100%; padding: 8px; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
-        .carrinho-cotacao { flex: 1; min-width: 300px; background: white; padding: 20px; border-radius: 8px; height: fit-content; border: 1px solid #e2e8f0; }
-        .tabela-carrinho { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        .tabela-carrinho th, .tabela-carrinho td { padding: 8px 4px; font-size: 0.85em; text-align: left; border-bottom: 1px solid #eee; }
-        .btn-whats { background: #16a34a; color: white; border: none; width: 100%; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 1em; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem 1rem 6rem 1rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- Barra de Filtro de Categorias --- */
+        .category-nav {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cat-btn {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .cat-btn.active, .cat-btn:hover {
+            background: var(--text);
+            color: #ffffff;
+            border-color: var(--text);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+
+        .img-container {
+            width: 100%;
+            height: 160px;
+            background-color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 1rem;
+            flex-grow: 1;
+        }
+
+        .badge {
+            background: #e0e7ff;
+            color: #3730a3;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 9999px;
+            display: inline-block;
+        }
+
+        .card-title {
+            font-size: 0.95rem;
+            margin: 0.4rem 0 0.2rem 0;
+            font-weight: 600;
+        }
+
+        .card-footer {
+            padding: 0.8rem 1rem;
+            border-top: 1px solid var(--border);
+            background: #fafafa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code {
+            font-family: monospace;
+            background: #e2e8f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .btn-add {
+            background-color: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+            border: none;
+            font-size: 0.85rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-add:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 0.5rem 0.9rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+
+        .page-btn.active, .page-btn:hover {
+            background: var(--primary-dark);
+            color: #ffffff;
+            border-color: var(--primary-dark);
+        }
+
+        /* --- Barra Flutuante do Carrinho --- */
+        .cart-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border-top: 2px solid var(--border);
+            padding: 1rem;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .cart-info {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .btn-send-wa {
+            background-color: var(--primary);
+            color: #fff;
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-send-wa:hover {
+            background-color: var(--primary-dark);
+        }
     </style>
 </head>
 <body>
 
-<h1>Catálogo Geral - Distribuidora</h1>
-
-<!-- Menu de Categorias -->
-<div class="nav-categorias">
-    <button class="btn-cat ativo" onclick="filtrar('todas', this)">Todas</button>
-    <button class="btn-cat" onclick="filtrar('Mercearia', this)">Mercearia</button>
-    <button class="btn-cat" onclick="filtrar('Doces', this)">Doces</button>
-    <button class="btn-cat" onclick="filtrar('Bebidas', this)">Bebidas</button>
-    <button class="btn-cat" onclick="filtrar('Papelaria', this)">Papelaria</button>
-    <button class="btn-cat" onclick="filtrar('Higiene e Limpeza', this)">Higiene/Limpeza</button>
-    <button class="btn-cat" onclick="filtrar('Descartaveis', this)">Descartáveis</button>
-</div>
-
-<div class="layout">
-    <!-- Grade de Produtos -->
-    <div class="vitrine" id="grade-produtos"></div>
-
-    <!-- Carrinho de Cotação -->
-    <div class="carrinho-cotacao">
-        <h3>Sua Cotação</h3>
-        <table class="tabela-carrinho">
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Qtd</th>
-                    <th>Ação</th>
-                </tr>
-            </thead>
-            <tbody id="itens-carrinho">
-                <!-- Adicionado via JS -->
-            </tbody>
-        </table>
-        <p><strong>Total de itens:</strong> <span id="total-itens">0</span></p>
-        <button class="btn-whats" onclick="enviarCotacaoWhatsApp()">Solicitar Cotação via WhatsApp</button>
+    <div class="header">
+        <h1>Distribuidora Frazão — Catálogo Geral</h1>
+        <p>Selecione o setor, adicione os produtos e envie sua cotação completa via WhatsApp</p>
     </div>
-</div>
 
-<script>
-    // Configuração do WhatsApp da Empresa (Apenas números: DDI + DDD + Telefone)
-    const SEU_NUMERO_WHATSAPP = "5521999999999"; 
+    <div class="container">
+        <!-- Filtro Principal por Categorias -->
+        <div class="category-nav" id="category-nav">
+            <button class="cat-btn active" onclick="filtrarCategoria('Todas')">Todas</button>
+            <button class="cat-btn" onclick="filtrarCategoria('Mercearia')">Mercearia</button>
+            <button class="cat-btn" onclick="filtrarCategoria('Doces')">Doces</button>
+            <button class="cat-btn" onclick="filtrarCategoria('Bebidas')">Bebidas</button>
+            <button class="cat-btn" onclick="filtrarCategoria('Papelaria')">Papelaria</button>
+            <button class="cat-btn" onclick="filtrarCategoria('Higiene & Limpeza')">Higiene & Limpeza</button>
+            <button class="cat-btn" onclick="filtrarCategoria('Descartáveis')">Descartáveis</button>
+        </div>
 
-    // Base de Produtos de Todos os Catálogos
-    const produtos = [
-        { id: 1, nome: "Café Tradicional 500g", categoria: "Mercearia" },
-        { id: 2, nome: "Pacote Bisnaguinha 300g", categoria: "Mercearia" },
-        { id: 3, nome: "Caixa Bala de Goma (24 un)", categoria: "Doces" },
-        { id: 4, nome: "Paçoca Embalada", categoria: "Doces" },
-        { id: 5, nome: "Refrigerante 2L", categoria: "Bebidas" },
-        { id: 6, nome: "Suco em Pó (Caixa)", categoria: "Bebidas" },
-        { id: 7, nome: "Caderno Universitário 10M", categoria: "Papelaria" },
-        { id: 8, nome: "Caixa Caneta Azul (50 un)", categoria: "Papelaria" },
-        { id: 9, nome: "Detergente Neutro 500ml", categoria: "Higiene e Limpeza" },
-        { id: 10, nome: "Sabonete em Barra (Caixa)", categoria: "Higiene e Limpeza" },
-        { id: 11, nome: "Copo Descartável 180ml (100un)", categoria: "Descartaveis" },
-        { id: 12, nome: "Guardanapo de Papel Pacote", categoria: "Descartaveis" }
-    ];
+        <div id="product-grid" class="grid"></div>
+        <div id="pagination" class="pagination"></div>
+    </div>
 
-    let carrinho = [];
+    <div class="cart-bar">
+        <div class="cart-info" id="cart-count">🛒 Itens na Cotação: 0</div>
+        <button onclick="enviarCotacao()" class="btn-send-wa">📲 Solicitar Cotação via WhatsApp</button>
+    </div>
 
-    function renderizarProdutos(lista) {
-        const grid = document.getElementById("grade-produtos");
-        grid.innerHTML = "";
-        lista.forEach(p => {
-            grid.innerHTML += `
-                <div class="card-produto">
-                    <span class="tag-cat">${p.categoria}</span>
-                    <h4>${p.nome}</h4>
-                    <button class="btn-add" onclick="adicionarAoCarrinho(${p.id})">+ Adicionar à Cotação</button>
-                </div>
-            `;
-        });
-    }
+    <script>
+        const produtos = [
+            // MERCEARIA
+            {"id": "MER-001", "nome": "Adoçante Assugrin 100ml", "setor": "Mercearia", "categoria": "Adoçantes", "imagem": ""},
+            {"id": "MER-002", "nome": "Creme de Leite Piracanjuba 200g", "setor": "Mercearia", "categoria": "Laticínios", "imagem": ""},
+            {"id": "MER-003", "nome": "Caldo Arisco Galinha 114g", "setor": "Mercearia", "categoria": "Temperos", "imagem": ""},
+            
+            // DOCES
+            {"id": "DOC-001", "nome": "Chocolates Sortidos Nestlé 251g", "setor": "Doces", "categoria": "Bombons", "imagem": ""},
+            {"id": "DOC-002", "nome": "Paçoca Rolha Moreninha do Rio 1kg", "setor": "Doces", "categoria": "Doces Tradicionais", "imagem": ""},
+            {"id": "DOC-003", "nome": "Bala Fini Dentaduras 90g", "setor": "Doces", "categoria": "Balas & Guloseimas", "imagem": ""},
 
-    function filtrar(cat, elemento) {
-        document.querySelectorAll('.btn-cat').forEach(b => b.classList.remove('ativo'));
-        elemento.classList.add('ativo');
-        
-        if (cat === 'todas') {
-            renderizarProdutos(produtos);
-        } else {
-            const filtrados = produtos.filter(p => p.categoria === cat);
-            renderizarProdutos(filtrados);
-        }
-    }
+            // BEBIDAS
+            {"id": "BEB-001", "nome": "Suco Concentrado Maguary Caju 500ml", "setor": "Bebidas", "categoria": "Sucos", "imagem": ""},
+            {"id": "BEB-002", "nome": "Refresco em Pó Fresh Abacaxi 15g", "setor": "Bebidas", "categoria": "Refrescos", "imagem": ""},
 
-    function adicionarAoCarrinho(idProduto) {
-        const itemExistente = carrinho.find(item => item.id === idProduto);
-        if (itemExistente) {
-            itemExistente.qtd += 1;
-        } else {
-            const produtoOriginal = produtos.find(p => p.id === idProduto);
-            carrinho.push({ ...produtoOriginal, qtd: 1 });
-        }
-        atualizarCarrinho();
-    }
+            // PAPELARIA
+            {"id": "PAP-001", "nome": "Caderno Universitário 10 Matérias", "setor": "Papelaria", "categoria": "Escolar", "imagem": ""},
+            {"id": "PAP-002", "nome": "Caneta Esferográfica Azul Cx c/ 50", "setor": "Papelaria", "categoria": "Escritório", "imagem": ""},
 
-    function removerDoCarrinho(idProduto) {
-        carrinho = carrinho.filter(item => item.id !== idProduto);
-        atualizarCarrinho();
-    }
+            // HIGIENE & LIMPEZA
+            {"id": "HIG-001", "nome": "Sabonete Francis Suave 84g", "setor": "Higiene & Limpeza", "categoria": "Higiene Pessoal", "imagem": ""},
+            {"id": "HIG-002", "nome": "Creme Dental Sorriso Dentes Brancos 90g", "setor": "Higiene & Limpeza", "categoria": "Higiene Bucal", "imagem": ""},
+            {"id": "HIG-003", "nome": "Aparelho de Barbear Bic Comfort 2 un", "setor": "Higiene & Limpeza", "categoria": "Barbearia", "imagem": ""},
 
-    function atualizarCarrinho() {
-        const tbody = document.getElementById("itens-carrinho");
-        tbody.innerHTML = "";
-        let totalQtd = 0;
+            // DESCARTÁVEIS
+            {"id": "DES-001", "nome": "Copo Descartável 200ml Cxa c/ 2500", "setor": "Descartáveis", "categoria": "Copos", "imagem": ""},
+            {"id": "DES-002", "nome": "Guardanapo Folha Simples 23x22", "setor": "Descartáveis", "categoria": "Papel", "imagem": ""}
+        ];
 
-        carrinho.forEach(item => {
-            totalQtd += item.qtd;
-            tbody.innerHTML += `
-                <tr>
-                    <td>${item.nome}</td>
-                    <td>${item.qtd}</td>
-                    <td><button onclick="removerDoCarrinho(${item.id})" style="background:red; color:white; border:none; border-radius:3px; cursor:pointer;">X</button></td>
-                </tr>
-            `;
-        });
+        const itensPorPagina = 8;
+        let paginaAtual = 1;
+        let setorSelecionado = 'Todas';
+        let carrinho = [];
 
-        document.getElementById("total-itens").innerText = totalQtd;
-    }
+        function filtrarCategoria(setor) {
+            setorSelecionado = setor;
+            paginaAtual = 1;
 
-    function enviarCotacaoWhatsApp() {
-        if (carrinho.length === 0) {
-            alert("Sua lista de cotação está vazia! Adicione produtos primeiro.");
-            return;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText === setor || (setor === 'Todas' && btn.innerText === 'Todas'));
+            });
+
+            renderizar();
         }
 
-        let mensagem = "Olá! Gostaria de receber uma cotação para os seguintes itens:\n\n";
-        carrinho.forEach(item => {
-            mensagem += `• *${item.nome}* (${item.categoria}) - Qtd: ${item.qtd}\n`;
-        });
+        function adicionarAoCarrinho(id) {
+            const produto = produtos.find(p => p.id === id);
+            const itemExistente = carrinho.find(item => item.id === id);
 
-        const linkWhatsApp = `https://wa.me/${SEU_NUMERO_WHATSAPP}?text=${encodeURIComponent(mensagem)}`;
-        window.open(linkWhatsApp, "_blank");
-    }
+            if (itemExistente) {
+                itemExistente.qtd += 1;
+            } else {
+                carrinho.push({ ...produto, qtd: 1 });
+            }
 
-    // Inicialização
-    renderizarProdutos(produtos);
-</script>
+            atualizarCarrinhoUI();
+        }
 
+        function atualizarCarrinhoUI() {
+            const totalItens = carrinho.reduce((acc, item) => acc + item.qtd, 0);
+            document.getElementById('cart-count').innerText = `🛒 Itens na Cotação: ${totalItens}`;
+        }
+
+        function enviarCotacao() {
+            if (carrinho.length === 0) {
+                alert("Seu carrinho de cotação está vazio!");
+                return;
+            }
+
+            let mensagem = "Olá! Gostaria de receber a cotação dos seguintes itens:\n\n";
+            carrinho.forEach(item => {
+                mensagem += `• [${item.setor}] ${item.nome} (${item.id}) - Qtd: ${item.qtd}\n`;
+            });
+
+            const linkWa = `https://wa.me/5521968659086?text=${encodeURIComponent(mensagem)}`;
+            window.open(linkWa, '_blank');
+        }
+
+        function obterProdutosFiltrados() {
+            if (setorSelecionado === 'Todas') {
+                return produtos;
+            }
+            return produtos.filter(p => p.setor === setorSelecionado);
+        }
+
+        function renderizarProdutos(listaProdutos) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            const inicio = (paginaAtual - 1) * itensPorPagina;
+            const fim = inicio + itensPorPagina;
+            const produtosPagina = listaProdutos.slice(inicio, fim);
+
+            if (produtosPagina.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">Nenhum produto cadastrado nesta categoria ainda.</p>';
+                return;
+            }
+
+            produtosPagina.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                card.innerHTML = `
+                    <div class="img-container">
+                        <img src="${prod.imagem}" alt="${prod.nome}" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
+                    </div>
+                    <div class="card-body">
+                        <span class="badge">${prod.setor} › ${prod.categoria}</span>
+                        <h3 class="card-title">${prod.nome}</h3>
+                    </div>
+                    <div class="card-footer">
+                        <span class="code">${prod.id}</span>
+                        <button onclick="adicionarAoCarrinho('${prod.id}')" class="btn-add">➕ Cotação</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderizarPaginacao(listaProdutos) {
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = '';
+
+            const totalPaginas = Math.ceil(listaProdutos.length / itensPorPagina);
+
+            if (totalPaginas <= 1) return;
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${i === paginaAtual ? 'active' : ''}`;
+                btn.innerText = i;
+                btn.onclick = () => {
+                    paginaAtual = i;
+                    renderizar();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                paginationContainer.appendChild(btn);
+            }
+        }
+
+        function renderizar() {
+            const lista = obterProdutosFiltrados();
+            renderizarProdutos(lista);
+            renderizarPaginacao(lista);
+        }
+
+        renderizar();
+    </script>
 </body>
 </html>

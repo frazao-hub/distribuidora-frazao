@@ -3,454 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mercearia - Distribuidora Frazão</title>
+    <title>Catálogo & Cotação de Produtos</title>
     <style>
-        :root {
-            --primary: #25d366;
-            --primary-dark: #128c7e;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 2rem 1rem 6rem 1rem; }
-
-        .header { text-align: center; margin-bottom: 2rem; }
-        .header h1 { font-size: 1.8rem; color: var(--text); margin-bottom: 0.5rem; }
-        .header p { color: var(--text-muted); font-size: 0.95rem; }
-
-        .container { max-width: 1200px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
-
-        .card { 
-            background: var(--card-bg); 
-            border: 1px solid var(--border); 
-            border-radius: 12px; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
-
-        .img-container { 
-            width: 100%; 
-            height: 180px; 
-            background-color: #f1f5f9; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .img-container img { width: 100%; height: 100%; object-fit: cover; }
-
-        .card-body { padding: 1rem; flex-grow: 1; }
-        .badge { background: #e0e7ff; color: #3730a3; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 9999px; display: inline-block; }
-        .card-title { font-size: 1rem; margin: 0.4rem 0 0.2rem 0; font-weight: 600; line-height: 1.3; }
-
-        /* RODAPÉ E BOTÃO AJUSTADOS */
-        .card-footer { 
-            padding: 0.8rem 1rem; 
-            border-top: 1px solid var(--border); 
-            background: #fafafa; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            gap: 10px;
-        }
-
-        .code { 
-            font-family: monospace; 
-            background: #e2e8f0; 
-            padding: 0.2rem 0.5rem; 
-            border-radius: 4px; 
-            font-size: 0.8rem; 
-            color: #475569; 
-            font-weight: 600;
-            white-space: nowrap;
-        }
+        * { box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background-color: #f1f5f9; margin: 0; padding: 20px; }
+        h1 { text-align: center; color: #0f172a; }
         
-        .btn-add { 
-            display: inline-block !important;
-            visibility: visible !important;
-            background-color: #0284c7; 
-            color: #ffffff; 
-            font-weight: 600; 
-            border: none; 
-            font-size: 0.85rem; 
-            padding: 0.5rem 0.8rem; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .btn-add:hover { background-color: #0369a1; }
-        .btn-add.added { background-color: #16a34a; }
+        .nav-categorias { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; justify-content: center; }
+        .btn-cat { background: #e2e8f0; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+        .btn-cat:hover, .btn-cat.ativo { background: #2563eb; color: white; }
 
-        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 2.5rem; flex-wrap: wrap; }
-        .page-btn {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            padding: 0.5rem 0.9rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text);
-            transition: all 0.2s;
-        }
-        .page-btn.active, .page-btn:hover {
-            background: var(--primary-dark);
-            color: #ffffff;
-            border-color: var(--primary-dark);
-        }
+        .layout { display: flex; gap: 20px; max-width: 1100px; margin: auto; flex-wrap: wrap; }
+        .vitrine { flex: 2; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        .card-produto { background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center; }
+        .card-produto h4 { margin: 10px 0 5px; color: #1e293b; }
+        .tag-cat { font-size: 0.75em; background: #f1f5f9; padding: 3px 8px; border-radius: 4px; color: #64748b; }
+        .btn-add { background: #2563eb; color: white; border: none; width: 100%; padding: 8px; border-radius: 4px; cursor: pointer; margin-top: 10px; }
 
-        /* BARRA DO CARRINHO FLUTUANTE */
-        .cart-bar {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #0f172a;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            cursor: pointer;
-            z-index: 1000;
-        }
-        .cart-count { background: var(--primary); color: white; padding: 2px 10px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
-
-        /* MODAL DO CARRINHO */
-        .cart-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1001;
-            justify-content: center;
-            align-items: center;
-        }
-        .cart-content {
-            background: white;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            border-radius: 12px;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-        }
-        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .cart-items { overflow-y: auto; margin: 15px 0; flex-grow: 1; max-height: 300px; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed var(--border); }
-        .cart-controls { display: flex; align-items: center; gap: 8px; }
-        .cart-btn { background: #e2e8f0; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-wa-finish { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; text-align: center; text-decoration: none; display: block; margin-top: 10px; }
-        .btn-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; }
+        .carrinho-cotacao { flex: 1; min-width: 300px; background: white; padding: 20px; border-radius: 8px; height: fit-content; border: 1px solid #e2e8f0; }
+        .tabela-carrinho { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        .tabela-carrinho th, .tabela-carrinho td { padding: 8px 4px; font-size: 0.85em; text-align: left; border-bottom: 1px solid #eee; }
+        .btn-whats { background: #16a34a; color: white; border: none; width: 100%; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 1em; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Distribuidora Frazão — Setor de Mercearia</h1>
-        <p>Monte seu pedido no carrinho e envie direto para cotação</p>
+<h1>Catálogo Geral - Distribuidora</h1>
+
+<!-- Menu de Categorias -->
+<div class="nav-categorias">
+    <button class="btn-cat ativo" onclick="filtrar('todas', this)">Todas</button>
+    <button class="btn-cat" onclick="filtrar('Mercearia', this)">Mercearia</button>
+    <button class="btn-cat" onclick="filtrar('Doces', this)">Doces</button>
+    <button class="btn-cat" onclick="filtrar('Bebidas', this)">Bebidas</button>
+    <button class="btn-cat" onclick="filtrar('Papelaria', this)">Papelaria</button>
+    <button class="btn-cat" onclick="filtrar('Higiene e Limpeza', this)">Higiene/Limpeza</button>
+    <button class="btn-cat" onclick="filtrar('Descartaveis', this)">Descartáveis</button>
+</div>
+
+<div class="layout">
+    <!-- Grade de Produtos -->
+    <div class="vitrine" id="grade-produtos"></div>
+
+    <!-- Carrinho de Cotação -->
+    <div class="carrinho-cotacao">
+        <h3>Sua Cotação</h3>
+        <table class="tabela-carrinho">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Qtd</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody id="itens-carrinho">
+                <!-- Adicionado via JS -->
+            </tbody>
+        </table>
+        <p><strong>Total de itens:</strong> <span id="total-itens">0</span></p>
+        <button class="btn-whats" onclick="enviarCotacaoWhatsApp()">Solicitar Cotação via WhatsApp</button>
     </div>
+</div>
 
-    <div class="container">
-        <div id="product-grid" class="grid"></div>
-        <div id="pagination" class="pagination"></div>
-    </div>
+<script>
+    // Configuração do WhatsApp da Empresa (Apenas números: DDI + DDD + Telefone)
+    const SEU_NUMERO_WHATSAPP = "5521999999999"; 
 
-    <!-- BARRA DO CARRINHO FLUTUANTE -->
-    <div class="cart-bar" onclick="abrirCarrinho()">
-        🛒 Ver Pedido <span class="cart-count" id="cart-count">0</span>
-    </div>
+    // Base de Produtos de Todos os Catálogos
+    const produtos = [
+        { id: 1, nome: "Café Tradicional 500g", categoria: "Mercearia" },
+        { id: 2, nome: "Pacote Bisnaguinha 300g", categoria: "Mercearia" },
+        { id: 3, nome: "Caixa Bala de Goma (24 un)", categoria: "Doces" },
+        { id: 4, nome: "Paçoca Embalada", categoria: "Doces" },
+        { id: 5, nome: "Refrigerante 2L", categoria: "Bebidas" },
+        { id: 6, nome: "Suco em Pó (Caixa)", categoria: "Bebidas" },
+        { id: 7, nome: "Caderno Universitário 10M", categoria: "Papelaria" },
+        { id: 8, nome: "Caixa Caneta Azul (50 un)", categoria: "Papelaria" },
+        { id: 9, nome: "Detergente Neutro 500ml", categoria: "Higiene e Limpeza" },
+        { id: 10, nome: "Sabonete em Barra (Caixa)", categoria: "Higiene e Limpeza" },
+        { id: 11, nome: "Copo Descartável 180ml (100un)", categoria: "Descartaveis" },
+        { id: 12, nome: "Guardanapo de Papel Pacote", categoria: "Descartaveis" }
+    ];
 
-    <!-- MODAL DO CARRINHO -->
-    <div class="cart-modal" id="cart-modal">
-        <div class="cart-content">
-            <div class="cart-header">
-                <h3>Seu Pedido de Cotação</h3>
-                <button class="btn-close" onclick="fecharCarrinho()">✖</button>
-            </div>
-            <div class="cart-items" id="cart-items">
-                <p style="text-align:center; color: var(--text-muted);">Nenhum item adicionado.</p>
-            </div>
-            <button class="btn-wa-finish" onclick="enviarWhatsapp()">📲 Finalizar Cotação no WhatsApp</button>
-        </div>
-    </div>
+    let carrinho = [];
 
-    <script>
-        const produtos = [
-            {"id": "MER-001", "nome": "Adoçante Assugrin", "categoria": "Adoçantes & Açúcar", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-002", "nome": "Aroma de Baunilha Barreto", "categoria": "Confeitaria", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-003", "nome": "Batata Palha Rei", "categoria": "Petiscos & Salgadinhos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-004", "nome": "Caldo Arisco Carne", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-005", "nome": "Caldo Arisco Galinha", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-006", "nome": "Chá 7 Ervas Italianinho", "categoria": "Matinais & Chás", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-007", "nome": "Chá Boldo Italianinho", "categoria": "Matinais & Chás", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-008", "nome": "Chá Camomila Italianinho", "categoria": "Matinais & Chás", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-009", "nome": "Chá Erva Doce Italianinho", "categoria": "Matinais & Chás", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-010", "nome": "Chá Hortelã Italianinho", "categoria": "Matinais & Chás", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-011", "nome": "Chá Maçã c/ Canela Italianinho", "categoria": "Matinais & Chás", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-012", "nome": "Corda de Varal nº5", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-013", "nome": "Creme de Leite Piracanjuba", "categoria": "Laticínios & Derivados", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-014", "nome": "Ervilha Lata Pramesa", "categoria": "Enlatados & Conservas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-015", "nome": "Fermento Apti 100g", "categoria": "Confeitaria", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-016", "nome": "Filtro 102", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-017", "nome": "Filtro 103", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-018", "nome": "Fresh Abacaxi", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-019", "nome": "Fresh Caju", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-020", "nome": "Fresh Guaraná", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-021", "nome": "Fresh Laranja", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-022", "nome": "Fresh Limão", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-023", "nome": "Fresh Manga", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-024", "nome": "Fresh Maracujá", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-025", "nome": "Fresh Morango", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-026", "nome": "Fresh Uva", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-027", "nome": "Granulado Preto", "categoria": "Confeitaria", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-028", "nome": "Granulado Colorido", "categoria": "Confeitaria", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-029", "nome": "Leite Cond. 270g", "categoria": "Laticínios & Derivados", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-030", "nome": "Molho Tomate Predilecta", "categoria": "Molhos & Extratos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-031", "nome": "Pilha Panasonic Grande", "categoria": "Pilhas & Baterias", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-032", "nome": "Pilha Panasonic Grande D Alcalina", "categoria": "Pilhas & Baterias", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-033", "nome": "Pilha AAA Panasonic", "categoria": "Pilhas & Baterias", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-034", "nome": "Tang Abacaxi", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-035", "nome": "Tang Goiaba", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-036", "nome": "Tang Guaraná", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-037", "nome": "Tang Manga", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-038", "nome": "Tang Maracujá", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-039", "nome": "Tang Morango", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-040", "nome": "Tang Uva", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-041", "nome": "Tang Laranja", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-042", "nome": "Abridor de Garrafa", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-043", "nome": "Abridor de Lata", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-044", "nome": "Amido de Milho Apti", "categoria": "Farinhas & Grãos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-045", "nome": "Borracha Panela Pressão 10l", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-046", "nome": "Borracha Panela Pressão 4/7l", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-047", "nome": "Cadeado 20-25-30mm", "categoria": "Bazar & Ferragens", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-048", "nome": "Café Pimpinela 100g", "categoria": "Matinais & Chás", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-049", "nome": "Colorau Chinezinho", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-050", "nome": "Funil c/12", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-051", "nome": "Lâmpada Ourolux 70w", "categoria": "Eletro & Iluminação", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-052", "nome": "Linha Magna Azul Marinho", "categoria": "Armarinho & Costura", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-053", "nome": "Linha Magna Vermelha", "categoria": "Armarinho & Costura", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-054", "nome": "Milho Verde", "categoria": "Enlatados & Conservas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-055", "nome": "Miojo Galinha", "categoria": "Massas & Instantâneos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-056", "nome": "Miojo Carne", "categoria": "Massas & Instantâneos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-057", "nome": "Palito Churrasco", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-058", "nome": "Palito de Dente", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-059", "nome": "Pregador de Roupa Grande", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-060", "nome": "Pregador de Roupa Pequeno", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-061", "nome": "Refresco Tandy Laranja", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-062", "nome": "Refresco Tandy Maracujá", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-063", "nome": "Refresco Tandy Uva", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-064", "nome": "Tang Limão", "categoria": "Bebidas & Refrescos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-065", "nome": "Sal Grosso", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-066", "nome": "Sal Fino", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-067", "nome": "Sardinha Tomate", "categoria": "Enlatados & Conservas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-068", "nome": "Sardinha Óleo", "categoria": "Enlatados & Conservas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-069", "nome": "Tempero Sazón Carne", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-070", "nome": "Agulha de Fogão", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-071", "nome": "Agulha de Máquina nº 11", "categoria": "Armarinho & Costura", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-072", "nome": "Agulha de Máquina nº 14", "categoria": "Armarinho & Costura", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-073", "nome": "Agulha de Mão nº 6", "categoria": "Armarinho & Costura", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-074", "nome": "Agulha de Mão nº 7", "categoria": "Armarinho & Costura", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-075", "nome": "Azeitona Zille", "categoria": "Enlatados & Conservas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-076", "nome": "Barbante Lyne 200m", "categoria": "Armarinho & Costura", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-077", "nome": "Borracha Panela Silicone 3/7", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-078", "nome": "Caldo Knorr Carne", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-079", "nome": "Caldo Knorr Galinha", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-080", "nome": "Chá Preto", "categoria": "Matinais & Chás", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-081", "nome": "Cond. Canela Casca", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-082", "nome": "Cond. Colorau", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-083", "nome": "Cond. Louro Folha", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-084", "nome": "Isqueiro Cricket Grande", "categoria": "Bazar & Acendedores", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-085", "nome": "Isqueiro Mini Cricket", "categoria": "Bazar & Acendedores", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-086", "nome": "Lâmpada 42w", "categoria": "Eletro & Iluminação", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-087", "nome": "Linha Magna Preta", "categoria": "Armarinho & Costura", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-088", "nome": "Sal Refinado", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-089", "nome": "Agulha de Mão nº 1", "categoria": "Armarinho & Costura", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-090", "nome": "Agulha de Mão nº 5", "categoria": "Armarinho & Costura", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-091", "nome": "Bateria Elgin AG13/LR41", "categoria": "Pilhas & Baterias", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-092", "nome": "Bateria Elgin AG13/LR44", "categoria": "Pilhas & Baterias", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-093", "nome": "Bateria 626A 1.55", "categoria": "Pilhas & Baterias", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-094", "nome": "Carnê INSS", "categoria": "Papelaria & Escritório", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-095", "nome": "Estalinhos Panda", "categoria": "Bazar & Diversos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-096", "nome": "Isqueiro Bic Maxi", "categoria": "Bazar & Acendedores", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-097", "nome": "Milho de Pipoca 500g", "categoria": "Farinhas & Grãos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-098", "nome": "Pilha Alfacel AA c/60", "categoria": "Pilhas & Baterias", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-099", "nome": "Pilha Rayovac Grande c/12", "categoria": "Pilhas & Baterias", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-100", "nome": "Agulha de Mão nº 2", "categoria": "Armarinho & Costura", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-101", "nome": "Amolador de Faca 3x1", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-102", "nome": "Cond. Erva Doce", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-103", "nome": "Cond. Pimenta Pó", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-104", "nome": "Cond. Tempero Misto", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-105", "nome": "Durepoxi 100g", "categoria": "Bazar & Ferragens", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-106", "nome": "Durepoxi 50g", "categoria": "Bazar & Ferragens", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-107", "nome": "Filtro de Papel 103", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-108", "nome": "Lâmpada Ourolux LED 40w", "categoria": "Eletro & Iluminação", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-109", "nome": "Lâmpada Hal. Ourolux 42w", "categoria": "Eletro & Iluminação", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-110", "nome": "Pilha Rayovac AA", "categoria": "Pilhas & Baterias", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-111", "nome": "Queijo Ralado Selete", "categoria": "Laticínios & Derivados", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-112", "nome": "Vinagre Bulnez 500ml", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-113", "nome": "Coco Ralado Menina 50g", "categoria": "Confeitaria", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-114", "nome": "Cond. Bicarbonato", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-115", "nome": "Goiabada Predilecta", "categoria": "Doces & Sobremesas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-116", "nome": "Linha Magna Branca", "categoria": "Armarinho & Costura", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-117", "nome": "Vela Padroeira nº 8", "categoria": "Bazar & Velas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-118", "nome": "Vela Padroeira nº 5", "categoria": "Bazar & Velas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-119", "nome": "Vela Padroeira nº 4", "categoria": "Bazar & Velas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-120", "nome": "Cond. Cominho Pó", "categoria": "Temperos & Condimentos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-121", "nome": "Pilha 23a", "categoria": "Pilhas & Baterias", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-122", "nome": "Bateria Elgin 2032", "categoria": "Pilhas & Baterias", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "MER-123", "nome": "Coador Flanelado nº 7", "categoria": "Utilidades Domésticas", "imagem": "COLE_O_LINK_AQUI"}
-        ];
-
-        const itensPorPagina = 12;
-        let paginaAtual = 1;
-        let carrinho = [];
-
-        function renderizarProdutos(pagina) {
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = '';
-
-            const inicio = (pagina - 1) * itensPorPagina;
-            const fim = inicio + itensPorPagina;
-            const produtosPagina = produtos.slice(inicio, fim);
-
-            produtosPagina.forEach(prod => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                
-                card.innerHTML = `
-                    <div class="img-container">
-                        <img src="${prod.imagem}" alt="${prod.nome}" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                    </div>
-                    <div class="card-body">
-                        <span class="badge">${prod.categoria}</span>
-                        <h3 class="card-title">${prod.nome}</h3>
-                    </div>
-                    <div class="card-footer">
-                        <span class="code">${prod.id}</span>
-                        <button class="btn-add" id="btn-${prod.id}" onclick="adicionarPorId('${prod.id}')">➕ Adicionar</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function renderizarPaginacao() {
-            const paginationContainer = document.getElementById('pagination');
-            paginationContainer.innerHTML = '';
-
-            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
-
-            for (let i = 1; i <= totalPaginas; i++) {
-                const btn = document.createElement('button');
-                btn.className = `page-btn ${i === paginaAtual ? 'active' : ''}`;
-                btn.innerText = i;
-                btn.onclick = () => {
-                    paginaAtual = i;
-                    renderizarProdutos(paginaAtual);
-                    renderizarPaginacao();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                };
-                paginationContainer.appendChild(btn);
-            }
-        }
-
-        function adicionarPorId(id) {
-            const produto = produtos.find(p => p.id === id);
-            if (!produto) return;
-
-            const itemExistente = carrinho.find(item => item.id === id);
-            if (itemExistente) {
-                itemExistente.qtd += 1;
-            } else {
-                carrinho.push({ id: produto.id, nome: produto.nome, qtd: 1 });
-            }
-
-            const btn = document.getElementById(`btn-${id}`);
-            if (btn) {
-                btn.innerText = "✓ Adicionado!";
-                btn.classList.add('added');
-                setTimeout(() => {
-                    btn.innerText = "➕ Adicionar";
-                    btn.classList.remove('added');
-                }, 1000);
-            }
-
-            atualizarCarrinho();
-        }
-
-        function alterarQuantidade(id, delta) {
-            const item = carrinho.find(item => item.id === id);
-            if (item) {
-                item.qtd += delta;
-                if (item.qtd <= 0) {
-                    carrinho = carrinho.filter(i => i.id !== id);
-                }
-            }
-            atualizarCarrinho();
-        }
-
-        function atualizarCarrinho() {
-            const countEl = document.getElementById('cart-count');
-            const totalItens = carrinho.reduce((acc, item) => acc + item.qtd, 0);
-            countEl.innerText = totalItens;
-
-            const itemsContainer = document.getElementById('cart-items');
-            if (carrinho.length === 0) {
-                itemsContainer.innerHTML = '<p style="text-align:center; color: var(--text-muted);">Nenhum item adicionado.</p>';
-                return;
-            }
-
-            itemsContainer.innerHTML = carrinho.map(item => `
-                <div class="cart-item">
-                    <div>
-                        <strong>${item.nome}</strong><br>
-                        <small style="color:var(--text-muted);">${item.id}</small>
-                    </div>
-                    <div class="cart-controls">
-                        <button class="cart-btn" onclick="alterarQuantidade('${item.id}', -1)">-</button>
-                        <span>${item.qtd}</span>
-                        <button class="cart-btn" onclick="alterarQuantidade('${item.id}', 1)">+</button>
-                    </div>
+    function renderizarProdutos(lista) {
+        const grid = document.getElementById("grade-produtos");
+        grid.innerHTML = "";
+        lista.forEach(p => {
+            grid.innerHTML += `
+                <div class="card-produto">
+                    <span class="tag-cat">${p.categoria}</span>
+                    <h4>${p.nome}</h4>
+                    <button class="btn-add" onclick="adicionarAoCarrinho(${p.id})">+ Adicionar à Cotação</button>
                 </div>
-            `).join('');
+            `;
+        });
+    }
+
+    function filtrar(cat, elemento) {
+        document.querySelectorAll('.btn-cat').forEach(b => b.classList.remove('ativo'));
+        elemento.classList.add('ativo');
+        
+        if (cat === 'todas') {
+            renderizarProdutos(produtos);
+        } else {
+            const filtrados = produtos.filter(p => p.categoria === cat);
+            renderizarProdutos(filtrados);
+        }
+    }
+
+    function adicionarAoCarrinho(idProduto) {
+        const itemExistente = carrinho.find(item => item.id === idProduto);
+        if (itemExistente) {
+            itemExistente.qtd += 1;
+        } else {
+            const produtoOriginal = produtos.find(p => p.id === idProduto);
+            carrinho.push({ ...produtoOriginal, qtd: 1 });
+        }
+        atualizarCarrinho();
+    }
+
+    function removerDoCarrinho(idProduto) {
+        carrinho = carrinho.filter(item => item.id !== idProduto);
+        atualizarCarrinho();
+    }
+
+    function atualizarCarrinho() {
+        const tbody = document.getElementById("itens-carrinho");
+        tbody.innerHTML = "";
+        let totalQtd = 0;
+
+        carrinho.forEach(item => {
+            totalQtd += item.qtd;
+            tbody.innerHTML += `
+                <tr>
+                    <td>${item.nome}</td>
+                    <td>${item.qtd}</td>
+                    <td><button onclick="removerDoCarrinho(${item.id})" style="background:red; color:white; border:none; border-radius:3px; cursor:pointer;">X</button></td>
+                </tr>
+            `;
+        });
+
+        document.getElementById("total-itens").innerText = totalQtd;
+    }
+
+    function enviarCotacaoWhatsApp() {
+        if (carrinho.length === 0) {
+            alert("Sua lista de cotação está vazia! Adicione produtos primeiro.");
+            return;
         }
 
-        function abrirCarrinho() { document.getElementById('cart-modal').style.display = 'flex'; }
-        function fecharCarrinho() { document.getElementById('cart-modal').style.display = 'none'; }
+        let mensagem = "Olá! Gostaria de receber uma cotação para os seguintes itens:\n\n";
+        carrinho.forEach(item => {
+            mensagem += `• *${item.nome}* (${item.categoria}) - Qtd: ${item.qtd}\n`;
+        });
 
-        function enviarWhatsapp() {
-            if (carrinho.length === 0) {
-                alert("Seu carrinho está vazio!");
-                return;
-            }
+        const linkWhatsApp = `https://wa.me/${SEU_NUMERO_WHATSAPP}?text=${encodeURIComponent(mensagem)}`;
+        window.open(linkWhatsApp, "_blank");
+    }
 
-            let mensagem = "Olá! Gostaria de cotar os seguintes itens da Mercearia:\n\n";
-            carrinho.forEach(item => {
-                mensagem += `• ${item.qtd}x ${item.nome} (${item.id})\n`;
-            });
-
-            const url = `https://wa.me/5521968659086?text=${encodeURIComponent(mensagem)}`;
-            window.open(url, '_blank');
-        }
-
-        renderizarProdutos(paginaAtual);
-        renderizarPaginacao();
-    </script>
+    // Inicialização
+    renderizarProdutos(produtos);
+</script>
 
 </body>
 </html>

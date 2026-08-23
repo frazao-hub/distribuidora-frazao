@@ -3,418 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Unificado - Distribuidora Frazão</title>
+    <title>Balas e Pirulitos - Distribuidora Frazão</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        :root {
-            --primary: #25d366;
-            --primary-dark: #128c7e;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
+        .secao-titulo {
+            width: 100%;
+            margin: 30px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #25d366;
+            color: #333;
+            font-size: 22px;
+            text-transform: uppercase;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            padding: 2rem 1rem 6rem 1rem;
-        }
-
-        .header {
+        .produto-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
             text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .header h1 {
-            font-size: 1.8rem;
-            color: var(--text);
-            margin-bottom: 0.5rem;
-        }
-
-        .header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* --- Barra de Filtro de Categorias --- */
-        .category-nav {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .cat-btn {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            padding: 0.6rem 1.2rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-muted);
-            white-space: nowrap;
-            transition: all 0.2s;
-        }
-
-        .cat-btn.active, .cat-btn:hover {
-            background: var(--text);
-            color: #ffffff;
-            border-color: var(--text);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
+            background: #fff;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-        }
-
-        .img-container {
+        .produto-card img {
             width: 100%;
-            height: 160px;
-            background-color: #f1f5f9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 1px solid var(--border);
+            height: 140px;
+            object-fit: contain;
+            margin-bottom: 10px;
         }
-
-        .img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .card-body {
-            padding: 1rem;
-            flex-grow: 1;
-        }
-
-        .badge {
-            background: #e0e7ff;
-            color: #3730a3;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.2rem 0.5rem;
-            border-radius: 9999px;
+        .btn-whatsapp {
             display: inline-block;
-        }
-
-        .card-title {
-            font-size: 0.95rem;
-            margin: 0.4rem 0 0.2rem 0;
-            font-weight: 600;
-        }
-
-        .card-footer {
-            padding: 0.8rem 1rem;
-            border-top: 1px solid var(--border);
-            background: #fafafa;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .code {
-            font-family: monospace;
-            background: #e2e8f0;
-            padding: 0.2rem 0.4rem;
+            margin-top: 10px;
+            background-color: #25d366;
+            color: #ffffff;
+            padding: 6px 12px;
             border-radius: 4px;
-            font-size: 0.8rem;
-            color: #475569;
+            text-decoration: none;
+            font-size: 13px;
             font-weight: 600;
+            transition: background-color 0.2s;
         }
-
-        .btn-add {
-            background-color: var(--primary);
-            color: #ffffff;
-            font-weight: 600;
-            border: none;
-            font-size: 0.85rem;
-            padding: 0.5rem 0.8rem;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .btn-add:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 2.5rem;
-            flex-wrap: wrap;
-        }
-
-        .page-btn {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            padding: 0.5rem 0.9rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text);
-            transition: all 0.2s;
-        }
-
-        .page-btn.active, .page-btn:hover {
-            background: var(--primary-dark);
-            color: #ffffff;
-            border-color: var(--primary-dark);
-        }
-
-        /* --- Barra Flutuante do Carrinho --- */
-        .cart-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #ffffff;
-            border-top: 2px solid var(--border);
-            padding: 1rem;
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .cart-info {
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .btn-send-wa {
-            background-color: var(--primary);
-            color: #fff;
-            padding: 0.7rem 1.2rem;
-            border-radius: 8px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-send-wa:hover {
-            background-color: var(--primary-dark);
-        }
+        .btn-whatsapp:hover { background-color: #128c7e; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Distribuidora Frazão — Catálogo Geral</h1>
-        <p>Selecione o setor, adicione os produtos e envie sua cotação completa via WhatsApp</p>
-    </div>
+    <header class="topo-interna">
+        <h1>Balas e Pirulitos - Distribuidora Frazão</h1>
+        <a href="index.html" class="btn-voltar">&larr; Voltar para a Página Inicial</a>
+    </header>
 
-    <div class="container">
-        <!-- Filtro Principal por Categorias -->
-        <div class="category-nav" id="category-nav">
-            <button class="cat-btn active" onclick="filtrarCategoria('Todas')">Todas</button>
-            <button class="cat-btn" onclick="filtrarCategoria('Mercearia')">Mercearia</button>
-            <button class="cat-btn" onclick="filtrarCategoria('Doces')">Doces</button>
-            <button class="cat-btn" onclick="filtrarCategoria('Bebidas')">Bebidas</button>
-            <button class="cat-btn" onclick="filtrarCategoria('Papelaria')">Papelaria</button>
-            <button class="cat-btn" onclick="filtrarCategoria('Higiene & Limpeza')">Higiene & Limpeza</button>
-            <button class="cat-btn" onclick="filtrarCategoria('Descartáveis')">Descartáveis</button>
+    <main class="container-produtos">
+        
+        <!-- CATEGORIA: BALAS -->
+        <h2 class="secao-titulo">Balas</h2>
+        <div class="grid-4-colunas">
+            
+            <div class="produto-card">
+                <img src="https://tse3.mm.bing.net/th/id/OIP.lNfk8QyHziOKGLJoSIvLigHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="AZEDINHA MORANGO">
+                <h3>AZEDINHA MORANGO</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20AZEDINHA%20MORANGO" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoDNQt608UljpPFuZW-6N6_DtXxLUaIdo-ord3JQuX_g&s=10" alt="AZEDINHA UVA">
+                <h3>AZEDINHA UVA</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20AZEDINHA%20UVA" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="AZEDINHA YOGURT">
+                <h3>AZEDINHA YOGURT</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20AZEDINHA%20YOGURT" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA 7 BELO">
+                <h3>BALA 7 BELO</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%207%20BELO" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA AZEDINHA MELANCIA">
+                <h3>BALA AZEDINHA MELANCIA</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20AZEDINHA%20MELANCIA" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA BERBAUSOFT">
+                <h3>BALA BERBAUSOFT</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20BERBAUSOFT" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA BOLETE">
+                <h3>BALA BOLETE</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20BOLETE" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA DE BANANA">
+                <h3>BALA DE BANANA</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20DE%20BANANA" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA DE CAFÉ">
+                <h3>BALA DE CAFÉ</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20DE%20CAFÉ" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA DE COCO">
+                <h3>BALA DE COCO</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20DE%20COCO" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA DORI MEL">
+                <h3>BALA DORI MEL</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20DORI%20MEL" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA ERVA CIDREIRA">
+                <h3>BALA ERVA CIDREIRA</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20ERVA%20CIDREIRA" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA FRUTSY">
+                <h3>BALA FRUTSY</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20FRUTSY" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA HORTELÃ">
+                <h3>BALA HORTELÃ</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20HORTELÃ" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA JUQUINHA">
+                <h3>BALA JUQUINHA</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20JUQUINHA" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA JUQUINHA SORTIDA">
+                <h3>BALA JUQUINHA SORTIDA</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20JUQUINHA%20SORTIDA" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA LUA CHEIA">
+                <h3>BALA LUA CHEIA</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20LUA%20CHEIA" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA MAÇÃ VERDE">
+                <h3>BALA MAÇÃ VERDE</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20MAÇÃ%20VERDE" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA MEL E GENGIBRE">
+                <h3>BALA MEL E GENGIBRE</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20MEL%20E%20GENGIBRE" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA MILHO VERDE">
+                <h3>BALA MILHO VERDE</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20MILHO%20VERDE" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA MORANGUINHO">
+                <h3>BALA MORANGUINHO</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20MORANGUINHO" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA PAÇOQUITA">
+                <h3>BALA PAÇOQUITA</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20PAÇOQUITA" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA SORTIDA">
+                <h3>BALA SORTIDA</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20SORTIDA" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA TAMARINDO">
+                <h3>BALA TAMARINDO</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20TAMARINDO" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA TOFFEE CHOCOLATE">
+                <h3>BALA TOFFEE CHOCOLATE</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20TOFFEE%20CHOCOLATE" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA YOGURT">
+                <h3>BALA YOGURT</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20YOGURT" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="CARAMELO EMBARÉ">
+                <h3>CARAMELO EMBARÉ</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20CARAMELO%20EMBARÉ" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="GAMADINHO">
+                <h3>GAMADINHO</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20GAMADINHO" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="TOFFEE COCO">
+                <h3>TOFFEE COCO</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20TOFFEE%20COCO" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="TOFFEE LEITE">
+                <h3>TOFFEE LEITE</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20TOFFEE%20LEITE" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="TOFFEE MARACUJA">
+                <h3>TOFFEE MARACUJA</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20TOFFEE%20MARACUJA" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+
         </div>
 
-        <div id="product-grid" class="grid"></div>
-        <div id="pagination" class="pagination"></div>
-    </div>
+        <!-- CATEGORIA: PIRULITOS -->
+        <h2 class="secao-titulo">Pirulitos</h2>
+        <div class="grid-4-colunas">
 
-    <div class="cart-bar">
-        <div class="cart-info" id="cart-count">🛒 Itens na Cotação: 0</div>
-        <button onclick="enviarCotacao()" class="btn-send-wa">📲 Solicitar Cotação via WhatsApp</button>
-    </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO BLONG AZUL">
+                <h3>PIRULITO BLONG AZUL</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20BLONG%20AZUL" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO BLONG MELANCIA">
+                <h3>PIRULITO BLONG MELANCIA</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20BLONG%20MELANCIA" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO BLONG MORANGO">
+                <h3>PIRULITO BLONG MORANGO</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20BLONG%20MORANGO" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO BLONG PRETO">
+                <h3>PIRULITO BLONG PRETO</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20BLONG%20PRETO" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO BLONG TUTTI">
+                <h3>PIRULITO BLONG TUTTI</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20BLONG%20TUTTI" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO BLONG UVA">
+                <h3>PIRULITO BLONG UVA</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20BLONG%20UVA" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO CH. POP MORANGO">
+                <h3>PIRULITO CH. POP MORANGO</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20CH.%20POP%20MORANGO" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO CHERRY POP">
+                <h3>PIRULITO CHERRY POP</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20CHERRY%20POP" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO FLORESCAL CORAÇÃO VERMELHO">
+                <h3>PIRULITO FLORESCAL CORAÇÃO VERMELHO</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20FLORESCAL%20CORAÇÃO%20VERMELHO" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO FLORESTAL CORAÇÃO COLORIDO">
+                <h3>PIRULITO FLORESTAL CORAÇÃO COLORIDO</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20FLORESTAL%20CORAÇÃO%20COLORIDO" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO MAÇÃ AMOR">
+                <h3>PIRULITO MAÇÃ AMOR</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20MAÇÃ%20AMOR" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO POP KISS">
+                <h3>PIRULITO POP KISS</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20POP%20KISS" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
+            <div class="produto-card">
+                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO UVA DO AMOR">
+                <h3>PIRULITO UVA DO AMOR</h3>
+                <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20UVA%20DO%20AMOR" target="_blank" class="btn-whatsapp">Cotar Preço</a>
+            </div>
 
-    <script>
-        const produtos = [
-            // MERCEARIA
-            {"id": "MER-001", "nome": "Adoçante Assugrin 100ml", "setor": "Mercearia", "categoria": "Adoçantes", "imagem": ""},
-            {"id": "MER-002", "nome": "Creme de Leite Piracanjuba 200g", "setor": "Mercearia", "categoria": "Laticínios", "imagem": ""},
-            {"id": "MER-003", "nome": "Caldo Arisco Galinha 114g", "setor": "Mercearia", "categoria": "Temperos", "imagem": ""},
-            
-            // DOCES
-            {"id": "DOC-001", "nome": "Chocolates Sortidos Nestlé 251g", "setor": "Doces", "categoria": "Bombons", "imagem": ""},
-            {"id": "DOC-002", "nome": "Paçoca Rolha Moreninha do Rio 1kg", "setor": "Doces", "categoria": "Doces Tradicionais", "imagem": ""},
-            {"id": "DOC-003", "nome": "Bala Fini Dentaduras 90g", "setor": "Doces", "categoria": "Balas & Guloseimas", "imagem": ""},
+        </div>
 
-            // BEBIDAS
-            {"id": "BEB-001", "nome": "Suco Concentrado Maguary Caju 500ml", "setor": "Bebidas", "categoria": "Sucos", "imagem": ""},
-            {"id": "BEB-002", "nome": "Refresco em Pó Fresh Abacaxi 15g", "setor": "Bebidas", "categoria": "Refrescos", "imagem": ""},
+    </main>
 
-            // PAPELARIA
-            {"id": "PAP-001", "nome": "Caderno Universitário 10 Matérias", "setor": "Papelaria", "categoria": "Escolar", "imagem": ""},
-            {"id": "PAP-002", "nome": "Caneta Esferográfica Azul Cx c/ 50", "setor": "Papelaria", "categoria": "Escritório", "imagem": ""},
-
-            // HIGIENE & LIMPEZA
-            {"id": "HIG-001", "nome": "Sabonete Francis Suave 84g", "setor": "Higiene & Limpeza", "categoria": "Higiene Pessoal", "imagem": ""},
-            {"id": "HIG-002", "nome": "Creme Dental Sorriso Dentes Brancos 90g", "setor": "Higiene & Limpeza", "categoria": "Higiene Bucal", "imagem": ""},
-            {"id": "HIG-003", "nome": "Aparelho de Barbear Bic Comfort 2 un", "setor": "Higiene & Limpeza", "categoria": "Barbearia", "imagem": ""},
-
-            // DESCARTÁVEIS
-            {"id": "DES-001", "nome": "Copo Descartável 200ml Cxa c/ 2500", "setor": "Descartáveis", "categoria": "Copos", "imagem": ""},
-            {"id": "DES-002", "nome": "Guardanapo Folha Simples 23x22", "setor": "Descartáveis", "categoria": "Papel", "imagem": ""}
-        ];
-
-        const itensPorPagina = 8;
-        let paginaAtual = 1;
-        let setorSelecionado = 'Todas';
-        let carrinho = [];
-
-        function filtrarCategoria(setor) {
-            setorSelecionado = setor;
-            paginaAtual = 1;
-
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.innerText === setor || (setor === 'Todas' && btn.innerText === 'Todas'));
-            });
-
-            renderizar();
-        }
-
-        function adicionarAoCarrinho(id) {
-            const produto = produtos.find(p => p.id === id);
-            const itemExistente = carrinho.find(item => item.id === id);
-
-            if (itemExistente) {
-                itemExistente.qtd += 1;
-            } else {
-                carrinho.push({ ...produto, qtd: 1 });
-            }
-
-            atualizarCarrinhoUI();
-        }
-
-        function atualizarCarrinhoUI() {
-            const totalItens = carrinho.reduce((acc, item) => acc + item.qtd, 0);
-            document.getElementById('cart-count').innerText = `🛒 Itens na Cotação: ${totalItens}`;
-        }
-
-        function enviarCotacao() {
-            if (carrinho.length === 0) {
-                alert("Seu carrinho de cotação está vazio!");
-                return;
-            }
-
-            let mensagem = "Olá! Gostaria de receber a cotação dos seguintes itens:\n\n";
-            carrinho.forEach(item => {
-                mensagem += `• [${item.setor}] ${item.nome} (${item.id}) - Qtd: ${item.qtd}\n`;
-            });
-
-            const linkWa = `https://wa.me/5521968659086?text=${encodeURIComponent(mensagem)}`;
-            window.open(linkWa, '_blank');
-        }
-
-        function obterProdutosFiltrados() {
-            if (setorSelecionado === 'Todas') {
-                return produtos;
-            }
-            return produtos.filter(p => p.setor === setorSelecionado);
-        }
-
-        function renderizarProdutos(listaProdutos) {
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = '';
-
-            const inicio = (paginaAtual - 1) * itensPorPagina;
-            const fim = inicio + itensPorPagina;
-            const produtosPagina = listaProdutos.slice(inicio, fim);
-
-            if (produtosPagina.length === 0) {
-                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">Nenhum produto cadastrado nesta categoria ainda.</p>';
-                return;
-            }
-
-            produtosPagina.forEach(prod => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                
-                card.innerHTML = `
-                    <div class="img-container">
-                        <img src="${prod.imagem}" alt="${prod.nome}" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                    </div>
-                    <div class="card-body">
-                        <span class="badge">${prod.setor} › ${prod.categoria}</span>
-                        <h3 class="card-title">${prod.nome}</h3>
-                    </div>
-                    <div class="card-footer">
-                        <span class="code">${prod.id}</span>
-                        <button onclick="adicionarAoCarrinho('${prod.id}')" class="btn-add">➕ Cotação</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function renderizarPaginacao(listaProdutos) {
-            const paginationContainer = document.getElementById('pagination');
-            paginationContainer.innerHTML = '';
-
-            const totalPaginas = Math.ceil(listaProdutos.length / itensPorPagina);
-
-            if (totalPaginas <= 1) return;
-
-            for (let i = 1; i <= totalPaginas; i++) {
-                const btn = document.createElement('button');
-                btn.className = `page-btn ${i === paginaAtual ? 'active' : ''}`;
-                btn.innerText = i;
-                btn.onclick = () => {
-                    paginaAtual = i;
-                    renderizar();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                };
-                paginationContainer.appendChild(btn);
-            }
-        }
-
-        function renderizar() {
-            const lista = obterProdutosFiltrados();
-            renderizarProdutos(lista);
-            renderizarPaginacao(lista);
-        }
-
-        renderizar();
-    </script>
+    <footer>
+        <div class="footer-links">
+            <a href="politica-privacidade.html">Política de Privacidade</a> |
+            <a href="regras-de-uso.html">Regras de Uso</a> |
+            <a href="politica-devolucao.html">Política de Devolução</a>
+        </div>
+        <p>&copy; 2026 Distribuidora Frazão.</p>
+    </footer>
 </body>
 </html>

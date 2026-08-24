@@ -1,16 +1,202 @@
-[
-  {
-    "id": "bal-001",
-    "nome": "Bala Mastigável Yogurte 100 600g",
-    "categoria": "Balas e Pirulitos",
-    "preco": 12.50,
-    "imagem": ""
-  },
-  {
-    "id": "pir-001",
-    "nome": "Pirulito Pop Mania Morango 600g",
-    "categoria": "Balas e Pirulitos",
-    "preco": 14.20,
-    "imagem": ""
-  }
-]
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Distribuidora Frazão - Catálogo de Produtos</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background-color: #f8fafc;
+      color: #1e293b;
+      padding-bottom: 40px;
+    }
+    header {
+      background-color: #0284c7;
+      color: #ffffff;
+      padding: 20px;
+      text-align: center;
+    }
+    header h1 {
+      margin-bottom: 5px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+    .controles {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .busca-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    .grid-produtos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .cartao-produto {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .cartao-produto img {
+      max-width: 100%;
+      height: 150px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+    .cartao-produto h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: #334155;
+    }
+    .cartao-produto .categoria {
+      font-size: 12px;
+      color: #0284c7;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .cartao-produto .preco {
+      font-size: 18px;
+      font-weight: bold;
+      color: #16a34a;
+    }
+    .mensagem-status {
+      color: #64748b;
+      text-align: center;
+      padding: 20px;
+      grid-column: 1 / -1;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Distribuidora Frazão</h1>
+    <p>Catálogo de Produtos & Cotações</p>
+  </header>
+
+  <main class="container">
+    <div class="controles">
+      <input 
+        type="text" 
+        id="campoBusca" 
+        class="busca-input" 
+        placeholder="Buscar produto por nome ou categoria..."
+        onkeyup="filtrarProdutos()"
+      >
+    </div>
+
+    <div id="gridProdutos" class="grid-produtos">
+      <p class="mensagem-status">Carregando catálogo completo...</p>
+    </div>
+  </main>
+
+  <script>
+    let todosOsProdutos = [];
+
+    // Lista com os caminhos das pastas existentes no repositório
+    const pastasCategorias = [
+      'balas e pirulitos',
+      'biscoitos',
+      'doces',
+      'descartáveis',
+      'mercearia',
+      'chicletes e drops',
+      'papelaria',
+      'bebidas',
+      'higiene e limpeza'
+    ];
+
+    async function carregarTodosProdutos() {
+      const container = document.getElementById('gridProdutos');
+      todosOsProdutos = [];
+
+      // Passa por cada pasta buscando o arquivo produtos.json
+      for (const pasta of pastasCategorias) {
+        try {
+          // encodeURIComponent garante que espaços e acentos no nome da pasta funcionem na URL
+          const url = `./${encodeURIComponent(pasta)}/produtos.json?v=` + new Date().getTime();
+          const resposta = await fetch(url);
+
+          if (resposta.ok) {
+            const itens = await resposta.json();
+            // Adiciona a categoria em cada produto caso não esteja definida
+            const itensComCategoria = itens.map(item => ({
+              ...item,
+              categoria: item.categoria || pasta
+            }));
+            todosOsProdutos = todosOsProdutos.concat(itensComCategoria);
+          }
+        } catch (e) {
+          console.warn(`Não foi possível carregar a pasta: ${pasta}`, e);
+        }
+      }
+
+      if (todosOsProdutos.length === 0) {
+        container.innerHTML = `<p class="mensagem-status">Nenhum produto encontrado. Certifique-se de criar o arquivo <strong>produtos.json</strong> dentro das pastas das categorias.</p>`;
+      } else {
+        exibirProdutos(todosOsProdutos);
+      }
+    }
+
+    function exibirProdutos(produtos) {
+      const container = document.getElementById('gridProdutos');
+      container.innerHTML = '';
+
+      if (produtos.length === 0) {
+        container.innerHTML = '<p class="mensagem-status">Nenhum produto corresponde à busca.</p>';
+        return;
+      }
+
+      produtos.forEach(produto => {
+        const card = document.createElement('div');
+        card.className = 'cartao-produto';
+        
+        const imagem = produto.imagem || 'https://via.placeholder.com/150?text=Sem+Imagem';
+        const preco = produto.preco ? `R$ ${Number(produto.preco).toFixed(2).replace('.', ',')}` : 'Sob consulta';
+
+        card.innerHTML = `
+          <img src="${imagem}" alt="${produto.nome}">
+          <div class="categoria">${produto.categoria}</div>
+          <h3>${produto.nome}</h3>
+          <p class="preco">${preco}</p>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function filtrarProdutos() {
+      const termo = document.getElementById('campoBusca').value.toLowerCase();
+      const filtrados = todosOsProdutos.filter(prod => 
+        prod.nome.toLowerCase().includes(termo) || 
+        (prod.categoria && prod.categoria.toLowerCase().includes(termo))
+      );
+      exibirProdutos(filtrados);
+    }
+
+    // Carrega tudo ao abrir a página
+    carregarTodosProdutos();
+  </script>
+
+</body>
+</html>

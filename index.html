@@ -1,205 +1,302 @@
-<!-- Cabeçalho do Site -->
-<header class="main-header">
-    <div class="header-container">
-        <a href="./index.html" class="brand-logo">
-            <h1>Distribuidora <span>Multidoces</span></h1>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribuidora Multidoces</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Cabeçalho */
+        .main-header {
+            background-color: #1b365d;
+            padding: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .brand-logo h1 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-logo span {
+            color: #d97706;
+        }
+
+        .brand-logo {
+            text-decoration: none;
+        }
+
+        /* Grid de Categorias (4 por linha) */
+        .category-grid-4col {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 15px;
+            flex: 1;
+        }
+
+        .category-card-horizontal {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+            text-decoration: none;
+            color: #1e293b;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        .category-card-horizontal:hover {
+            border-color: #1b365d;
+            background-color: #f8fafc;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .category-card-horizontal:active {
+            transform: scale(0.98);
+        }
+
+        .category-icon-box {
+            font-size: 1.6rem;
+            background-color: #f1f5f9;
+            padding: 8px 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .category-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .category-info h3 {
+            margin: 0 0 2px 0;
+            font-size: 0.95rem;
+            color: #1b365d;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .category-info p {
+            margin: 0;
+            font-size: 0.78rem;
+            color: #64748b;
+            line-height: 1.2;
+        }
+
+        /* Rodapé */
+        .main-footer {
+            background-color: #1b365d;
+            color: #ffffff;
+            padding: 25px 15px;
+            margin-top: 50px;
+            text-align: center;
+            border-top: 3px solid #d97706;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: #d97706;
+            text-decoration: underline;
+        }
+
+        .footer-links .divider {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .copyright {
+            margin: 0;
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .category-grid-4col {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .category-grid-4col {
+                grid-template-columns: 1fr;
+            }
+            .footer-links .divider {
+                display: none;
+            }
+            .footer-links {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cabeçalho -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="./index.html" class="brand-logo">
+                <h1>Distribuidora <span>Multidoces</span></h1>
+            </a>
+        </div>
+    </header>
+
+    <!-- Seção de Categorias -->
+    <div class="category-grid-4col">
+
+        <!-- Linha 1 -->
+        <a href="./mercearia.html" class="category-card-horizontal">
+            <div class="category-icon-box">🛒</div>
+            <div class="category-info">
+                <h3>Mercearia</h3>
+                <p>Alimentos secos e conservas.</p>
+            </div>
         </a>
+
+        <a href="./bebidas.html" class="category-card-horizontal">
+            <div class="category-icon-box">🥤</div>
+            <div class="category-info">
+                <h3>Bebidas</h3>
+                <p>Sucos, refrigerantes e águas.</p>
+            </div>
+        </a>
+
+        <a href="./doces.html" class="category-card-horizontal">
+            <div class="category-icon-box">🍫</div>
+            <div class="category-info">
+                <h3>Doces</h3>
+                <p>Chocolates e confeitaria.</p>
+            </div>
+        </a>
+
+        <a href="./balas-e-pirulitos.html" class="category-card-horizontal">
+            <div class="category-icon-box">🍭</div>
+            <div class="category-info">
+                <h3>Balas & Pirulitos</h3>
+                <p>Balas mastigáveis e pirulitos.</p>
+            </div>
+        </a>
+
+        <!-- Linha 2 -->
+        <a href="./chicletes-e-drops.html" class="category-card-horizontal">
+            <div class="category-icon-box">🍬</div>
+            <div class="category-info">
+                <h3>Chicletes & Drops</h3>
+                <p>Gomas de mascar e pastilhas.</p>
+            </div>
+        </a>
+
+        <a href="./biscoitos.html" class="category-card-horizontal">
+            <div class="category-icon-box">🍪</div>
+            <div class="category-info">
+                <h3>Biscoitos</h3>
+                <p>Recheados, wafers e salgados.</p>
+            </div>
+        </a>
+
+        <a href="./higiene.html" class="category-card-horizontal">
+            <div class="category-icon-box">🧴</div>
+            <div class="category-info">
+                <h3>Higiene</h3>
+                <p>Sabonetes e higiene pessoal.</p>
+            </div>
+        </a>
+
+        <a href="./limpeza.html" class="category-card-horizontal">
+            <div class="category-icon-box">🧹</div>
+            <div class="category-info">
+                <h3>Limpeza</h3>
+                <p>Detergentes e desinfetantes.</p>
+            </div>
+        </a>
+
+        <!-- Linha 3 -->
+        <a href="./descartaveis.html" class="category-card-horizontal">
+            <div class="category-icon-box">🍽️</div>
+            <div class="category-info">
+                <h3>Descartáveis</h3>
+                <p>Copos, pratos e embalagens.</p>
+            </div>
+        </a>
+
+        <a href="./papelaria.html" class="category-card-horizontal">
+            <div class="category-icon-box">📦</div>
+            <div class="category-info">
+                <h3>Papelaria</h3>
+                <p>Escolar e escritório.</p>
+            </div>
+        </a>
+
     </div>
-</header>
 
-<!-- Estilos CSS -->
-<style>
-    /* Estilos do Cabeçalho */
-    .main-header {
-        background-color: #1b365d;
-        padding: 20px 0;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        text-align: center;
-    }
-
-    .brand-logo h1 {
-        margin: 0;
-        color: #ffffff;
-        font-size: 1.8rem;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-    }
-
-    .brand-logo span {
-        color: #d97706;
-    }
-
-    .brand-logo {
-        text-decoration: none;
-    }
-
-    /* Grid de Categorias (4 por linha) */
-    .category-grid-4col {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr); /* Força 4 colunas */
-        gap: 16px;
-        max-width: 1200px;
-        margin: 40px auto;
-        padding: 0 15px;
-    }
-
-    .category-card-horizontal {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        background-color: #ffffff;
-        border: 2px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 14px;
-        text-decoration: none;
-        color: #1e293b;
-        transition: all 0.2s ease-in-out;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-    }
-
-    .category-card-horizontal:hover {
-        border-color: #1b365d;
-        background-color: #f8fafc;
-        transform: translateY(-3px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-    }
-
-    .category-card-horizontal:active {
-        transform: scale(0.98);
-    }
-
-    .category-icon-box {
-        font-size: 1.6rem;
-        background-color: #f1f5f9;
-        padding: 8px 10px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-
-    .category-info {
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-
-    .category-info h3 {
-        margin: 0 0 2px 0;
-        font-size: 0.95rem;
-        color: #1b365d;
-        font-weight: 700;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .category-info p {
-        margin: 0;
-        font-size: 0.78rem;
-        color: #64748b;
-        line-height: 1.2;
-    }
-
-    /* Responsividade para Telas Menores */
-    @media (max-width: 992px) {
-        .category-grid-4col {
-            grid-template-columns: repeat(2, 1fr); /* 2 por linha em tablets */
-        }
-    }
-
-    @media (max-width: 576px) {
-        .category-grid-4col {
-            grid-template-columns: 1fr; /* 1 por linha em celulares */
-        }
-    }
-</style>
-
-<!-- Seção das Categorias (.html) -->
-<div class="category-grid-4col">
-
-    <!-- Linha 1 -->
-    <a href="./mercearia.html" class="category-card-horizontal">
-        <div class="category-icon-box">🛒</div>
-        <div class="category-info">
-            <h3>Mercearia</h3>
-            <p>Alimentos secos e conservas.</p>
+    <!-- Rodapé -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="./politica-de-devolucao.html">Política de Devolução</a>
+                <span class="divider">|</span>
+                <a href="./politica-de-privacidade.html">Política de Privacidade</a>
+                <span class="divider">|</span>
+                <a href="./regras-de-uso.html">Regras de Uso</a>
+            </div>
+            <p class="copyright">&copy; Distribuidora Multidoces. Todos os direitos reservados.</p>
         </div>
-    </a>
+    </footer>
 
-    <a href="./bebidas.html" class="category-card-horizontal">
-        <div class="category-icon-box">🥤</div>
-        <div class="category-info">
-            <h3>Bebidas</h3>
-            <p>Sucos, refrigerantes e águas.</p>
-        </div>
-    </a>
-
-    <a href="./doces.html" class="category-card-horizontal">
-        <div class="category-icon-box">🍫</div>
-        <div class="category-info">
-            <h3>Doces</h3>
-            <p>Chocolates e confeitaria.</p>
-        </div>
-    </a>
-
-    <a href="./balas-e-pirulitos.html" class="category-card-horizontal">
-        <div class="category-icon-box">🍭</div>
-        <div class="category-info">
-            <h3>Balas & Pirulitos</h3>
-            <p>Balas mastigáveis e pirulitos.</p>
-        </div>
-    </a>
-
-    <!-- Linha 2 -->
-    <a href="./chicletes-e-drops.html" class="category-card-horizontal">
-        <div class="category-icon-box">🍬</div>
-        <div class="category-info">
-            <h3>Chicletes & Drops</h3>
-            <p>Gomas de mascar e pastilhas.</p>
-        </div>
-    </a>
-
-    <a href="./biscoitos.html" class="category-card-horizontal">
-        <div class="category-icon-box">🍪</div>
-        <div class="category-info">
-            <h3>Biscoitos</h3>
-            <p>Recheados, wafers e salgados.</p>
-        </div>
-    </a>
-
-    <a href="./higiene.html" class="category-card-horizontal">
-        <div class="category-icon-box">🧴</div>
-        <div class="category-info">
-            <h3>Higiene</h3>
-            <p>Sabonetes e higiene pessoal.</p>
-        </div>
-    </a>
-
-    <a href="./limpeza.html" class="category-card-horizontal">
-        <div class="category-icon-box">🧹</div>
-        <div class="category-info">
-            <h3>Limpeza</h3>
-            <p>Detergentes e desinfetantes.</p>
-        </div>
-    </a>
-
-    <!-- Linha 3 -->
-    <a href="./descartaveis.html" class="category-card-horizontal">
-        <div class="category-icon-box">🍽️</div>
-        <div class="category-info">
-            <h3>Descartáveis</h3>
-            <p>Copos, pratos e embalagens.</p>
-        </div>
-    </a>
-
-    <a href="./papelaria.html" class="category-card-horizontal">
-        <div class="category-icon-box">📦</div>
-        <div class="category-info">
-            <h3>Papelaria</h3>
-            <p>Escolar e escritório.</p>
-        </div>
-    </a>
-
-</div>
+</body>
+</html>

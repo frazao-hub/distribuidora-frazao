@@ -1,59 +1,135 @@
-<!-- BOTÕES DAS CATEGORIAS COM EVENTO DE CLIQUE -->
+<style>
+/* Grid dos Botoes Retangulares */
+.categorias-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+    max-width: 900px;
+    margin: 0 auto 30px auto;
+}
+
+/* Formato Retangular dos Botoes */
+.btn-categoria {
+    background-color: #f4f7fe;
+    border: 2px solid #3b82f6;
+    border-radius: 8px; /* Cantos levemente arredondados/retangulares */
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #1e293b;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.btn-categoria:hover {
+    background-color: #3b82f6;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+.btn-categoria.ativo {
+    background-color: #1d4ed8;
+    color: #ffffff;
+    border-color: #1d4ed8;
+}
+
+/* Area dos Produtos */
+.grid-produtos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.produto-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    background-color: #fff;
+}
+</style>
+
+<!-- BOTÕES RETANGULARES -->
 <div class="categorias-grid">
-    <button type="button" class="btn-categoria" onclick="mostrarCategoria('balas')">Balas e Pirulitos</button>
-    <button type="button" class="btn-categoria" onclick="mostrarCategoria('doces')">Doces</button>
-    <button type="button" class="btn-categoria" onclick="mostrarCategoria('higiene')">Higiene</button>
-    <button type="button" class="btn-categoria" onclick="mostrarCategoria('limpeza')">Limpeza</button>
-    <button type="button" class="btn-categoria" onclick="mostrarCategoria('descartaveis')">Descartáveis</button>
-    <button type="button" class="btn-categoria" onclick="mostrarCategoria('papelaria')">Papelaria</button>
-    <button type="button" class="btn-categoria" onclick="mostrarCategoria('mercearia')">Mercearia</button>
-    <button type="button" class="btn-categoria" onclick="mostrarCategoria('bebidas')">Bebidas</button>
-    <button type="button" class="btn-categoria" onclick="mostrarCategoria('biscoitos')">Biscoitos</button>
-    <button type="button" class="btn-categoria" onclick="mostrarCategoria('chicletes')">Chicletes e Drops</button>
+    <button type="button" class="btn-categoria" onclick="abrirPasta('balas', this)">🍬 Balas e Pirulitos</button>
+    <button type="button" class="btn-categoria" onclick="abrirPasta('doces', this)">🍩 Doces</button>
+    <button type="button" class="btn-categoria" onclick="abrirPasta('higiene', this)">🧴 Higiene</button>
+    <button type="button" class="btn-categoria" onclick="abrirPasta('limpeza', this)">🧹 Limpeza</button>
+    <button type="button" class="btn-categoria" onclick="abrirPasta('descartaveis', this)">🥤 Descartáveis</button>
+    <button type="button" class="btn-categoria" onclick="abrirPasta('papelaria', this)">✏️ Papelaria</button>
+    <button type="button" class="btn-categoria" onclick="abrirPasta('mercearia', this)">🛒 Mercearia</button>
+    <button type="button" class="btn-categoria" onclick="abrirPasta('bebidas', this)">🧃 Bebidas</button>
+    <button type="button" class="btn-categoria" onclick="abrirPasta('biscoitos', this)">🍪 Biscoitos</button>
+    <button type="button" class="btn-categoria" onclick="abrirPasta('chicletes', this)">🍬 Chicletes e Drops</button>
 </div>
 
-<!-- ÁREA ONDE OS PRODUTOS VÃO APARECER -->
-<div id="conteudo-catalogo" style="margin-top: 30px;">
-    <p id="mensagem-inicial" style="text-align: center; color: #666;">Selecione uma categoria para ver os produtos.</p>
-    
-    <!-- SEÇÃO BALAS (INICIALMENTE OCULTA) -->
-    <div id="cat-balas" class="secao-categoria" style="display: none;">
-        <!-- Cole aqui o código de Balas e Pirulitos -->
+<!-- CONTEÚDO DAS PASTAS (PRODUTOS) -->
+<div id="painel-produtos">
+    <p id="msg-padrao" style="text-align: center; color: #64748b; font-size: 18px;">Clique em uma pasta acima para abrir os produtos.</p>
+
+    <!-- PASTA: BALAS E PIRULITOS -->
+    <div id="pasta-balas" class="conteudo-pasta" style="display: none;">
+        <h2>Balas e Pirulitos</h2>
+        <div class="grid-produtos">
+            <div class="produto-card"><h3>AZEDINHA MORANGO</h3></div>
+            <div class="produto-card"><h3>BALA 7 BELO</h3></div>
+            <div class="produto-card"><h3>BALA JUQUINHA</h3></div>
+            <div class="produto-card"><h3>PIRULITO BLONG SORTIDO</h3></div>
+        </div>
     </div>
 
-    <!-- SEÇÃO DOCES (INICIALMENTE OCULTA) -->
-    <div id="cat-doces" class="secao-categoria" style="display: none;">
-        <!-- Cole aqui o código de Doces -->
+    <!-- PASTA: DOCES -->
+    <div id="pasta-doces" class="conteudo-pasta" style="display: none;">
+        <h2>Doces</h2>
+        <div class="grid-produtos">
+            <div class="produto-card"><h3>PAÇOCA ROLHA</h3></div>
+            <div class="produto-card"><h3>DOCE DE LEITE POTE</h3></div>
+            <div class="produto-card"><h3>PÉ DE MOÇA</h3></div>
+        </div>
     </div>
 
-    <!-- SEÇÃO HIGIENE (INICIALMENTE OCULTA) -->
-    <div id="cat-higiene" class="secao-categoria" style="display: none;">
-        <!-- Cole aqui o código de Higiene -->
+    <!-- PASTA: HIGIENE -->
+    <div id="pasta-higiene" class="conteudo-pasta" style="display: none;">
+        <h2>Higiene</h2>
+        <div class="grid-produtos">
+            <div class="produto-card"><h3>SABONETE LIQUIDO</h3></div>
+            <div class="produto-card"><h3>CREME DENTAL</h3></div>
+        </div>
     </div>
 
-    <!-- SEÇÃO MERCEARIA (INICIALMENTE OCULTA) -->
-    <div id="cat-mercearia" class="secao-categoria" style="display: none;">
-        <!-- Cole aqui o código de Mercearia -->
+    <!-- PASTA: MERCEARIA -->
+    <div id="pasta-mercearia" class="conteudo-pasta" style="display: none;">
+        <h2>Mercearia</h2>
+        <div class="grid-produtos">
+            <div class="produto-card"><h3>SALGADINHO TORCIDA</h3></div>
+            <div class="produto-card"><h3>CHOCOLATE EM PÓ</h3></div>
+        </div>
     </div>
 </div>
 
-<!-- SCRIPT PARA ABRIR O CATÁLOGO AO CLICAR -->
+<!-- JAVASCRIPT PARA ABRIR AS PASTAS -->
 <script>
-function mostrarCategoria(categoriaId) {
-    // Esconde a mensagem inicial
-    const msg = document.getElementById('mensagem-inicial');
+function abrirPasta(nomePasta, botaoClicado) {
+    // 1. Oculta a mensagem padrao
+    const msg = document.getElementById('msg-padrao');
     if (msg) msg.style.display = 'none';
 
-    // Oculta todas as seções de categoria
-    const secoes = document.querySelectorAll('.secao-categoria');
-    secoes.forEach(secao => {
-        secao.style.display = 'none';
-    });
+    // 2. Esconde todas as pastas abertas
+    const pastas = document.querySelectorAll('.conteudo-pasta');
+    pastas.forEach(pasta => pasta.style.display = 'none');
 
-    // Exibe apenas a categoria clicada
-    const categoriaSelecionada = document.getElementById('cat-' + categoriaId);
-    if (categoriaSelecionada) {
-        categoriaSelecionada.style.display = 'block';
+    // 3. Remove a classe 'ativo' de todos os botoes
+    const botoes = document.querySelectorAll('.btn-categoria');
+    botoes.forEach(btn => btn.classList.remove('ativo'));
+
+    // 4. Exibe a pasta correspondente e destaca o botao clicado
+    const pastaAlvo = document.getElementById('pasta-' + nomePasta);
+    if (pastaAlvo) {
+        pastaAlvo.style.display = 'block';
+        botaoClicado.classList.add('ativo');
     }
 }
 </script>

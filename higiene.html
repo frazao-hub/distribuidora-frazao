@@ -3,394 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Higiene - Distribuidora Frazão</title>
+    <title>Distribuidora Frazão</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
-        :root {
-            --primary: #25d366;
-            --primary-dark: #128c7e;
-            --accent: #2563eb;
-            --accent-dark: #1d4ed8;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 2rem 1rem 6rem 1rem; }
-
-        .header { text-align: center; margin-bottom: 2rem; }
-        .header h1 { font-size: 1.8rem; color: var(--text); margin-bottom: 0.5rem; }
-        .header p { color: var(--text-muted); font-size: 0.95rem; }
-
-        .container { max-width: 1200px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
-
-        .card { 
-            background: var(--card-bg); 
-            border: 1px solid var(--border); 
-            border-radius: 12px; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
-
-        .img-container { 
-            width: 100%; 
-            height: 180px; 
-            background-color: #ffffff; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            border-bottom: 1px solid var(--border);
-            padding: 8px;
-        }
-
-        .img-container img { width: 100%; height: 100%; object-fit: contain; }
-
-        .card-body { padding: 1rem; flex-grow: 1; }
-        .badge { background: #e0e7ff; color: #3730a3; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 9999px; display: inline-block; }
-        .card-title { font-size: 1rem; margin: 0.4rem 0 0.2rem 0; font-weight: 600; }
-
-        .card-footer { 
-            padding: 0.8rem 1rem; 
-            border-top: 1px solid var(--border); 
-            background: #fafafa; 
-            display: flex; 
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .code-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .code { font-family: monospace; background: #e2e8f0; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.8rem; color: #475569; font-weight: 600; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        body { background-color: #f4f4f9; color: #333; }
         
-        .qty-controls {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+        header { background-color: #004488; color: white; padding: 20px; text-align: center; }
+        header h1 { margin-bottom: 5px; }
 
-        .btn-qty {
-            background: #e2e8f0;
-            border: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #334155;
-        }
-        .btn-qty:hover { background: #cbd5e1; }
-
-        .input-qty {
-            width: 38px;
-            text-align: center;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 2px;
-            font-size: 0.85rem;
-        }
-
-        .actions-row {
-            display: flex;
-            gap: 6px;
-        }
-
-        .btn-add {
-            flex: 1;
-            background-color: var(--accent);
-            color: #ffffff;
-            font-weight: 600;
-            border: none;
-            font-size: 0.8rem;
-            padding: 0.5rem 0.4rem;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-        }
-        .btn-add:hover { background-color: var(--accent-dark); }
-
-        .btn-wa { 
-            flex: 1;
-            background-color: var(--primary);
-            color: #ffffff;
-            font-weight: 600; 
-            text-decoration: none; 
-            font-size: 0.8rem; 
-            padding: 0.5rem 0.4rem;
-            border-radius: 6px;
-            transition: background 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            text-align: center;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-wa:hover { background-color: var(--primary-dark); }
-
-        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 2.5rem; }
-        .page-btn {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            padding: 0.5rem 0.9rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text);
-            transition: all 0.2s;
-        }
-        .page-btn.active, .page-btn:hover {
-            background: var(--primary-dark);
-            color: #ffffff;
-            border-color: var(--primary-dark);
-        }
-
-        /* Barra do Carrinho Flutuante no Rodapé */
-        .cart-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #ffffff;
-            border-top: 2px solid var(--primary);
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
-            padding: 0.8rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* Menu de Navegação */
+        nav { 
+            background: #002244; 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            position: sticky; 
+            top: 0; 
             z-index: 1000;
         }
-
-        .cart-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .cart-count-badge {
-            background: var(--primary);
+        nav button {
+            background: transparent;
             color: white;
+            border: none;
+            padding: 12px 18px;
+            cursor: pointer;
+            font-size: 14px;
             font-weight: bold;
-            padding: 0.2rem 0.6rem;
-            border-radius: 9999px;
-            font-size: 0.9rem;
+            transition: background 0.3s;
         }
+        nav button:hover, nav button.active { background-color: #0066cc; }
 
-        .btn-cart-wa {
-            background-color: var(--primary);
-            color: #ffffff;
-            font-weight: bold;
-            text-decoration: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
-        }
-        .btn-cart-wa:hover { background-color: var(--primary-dark); }
+        /* Conteúdo das Seções */
+        main { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
+        .categoria-section { display: none; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .categoria-section.active { display: block; }
+        
+        .categoria-section h2 { color: #004488; margin-bottom: 15px; border-bottom: 2px solid #004488; padding-bottom: 5px; }
+        
+        /* Grid de Produtos */
+        .grid-produtos { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .card-produto { border: 1px solid #ddd; padding: 15px; border-radius: 5px; text-align: center; background: #fafafa; }
+        .card-produto h3 { font-size: 16px; margin-bottom: 8px; }
+        .card-produto p { color: #27ae60; font-weight: bold; }
+
+        footer { text-align: center; padding: 15px; margin-top: 30px; background: #222; color: white; font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Distribuidora Frazão — Setor de Higiene</h1>
-        <p>Selecione os produtos e solicite sua cotação diretamente via WhatsApp</p>
-    </div>
+    <header>
+        <h1>Distribuidora Frazão</h1>
+        <p>Selecione a categoria desejada no menu abaixo</p>
+    </header>
 
-    <div class="container">
-        <div id="product-grid" class="grid"></div>
-        <div id="pagination" class="pagination"></div>
-    </div>
+    <!-- Menu com as 10 categorias -->
+    <nav>
+        <button class="tab-btn active" onclick="mostrarCategoria('balas-pirulitos')">Balas e Pirulitos</button>
+        <button class="tab-btn" onclick="mostrarCategoria('doces')">Doces</button>
+        <button class="tab-btn" onclick="mostrarCategoria('higiene')">Higiene</button>
+        <button class="tab-btn" onclick="mostrarCategoria('limpeza')">Limpeza</button>
+        <button class="tab-btn" onclick="mostrarCategoria('descartaveis')">Descartáveis</button>
+        <button class="tab-btn" onclick="mostrarCategoria('papelaria')">Papelaria</button>
+        <button class="tab-btn" onclick="mostrarCategoria('mercearia')">Mercearia</button>
+        <button class="tab-btn" onclick="mostrarCategoria('bebidas')">Bebidas</button>
+        <button class="tab-btn" onclick="mostrarCategoria('biscoitos')">Biscoitos</button>
+        <button class="tab-btn" onclick="mostrarCategoria('chicletes-drops')">Chicletes e Drops</button>
+    </nav>
 
-    <!-- Barra de Carrinho Flutuante -->
-    <div id="cart-bar" class="cart-bar" style="display: none;">
-        <div class="cart-info">
-            <span class="cart-count-badge" id="cart-count">0</span>
-            <span style="font-weight: 600;">item(ns) na cotação</span>
-        </div>
-        <a id="btn-cotar-lista" href="#" target="_blank" class="btn-cart-wa">
-            📲 Enviar Cotação Geral no WhatsApp
-        </a>
-    </div>
+    <main>
+        <!-- 1. Balas e Pirulitos -->
+        <section id="balas-pirulitos" class="categoria-section active">
+            <h2>Balas e Pirulitos</h2>
+            <div class="grid-produtos">
+                <div class="card-produto"><h3>Bala Mastigável 600g</h3><p>R$ --</p></div>
+                <div class="card-produto"><h3>Pirulito Pacote 500g</h3><p>R$ --</p></div>
+            </div>
+        </section>
+
+        <!-- 2. Doces -->
+        <section id="doces" class="categoria-section">
+            <h2>Doces</h2>
+            <div class="grid-produtos">
+                <div class="card-produto"><h3>Paçoca Caixa</h3><p>R$ --</p></div>
+                <div class="card-produto"><h3>Doce de Leite</h3><p>R$ --</p></div>
+            </div>
+        </section>
+
+        <!-- 3. Higiene -->
+        <section id="higiene" class="categoria-section">
+            <h2>Higiene</h2>
+            <div class="grid-produtos">
+                <div class="card-produto"><h3>Sabonete 90g</h3><p>R$ --</p></div>
+                <div class="card-produto"><h3>Creme Dental</h3><p>R$ --</p></div>
+            </div>
+        </section>
+
+        <!-- 4. Limpeza -->
+        <section id="limpeza" class="categoria-section">
+            <h2>Limpeza</h2>
+            <div class="grid-produtos">
+                <div class="card-produto"><h3>Detergente 500ml</h3><p>R$ --</p></div>
+                <div class="card-produto"><h3>Desinfetante 1L</h3><p>R$ --</p></div>
+            </div>
+        </section>
+
+        <!-- 5. Descartáveis -->
+        <section id="descartaveis" class="categoria-section">
+            <h2>Descartáveis</h2>
+            <div class="grid-produtos">
+                <div class="card-produto"><h3>Copo Descartável 200ml (C/100)</h3><p>R$ --</p></div>
+                <div class="card-produto"><h3>Prato Descartável (C/10)</h3><p>R$ --</p></div>
+            </div>
+        </section>
+
+        <!-- 6. Papelaria -->
+        <section id="papelaria" class="categoria-section">
+            <h2>Papelaria</h2>
+            <div class="grid-produtos">
+                <div class="card-produto"><h3>Papel A4 500 folhas</h3><p>R$ --</p></div>
+                <div class="card-produto"><h3>Caneta Esferográfica</h3><p>R$ --</p></div>
+            </div>
+        </section>
+
+        <!-- 7. Mercearia -->
+        <section id="mercearia" class="categoria-section">
+            <h2>Mercearia</h2>
+            <div class="grid-produtos">
+                <div class="card-produto"><h3>Arroz 5kg</h3><p>R$ --</p></div>
+                <div class="card-produto"><h3>Feijão 1kg</h3><p>R$ --</p></div>
+            </div>
+        </section>
+
+        <!-- 8. Bebidas -->
+        <section id="bebidas" class="categoria-section">
+            <h2>Bebidas</h2>
+            <div class="grid-produtos">
+                <div class="card-produto"><h3>Refrigerante 2L</h3><p>R$ --</p></div>
+                <div class="card-produto"><h3>Suco Caixinha 1L</h3><p>R$ --</p></div>
+            </div>
+        </section>
+
+        <!-- 9. Biscoitos -->
+        <section id="biscoitos" class="categoria-section">
+            <h2>Biscoitos</h2>
+            <div class="grid-produtos">
+                <div class="card-produto"><h3>Biscoito Recheado</h3><p>R$ --</p></div>
+                <div class="card-produto"><h3>Biscoito Cream Cracker</h3><p>R$ --</p></div>
+            </div>
+        </section>
+
+        <!-- 10. Chicletes e Drops -->
+        <section id="chicletes-drops" class="categoria-section">
+            <h2>Chicletes e Drops</h2>
+            <div class="grid-produtos">
+                <div class="card-produto"><h3>Chiclete Caixinha</h3><p>R$ --</p></div>
+                <div class="card-produto"><h3>Drops Hortelã</h3><p>R$ --</p></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; Distribuidora Frazão - Todos os direitos reservados.</p>
+    </footer>
 
     <script>
-        const WHATSAPP_NUMERO = "5521968659086";
+        function mostrarCategoria(idCategoria) {
+            const secoes = document.querySelectorAll('.categoria-section');
+            secoes.forEach(secao => secao.classList.remove('active'));
 
-        const produtos = [
-            {"id": "HIG-001", "nome": "Absorvente Intimus Gel", "categoria": "Higiene Feminina", "imagem": "https://alexfarma.vteximg.com.br/arquivos/ids/157682-1000-1000/ABS-INTIMUS-GEL-COM-ABAS-SUAVE-8UND-min.jpg?v=637959040915400000"},
-            {"id": "HIG-002", "nome": "Acetona Bruna", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/51fH0b55TdL._AC_SX679_.jpg"},
-            {"id": "HIG-003", "nome": "Acetona Farmax", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/61k1jY-8G8L._AC_SL1000_.jpg"},
-            {"id": "HIG-004", "nome": "Água Oxigenada Márcia 30 Vol", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/61WvQeM9OML._AC_SL1200_.jpg"},
-            {"id": "HIG-005", "nome": "Água Oxigenada Márcia 40 Vol", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/61J6I9V4T1L._AC_SL1200_.jpg"},
-            {"id": "HIG-006", "nome": "Algodão Apolo", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/61f4+aR5DUL._AC_SL1000_.jpg"},
-            {"id": "HIG-007", "nome": "Algodão Nathy", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/61I2aYpB6+L._AC_SL1000_.jpg"},
-            {"id": "HIG-008", "nome": "Amônia Radar", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/51rY0o5dDmL._AC_SL1000_.jpg"},
-            {"id": "HIG-009", "nome": "Aparelho Prestobarba", "categoria": "Barbeamento", "imagem": "https://m.media-amazon.com/images/I/71I2wI2g3+L._AC_SL1500_.jpg"},
-            {"id": "HIG-010", "nome": "Aparelho Probak", "categoria": "Barbeamento", "imagem": "https://m.media-amazon.com/images/I/71R3J1z9S1L._AC_SL1500_.jpg"},
-            {"id": "HIG-011", "nome": "Chupeta Silicone", "categoria": "Infantil", "imagem": "https://m.media-amazon.com/images/I/61x8E-3gLgL._AC_SL1000_.jpg"},
-            {"id": "HIG-012", "nome": "Cortador de Unha Pequeno", "categoria": "Acessórios", "imagem": "https://m.media-amazon.com/images/I/51L83zR+xNL._AC_SL1000_.jpg"},
-            {"id": "HIG-013", "nome": "Cortador de Unha Grande", "categoria": "Acessórios", "imagem": "https://m.media-amazon.com/images/I/51M3vT9yG2L._AC_SL1000_.jpg"},
-            {"id": "HIG-014", "nome": "Cotonetes Nathy", "categoria": "Higiene Pessoal", "imagem": "https://m.media-amazon.com/images/I/61V+hT4o2XL._AC_SL1000_.jpg"},
-            {"id": "HIG-015", "nome": "Creme Dental Oral-B", "categoria": "Higiene Bucal", "imagem": "https://m.media-amazon.com/images/I/61U0T4IeO8L._AC_SL1500_.jpg"},
-            {"id": "HIG-016", "nome": "Band-Aid", "categoria": "Primeiros Socorros", "imagem": "https://m.media-amazon.com/images/I/71O6R5+G1TL._AC_SL1500_.jpg"},
-            {"id": "HIG-017", "nome": "Descolorante Márcia", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/61D4xOa3u8L._AC_SL1200_.jpg"},
-            {"id": "HIG-018", "nome": "Desodorante Leite de Rosas", "categoria": "Perfumaria", "imagem": "https://m.media-amazon.com/images/I/61fI3w4c3HL._AC_SL1000_.jpg"},
-            {"id": "HIG-019", "nome": "Escova de Dente Condor", "categoria": "Higiene Bucal", "imagem": "https://m.media-amazon.com/images/I/61Y7a3T8T3L._AC_SL1000_.jpg"},
-            {"id": "HIG-020", "nome": "Escova Pata-Pata", "categoria": "Acessórios", "imagem": "https://m.media-amazon.com/images/I/51V1E9t5pXL._AC_SL1000_.jpg"},
-            {"id": "HIG-021", "nome": "Lâmina Lord", "categoria": "Barbeamento", "imagem": "https://m.media-amazon.com/images/I/61v3Z8K3S0L._AC_SL1000_.jpg"},
-            {"id": "HIG-022", "nome": "Lâmina Super Maxi", "categoria": "Barbeamento", "imagem": "https://m.media-amazon.com/images/I/61I2e-Xf44L._AC_SL1000_.jpg"},
-            {"id": "HIG-023", "nome": "Lâmina Wilkinson", "categoria": "Barbeamento", "imagem": "https://m.media-amazon.com/images/I/71Yv3P0pGTL._AC_SL1500_.jpg"},
-            {"id": "HIG-024", "nome": "Papel Higiênico Belisoft Gold", "categoria": "Papelaria & Higiene", "imagem": "https://m.media-amazon.com/images/I/71k4d2X2cUL._AC_SL1000_.jpg"},
-            {"id": "HIG-025", "nome": "Papel Higiênico Silver", "categoria": "Papelaria & Higiene", "imagem": "https://m.media-amazon.com/images/I/71x5yY5zXUL._AC_SL1000_.jpg"},
-            {"id": "HIG-026", "nome": "Pente Carioca", "categoria": "Acessórios", "imagem": "https://m.media-amazon.com/images/I/51r2z1X3dSL._AC_SL1000_.jpg"},
-            {"id": "HIG-027", "nome": "Pente CP Luxo", "categoria": "Acessórios", "imagem": "https://m.media-amazon.com/images/I/51R1r3Y5eSL._AC_SL1000_.jpg"},
-            {"id": "HIG-028", "nome": "Pinça Merheje", "categoria": "Acessórios", "imagem": "https://m.media-amazon.com/images/I/51N2w4Y3sSL._AC_SL1000_.jpg"},
-            {"id": "HIG-029", "nome": "Rala Calo Plástico", "categoria": "Acessórios", "imagem": "https://m.media-amazon.com/images/I/51W3x2Y1rSL._AC_SL1000_.jpg"},
-            {"id": "HIG-030", "nome": "Sabonete Francis", "categoria": "Sabonetes", "imagem": "https://m.media-amazon.com/images/I/61U4e5Z7S8L._AC_SL1000_.jpg"},
-            {"id": "HIG-031", "nome": "Sabonete Lux", "categoria": "Sabonetes", "imagem": "https://m.media-amazon.com/images/I/61Y2e5R3S8L._AC_SL1000_.jpg"}
-        ];
+            const botoes = document.querySelectorAll('.tab-btn');
+            botoes.forEach(botao => botao.classList.remove('active'));
 
-        const itensPorPagina = 10;
-        let paginaAtual = 1;
-        let carrinho = {};
-
-        function alterarQtdInput(id, delta) {
-            const input = document.getElementById(`qtd-${id}`);
-            if (input) {
-                let val = parseInt(input.value) || 1;
-                val = Math.max(1, val + delta);
-                input.value = val;
-            }
+            document.getElementById(idCategoria).classList.add('active');
+            event.currentTarget.classList.add('active');
         }
-
-        function adicionarAoCarrinho(id) {
-            const prod = produtos.find(p => p.id === id);
-            const input = document.getElementById(`qtd-${id}`);
-            const qtd = parseInt(input ? input.value : 1) || 1;
-
-            if (carrinho[id]) {
-                carrinho[id].qtd += qtd;
-            } else {
-                carrinho[id] = { prod, qtd };
-            }
-
-            atualizarBarraCarrinho();
-            alert(`Adicionado: ${qtd}x ${prod.nome} à lista de cotação!`);
-        }
-
-        function atualizarBarraCarrinho() {
-            const keys = Object.keys(carrinho);
-            const cartBar = document.getElementById('cart-bar');
-            const cartCount = document.getElementById('cart-count');
-            const btnCotarLista = document.getElementById('btn-cotar-lista');
-
-            let totalItens = 0;
-            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes itens:\n\n";
-
-            keys.forEach(key => {
-                const item = carrinho[key];
-                totalItens += item.qtd;
-                mensagem += `• ${item.prod.nome} (${item.prod.id}) - Qtd: ${item.qtd}\n`;
-            });
-
-            if (keys.length > 0) {
-                cartCount.innerText = totalItens;
-                cartBar.style.display = 'flex';
-                btnCotarLista.href = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensagem)}`;
-            } else {
-                cartBar.style.display = 'none';
-            }
-        }
-
-        function cotarIndividual(id) {
-            const prod = produtos.find(p => p.id === id);
-            const input = document.getElementById(`qtd-${id}`);
-            const qtd = parseInt(input ? input.value : 1) || 1;
-            
-            const mensagem = `Olá! Gostaria de cotar o produto:\n• ${prod.nome} (${prod.id}) - Qtd: ${qtd}`;
-            const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensagem)}`;
-            window.open(url, '_blank');
-        }
-
-        function renderizarProdutos(pagina) {
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = '';
-
-            const inicio = (pagina - 1) * itensPorPagina;
-            const fim = inicio + itensPorPagina;
-            const produtosPagina = produtos.slice(inicio, fim);
-
-            produtosPagina.forEach(prod => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                
-                card.innerHTML = `
-                    <div class="img-container">
-                        <img src="${prod.imagem}" alt="${prod.nome}" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                    </div>
-                    <div class="card-body">
-                        <span class="badge">${prod.categoria}</span>
-                        <h3 class="card-title">${prod.nome}</h3>
-                    </div>
-                    <div class="card-footer">
-                        <div class="code-row">
-                            <span class="code">${prod.id}</span>
-                            <div class="qty-controls">
-                                <button class="btn-qty" onclick="alterarQtdInput('${prod.id}', -1)">-</button>
-                                <input type="number" id="qtd-${prod.id}" class="input-qty" value="1" min="1">
-                                <button class="btn-qty" onclick="alterarQtdInput('${prod.id}', 1)">+</button>
-                            </div>
-                        </div>
-                        <div class="actions-row">
-                            <button onclick="adicionarAoCarrinho('${prod.id}')" class="btn-add">➕ Adicionar</button>
-                            <button onclick="cotarIndividual('${prod.id}')" class="btn-wa">📲 Cotar</button>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function renderizarPaginacao() {
-            const paginationContainer = document.getElementById('pagination');
-            paginationContainer.innerHTML = '';
-
-            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
-
-            for (let i = 1; i <= totalPaginas; i++) {
-                const btn = document.createElement('button');
-                btn.className = `page-btn ${i === paginaAtual ? 'active' : ''}`;
-                btn.innerText = i;
-                btn.onclick = () => {
-                    paginaAtual = i;
-                    renderizarProdutos(paginaAtual);
-                    renderizarPaginacao();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                };
-                paginationContainer.appendChild(btn);
-            }
-        }
-
-        renderizarProdutos(paginaAtual);
-        renderizarPaginacao();
     </script>
 
 </body>

@@ -8,6 +8,8 @@
         :root {
             --primary: #25d366;
             --primary-dark: #128c7e;
+            --accent: #2563eb;
+            --accent-dark: #1d4ed8;
             --bg: #f8fafc;
             --card-bg: #ffffff;
             --text: #0f172a;
@@ -16,7 +18,7 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 2rem 1rem; }
+        body { background-color: var(--bg); color: var(--text); padding: 2rem 1rem 6rem 1rem; }
 
         .header { text-align: center; margin-bottom: 2rem; }
         .header h1 { font-size: 1.8rem; color: var(--text); margin-bottom: 0.5rem; }
@@ -42,14 +44,15 @@
         .img-container { 
             width: 100%; 
             height: 180px; 
-            background-color: #f1f5f9; 
+            background-color: #ffffff; 
             display: flex; 
             align-items: center; 
             justify-content: center;
             border-bottom: 1px solid var(--border);
+            padding: 8px;
         }
 
-        .img-container img { width: 100%; height: 100%; object-fit: cover; }
+        .img-container img { width: 100%; height: 100%; object-fit: contain; }
 
         .card-body { padding: 1rem; flex-grow: 1; }
         .badge { background: #e0e7ff; color: #3730a3; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 9999px; display: inline-block; }
@@ -60,26 +63,86 @@
             border-top: 1px solid var(--border); 
             background: #fafafa; 
             display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .code-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .code { font-family: monospace; background: #e2e8f0; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.8rem; color: #475569; font-weight: 600; }
         
-        .btn-wa { 
-            background-color: var(--primary);
-            color: #ffffff;
-            font-weight: 600; 
-            text-decoration: none; 
-            font-size: 0.85rem; 
-            padding: 0.4rem 0.7rem;
-            border-radius: 6px;
-            transition: background 0.2s;
-            display: inline-flex;
+        .qty-controls {
+            display: flex;
             align-items: center;
             gap: 4px;
         }
 
+        .btn-qty {
+            background: #e2e8f0;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #334155;
+        }
+        .btn-qty:hover { background: #cbd5e1; }
+
+        .input-qty {
+            width: 38px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px;
+            font-size: 0.85rem;
+        }
+
+        .actions-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-add {
+            flex: 1;
+            background-color: var(--accent);
+            color: #ffffff;
+            font-weight: 600;
+            border: none;
+            font-size: 0.8rem;
+            padding: 0.5rem 0.4rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .btn-add:hover { background-color: var(--accent-dark); }
+
+        .btn-wa { 
+            flex: 1;
+            background-color: var(--primary);
+            color: #ffffff;
+            font-weight: 600; 
+            text-decoration: none; 
+            font-size: 0.8rem; 
+            padding: 0.5rem 0.4rem;
+            border-radius: 6px;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+        }
         .btn-wa:hover { background-color: var(--primary-dark); }
 
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 2.5rem; }
@@ -98,13 +161,58 @@
             color: #ffffff;
             border-color: var(--primary-dark);
         }
+
+        /* Barra do Carrinho Flutuante no Rodapé */
+        .cart-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border-top: 2px solid var(--primary);
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .cart-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cart-count-badge {
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.9rem;
+        }
+
+        .btn-cart-wa {
+            background-color: var(--primary);
+            color: #ffffff;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+        .btn-cart-wa:hover { background-color: var(--primary-dark); }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>Distribuidora Frazão — Setor de Higiene</h1>
-        <p>Catálogo com links diretos de imagens da internet</p>
+        <p>Selecione os produtos e solicite sua cotação diretamente via WhatsApp</p>
     </div>
 
     <div class="container">
@@ -112,44 +220,115 @@
         <div id="pagination" class="pagination"></div>
     </div>
 
+    <!-- Barra de Carrinho Flutuante -->
+    <div id="cart-bar" class="cart-bar" style="display: none;">
+        <div class="cart-info">
+            <span class="cart-count-badge" id="cart-count">0</span>
+            <span style="font-weight: 600;">item(ns) na cotação</span>
+        </div>
+        <a id="btn-cotar-lista" href="#" target="_blank" class="btn-cart-wa">
+            📲 Enviar Cotação Geral no WhatsApp
+        </a>
+    </div>
+
     <script>
-        // COLE O LINK DA IMAGEM COPIADO DA INTERNET ENTRE AS ASPAS DE "imagem"
+        const WHATSAPP_NUMERO = "5521968659086";
+
         const produtos = [
             {"id": "HIG-001", "nome": "Absorvente Intimus Gel", "categoria": "Higiene Feminina", "imagem": "https://alexfarma.vteximg.com.br/arquivos/ids/157682-1000-1000/ABS-INTIMUS-GEL-COM-ABAS-SUAVE-8UND-min.jpg?v=637959040915400000"},
-            {"id": "HIG-002", "nome": "Acetona Bruna", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-003", "nome": "Acetona Farmax", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-004", "nome": "Água Oxigenada Márcia 30 Vol", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-005", "nome": "Água Oxigenada Márcia 40 Vol", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-006", "nome": "Algodão Apolo", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-007", "nome": "Algodão Nathy", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-008", "nome": "Amônia Radar", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-009", "nome": "Aparelho Prestobarba", "categoria": "Barbeamento", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-010", "nome": "Aparelho Probak", "categoria": "Barbeamento", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-011", "nome": "Chupeta Silicone", "categoria": "Infantil", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-012", "nome": "Cortador de Unha Pequeno", "categoria": "Acessórios", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-013", "nome": "Cortador de Unha Grande", "categoria": "Acessórios", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-014", "nome": "Cotonetes Nathy", "categoria": "Higiene Pessoal", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-015", "nome": "Creme Dental Oral-B", "categoria": "Higiene Bucal", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-016", "nome": "Band-Aid", "categoria": "Primeiros Socorros", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-017", "nome": "Descolorante Márcia", "categoria": "Cuidados Pessoais", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-018", "nome": "Desodorante Leite de Rosas", "categoria": "Perfumaria", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-019", "nome": "Escova de Dente Condor", "categoria": "Higiene Bucal", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-020", "nome": "Escova Pata-Pata", "categoria": "Acessórios", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-021", "nome": "Lâmina Lord", "categoria": "Barbeamento", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-022", "nome": "Lâmina Super Maxi", "categoria": "Barbeamento", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-023", "nome": "Lâmina Wilkinson", "categoria": "Barbeamento", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-024", "nome": "Papel Higiênico Belisoft Gold", "categoria": "Papelaria & Higiene", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-025", "nome": "Papel Higiênico Silver", "categoria": "Papelaria & Higiene", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-026", "nome": "Pente Carioca", "categoria": "Acessórios", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-027", "nome": "Pente CP Luxo", "categoria": "Acessórios", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-028", "nome": "Pinça Merheje", "categoria": "Acessórios", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-029", "nome": "Rala Calo Plástico", "categoria": "Acessórios", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-030", "nome": "Sabonete Francis", "categoria": "Sabonetes", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "HIG-031", "nome": "Sabonete Lux", "categoria": "Sabonetes", "imagem": "COLE_O_LINK_AQUI"}
+            {"id": "HIG-002", "nome": "Acetona Bruna", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/51fH0b55TdL._AC_SX679_.jpg"},
+            {"id": "HIG-003", "nome": "Acetona Farmax", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/61k1jY-8G8L._AC_SL1000_.jpg"},
+            {"id": "HIG-004", "nome": "Água Oxigenada Márcia 30 Vol", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/61WvQeM9OML._AC_SL1200_.jpg"},
+            {"id": "HIG-005", "nome": "Água Oxigenada Márcia 40 Vol", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/61J6I9V4T1L._AC_SL1200_.jpg"},
+            {"id": "HIG-006", "nome": "Algodão Apolo", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/61f4+aR5DUL._AC_SL1000_.jpg"},
+            {"id": "HIG-007", "nome": "Algodão Nathy", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/61I2aYpB6+L._AC_SL1000_.jpg"},
+            {"id": "HIG-008", "nome": "Amônia Radar", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/51rY0o5dDmL._AC_SL1000_.jpg"},
+            {"id": "HIG-009", "nome": "Aparelho Prestobarba", "categoria": "Barbeamento", "imagem": "https://m.media-amazon.com/images/I/71I2wI2g3+L._AC_SL1500_.jpg"},
+            {"id": "HIG-010", "nome": "Aparelho Probak", "categoria": "Barbeamento", "imagem": "https://m.media-amazon.com/images/I/71R3J1z9S1L._AC_SL1500_.jpg"},
+            {"id": "HIG-011", "nome": "Chupeta Silicone", "categoria": "Infantil", "imagem": "https://m.media-amazon.com/images/I/61x8E-3gLgL._AC_SL1000_.jpg"},
+            {"id": "HIG-012", "nome": "Cortador de Unha Pequeno", "categoria": "Acessórios", "imagem": "https://m.media-amazon.com/images/I/51L83zR+xNL._AC_SL1000_.jpg"},
+            {"id": "HIG-013", "nome": "Cortador de Unha Grande", "categoria": "Acessórios", "imagem": "https://m.media-amazon.com/images/I/51M3vT9yG2L._AC_SL1000_.jpg"},
+            {"id": "HIG-014", "nome": "Cotonetes Nathy", "categoria": "Higiene Pessoal", "imagem": "https://m.media-amazon.com/images/I/61V+hT4o2XL._AC_SL1000_.jpg"},
+            {"id": "HIG-015", "nome": "Creme Dental Oral-B", "categoria": "Higiene Bucal", "imagem": "https://m.media-amazon.com/images/I/61U0T4IeO8L._AC_SL1500_.jpg"},
+            {"id": "HIG-016", "nome": "Band-Aid", "categoria": "Primeiros Socorros", "imagem": "https://m.media-amazon.com/images/I/71O6R5+G1TL._AC_SL1500_.jpg"},
+            {"id": "HIG-017", "nome": "Descolorante Márcia", "categoria": "Cuidados Pessoais", "imagem": "https://m.media-amazon.com/images/I/61D4xOa3u8L._AC_SL1200_.jpg"},
+            {"id": "HIG-018", "nome": "Desodorante Leite de Rosas", "categoria": "Perfumaria", "imagem": "https://m.media-amazon.com/images/I/61fI3w4c3HL._AC_SL1000_.jpg"},
+            {"id": "HIG-019", "nome": "Escova de Dente Condor", "categoria": "Higiene Bucal", "imagem": "https://m.media-amazon.com/images/I/61Y7a3T8T3L._AC_SL1000_.jpg"},
+            {"id": "HIG-020", "nome": "Escova Pata-Pata", "categoria": "Acessórios", "imagem": "https://m.media-amazon.com/images/I/51V1E9t5pXL._AC_SL1000_.jpg"},
+            {"id": "HIG-021", "nome": "Lâmina Lord", "categoria": "Barbeamento", "imagem": "https://m.media-amazon.com/images/I/61v3Z8K3S0L._AC_SL1000_.jpg"},
+            {"id": "HIG-022", "nome": "Lâmina Super Maxi", "categoria": "Barbeamento", "imagem": "https://m.media-amazon.com/images/I/61I2e-Xf44L._AC_SL1000_.jpg"},
+            {"id": "HIG-023", "nome": "Lâmina Wilkinson", "categoria": "Barbeamento", "imagem": "https://m.media-amazon.com/images/I/71Yv3P0pGTL._AC_SL1500_.jpg"},
+            {"id": "HIG-024", "nome": "Papel Higiênico Belisoft Gold", "categoria": "Papelaria & Higiene", "imagem": "https://m.media-amazon.com/images/I/71k4d2X2cUL._AC_SL1000_.jpg"},
+            {"id": "HIG-025", "nome": "Papel Higiênico Silver", "categoria": "Papelaria & Higiene", "imagem": "https://m.media-amazon.com/images/I/71x5yY5zXUL._AC_SL1000_.jpg"},
+            {"id": "HIG-026", "nome": "Pente Carioca", "categoria": "Acessórios", "imagem": "https://m.media-amazon.com/images/I/51r2z1X3dSL._AC_SL1000_.jpg"},
+            {"id": "HIG-027", "nome": "Pente CP Luxo", "categoria": "Acessórios", "imagem": "https://m.media-amazon.com/images/I/51R1r3Y5eSL._AC_SL1000_.jpg"},
+            {"id": "HIG-028", "nome": "Pinça Merheje", "categoria": "Acessórios", "imagem": "https://m.media-amazon.com/images/I/51N2w4Y3sSL._AC_SL1000_.jpg"},
+            {"id": "HIG-029", "nome": "Rala Calo Plástico", "categoria": "Acessórios", "imagem": "https://m.media-amazon.com/images/I/51W3x2Y1rSL._AC_SL1000_.jpg"},
+            {"id": "HIG-030", "nome": "Sabonete Francis", "categoria": "Sabonetes", "imagem": "https://m.media-amazon.com/images/I/61U4e5Z7S8L._AC_SL1000_.jpg"},
+            {"id": "HIG-031", "nome": "Sabonete Lux", "categoria": "Sabonetes", "imagem": "https://m.media-amazon.com/images/I/61Y2e5R3S8L._AC_SL1000_.jpg"}
         ];
 
         const itensPorPagina = 10;
         let paginaAtual = 1;
+        let carrinho = {};
+
+        function alterarQtdInput(id, delta) {
+            const input = document.getElementById(`qtd-${id}`);
+            if (input) {
+                let val = parseInt(input.value) || 1;
+                val = Math.max(1, val + delta);
+                input.value = val;
+            }
+        }
+
+        function adicionarAoCarrinho(id) {
+            const prod = produtos.find(p => p.id === id);
+            const input = document.getElementById(`qtd-${id}`);
+            const qtd = parseInt(input ? input.value : 1) || 1;
+
+            if (carrinho[id]) {
+                carrinho[id].qtd += qtd;
+            } else {
+                carrinho[id] = { prod, qtd };
+            }
+
+            atualizarBarraCarrinho();
+            alert(`Adicionado: ${qtd}x ${prod.nome} à lista de cotação!`);
+        }
+
+        function atualizarBarraCarrinho() {
+            const keys = Object.keys(carrinho);
+            const cartBar = document.getElementById('cart-bar');
+            const cartCount = document.getElementById('cart-count');
+            const btnCotarLista = document.getElementById('btn-cotar-lista');
+
+            let totalItens = 0;
+            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes itens:\n\n";
+
+            keys.forEach(key => {
+                const item = carrinho[key];
+                totalItens += item.qtd;
+                mensagem += `• ${item.prod.nome} (${item.prod.id}) - Qtd: ${item.qtd}\n`;
+            });
+
+            if (keys.length > 0) {
+                cartCount.innerText = totalItens;
+                cartBar.style.display = 'flex';
+                btnCotarLista.href = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensagem)}`;
+            } else {
+                cartBar.style.display = 'none';
+            }
+        }
+
+        function cotarIndividual(id) {
+            const prod = produtos.find(p => p.id === id);
+            const input = document.getElementById(`qtd-${id}`);
+            const qtd = parseInt(input ? input.value : 1) || 1;
+            
+            const mensagem = `Olá! Gostaria de cotar o produto:\n• ${prod.nome} (${prod.id}) - Qtd: ${qtd}`;
+            const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensagem)}`;
+            window.open(url, '_blank');
+        }
 
         function renderizarProdutos(pagina) {
             const grid = document.getElementById('product-grid');
@@ -163,7 +342,6 @@
                 const card = document.createElement('div');
                 card.className = 'card';
                 
-                // O src abaixo carrega o link direto que você colou no array "imagem"
                 card.innerHTML = `
                     <div class="img-container">
                         <img src="${prod.imagem}" alt="${prod.nome}" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
@@ -173,8 +351,18 @@
                         <h3 class="card-title">${prod.nome}</h3>
                     </div>
                     <div class="card-footer">
-                        <span class="code">${prod.id}</span>
-                        <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20${encodeURIComponent(prod.nome)}%20(${prod.id})" target="_blank" class="btn-wa">📲 Cotar</a>
+                        <div class="code-row">
+                            <span class="code">${prod.id}</span>
+                            <div class="qty-controls">
+                                <button class="btn-qty" onclick="alterarQtdInput('${prod.id}', -1)">-</button>
+                                <input type="number" id="qtd-${prod.id}" class="input-qty" value="1" min="1">
+                                <button class="btn-qty" onclick="alterarQtdInput('${prod.id}', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="actions-row">
+                            <button onclick="adicionarAoCarrinho('${prod.id}')" class="btn-add">➕ Adicionar</button>
+                            <button onclick="cotarIndividual('${prod.id}')" class="btn-wa">📲 Cotar</button>
+                        </div>
                     </div>
                 `;
                 grid.appendChild(card);

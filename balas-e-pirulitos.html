@@ -68,6 +68,7 @@
             font-size: 13px;
             font-weight: 600;
             transition: background-color 0.2s;
+            cursor: pointer;
         }
         .btn-whatsapp:hover { background-color: #128c7e; }
         
@@ -92,6 +93,7 @@
         <div class="grid-4-colunas">
             
             <div class="produto-card" data-nome="AZEDINHA MORANGO">
+                <!-- Para alterar a imagem, cole o link direto da imagem no atributo src -->
                 <img src="https://tse3.mm.bing.net/th/id/OIP.lNfk8QyHziOKGLJoSIvLigHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="AZEDINHA MORANGO">
                 <h3>AZEDINHA MORANGO</h3>
                 <div class="qtd-container">
@@ -100,7 +102,7 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('AZEDINHA MORANGO', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20AZEDINHA%20MORANGO" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('AZEDINHA MORANGO', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
@@ -113,12 +115,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('AZEDINHA UVA', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20AZEDINHA%20UVA" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('AZEDINHA UVA', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="AZEDINHA YOGURT">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="AZEDINHA YOGURT">
+                <img src="https://via.placeholder.com/150?text=Azedinha+Yogurt" alt="AZEDINHA YOGURT">
                 <h3>AZEDINHA YOGURT</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -126,12 +128,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('AZEDINHA YOGURT', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20AZEDINHA%20YOGURT" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('AZEDINHA YOGURT', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA 7 BELO">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA 7 BELO">
+                <img src="https://via.placeholder.com/150?text=Bala+7+Belo" alt="BALA 7 BELO">
                 <h3>BALA 7 BELO</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -139,12 +141,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA 7 BELO', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%207%20BELO" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA 7 BELO', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA AZEDINHA MELANCIA">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA AZEDINHA MELANCIA">
+                <img src="https://via.placeholder.com/150?text=Bala+Azedinha+Melancia" alt="BALA AZEDINHA MELANCIA">
                 <h3>BALA AZEDINHA MELANCIA</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -152,12 +154,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA AZEDINHA MELANCIA', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20AZEDINHA%20MELANCIA" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA AZEDINHA MELANCIA', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA BERBAUSOFT">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA BERBAUSOFT">
+                <img src="https://via.placeholder.com/150?text=Bala+Berbausoft" alt="BALA BERBAUSOFT">
                 <h3>BALA BERBAUSOFT</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -165,12 +167,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA BERBAUSOFT', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20BERBAUSOFT" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA BERBAUSOFT', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA BOLETE">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA BOLETE">
+                <img src="https://via.placeholder.com/150?text=Bala+Bolete" alt="BALA BOLETE">
                 <h3>BALA BOLETE</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -178,12 +180,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA BOLETE', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20BOLETE" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA BOLETE', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA DE BANANA">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA DE BANANA">
+                <img src="https://via.placeholder.com/150?text=Bala+de+Banana" alt="BALA DE BANANA">
                 <h3>BALA DE BANANA</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -191,12 +193,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA DE BANANA', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20DE%20BANANA" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA DE BANANA', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA DE CAFÉ">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA DE CAFÉ">
+                <img src="https://via.placeholder.com/150?text=Bala+de+Cafe" alt="BALA DE CAFÉ">
                 <h3>BALA DE CAFÉ</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -204,12 +206,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA DE CAFÉ', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20DE%20CAFÉ" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA DE CAFÉ', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA DE COCO">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA DE COCO">
+                <img src="https://via.placeholder.com/150?text=Bala+de+Coco" alt="BALA DE COCO">
                 <h3>BALA DE COCO</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -217,12 +219,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA DE COCO', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20DE%20COCO" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA DE COCO', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA DORI MEL">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA DORI MEL">
+                <img src="https://via.placeholder.com/150?text=Bala+Dori+Mel" alt="BALA DORI MEL">
                 <h3>BALA DORI MEL</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -230,12 +232,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA DORI MEL', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20DORI%20MEL" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA DORI MEL', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA ERVA CIDREIRA">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA ERVA CIDREIRA">
+                <img src="https://via.placeholder.com/150?text=Bala+Erva+Cidreira" alt="BALA ERVA CIDREIRA">
                 <h3>BALA ERVA CIDREIRA</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -243,12 +245,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA ERVA CIDREIRA', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20ERVA%20CIDREIRA" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA ERVA CIDREIRA', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA FRUTSY">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA FRUTSY">
+                <img src="https://via.placeholder.com/150?text=Bala+Frutsy" alt="BALA FRUTSY">
                 <h3>BALA FRUTSY</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -256,12 +258,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA FRUTSY', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20FRUTSY" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA FRUTSY', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA HORTELÃ">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA HORTELÃ">
+                <img src="https://via.placeholder.com/150?text=Bala+Hortela" alt="BALA HORTELÃ">
                 <h3>BALA HORTELÃ</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -269,12 +271,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA HORTELÃ', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20HORTELÃ" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA HORTELÃ', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA JUQUINHA">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA JUQUINHA">
+                <img src="https://via.placeholder.com/150?text=Bala+Juquinha" alt="BALA JUQUINHA">
                 <h3>BALA JUQUINHA</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -282,12 +284,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA JUQUINHA', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20JUQUINHA" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA JUQUINHA', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA JUQUINHA SORTIDA">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA JUQUINHA SORTIDA">
+                <img src="https://via.placeholder.com/150?text=Juquinha+Sortida" alt="BALA JUQUINHA SORTIDA">
                 <h3>BALA JUQUINHA SORTIDA</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -295,12 +297,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA JUQUINHA SORTIDA', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20JUQUINHA%20SORTIDA" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA JUQUINHA SORTIDA', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA LUA CHEIA">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA LUA CHEIA">
+                <img src="https://via.placeholder.com/150?text=Bala+Lua+Cheia" alt="BALA LUA CHEIA">
                 <h3>BALA LUA CHEIA</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -308,12 +310,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA LUA CHEIA', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20LUA%20CHEIA" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA LUA CHEIA', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA MAÇÃ VERDE">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA MAÇÃ VERDE">
+                <img src="https://via.placeholder.com/150?text=Bala+Maca+Verde" alt="BALA MAÇÃ VERDE">
                 <h3>BALA MAÇÃ VERDE</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -321,12 +323,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA MAÇÃ VERDE', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20MAÇÃ%20VERDE" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA MAÇÃ VERDE', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA MEL E GENGIBRE">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA MEL E GENGIBRE">
+                <img src="https://via.placeholder.com/150?text=Mel+e+Gengibre" alt="BALA MEL E GENGIBRE">
                 <h3>BALA MEL E GENGIBRE</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -334,12 +336,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA MEL E GENGIBRE', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20MEL%20E%20GENGIBRE" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA MEL E GENGIBRE', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA MILHO VERDE">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA MILHO VERDE">
+                <img src="https://via.placeholder.com/150?text=Bala+Milho+Verde" alt="BALA MILHO VERDE">
                 <h3>BALA MILHO VERDE</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -347,12 +349,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA MILHO VERDE', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20MILHO%20VERDE" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA MILHO VERDE', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA MORANGUINHO">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA MORANGUINHO">
+                <img src="https://via.placeholder.com/150?text=Bala+Moranguinho" alt="BALA MORANGUINHO">
                 <h3>BALA MORANGUINHO</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -360,12 +362,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA MORANGUINHO', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20MORANGUINHO" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA MORANGUINHO', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA PAÇOQUITA">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA PAÇOQUITA">
+                <img src="https://via.placeholder.com/150?text=Bala+Pacoquita" alt="BALA PAÇOQUITA">
                 <h3>BALA PAÇOQUITA</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -373,12 +375,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA PAÇOQUITA', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20PAÇOQUITA" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA PAÇOQUITA', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA SORTIDA">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA SORTIDA">
+                <img src="https://via.placeholder.com/150?text=Bala+Sortida" alt="BALA SORTIDA">
                 <h3>BALA SORTIDA</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -386,12 +388,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA SORTIDA', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20SORTIDA" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA SORTIDA', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA TAMARINDO">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA TAMARINDO">
+                <img src="https://via.placeholder.com/150?text=Bala+Tamarindo" alt="BALA TAMARINDO">
                 <h3>BALA TAMARINDO</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -399,12 +401,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA TAMARINDO', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20TAMARINDO" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA TAMARINDO', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA TOFFEE CHOCOLATE">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA TOFFEE CHOCOLATE">
+                <img src="https://via.placeholder.com/150?text=Toffee+Chocolate" alt="BALA TOFFEE CHOCOLATE">
                 <h3>BALA TOFFEE CHOCOLATE</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -412,12 +414,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA TOFFEE CHOCOLATE', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20TOFFEE%20CHOCOLATE" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA TOFFEE CHOCOLATE', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="BALA YOGURT">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="BALA YOGURT">
+                <img src="https://via.placeholder.com/150?text=Bala+Yogurt" alt="BALA YOGURT">
                 <h3>BALA YOGURT</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -425,12 +427,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA YOGURT', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20BALA%20YOGURT" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA YOGURT', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="CARAMELO EMBARÉ">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="CARAMELO EMBARÉ">
+                <img src="https://via.placeholder.com/150?text=Caramelo+Embare" alt="CARAMELO EMBARÉ">
                 <h3>CARAMELO EMBARÉ</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -438,12 +440,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('CARAMELO EMBARÉ', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20CARAMELO%20EMBARÉ" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('CARAMELO EMBARÉ', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="GAMADINHO">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="GAMADINHO">
+                <img src="https://via.placeholder.com/150?text=Gamadinho" alt="GAMADINHO">
                 <h3>GAMADINHO</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -451,12 +453,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('GAMADINHO', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20GAMADINHO" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('GAMADINHO', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="TOFFEE COCO">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="TOFFEE COCO">
+                <img src="https://via.placeholder.com/150?text=Toffee+Coco" alt="TOFFEE COCO">
                 <h3>TOFFEE COCO</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -464,12 +466,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('TOFFEE COCO', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20TOFFEE%20COCO" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('TOFFEE COCO', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="TOFFEE LEITE">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="TOFFEE LEITE">
+                <img src="https://via.placeholder.com/150?text=Toffee+Leite" alt="TOFFEE LEITE">
                 <h3>TOFFEE LEITE</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -477,12 +479,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('TOFFEE LEITE', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20TOFFEE%20LEITE" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('TOFFEE LEITE', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="TOFFEE MARACUJA">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="TOFFEE MARACUJA">
+                <img src="https://via.placeholder.com/150?text=Toffee+Maracuja" alt="TOFFEE MARACUJA">
                 <h3>TOFFEE MARACUJA</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -490,7 +492,7 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('TOFFEE MARACUJA', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20TOFFEE%20MARACUJA" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('TOFFEE MARACUJA', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
@@ -501,7 +503,7 @@
         <div class="grid-4-colunas">
 
             <div class="produto-card" data-nome="PIRULITO BLONG AZUL">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO BLONG AZUL">
+                <img src="https://via.placeholder.com/150?text=Blong+Azul" alt="PIRULITO BLONG AZUL">
                 <h3>PIRULITO BLONG AZUL</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -509,12 +511,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PIRULITO BLONG AZUL', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20BLONG%20AZUL" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('PIRULITO BLONG AZUL', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="PIRULITO BLONG MELANCIA">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO BLONG MELANCIA">
+                <img src="https://via.placeholder.com/150?text=Blong+Melancia" alt="PIRULITO BLONG MELANCIA">
                 <h3>PIRULITO BLONG MELANCIA</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -522,12 +524,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PIRULITO BLONG MELANCIA', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20BLONG%20MELANCIA" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('PIRULITO BLONG MELANCIA', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="PIRULITO BLONG MORANGO">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO BLONG MORANGO">
+                <img src="https://via.placeholder.com/150?text=Blong+Morango" alt="PIRULITO BLONG MORANGO">
                 <h3>PIRULITO BLONG MORANGO</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -535,12 +537,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PIRULITO BLONG MORANGO', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20BLONG%20MORANGO" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('PIRULITO BLONG MORANGO', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="PIRULITO BLONG PRETO">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO BLONG PRETO">
+                <img src="https://via.placeholder.com/150?text=Blong+Preto" alt="PIRULITO BLONG PRETO">
                 <h3>PIRULITO BLONG PRETO</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -548,12 +550,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PIRULITO BLONG PRETO', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20BLONG%20PRETO" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('PIRULITO BLONG PRETO', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="PIRULITO BLONG TUTTI">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO BLONG TUTTI">
+                <img src="https://via.placeholder.com/150?text=Blong+Tutti" alt="PIRULITO BLONG TUTTI">
                 <h3>PIRULITO BLONG TUTTI</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -561,12 +563,12 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PIRULITO BLONG TUTTI', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20BLONG%20TUTTI" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('PIRULITO BLONG TUTTI', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
             <div class="produto-card" data-nome="PIRULITO BLONG UVA">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO BLONG UVA">
+                <img src="https://via.placeholder.com/150?text=Blong+Uva" alt="PIRULITO BLONG UVA">
                 <h3>PIRULITO BLONG UVA</h3>
                 <div class="qtd-container">
                     <label>Qtd:</label>
@@ -574,131 +576,34 @@
                 </div>
                 <div class="acoes-card">
                     <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PIRULITO BLONG UVA', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20BLONG%20UVA" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
-                </div>
-            </div>
-
-            <div class="produto-card" data-nome="PIRULITO CH. POP MORANGO">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO CH. POP MORANGO">
-                <h3>PIRULITO CH. POP MORANGO</h3>
-                <div class="qtd-container">
-                    <label>Qtd:</label>
-                    <input type="number" value="1" min="1" class="input-qtd">
-                </div>
-                <div class="acoes-card">
-                    <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PIRULITO CH. POP MORANGO', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20CH.%20POP%20MORANGO" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
-                </div>
-            </div>
-
-            <div class="produto-card" data-nome="PIRULITO CHERRY POP">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO CHERRY POP">
-                <h3>PIRULITO CHERRY POP</h3>
-                <div class="qtd-container">
-                    <label>Qtd:</label>
-                    <input type="number" value="1" min="1" class="input-qtd">
-                </div>
-                <div class="acoes-card">
-                    <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PIRULITO CHERRY POP', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20CHERRY%20POP" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
-                </div>
-            </div>
-
-            <div class="produto-card" data-nome="PIRULITO FLORESCAL CORAÇÃO VERMELHO">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO FLORESCAL CORAÇÃO VERMELHO">
-                <h3>PIRULITO FLORESCAL CORAÇÃO VERMELHO</h3>
-                <div class="qtd-container">
-                    <label>Qtd:</label>
-                    <input type="number" value="1" min="1" class="input-qtd">
-                </div>
-                <div class="acoes-card">
-                    <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PIRULITO FLORESCAL CORAÇÃO VERMELHO', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20FLORESCAL%20CORAÇÃO%20VERMELHO" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
-                </div>
-            </div>
-
-            <div class="produto-card" data-nome="PIRULITO FLORESTAL CORAÇÃO COLORIDO">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO FLORESTAL CORAÇÃO COLORIDO">
-                <h3>PIRULITO FLORESTAL CORAÇÃO COLORIDO</h3>
-                <div class="qtd-container">
-                    <label>Qtd:</label>
-                    <input type="number" value="1" min="1" class="input-qtd">
-                </div>
-                <div class="acoes-card">
-                    <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PIRULITO FLORESTAL CORAÇÃO COLORIDO', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20FLORESTAL%20CORAÇÃO%20COLORIDO" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
-                </div>
-            </div>
-
-            <div class="produto-card" data-nome="PIRULITO MAÇÃ AMOR">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO MAÇÃ AMOR">
-                <h3>PIRULITO MAÇÃ AMOR</h3>
-                <div class="qtd-container">
-                    <label>Qtd:</label>
-                    <input type="number" value="1" min="1" class="input-qtd">
-                </div>
-                <div class="acoes-card">
-                    <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PIRULITO MAÇÃ AMOR', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20MAÇÃ%20AMOR" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
-                </div>
-            </div>
-
-            <div class="produto-card" data-nome="PIRULITO POP KISS">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO POP KISS">
-                <h3>PIRULITO POP KISS</h3>
-                <div class="qtd-container">
-                    <label>Qtd:</label>
-                    <input type="number" value="1" min="1" class="input-qtd">
-                </div>
-                <div class="acoes-card">
-                    <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PIRULITO POP KISS', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20POP%20KISS" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
-                </div>
-            </div>
-
-            <div class="produto-card" data-nome="PIRULITO UVA DO AMOR">
-                <img src="LINK_DA_IMAGEM_AQUI" alt="PIRULITO UVA DO AMOR">
-                <h3>PIRULITO UVA DO AMOR</h3>
-                <div class="qtd-container">
-                    <label>Qtd:</label>
-                    <input type="number" value="1" min="1" class="input-qtd">
-                </div>
-                <div class="acoes-card">
-                    <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PIRULITO UVA DO AMOR', this)">Adicionar ao Carrinho</button>
-                    <a href="https://wa.me/5521968659086?text=Olá!%20Gostaria%20de%20cotar%20preço%20do%20produto:%20PIRULITO%20UVA%20DO%20AMOR" target="_blank" class="btn-whatsapp">Cotar no WhatsApp</a>
+                    <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('PIRULITO BLONG UVA', this)">Cotar no WhatsApp</button>
                 </div>
             </div>
 
         </div>
-
     </main>
 
-    <footer>
-        <div class="footer-links">
-            <a href="politica-privacidade.html">Política de Privacidade</a> |
-            <a href="regras-de-uso.html">Regras de Uso</a> |
-            <a href="politica-devolucao.html">Política de Devolução</a>
-        </div>
-        <p>&copy; 2026 Distribuidora Frazão.</p>
-    </footer>
-
     <script>
+        // Função para cotar direto no WhatsApp incluindo a quantidade informada pelo cliente
+        function cotarWhatsapp(nomeProduto, elemento) {
+            const card = elemento.closest('.produto-card');
+            const quantidade = card.querySelector('.input-qtd').value || 1;
+            const telefone = "5521968659086";
+            
+            const mensagem = `Olá! Gostaria de cotar o produto: ${nomeProduto} (Quantidade: ${quantidade})`;
+            const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
+            
+            window.open(url, '_blank');
+        }
+
+        // Função para o botão do carrinho local
         function adicionarAoCarrinho(nomeProduto, elemento) {
             const card = elemento.closest('.produto-card');
-            const quantidade = card.querySelector('.input-qtd').value;
+            const quantidade = card.querySelector('.input-qtd').value || 1;
             
-            let carrinho = JSON.parse(localStorage.getItem('carrinhoFrazao')) || [];
-            
-            const itemExistente = carrinho.find(item => item.nome === nomeProduto);
-            if (itemExistente) {
-                itemExistente.quantidade = parseInt(itemExistente.quantidade) + parseInt(quantidade);
-            } else {
-                carrinho.push({ nome: nomeProduto, quantidade: parseInt(quantidade) });
-            }
-            
-            localStorage.setItem('carrinhoFrazao', JSON.stringify(carrinho));
-            alert(quantidade + 'x "' + nomeProduto + '" adicionado(s) ao carrinho!');
+            alert(`Adicionado ao carrinho: ${quantidade}x ${nomeProduto}`);
         }
     </script>
+
 </body>
 </html>

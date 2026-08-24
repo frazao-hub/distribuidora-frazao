@@ -3,138 +3,510 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doces - Distribuidora Frazão</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Catálogo de Doces em Geral</title>
+    <style>
+        :root {
+            --primary-color: #d32f2f;
+            --accent-color: #f57c00;
+            --whatsapp-color: #25d366;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px 10px 100px 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 6px;
+        }
+
+        header p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        /* Barra de Pesquisa */
+        .search-box {
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-box input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(211, 47, 47, 0.2);
+        }
+
+        /* Contador */
+        .products-count {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Grid do Catálogo em 4 Colunas */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        /* Adaptabilidade para Telas Menores */
+        @media (max-width: 992px) {
+            .products-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .product-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #eee;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Banner ilustrativo para o catálogo */
+        .product-thumb {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color);
+            font-size: 2.5rem;
+        }
+
+        .product-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .product-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 15px;
+            text-transform: capitalize;
+            min-height: 2.8em;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-add {
+            background-color: #f0f0f0;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            flex: 1;
+        }
+
+        .btn-add:hover {
+            background-color: #e0e0e0;
+        }
+
+        .btn-add.added {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .btn-direct-quote {
+            background-color: var(--whatsapp-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            flex: 1;
+        }
+
+        .btn-direct-quote:hover {
+            background-color: #1eb954;
+        }
+
+        /* Controle de Paginação */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 35px;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover {
+            background-color: #eee;
+        }
+
+        .page-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Barra Flutuante */
+        .cart-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .cart-info {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .btn-whatsapp-cart {
+            background-color: var(--whatsapp-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-whatsapp-cart:hover {
+            background-color: #1eb954;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: #888;
+            font-size: 1.1rem;
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
-    <header class="topo-interna">
-        <h1>Doces - Distribuidora Frazão</h1>
-        <a href="index.html" class="btn-voltar">&larr; Voltar para a Página Inicial</a>
+<div class="container">
+    <header>
+        <h1>Catálogo de Doces em Geral</h1>
+        <p>Navegue pelas páginas, adicione itens à cotação ou fale direto no WhatsApp.</p>
     </header>
 
-    <main class="container-produtos">
-        
-        <div class="grid-4-colunas">
-            <div class="produto-card"><h3>BANANINHA CREMOSA FAMOSO C/24</h3></div>
-            <div class="produto-card"><h3>BATATA OND. DEORA 30G ORIGINAL C/20</h3></div>
-            <div class="produto-card"><h3>BATON BRANCO C/ 30</h3></div>
-            <div class="produto-card"><h3>BATON PRETO C/30</h3></div>
-            <div class="produto-card"><h3>BIS AO LEITE 1UNX X 100,8</h3></div>
-            <div class="produto-card"><h3>BOMBOM SERENATA 1KG</h3></div>
-            <div class="produto-card"><h3>CAJUZINHO DA ALEGRIA C/20</h3></div>
-            <div class="produto-card"><h3>CH. ADAMS HORTELA C/100</h3></div>
-            <div class="produto-card"><h3>CHOCOLATE AO LEITE HERSEYS 18X20</h3></div>
-            <div class="produto-card"><h3>CHOKITO C/30</h3></div>
-            <div class="produto-card"><h3>CHUPÃO BIBA C/50 1,5KG</h3></div>
-            <div class="produto-card"><h3>CHUPÃO SOUVENIR C/50</h3></div>
-            <div class="produto-card"><h3>COCADA PINGADA BRANCA AURORA C/20</h3></div>
-            <div class="produto-card"><h3>COCADA PIRANGUÇU BRANCA C/20</h3></div>
-            <div class="produto-card"><h3>CROCK BARBECUE C/10</h3></div>
-            <div class="produto-card"><h3>CROKÍSSIMO C/36</h3></div>
-            <div class="produto-card"><h3>DISQUETI C/24</h3></div>
-            <div class="produto-card"><h3>DOCE DE ABOBORA AURORA C/20</h3></div>
-            <div class="produto-card"><h3>DOCE DE ABOBORA CORAÇÃO MISTO C/50</h3></div>
-            <div class="produto-card"><h3>DOCE DE ABOBORA RAPANUI C/20</h3></div>
-            <div class="produto-card"><h3>DOCE DE AMENDOIM CASEIRÃO 1,65KG C/30</h3></div>
-            <div class="produto-card"><h3>DOCE DE AMENDOIM FC GIBI 1,5 KG C/50</h3></div>
-            <div class="produto-card"><h3>DOCE DE AMENDOIM LISO AURORA C/20</h3></div>
-            <div class="produto-card"><h3>DOCE DE AMENDOIM MOLECÃO SANTA HELENA C/50</h3></div>
-            <div class="produto-card"><h3>DOCE DE AMENDOIM PÉ DE MOLEQUE AURORA C/20</h3></div>
-            <div class="produto-card"><h3>DOCE DE LEITE NINHO C/40</h3></div>
-            <div class="produto-card"><h3>DOCE DE LEITE PURO ALEGRIA C/20</h3></div>
-            <div class="produto-card"><h3>FAMOSO BEIJINHO C/ GOIABA C/21</h3></div>
-            <div class="produto-card"><h3>FAMOSO BEIJINHO DE COCO C/21</h3></div>
-            <div class="produto-card"><h3>FAMOSO BRIGADEIRO C/21</h3></div>
-            <div class="produto-card"><h3>FAMOSO LEITE C/ AMEIXA C/20</h3></div>
-            <div class="produto-card"><h3>FOFURAO CEBOLA 60G C/10</h3></div>
-            <div class="produto-card"><h3>FOFURAO CHURRASCO C/10</h3></div>
-            <div class="produto-card"><h3>FOFURAO PRESUNTO C/10</h3></div>
-            <div class="produto-card"><h3>FOFURAO QUEIJO 60G C/10</h3></div>
-            <div class="produto-card"><h3>GELADÃO C/20</h3></div>
-            <div class="produto-card"><h3>GELADINHO C/40</h3></div>
-            <div class="produto-card"><h3>GELEIA DE FRUTAS AURORA C/20</h3></div>
-            <div class="produto-card"><h3>GELEIA DE MOCOTO ALGACEL C/20</h3></div>
-            <div class="produto-card"><h3>GOMA DOCILE EUCALIPTO C/24</h3></div>
-            <div class="produto-card"><h3>GOMA DOCILE SORTIDA C/24</h3></div>
-            <div class="produto-card"><h3>GOMA FINI AMORA 15G C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI BANANA 15G C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI BEIJOS DE MORANGO 15G C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI DENTADURA 15G C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI MINHOCAS C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI MORANGO CITRICO 15G C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI MORANGO/LAR CITRUS C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI TUBES MORANGO NOVO 15G C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI TUBES PINTA LINGUA 15G C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI TUBES SORTIDO C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI TUBES TRES CORES 15G C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI TUBES TWISTER 15G C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI TUBES TWISTER ACIDO 15G C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI TUBES UVA C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI TUBES UVA CITRICO C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI TUTTI FRUTTI 15G C/12</h3></div>
-            <div class="produto-card"><h3>GOMA FINI URSINHO C/12</h3></div>
-            <div class="produto-card"><h3>GOMA TUBO DORI C/30</h3></div>
-            <div class="produto-card"><h3>GRELHADITOS C/30</h3></div>
-            <div class="produto-card"><h3>KERUS BACON 43G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS BACON 80G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS CALABRESA 43G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS CEBOLA E SALSA 43G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS CEBOLA E SALSA 80G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS CHEDDAR 43G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS CHEDDAR 80G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS CHURRASCO 43G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS CHURRASCO 80G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS PIZZA 43G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS PIZZA 80G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS PRESUNTO 43G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS PRESUNTO 80G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS QUEIJO BOLA 43G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS QUEIJO BOLA 80G C/10</h3></div>
-            <div class="produto-card"><h3>KERUS REQUEIJÃO 43G C/10</h3></div>
-            <div class="produto-card"><h3>MARIOLA AÇUCARADA INGRID C/50</h3></div>
-            <div class="produto-card"><h3>MARIOLA CAMPISTA AÇUCARADA C/50</h3></div>
-            <div class="produto-card"><h3>MARIOLA LISA C/50</h3></div>
-            <div class="produto-card"><h3>MARIOLA LISA CAMPISTA 2,5 KG C/50</h3></div>
-            <div class="produto-card"><h3>MARIOLA LISA CAMPISTA 3 KG C/50</h3></div>
-            <div class="produto-card"><h3>MENDORATO C/30</h3></div>
-            <div class="produto-card"><h3>NUCITA CHOCOLATE C/ AVELÃ C/48</h3></div>
-            <div class="produto-card"><h3>NUCITA POTE NAPOLITANO C/60</h3></div>
-            <div class="produto-card"><h3>NUCITA SORTIDA C/48</h3></div>
-            <div class="produto-card"><h3>PAÇOCA DISPLAY C/50</h3></div>
-            <div class="produto-card"><h3>PAÇOCA ROLHA SANTA HELENA C/ 100</h3></div>
-            <div class="produto-card"><h3>PAÇOCA ROLHA UNIÃO C/100</h3></div>
-            <div class="produto-card"><h3>PAÇOCAO ROLHÃO UNIÃO C/20</h3></div>
-            <div class="produto-card"><h3>PASTILHA MINTY HORTELÃ C/40</h3></div>
-            <div class="produto-card"><h3>PÉ DE MOÇA UNIÃO C/20</h3></div>
-            <div class="produto-card"><h3>PEZAO AURORA CROCANTE C/20</h3></div>
-            <div class="produto-card"><h3>PEZÃO DE MOLEQUE DOCE SONHO C/20</h3></div>
-            <div class="produto-card"><h3>PINGO DE LEITE JAZAM C/50</h3></div>
-            <div class="produto-card"><h3>PIPOCA DE MILHO 80G FD C/10 UNID</h3></div>
-            <div class="produto-card"><h3>PIPOCA DOCE KI DELICIA 70g c/13</h3></div>
-            <div class="produto-card"><h3>PIPOCA FRANK DOCE C/13</h3></div>
-            <div class="produto-card"><h3>PIPOU BACON LISTRADA 40G C/10</h3></div>
-            <div class="produto-card"><h3>PRESTIGIO NESTLÊ C/30</h3></div>
-            <div class="produto-card"><h3>QUEBRA QUEIXÃO AURORA C/20</h3></div>
-            <div class="produto-card"><h3>QUEBRA QUEIXO C/50</h3></div>
-            <div class="produto-card"><h3>SALGADINHO KI GOSTOSO LISTRADO 40G C/10</h3></div>
-            <div class="produto-card"><h3>TIC TAC FRUTAS C/14</h3></div>
-        </div>
+    <div class="search-box">
+        <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Digite para buscar um doce (ex: Fini, Mariola, Paçoca)...">
+    </div>
 
-        <div class="paginacao">
-            <span class="pagina-atual">Página 1</span>
-        </div>
+    <div class="products-count" id="productsCount">Mostrando produtos...</div>
 
+    <main class="products-grid" id="productList">
+        <div class="no-results" id="noResults">Nenhum produto encontrado.</div>
     </main>
 
-    <footer>
-        <div class="footer-links">
-            <a href="politica-privacidade.html">Política de Privacidade</a> |
-            <a href="regras-de-uso.html">Regras de Uso</a> |
-            <a href="politica-devolucao.html">Política de Devolução</a>
-        </div>
-        <p>&copy; 2026 Distribuidora Frazão.</p>
-    </footer>
+    <!-- Paginação -->
+    <div class="pagination" id="pagination"></div>
+</div>
+
+<div class="cart-bar">
+    <div class="cart-info">
+        <span id="cartCount">0</span> item(ns) selecionado(s)
+    </div>
+    <button class="btn-whatsapp-cart" onclick="sendCartToWhatsApp()">
+        Cotar Lista no WhatsApp
+    </button>
+</div>
+
+<script>
+    const whatsappNumber = "5521968659086"; 
+
+    const doces = [
+        "bananinha cremosa famoso",
+        "baton preto",
+        "bombom serenata",
+        "cajuzinho",
+        "chup-chup biba",
+        "cocada Aurora",
+        "crokissimo",
+        "disqueti",
+        "doce de abóbora",
+        "doce de amendoim 1,5 kg",
+        "doce de amendoim 1,65 kg",
+        "doce de amendoim liso Aurora",
+        "doce de leite",
+        "doce de leite ninho",
+        "famoso beijinho de coco",
+        "famoso beijinho goiabada",
+        "famoso brigadeiro",
+        "geladão gel fruta",
+        "geladinho gel fruta",
+        "geleia Aurora",
+        "goma docile eucalipto",
+        "goma fini amora",
+        "goma fini angry",
+        "goma fini banana",
+        "goma fini beijinho",
+        "goma fini dentadura",
+        "goma fini minhoca",
+        "goma fini morango",
+        "goma fini morango cítrico",
+        "goma fini pinta língua",
+        "goma fini sortido",
+        "goma fini tutti frutti",
+        "goma fini twister",
+        "goma fini twister ácido",
+        "goma fini ursinho",
+        "goma fini uva",
+        "goma fini uva cítrico",
+        "goma mini sortida c/24",
+        "goma tubo Dori",
+        "grelhaditos c/30",
+        "mariola 2,5kg",
+        "mariola 3,0kg",
+        "mariola açucarada",
+        "mariola lisa 800g",
+        "mendorato c/30",
+        "nucita chocolate",
+        "nucita morango",
+        "nucita napolitano c/24",
+        "nucita sortida",
+        "paçoca rolha santa helena",
+        "paçocao",
+        "pé de moça",
+        "pezão",
+        "pingo de leite",
+        "quebra queixão"
+    ];
+
+    let cart = [];
+    let currentFiltered = [...doces];
+    let currentPage = 1;
+    const itemsPerPage = 12; // Exibe 12 produtos por página (3 linhas completas em 4 colunas)
+
+    const productList = document.getElementById('productList');
+    const productsCount = document.getElementById('productsCount');
+    const noResults = document.getElementById('noResults');
+    const cartCount = document.getElementById('cartCount');
+    const paginationEl = document.getElementById('pagination');
+
+    function renderPage(page) {
+        currentPage = page;
+        productList.innerHTML = '';
+        productList.appendChild(noResults);
+
+        if (currentFiltered.length === 0) {
+            noResults.style.display = 'block';
+            productsCount.innerText = 'Nenhum produto encontrado';
+            paginationEl.innerHTML = '';
+            return;
+        }
+
+        noResults.style.display = 'none';
+        
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageItems = currentFiltered.slice(start, end);
+
+        productsCount.innerText = `Exibindo ${start + 1}-${Math.min(end, currentFiltered.length)} de ${currentFiltered.length} produto(s)`;
+
+        pageItems.forEach(item => {
+            const isAdded = cart.includes(item);
+            const card = document.createElement('article');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <div class="product-thumb">🍬</div>
+                <div class="product-info">
+                    <h2 class="product-title">${item}</h2>
+                    <div class="actions">
+                        <button class="btn-add ${isAdded ? 'added' : ''}" onclick="toggleCart('${item}', this)">
+                            ${isAdded ? 'Remover' : 'Adicionar'}
+                        </button>
+                        <button class="btn-direct-quote" onclick="quoteSingleProduct('${item}')">
+                            Cotar
+                        </button>
+                    </div>
+                </div>
+            `;
+            productList.appendChild(card);
+        });
+
+        renderPagination();
+    }
+
+    function renderPagination() {
+        paginationEl.innerHTML = '';
+        const totalPages = Math.ceil(currentFiltered.length / itemsPerPage);
+
+        if (totalPages <= 1) return;
+
+        // Botão Anterior
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'page-btn';
+        prevBtn.innerText = '«';
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => renderPage(currentPage - 1);
+        paginationEl.appendChild(prevBtn);
+
+        // Botões de Páginas
+        for (let i = 1; i <= totalPages; i++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+            pageBtn.innerText = i;
+            pageBtn.onclick = () => renderPage(i);
+            paginationEl.appendChild(pageBtn);
+        }
+
+        // Botão Próximo
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'page-btn';
+        nextBtn.innerText = '»';
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => renderPage(currentPage + 1);
+        paginationEl.appendChild(nextBtn);
+    }
+
+    function toggleCart(productName, btn) {
+        const index = cart.indexOf(productName);
+        if (index > -1) {
+            cart.splice(index, 1);
+            btn.innerText = "Adicionar";
+            btn.classList.remove("added");
+        } else {
+            cart.push(productName);
+            btn.innerText = "Remover";
+            btn.classList.add("added");
+        }
+        cartCount.innerText = cart.length;
+    }
+
+    function quoteSingleProduct(productName) {
+        const message = `Olá! Gostaria de consultar o preço e disponibilidade do item:\n- *${productName}*`;
+        const url = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    }
+
+    function sendCartToWhatsApp() {
+        if (cart.length === 0) {
+            alert("Por favor, clique em 'Adicionar' nos produtos que deseja cotar antes de enviar.");
+            return;
+        }
+
+        let message = "Olá! Gostaria de fazer uma cotação para os seguintes itens da categoria *Doces em Geral*:\n\n";
+        cart.forEach(item => {
+            message += `• ${item}\n`;
+        });
+
+        const url = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    }
+
+    function handleSearch() {
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
+        currentFiltered = doces.filter(item => item.toLowerCase().includes(query));
+        renderPage(1);
+    }
+
+    // Renderiza a página inicial
+    renderPage(1);
+</script>
 
 </body>
 </html>

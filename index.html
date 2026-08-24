@@ -1,135 +1,106 @@
 <style>
-/* Grid dos Botoes Retangulares */
-.categorias-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
-    max-width: 900px;
-    margin: 0 auto 30px auto;
-}
-
-/* Formato Retangular dos Botoes */
-.btn-categoria {
-    background-color: #f4f7fe;
-    border: 2px solid #3b82f6;
-    border-radius: 8px; /* Cantos levemente arredondados/retangulares */
+/* Estilos do Cabeçalho */
+.header-frazao {
+    background-color: #ffffff;
+    border-bottom: 3px solid #3b82f6;
     padding: 15px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #1e293b;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.2s ease-in-out;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
 }
 
-.btn-categoria:hover {
+.header-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.logo-area h1 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.logo-area span {
+    color: #3b82f6;
+}
+
+.subtitulo-header {
+    margin: 3px 0 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.busca-header {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    max-width: 400px;
+}
+
+.busca-header input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px 0 0 6px;
+    outline: none;
+    font-size: 14px;
+}
+
+.busca-header button {
     background-color: #3b82f6;
     color: #ffffff;
-    transform: translateY(-2px);
+    border: none;
+    padding: 10px 16px;
+    border-radius: 0 6px 6px 0;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
 }
 
-.btn-categoria.ativo {
+.busca-header button:hover {
     background-color: #1d4ed8;
-    color: #ffffff;
-    border-color: #1d4ed8;
 }
 
-/* Area dos Produtos */
-.grid-produtos {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
+.contato-header {
+    text-align: right;
+    font-size: 13px;
+    color: #334155;
 }
 
-.produto-card {
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 15px;
-    text-align: center;
-    background-color: #fff;
+.contato-header strong {
+    color: #25d366;
+    display: block;
+    font-size: 14px;
 }
 </style>
 
-<!-- BOTÕES RETANGULARES -->
-<div class="categorias-grid">
-    <button type="button" class="btn-categoria" onclick="abrirPasta('balas', this)">🍬 Balas e Pirulitos</button>
-    <button type="button" class="btn-categoria" onclick="abrirPasta('doces', this)">🍩 Doces</button>
-    <button type="button" class="btn-categoria" onclick="abrirPasta('higiene', this)">🧴 Higiene</button>
-    <button type="button" class="btn-categoria" onclick="abrirPasta('limpeza', this)">🧹 Limpeza</button>
-    <button type="button" class="btn-categoria" onclick="abrirPasta('descartaveis', this)">🥤 Descartáveis</button>
-    <button type="button" class="btn-categoria" onclick="abrirPasta('papelaria', this)">✏️ Papelaria</button>
-    <button type="button" class="btn-categoria" onclick="abrirPasta('mercearia', this)">🛒 Mercearia</button>
-    <button type="button" class="btn-categoria" onclick="abrirPasta('bebidas', this)">🧃 Bebidas</button>
-    <button type="button" class="btn-categoria" onclick="abrirPasta('biscoitos', this)">🍪 Biscoitos</button>
-    <button type="button" class="btn-categoria" onclick="abrirPasta('chicletes', this)">🍬 Chicletes e Drops</button>
-</div>
-
-<!-- CONTEÚDO DAS PASTAS (PRODUTOS) -->
-<div id="painel-produtos">
-    <p id="msg-padrao" style="text-align: center; color: #64748b; font-size: 18px;">Clique em uma pasta acima para abrir os produtos.</p>
-
-    <!-- PASTA: BALAS E PIRULITOS -->
-    <div id="pasta-balas" class="conteudo-pasta" style="display: none;">
-        <h2>Balas e Pirulitos</h2>
-        <div class="grid-produtos">
-            <div class="produto-card"><h3>AZEDINHA MORANGO</h3></div>
-            <div class="produto-card"><h3>BALA 7 BELO</h3></div>
-            <div class="produto-card"><h3>BALA JUQUINHA</h3></div>
-            <div class="produto-card"><h3>PIRULITO BLONG SORTIDO</h3></div>
+<!-- ESTRUTURA DO CABEÇALHO -->
+<header class="header-frazao">
+    <div class="header-container">
+        
+        <!-- LOGO / NOME -->
+        <div class="logo-area">
+            <h1>Distribuidora <span>Frazão</span></h1>
+            <p class="subtitulo-header">Catálogo de Produtos & Cotações</p>
         </div>
-    </div>
 
-    <!-- PASTA: DOCES -->
-    <div id="pasta-doces" class="conteudo-pasta" style="display: none;">
-        <h2>Doces</h2>
-        <div class="grid-produtos">
-            <div class="produto-card"><h3>PAÇOCA ROLHA</h3></div>
-            <div class="produto-card"><h3>DOCE DE LEITE POTE</h3></div>
-            <div class="produto-card"><h3>PÉ DE MOÇA</h3></div>
+        <!-- BARRA DE BUSCA -->
+        <div class="busca-header">
+            <input type="text" placeholder="Buscar produto no catálogo...">
+            <button type="button">Buscar</button>
         </div>
-    </div>
 
-    <!-- PASTA: HIGIENE -->
-    <div id="pasta-higiene" class="conteudo-pasta" style="display: none;">
-        <h2>Higiene</h2>
-        <div class="grid-produtos">
-            <div class="produto-card"><h3>SABONETE LIQUIDO</h3></div>
-            <div class="produto-card"><h3>CREME DENTAL</h3></div>
+        <!-- INFORMAÇÃO DE CONTATO/WHATSAPP -->
+        <div class="contato-header">
+            <span>Atendimento Rápido:</span>
+            <strong>📱 (21) 96865-9086</strong>
         </div>
+
     </div>
-
-    <!-- PASTA: MERCEARIA -->
-    <div id="pasta-mercearia" class="conteudo-pasta" style="display: none;">
-        <h2>Mercearia</h2>
-        <div class="grid-produtos">
-            <div class="produto-card"><h3>SALGADINHO TORCIDA</h3></div>
-            <div class="produto-card"><h3>CHOCOLATE EM PÓ</h3></div>
-        </div>
-    </div>
-</div>
-
-<!-- JAVASCRIPT PARA ABRIR AS PASTAS -->
-<script>
-function abrirPasta(nomePasta, botaoClicado) {
-    // 1. Oculta a mensagem padrao
-    const msg = document.getElementById('msg-padrao');
-    if (msg) msg.style.display = 'none';
-
-    // 2. Esconde todas as pastas abertas
-    const pastas = document.querySelectorAll('.conteudo-pasta');
-    pastas.forEach(pasta => pasta.style.display = 'none');
-
-    // 3. Remove a classe 'ativo' de todos os botoes
-    const botoes = document.querySelectorAll('.btn-categoria');
-    botoes.forEach(btn => btn.classList.remove('ativo'));
-
-    // 4. Exibe a pasta correspondente e destaca o botao clicado
-    const pastaAlvo = document.getElementById('pasta-' + nomePasta);
-    if (pastaAlvo) {
-        pastaAlvo.style.display = 'block';
-        botaoClicado.classList.add('ativo');
-    }
-}
-</script>
+</header>

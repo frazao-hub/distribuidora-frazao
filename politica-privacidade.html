@@ -1,82 +1,228 @@
-politica-privacidade.html<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Política de Privacidade - Distribuidora Frazão</title>
-    <link rel="stylesheet" href="style.css">
     <style>
-        .conteudo-legal {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Cabeçalho */
+        .main-header {
+            background-color: #1b365d;
+            padding: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .brand-logo h1 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-logo span {
+            color: #d97706;
+        }
+
+        .brand-logo {
+            text-decoration: none;
+        }
+
+        /* Conteúdo da Página */
+        .page-container {
             max-width: 900px;
             margin: 40px auto;
             padding: 0 20px;
-            color: #334155;
+            flex: 1;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 40px;
+        }
+
+        .page-container h2 {
+            color: #1b365d;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .page-container h3 {
+            color: #1b365d;
+            font-size: 1.2rem;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .page-container p, .page-container ul {
+            font-size: 0.95rem;
             line-height: 1.6;
-        }
-        .conteudo-legal h2 {
-            color: #0f172a;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 22px;
-        }
-        .conteudo-legal p {
+            color: #475569;
             margin-bottom: 15px;
         }
-        .conteudo-legal ul {
-            margin-bottom: 15px;
+
+        .page-container ul {
             padding-left: 20px;
         }
-        .conteudo-legal li {
+
+        .page-container li {
             margin-bottom: 8px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #d97706;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Rodapé */
+        .main-footer {
+            background-color: #1b365d;
+            color: #ffffff;
+            padding: 25px 15px;
+            margin-top: 50px;
+            text-align: center;
+            border-top: 3px solid #d97706;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: #d97706;
+            text-decoration: underline;
+        }
+
+        .footer-links .divider {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .copyright {
+            margin: 0;
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        @media (max-width: 576px) {
+            .page-container {
+                padding: 20px;
+                margin: 20px 10px;
+            }
+            .footer-links .divider {
+                display: none;
+            }
+            .footer-links {
+                flex-direction: column;
+                gap: 8px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <header class="topo-interna">
-        <h1>Distribuidora Frazão</h1>
-        <a href="index.html" class="btn-voltar">&larr; Voltar para a Página Inicial</a>
+    <!-- Cabeçalho -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="./index.html" class="brand-logo">
+                <h1>Distribuidora <span>Frazão</span></h1>
+            </a>
+        </div>
     </header>
 
-    <main class="conteudo-legal">
+    <!-- Conteúdo do Texto -->
+    <main class="page-container">
         <h2>Política de Privacidade</h2>
-        <p>A <strong>Distribuidora Frazão</strong> valoriza a sua privacidade e está comprometida em proteger os dados pessoais de seus clientes e visitantes. Esta Política de Privacidade descreve como coletamos, usamos e protegemos suas informações ao navegar em nosso site.</p>
+        
+        <p>A <strong>Distribuidora Frazão</strong> tem o compromisso de proteger a privacidade e os dados pessoais dos seus clientes e parceiros comerciais. Esta política descreve como coletamos, usamos e protegemos suas informações.</p>
 
-        <h2>1. Informações que Coletamos</h2>
-        <p>Nosso site foi desenvolvido para exibir nosso catálogo de produtos. Podemos coletar informações de forma automática ou direta quando você entra em contato conosco:</p>
+        <h3>1. Coleta de Informações</h3>
+        <p>Coletamos informações pessoais e comerciais fornecidas voluntariamente no momento do cadastro ou orçamento, tais como:</p>
         <ul>
-            <li><strong>Dados de Contato:</strong> Nome, telefone ou endereço de e-mail quando você nos envia uma mensagem ou pedido de orçamento.</li>
-            <li><strong>Dados de Navegação:</strong> Endereço IP, tipo de navegador, páginas visitadas e tempo de permanência, utilizados exclusivamente para melhorar a experiência no site.</li>
+            <li>Nome completo ou Razão Social;</li>
+            <li>CPF ou CNPJ e Inscrição Estadual;</li>
+            <li>Endereço para entrega e faturamento;</li>
+            <li>Telefone e e-mail de contato.</li>
         </ul>
 
-        <h2>2. Como Utilizamos Seus Dados</h2>
-        <p>As informações coletadas são usadas exclusivamente para:</p>
+        <h3>2. Uso das Informações</h3>
+        <p>Os dados coletados são utilizados estritamente para:</p>
         <ul>
-            <li>Responder a dúvidas, pedidos de cotação ou atendimento via canais de contato.</li>
-            <li>Melhorar o funcionamento, a segurança e o layout do nosso site.</li>
-            <li>Cumprir obrigações legais ou regulatórias.</li>
+            <li>Processamento e emissão de pedidos e notas fiscais;</li>
+            <li>Organização e realização da entrega de mercadorias;</li>
+            <li>Atendimento ao cliente e suporte pós-venda;</li>
+            <li>Comunicação sobre status do pedido e atualizações operacionais.</li>
         </ul>
 
-        <h2>3. Compartilhamento de Informações</h2>
-        <p>A Distribuidora Frazão <strong>não vende, aluga ou repassa</strong> os seus dados pessoais para terceiros. O compartilhamento só ocorre caso seja estritamente necessário para a entrega de pedidos ou por exigência da lei.</p>
+        <h3>3. Compartilhamento de Dados</h3>
+        <p>A Distribuidora Frazão não vende nem aluga dados de clientes. O compartilhamento de dados ocorre unicamente com parceiros indispensáveis para a operação comercial, como transportadoras para envio das mercadorias e processadores de pagamento/faturamento.</p>
 
-        <h2>4. Segurança da Informação</h2>
-        <p>Adotamos medidas de segurança adequadas para proteger seus dados contra acessos não autorizados, alteração, divulgação ou destruição.</p>
+        <h3>4. Segurança</h3>
+        <p>Adotamos medidas técnicas e organizacionais adequadas para proteger os dados pessoais contra acesso não autorizado, perda, destruição ou alteração.</p>
 
-        <h2>5. Alterações nesta Política</h2>
-        <p>Reservamo-nos o direito de atualizar esta Política de Privacidade a qualquer momento. Recomendamos que você revise esta página periodicamente para se manter informado sobre como estamos protegendo suas informações.</p>
+        <h3>5. Seus Direitos</h3>
+        <p>Você pode solicitar a qualquer momento a atualização, correção ou confirmação dos dados armazenados em nosso cadastro entrando em contato com nosso atendimento.</p>
 
-        <h2>6. Contato</h2>
-        <p>Se você tiver dúvidas sobre esta Política de Privacidade ou sobre o tratamento dos seus dados, entre em contato conosco através dos nossos canais oficiais de atendimento disponíveis no site.</p>
+        <a href="./index.html" class="back-link">&larr; Voltar para a página inicial</a>
     </main>
 
-    <footer>
-        <div class="footer-links">
-            <a href="politica-privacidade.html">Política de Privacidade</a> |
-            <a href="regras-de-uso.html">Regras de Uso</a> |
-            <a href="politica-devolucao.html">Política de Devolução</a>
+    <!-- Rodapé -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="./politica-de-devolucao.html">Política de Devolução</a>
+                <span class="divider">|</span>
+                <a href="./politica-de-privacidade.html">Política de Privacidade</a>
+                <span class="divider">|</span>
+                <a href="./regras-de-uso.html">Regras de Uso</a>
+            </div>
+            <p class="copyright">&copy; Distribuidora Frazão. Todos os direitos reservados.</p>
         </div>
-        <p>&copy; 2026 Distribuidora Frazão.</p>
     </footer>
 
 </body>

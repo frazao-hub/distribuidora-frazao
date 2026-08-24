@@ -1,346 +1,59 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distribuidora Frazão - Catálogo de Produtos</title>
-    <!-- Prevenção de Cache -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+<!-- BOTÕES DAS CATEGORIAS COM EVENTO DE CLIQUE -->
+<div class="categorias-grid">
+    <button type="button" class="btn-categoria" onclick="mostrarCategoria('balas')">Balas e Pirulitos</button>
+    <button type="button" class="btn-categoria" onclick="mostrarCategoria('doces')">Doces</button>
+    <button type="button" class="btn-categoria" onclick="mostrarCategoria('higiene')">Higiene</button>
+    <button type="button" class="btn-categoria" onclick="mostrarCategoria('limpeza')">Limpeza</button>
+    <button type="button" class="btn-categoria" onclick="mostrarCategoria('descartaveis')">Descartáveis</button>
+    <button type="button" class="btn-categoria" onclick="mostrarCategoria('papelaria')">Papelaria</button>
+    <button type="button" class="btn-categoria" onclick="mostrarCategoria('mercearia')">Mercearia</button>
+    <button type="button" class="btn-categoria" onclick="mostrarCategoria('bebidas')">Bebidas</button>
+    <button type="button" class="btn-categoria" onclick="mostrarCategoria('biscoitos')">Biscoitos</button>
+    <button type="button" class="btn-categoria" onclick="mostrarCategoria('chicletes')">Chicletes e Drops</button>
+</div>
 
-        body {
-            background-color: #f0f4f8;
-            color: #1f2937;
-            padding-bottom: 40px;
-        }
-
-        /* Cabeçalho Principal */
-        header {
-            text-align: center;
-            padding: 30px 15px 20px 15px;
-        }
-
-        header h1 {
-            color: #0b2545;
-            font-size: 2rem;
-            font-weight: 700;
-        }
-
-        /* Painel Branco Central */
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        .panel {
-            background-color: #ffffff;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            margin-bottom: 25px;
-        }
-
-        /* Grid dos Retângulos das Categorias */
-        .grid-categorias {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 15px;
-        }
-
-        /* Card Retangular de Categoria */
-        .card-categoria {
-            background: linear-gradient(180deg, #eef5ff 0%, #dbeafe 100%);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
-            user-select: none;
-        }
-
-        /* Efeito ao passar o mouse */
-        .card-categoria:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(11, 37, 69, 0.12);
-            border-color: #3b82f6;
-            background: linear-gradient(180deg, #ffffff 0%, #dbeafe 100%);
-        }
-
-        /* Estado Selecionado / Ativo */
-        .card-categoria.active {
-            border-color: #15803d;
-            background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
-            box-shadow: 0 0 0 2px #15803d;
-        }
-
-        .card-categoria .icon {
-            font-size: 1.8rem;
-            line-height: 1;
-        }
-
-        .card-categoria .titulo {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: #0f172a;
-        }
-
-        /* Badge Informativo */
-        .status-badge {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .status-badge span {
-            background-color: #15803d;
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 8px 18px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-
-        /* Seção do Conteúdo dos Produtos */
-        .categoria-conteudo {
-            display: none;
-        }
-
-        .categoria-conteudo.active {
-            display: block;
-        }
-
-        .categoria-conteudo h2 {
-            font-size: 1.3rem;
-            color: #0b2545;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 8px;
-        }
-
-        /* Grid de Produtos dentro de cada Categoria */
-        .grid-produtos {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 15px;
-        }
-
-        .card-produto {
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            background: #fafafa;
-            transition: border-color 0.2s;
-        }
-
-        .card-produto:hover {
-            border-color: #3b82f6;
-        }
-
-        .card-produto h3 {
-            font-size: 0.95rem;
-            color: #334155;
-            margin-bottom: 8px;
-        }
-
-        .card-produto p {
-            color: #15803d;
-            font-weight: 700;
-            font-size: 1rem;
-        }
-
-        footer {
-            text-align: center;
-            font-size: 0.85rem;
-            color: #64748b;
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1>Distribuidora Frazão - Catálogo de Produtos</h1>
-    </header>
-
-    <div class="container">
-        <!-- Painel Principal de Categorias -->
-        <div class="panel">
-            <div class="grid-categorias">
-                <div class="card-categoria active" onclick="selecionarCategoria(this, 'balas-pirulitos')">
-                    <span class="icon">🍭</span>
-                    <span class="titulo">Balas e Pirulitos</span>
-                </div>
-                <div class="card-categoria" onclick="selecionarCategoria(this, 'doces')">
-                    <span class="icon">🍬</span>
-                    <span class="titulo">Doces</span>
-                </div>
-                <div class="card-categoria" onclick="selecionarCategoria(this, 'higiene')">
-                    <span class="icon">🧴</span>
-                    <span class="titulo">Higiene</span>
-                </div>
-                <div class="card-categoria" onclick="selecionarCategoria(this, 'limpeza')">
-                    <span class="icon">🧹</span>
-                    <span class="titulo">Limpeza</span>
-                </div>
-                <div class="card-categoria" onclick="selecionarCategoria(this, 'descartaveis')">
-                    <span class="icon">🥤</span>
-                    <span class="titulo">Descartáveis</span>
-                </div>
-                <div class="card-categoria" onclick="selecionarCategoria(this, 'papelaria')">
-                    <span class="icon">📝</span>
-                    <span class="titulo">Papelaria</span>
-                </div>
-                <div class="card-categoria" onclick="selecionarCategoria(this, 'mercearia')">
-                    <span class="icon">🌾</span>
-                    <span class="titulo">Mercearia</span>
-                </div>
-                <div class="card-categoria" onclick="selecionarCategoria(this, 'bebidas')">
-                    <span class="icon">🥤</span>
-                    <span class="titulo">Bebidas</span>
-                </div>
-                <div class="card-categoria" onclick="selecionarCategoria(this, 'biscoitos')">
-                    <span class="icon">🍪</span>
-                    <span class="titulo">Biscoitos</span>
-                </div>
-                <div class="card-categoria" onclick="selecionarCategoria(this, 'chicletes-drops')">
-                    <span class="icon">💊</span>
-                    <span class="titulo">Chicletes e Drops</span>
-                </div>
-            </div>
-
-            <div class="status-badge">
-                <span>Selecione uma categoria para ver os produtos</span>
-            </div>
-        </div>
-
-        <!-- Painel de Exibição dos Produtos -->
-        <div class="panel">
-            <!-- 1. Balas e Pirulitos -->
-            <div id="balas-pirulitos" class="categoria-conteudo active">
-                <h2>Balas e Pirulitos</h2>
-                <div class="grid-produtos">
-                    <div class="card-produto"><h3>Bala Mastigável 600g</h3><p>R$ --</p></div>
-                    <div class="card-produto"><h3>Pirulito Pacote 500g</h3><p>R$ --</p></div>
-                </div>
-            </div>
-
-            <!-- 2. Doces -->
-            <div id="doces" class="categoria-conteudo">
-                <h2>Doces</h2>
-                <div class="grid-produtos">
-                    <div class="card-produto"><h3>Paçoca Caixa</h3><p>R$ --</p></div>
-                    <div class="card-produto"><h3>Doce de Leite</h3><p>R$ --</p></div>
-                </div>
-            </div>
-
-            <!-- 3. Higiene -->
-            <div id="higiene" class="categoria-conteudo">
-                <h2>Higiene</h2>
-                <div class="grid-produtos">
-                    <div class="card-produto"><h3>Sabonete 90g</h3><p>R$ --</p></div>
-                    <div class="card-produto"><h3>Creme Dental</h3><p>R$ --</p></div>
-                </div>
-            </div>
-
-            <!-- 4. Limpeza -->
-            <div id="limpeza" class="categoria-conteudo">
-                <h2>Limpeza</h2>
-                <div class="grid-produtos">
-                    <div class="card-produto"><h3>Detergente 500ml</h3><p>R$ --</p></div>
-                    <div class="card-produto"><h3>Desinfetante 1L</h3><p>R$ --</p></div>
-                </div>
-            </div>
-
-            <!-- 5. Descartáveis -->
-            <div id="descartaveis" class="categoria-conteudo">
-                <h2>Descartáveis</h2>
-                <div class="grid-produtos">
-                    <div class="card-produto"><h3>Copo Descartável 200ml (100un)</h3><p>R$ --</p></div>
-                    <div class="card-produto"><h3>Prato Descartável (10un)</h3><p>R$ --</p></div>
-                </div>
-            </div>
-
-            <!-- 6. Papelaria -->
-            <div id="papelaria" class="categoria-conteudo">
-                <h2>Papelaria</h2>
-                <div class="grid-produtos">
-                    <div class="card-produto"><h3>Papel A4 500 folhas</h3><p>R$ --</p></div>
-                    <div class="card-produto"><h3>Caneta Esferográfica</h3><p>R$ --</p></div>
-                </div>
-            </div>
-
-            <!-- 7. Mercearia -->
-            <div id="mercearia" class="categoria-conteudo">
-                <h2>Mercearia</h2>
-                <div class="grid-produtos">
-                    <div class="card-produto"><h3>Arroz 5kg</h3><p>R$ --</p></div>
-                    <div class="card-produto"><h3>Feijão 1kg</h3><p>R$ --</p></div>
-                </div>
-            </div>
-
-            <!-- 8. Bebidas -->
-            <div id="bebidas" class="categoria-conteudo">
-                <h2>Bebidas</h2>
-                <div class="grid-produtos">
-                    <div class="card-produto"><h3>Refrigerante 2L</h3><p>R$ --</p></div>
-                    <div class="card-produto"><h3>Suco Caixinha 1L</h3><p>R$ --</p></div>
-                </div>
-            </div>
-
-            <!-- 9. Biscoitos -->
-            <div id="biscoitos" class="categoria-conteudo">
-                <h2>Biscoitos</h2>
-                <div class="grid-produtos">
-                    <div class="card-produto"><h3>Biscoito Recheado</h3><p>R$ --</p></div>
-                    <div class="card-produto"><h3>Biscoito Cream Cracker</h3><p>R$ --</p></div>
-                </div>
-            </div>
-
-            <!-- 10. Chicletes e Drops -->
-            <div id="chicletes-drops" class="categoria-conteudo">
-                <h2>Chicletes e Drops</h2>
-                <div class="grid-produtos">
-                    <div class="card-produto"><h3>Chiclete Caixinha</h3><p>R$ --</p></div>
-                    <div class="card-produto"><h3>Drops Hortelã</h3><p>R$ --</p></div>
-                </div>
-            </div>
-        </div>
+<!-- ÁREA ONDE OS PRODUTOS VÃO APARECER -->
+<div id="conteudo-catalogo" style="margin-top: 30px;">
+    <p id="mensagem-inicial" style="text-align: center; color: #666;">Selecione uma categoria para ver os produtos.</p>
+    
+    <!-- SEÇÃO BALAS (INICIALMENTE OCULTA) -->
+    <div id="cat-balas" class="secao-categoria" style="display: none;">
+        <!-- Cole aqui o código de Balas e Pirulitos -->
     </div>
 
-    <footer>
-        &copy; 2026 Distribuidora Frazão - Todos os direitos reservados.
-    </footer>
+    <!-- SEÇÃO DOCES (INICIALMENTE OCULTA) -->
+    <div id="cat-doces" class="secao-categoria" style="display: none;">
+        <!-- Cole aqui o código de Doces -->
+    </div>
 
-    <script>
-        function selecionarCategoria(elemento, idCategoria) {
-            // Remove destaque de todas as categorias
-            const cards = document.querySelectorAll('.card-categoria');
-            cards.forEach(card => card.classList.remove('active'));
+    <!-- SEÇÃO HIGIENE (INICIALMENTE OCULTA) -->
+    <div id="cat-higiene" class="secao-categoria" style="display: none;">
+        <!-- Cole aqui o código de Higiene -->
+    </div>
 
-            // Esconde todas as seções de produtos
-            const conteudos = document.querySelectorAll('.categoria-conteudo');
-            conteudos.forEach(conteudo => conteudo.classList.remove('active'));
+    <!-- SEÇÃO MERCEARIA (INICIALMENTE OCULTA) -->
+    <div id="cat-mercearia" class="secao-categoria" style="display: none;">
+        <!-- Cole aqui o código de Mercearia -->
+    </div>
+</div>
 
-            // Adiciona destaque no retângular clicado
-            elemento.classList.add('active');
+<!-- SCRIPT PARA ABRIR O CATÁLOGO AO CLICAR -->
+<script>
+function mostrarCategoria(categoriaId) {
+    // Esconde a mensagem inicial
+    const msg = document.getElementById('mensagem-inicial');
+    if (msg) msg.style.display = 'none';
 
-            // Mostra os produtos correspondentes
-            document.getElementById(idCategoria).classList.add('active');
-        }
-    </script>
-</body>
-</html>
+    // Oculta todas as seções de categoria
+    const secoes = document.querySelectorAll('.secao-categoria');
+    secoes.forEach(secao => {
+        secao.style.display = 'none';
+    });
+
+    // Exibe apenas a categoria clicada
+    const categoriaSelecionada = document.getElementById('cat-' + categoriaId);
+    if (categoriaSelecionada) {
+        categoriaSelecionada.style.display = 'block';
+    }
+}
+</script>

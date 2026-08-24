@@ -1,186 +1,125 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distribuidora Frazão</title>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        body { background-color: #f4f4f9; color: #333; }
-        
-        header { background-color: #004488; color: white; padding: 20px; text-align: center; }
-        header h1 { margin-bottom: 5px; }
-
-        /* Menu de Navegação */
-        nav { 
-            background: #002244; 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000;
-        }
-        nav button {
-            background: transparent;
-            color: white;
-            border: none;
-            padding: 12px 18px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        nav button:hover, nav button.active { background-color: #0066cc; }
-
-        /* Conteúdo das Seções */
-        main { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
-        .categoria-section { display: none; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .categoria-section.active { display: block; }
-        
-        .categoria-section h2 { color: #004488; margin-bottom: 15px; border-bottom: 2px solid #004488; padding-bottom: 5px; }
-        
-        /* Grid de Produtos */
-        .grid-produtos { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
-        .card-produto { border: 1px solid #ddd; padding: 15px; border-radius: 5px; text-align: center; background: #fafafa; }
-        .card-produto h3 { font-size: 16px; margin-bottom: 8px; }
-        .card-produto p { color: #27ae60; font-weight: bold; }
-
-        footer { text-align: center; padding: 15px; margin-top: 30px; background: #222; color: white; font-size: 14px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Higiene - Distribuidora Frazão</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .grid-produtos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card-produto {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      width: 250px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card-produto h3 {
+      font-size: 1.1rem;
+      color: #222;
+      margin-top: 0;
+    }
+    .botoes {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 15px;
+    }
+    .btn {
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .btn-adicionar {
+      background-color: #007bff;
+      color: white;
+    }
+    .btn-adicionar:hover {
+      background-color: #0056b3;
+    }
+    .btn-whatsapp {
+      background-color: #25d366;
+      color: white;
+    }
+    .btn-whatsapp:hover {
+      background-color: #1eb954;
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <h1>Distribuidora Frazão</h1>
-        <p>Selecione a categoria desejada no menu abaixo</p>
-    </header>
+  <h1>🧼 Seção: Higiene</h1>
 
-    <!-- Menu com as 10 categorias -->
-    <nav>
-        <button class="tab-btn active" onclick="mostrarCategoria('balas-pirulitos')">Balas e Pirulitos</button>
-        <button class="tab-btn" onclick="mostrarCategoria('doces')">Doces</button>
-        <button class="tab-btn" onclick="mostrarCategoria('higiene')">Higiene</button>
-        <button class="tab-btn" onclick="mostrarCategoria('limpeza')">Limpeza</button>
-        <button class="tab-btn" onclick="mostrarCategoria('descartaveis')">Descartáveis</button>
-        <button class="tab-btn" onclick="mostrarCategoria('papelaria')">Papelaria</button>
-        <button class="tab-btn" onclick="mostrarCategoria('mercearia')">Mercearia</button>
-        <button class="tab-btn" onclick="mostrarCategoria('bebidas')">Bebidas</button>
-        <button class="tab-btn" onclick="mostrarCategoria('biscoitos')">Biscoitos</button>
-        <button class="tab-btn" onclick="mostrarCategoria('chicletes-drops')">Chicletes e Drops</button>
-    </nav>
+  <div class="grid-produtos">
 
-    <main>
-        <!-- 1. Balas e Pirulitos -->
-        <section id="balas-pirulitos" class="categoria-section active">
-            <h2>Balas e Pirulitos</h2>
-            <div class="grid-produtos">
-                <div class="card-produto"><h3>Bala Mastigável 600g</h3><p>R$ --</p></div>
-                <div class="card-produto"><h3>Pirulito Pacote 500g</h3><p>R$ --</p></div>
-            </div>
-        </section>
+    <!-- Produto 1 -->
+    <div class="card-produto">
+      <h3>Sabonete em Barra</h3>
+      <div class="botoes">
+        <button class="btn btn-adicionar" onclick="adicionarAoCarrinho('Sabonete em Barra')">Adicionar</button>
+        <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar%20o%20produto:%20Sabonete%20em%20Barra" target="_blank">Cotar no WhatsApp</a>
+      </div>
+    </div>
 
-        <!-- 2. Doces -->
-        <section id="doces" class="categoria-section">
-            <h2>Doces</h2>
-            <div class="grid-produtos">
-                <div class="card-produto"><h3>Paçoca Caixa</h3><p>R$ --</p></div>
-                <div class="card-produto"><h3>Doce de Leite</h3><p>R$ --</p></div>
-            </div>
-        </section>
+    <!-- Produto 2 -->
+    <div class="card-produto">
+      <h3>Creme Dental</h3>
+      <div class="botoes">
+        <button class="btn btn-adicionar" onclick="adicionarAoCarrinho('Creme Dental')">Adicionar</button>
+        <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar%20o%20produto:%20Creme%20Dental" target="_blank">Cotar no WhatsApp</a>
+      </div>
+    </div>
 
-        <!-- 3. Higiene -->
-        <section id="higiene" class="categoria-section">
-            <h2>Higiene</h2>
-            <div class="grid-produtos">
-                <div class="card-produto"><h3>Sabonete 90g</h3><p>R$ --</p></div>
-                <div class="card-produto"><h3>Creme Dental</h3><p>R$ --</p></div>
-            </div>
-        </section>
+    <!-- Produto 3 -->
+    <div class="card-produto">
+      <h3>Shampoo</h3>
+      <div class="botoes">
+        <button class="btn btn-adicionar" onclick="adicionarAoCarrinho('Shampoo')">Adicionar</button>
+        <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar%20o%20produto:%20Shampoo" target="_blank">Cotar no WhatsApp</a>
+      </div>
+    </div>
 
-        <!-- 4. Limpeza -->
-        <section id="limpeza" class="categoria-section">
-            <h2>Limpeza</h2>
-            <div class="grid-produtos">
-                <div class="card-produto"><h3>Detergente 500ml</h3><p>R$ --</p></div>
-                <div class="card-produto"><h3>Desinfetante 1L</h3><p>R$ --</p></div>
-            </div>
-        </section>
+    <!-- Produto 4 -->
+    <div class="card-produto">
+      <h3>Desodorante</h3>
+      <div class="botoes">
+        <button class="btn btn-adicionar" onclick="adicionarAoCarrinho('Desodorante')">Adicionar</button>
+        <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar%20o%20produto:%20Desodorante" target="_blank">Cotar no WhatsApp</a>
+      </div>
+    </div>
 
-        <!-- 5. Descartáveis -->
-        <section id="descartaveis" class="categoria-section">
-            <h2>Descartáveis</h2>
-            <div class="grid-produtos">
-                <div class="card-produto"><h3>Copo Descartável 200ml (C/100)</h3><p>R$ --</p></div>
-                <div class="card-produto"><h3>Prato Descartável (C/10)</h3><p>R$ --</p></div>
-            </div>
-        </section>
+  </div>
 
-        <!-- 6. Papelaria -->
-        <section id="papelaria" class="categoria-section">
-            <h2>Papelaria</h2>
-            <div class="grid-produtos">
-                <div class="card-produto"><h3>Papel A4 500 folhas</h3><p>R$ --</p></div>
-                <div class="card-produto"><h3>Caneta Esferográfica</h3><p>R$ --</p></div>
-            </div>
-        </section>
-
-        <!-- 7. Mercearia -->
-        <section id="mercearia" class="categoria-section">
-            <h2>Mercearia</h2>
-            <div class="grid-produtos">
-                <div class="card-produto"><h3>Arroz 5kg</h3><p>R$ --</p></div>
-                <div class="card-produto"><h3>Feijão 1kg</h3><p>R$ --</p></div>
-            </div>
-        </section>
-
-        <!-- 8. Bebidas -->
-        <section id="bebidas" class="categoria-section">
-            <h2>Bebidas</h2>
-            <div class="grid-produtos">
-                <div class="card-produto"><h3>Refrigerante 2L</h3><p>R$ --</p></div>
-                <div class="card-produto"><h3>Suco Caixinha 1L</h3><p>R$ --</p></div>
-            </div>
-        </section>
-
-        <!-- 9. Biscoitos -->
-        <section id="biscoitos" class="categoria-section">
-            <h2>Biscoitos</h2>
-            <div class="grid-produtos">
-                <div class="card-produto"><h3>Biscoito Recheado</h3><p>R$ --</p></div>
-                <div class="card-produto"><h3>Biscoito Cream Cracker</h3><p>R$ --</p></div>
-            </div>
-        </section>
-
-        <!-- 10. Chicletes e Drops -->
-        <section id="chicletes-drops" class="categoria-section">
-            <h2>Chicletes e Drops</h2>
-            <div class="grid-produtos">
-                <div class="card-produto"><h3>Chiclete Caixinha</h3><p>R$ --</p></div>
-                <div class="card-produto"><h3>Drops Hortelã</h3><p>R$ --</p></div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; Distribuidora Frazão - Todos os direitos reservados.</p>
-    </footer>
-
-    <script>
-        function mostrarCategoria(idCategoria) {
-            const secoes = document.querySelectorAll('.categoria-section');
-            secoes.forEach(secao => secao.classList.remove('active'));
-
-            const botoes = document.querySelectorAll('.tab-btn');
-            botoes.forEach(botao => botao.classList.remove('active'));
-
-            document.getElementById(idCategoria).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-    </script>
+  <script>
+    function adicionarAoCarrinho(nomeProduto) {
+      alert(nomeProduto + " foi adicionado ao seu carrinho!");
+    }
+  </script>
 
 </body>
 </html>

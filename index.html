@@ -19,27 +19,69 @@
     header {
       background-color: #0284c7;
       color: #ffffff;
-      padding: 20px;
+      padding: 25px 15px;
       text-align: center;
     }
     header h1 {
-      margin-bottom: 5px;
+      margin-bottom: 6px;
+      font-size: 28px;
     }
+    header p {
+      font-size: 14px;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+
+    /* Container dos retângulos clicáveis (Categorias) */
+    .menu-categorias {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* Estilo dos retângulos clicáveis */
+    .btn-categoria {
+      background-color: #ffffff;
+      color: #0284c7;
+      border: 2px solid #ffffff;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 13px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-categoria:hover {
+      background-color: #e0f2fe;
+      color: #0369a1;
+      transform: translateY(-2px);
+    }
+
+    .btn-categoria.ativo {
+      background-color: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+
     .container {
       max-width: 1000px;
-      margin: 20px auto;
+      margin: 25px auto;
       padding: 0 15px;
     }
     .controles {
       display: flex;
       gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
+      margin-bottom: 25px;
     }
     .busca-input {
-      flex: 1;
-      min-width: 200px;
-      padding: 10px;
+      width: 100%;
+      padding: 12px;
       border: 1px solid #cbd5e1;
       border-radius: 6px;
       font-size: 16px;
@@ -64,12 +106,12 @@
       margin-bottom: 10px;
     }
     .cartao-produto h3 {
-      font-size: 16px;
+      font-size: 15px;
       margin-bottom: 8px;
       color: #334155;
     }
     .cartao-produto .categoria {
-      font-size: 12px;
+      font-size: 11px;
       color: #0284c7;
       font-weight: bold;
       text-transform: uppercase;
@@ -93,6 +135,20 @@
   <header>
     <h1>Distribuidora Frazão</h1>
     <p>Catálogo de Produtos & Cotações</p>
+
+    <!-- Retângulos Clicáveis das Categorias -->
+    <div class="menu-categorias" id="menuCategorias">
+      <button class="btn-categoria ativo" onclick="filtrarPorCategoria('todas', this)">Todas</button>
+      <button class="btn-categoria" onclick="filtrarPorCategoria('balas e pirulitos', this)">Balas e Pirulitos</button>
+      <button class="btn-categoria" onclick="filtrarPorCategoria('biscoitos', this)">Biscoitos</button>
+      <button class="btn-categoria" onclick="filtrarPorCategoria('doces', this)">Doces</button>
+      <button class="btn-categoria" onclick="filtrarPorCategoria('descartáveis', this)">Descartáveis</button>
+      <button class="btn-categoria" onclick="filtrarPorCategoria('mercearia', this)">Mercearia</button>
+      <button class="btn-categoria" onclick="filtrarPorCategoria('chicletes e drops', this)">Chicletes e Drops</button>
+      <button class="btn-categoria" onclick="filtrarPorCategoria('papelaria', this)">Papelaria</button>
+      <button class="btn-categoria" onclick="filtrarPorCategoria('bebidas', this)">Bebidas</button>
+      <button class="btn-categoria" onclick="filtrarPorCategoria('higiene e limpeza', this)">Higiene e Limpeza</button>
+    </div>
   </header>
 
   <main class="container">
@@ -101,7 +157,7 @@
         type="text" 
         id="campoBusca" 
         class="busca-input" 
-        placeholder="Buscar produto por nome ou categoria..."
+        placeholder="Ou digite o nome do produto para buscar..."
         onkeyup="filtrarProdutos()"
       >
     </div>
@@ -113,8 +169,8 @@
 
   <script>
     let todosOsProdutos = [];
+    let categoriaSelecionada = 'todas';
 
-    // Lista com os caminhos das pastas existentes no repositório
     const pastasCategorias = [
       'balas e pirulitos',
       'biscoitos',
@@ -131,16 +187,13 @@
       const container = document.getElementById('gridProdutos');
       todosOsProdutos = [];
 
-      // Passa por cada pasta buscando o arquivo produtos.json
       for (const pasta of pastasCategorias) {
         try {
-          // encodeURIComponent garante que espaços e acentos no nome da pasta funcionem na URL
           const url = `./${encodeURIComponent(pasta)}/produtos.json?v=` + new Date().getTime();
           const resposta = await fetch(url);
 
           if (resposta.ok) {
             const itens = await resposta.json();
-            // Adiciona a categoria em cada produto caso não esteja definida
             const itensComCategoria = itens.map(item => ({
               ...item,
               categoria: item.categoria || pasta
@@ -148,12 +201,12 @@
             todosOsProdutos = todosOsProdutos.concat(itensComCategoria);
           }
         } catch (e) {
-          console.warn(`Não foi possível carregar a pasta: ${pasta}`, e);
+          console.warn(`Pasta não encontrada ou vazia: ${pasta}`);
         }
       }
 
       if (todosOsProdutos.length === 0) {
-        container.innerHTML = `<p class="mensagem-status">Nenhum produto encontrado. Certifique-se de criar o arquivo <strong>produtos.json</strong> dentro das pastas das categorias.</p>`;
+        container.innerHTML = `<p class="mensagem-status">Nenhum produto encontrado. Certifique-se de salvar os arquivos <strong>produtos.json</strong> dentro das pastas.</p>`;
       } else {
         exibirProdutos(todosOsProdutos);
       }
@@ -164,7 +217,7 @@
       container.innerHTML = '';
 
       if (produtos.length === 0) {
-        container.innerHTML = '<p class="mensagem-status">Nenhum produto corresponde à busca.</p>';
+        container.innerHTML = '<p class="mensagem-status">Nenhum produto encontrado para este filtro.</p>';
         return;
       }
 
@@ -185,16 +238,35 @@
       });
     }
 
+    // Filtra ao clicar em um dos retângulos no cabeçalho
+    function filtrarPorCategoria(nomeCategoria, elementoBotao) {
+      categoriaSelecionada = nomeCategoria.toLowerCase();
+
+      // Ajusta o estilo visual do botão ativo
+      const botoes = document.querySelectorAll('.btn-categoria');
+      botoes.forEach(btn => btn.classList.remove('ativo'));
+      elementoBotao.classList.add('ativo');
+
+      // Aplica os filtros
+      filtrarProdutos();
+    }
+
+    // Filtra pela busca de texto e pela categoria do retângulo selecionado
     function filtrarProdutos() {
       const termo = document.getElementById('campoBusca').value.toLowerCase();
-      const filtrados = todosOsProdutos.filter(prod => 
-        prod.nome.toLowerCase().includes(termo) || 
-        (prod.categoria && prod.categoria.toLowerCase().includes(termo))
-      );
+      
+      const filtrados = todosOsProdutos.filter(prod => {
+        const bateNome = prod.nome.toLowerCase().includes(termo);
+        const bateCategoria = categoriaSelecionada === 'todas' || 
+                              (prod.categoria && prod.categoria.toLowerCase() === categoriaSelecionada);
+
+        return bateNome && bateCategoria;
+      });
+
       exibirProdutos(filtrados);
     }
 
-    // Carrega tudo ao abrir a página
+    // Carrega os dados ao abrir o site
     carregarTodosProdutos();
   </script>
 

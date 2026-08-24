@@ -1,18 +1,6 @@
 .grid-4-colunas {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
-}
-
-/* Responsividade para telas menores (Celulares e Tablets) */
-@media (max-width: 992px) {
-    .grid-4-colunas {
-        grid-template-columns: repeat(2, 1fr); /* 2 colunas no tablet */
-    }
-}
-
-@media (max-width: 576px) {
-    .grid-4-colunas {
-        grid-template-columns: 1fr; /* 1 coluna no celular */
-    }
+    padding: 20px 0;
 }

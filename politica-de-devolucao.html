@@ -1,79 +1,231 @@
-politica-devoluçao.html<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Política de Devolução - Distribuidora Frazão</title>
-    <link rel="stylesheet" href="style.css">
     <style>
-        .conteudo-legal {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Cabeçalho */
+        .main-header {
+            background-color: #1b365d;
+            padding: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .brand-logo h1 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .brand-logo span {
+            color: #d97706;
+        }
+
+        .brand-logo {
+            text-decoration: none;
+        }
+
+        /* Conteúdo da Página */
+        .page-container {
             max-width: 900px;
             margin: 40px auto;
-            padding: 0 20px;
-            color: #334155;
+            padding: 40px;
+            flex: 1;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .page-container h2 {
+            color: #1b365d;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .page-container h3 {
+            color: #1b365d;
+            font-size: 1.2rem;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .page-container p, .page-container ul {
+            font-size: 0.95rem;
             line-height: 1.6;
-        }
-        .conteudo-legal h2 {
-            color: #0f172a;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 22px;
-        }
-        .conteudo-legal p {
+            color: #475569;
             margin-bottom: 15px;
         }
-        .conteudo-legal ul {
-            margin-bottom: 15px;
+
+        .page-container ul {
             padding-left: 20px;
         }
-        .conteudo-legal li {
+
+        .page-container li {
             margin-bottom: 8px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #d97706;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Rodapé */
+        .main-footer {
+            background-color: #1b365d;
+            color: #ffffff;
+            padding: 25px 15px;
+            margin-top: 50px;
+            text-align: center;
+            border-top: 3px solid #d97706;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.88rem;
+        }
+
+        .footer-links a:hover {
+            color: #d97706;
+            text-decoration: underline;
+        }
+
+        .footer-links .divider {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .copyright {
+            margin: 0;
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        @media (max-width: 576px) {
+            .page-container {
+                padding: 20px;
+                margin: 20px 10px;
+            }
+            .footer-links .divider {
+                display: none;
+            }
+            .footer-links {
+                flex-direction: column;
+                gap: 8px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <header class="topo-interna">
-        <h1>Distribuidora Frazão</h1>
-        <a href="index.html" class="btn-voltar">&larr; Voltar para a Página Inicial</a>
+    <!-- Cabeçalho -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="./index.html" class="brand-logo">
+                <h1>Distribuidora <span>Frazão</span></h1>
+            </a>
+        </div>
     </header>
 
-    <main class="conteudo-legal">
-        <h2>Política de Devolução e Troca</h2>
-        <p>A <strong>Distribuidora Frazão</strong> preza pela qualidade dos produtos fornecidos e pela satisfação de seus clientes comerciais e parceiros. Abaixo estão descritas as diretrizes para trocas e devoluções.</p>
+    <!-- Conteúdo Principal -->
+    <main class="page-container">
+        <h2>Política de Devolução e Trocas</h2>
+        
+        <p>A <strong>Distribuidora Frazão</strong> busca garantir a máxima satisfação e transparência nas operações comerciais com nossos parceiros e clientes. Nossa política de devolução segue as diretrizes comerciais e fiscais para o setor atacadista.</p>
 
-        <h2>1. Condições Gerais</h2>
-        <p>Toda ocorrência envolvendo troca ou devolução deve ser comunicada previamente à nossa central de atendimento dentro dos prazos estabelecidos por lei ou acordo comercial.</p>
-
-        <h2>2. Motivos Aceitos para Troca ou Devolução</h2>
-        <p>Aceitamos solicitações nos seguintes casos:</p>
+        <h3>1. Conferência no Ato da Entrega</h3>
+        <p>Recomendamos fortemente que toda a mercadoria seja conferida no momento do recebimento, presencialmente com o entregador ou transportadora. Verifique:</p>
         <ul>
-            <li><strong>Produto avariado ou com defeito de fabricação:</strong> Constatado no ato da entrega ou conforme prazo do fabricante.</li>
-            <li><strong> Divergência no pedido:</strong> Produto recebido diferente do solicitado no fechamento da compra.</li>
-            <li><strong>Avarias na embalagem:</strong> Embalagens violadas ou danificadas durante o transporte.</li>
+            <li>A integridade das caixas e embalagens lacradas;</li>
+            <li>A quantidade de volumes em relação à Nota Fiscal;</li>
+            <li>A validade e o estado dos produtos.</li>
         </ul>
 
-        <h2>3. Prazos</h2>
-        <p>O prazo para relatar avarias, defeitos aparentes ou divergências nos produtos é de até 7 (sete) dias corridos a contar da data de recebimento da mercadoria.</p>
-
-        <h2>4. Condições do Produto para Devolução</h2>
-        <p>Para que a troca ou devolução seja efetuada, o produto deve atender aos seguintes critérios:</p>
+        <h3>2. Recusa no Ato da Entrega</h3>
+        <p>A devolução total ou parcial deve ser realizada no momento da entrega caso seja constatado:</p>
         <ul>
-            <li>Estar em sua embalagem original, sem sinais de violação indevida.</li>
-            <li>Acompanhar todos os itens, acessórios e nota fiscal correspondente.</li>
+            <li>Embalagem aberta, violada ou avariada;</li>
+            <li>Produto em desacordo com o pedido realizado;</li>
+            <li>Falta de itens ou divergência de quantidades em relação à Nota Fiscal.</li>
+        </ul>
+        <p>Nestes casos, registre a ressalva no verso da Nota Fiscal e informe imediatamente nossa equipe de atendimento.</p>
+
+        <h3>3. Troca por Defeito ou Avaria de Fabricação</h3>
+        <p>Caso seja identificado qualquer vício ou defeito de fabricação após a entrega, o cliente deverá entrar em contato em até **7 (sete) dias corridos** após o recebimento. Para prosseguir com o processo:</p>
+        <ul>
+            <li>O produto deve ser mantido na embalagem original;</li>
+            <li>Deve ser apresentada a Nota Fiscal da compra;</li>
+            <li>Será solicitada foto ou vídeo comprovando a avaria ou defeito.</li>
         </ul>
 
-        <h2>5. Como Solicitar</h2>
-        <p>Para iniciar um processo de troca ou devolução, entre em contato conosco através dos nossos canais oficiais de atendimento informando o número do pedido, o motivo da troca e fotos do produto (em caso de avaria).</p>
+        <h3>4. Procedimento de Restituição</h3>
+        <p>Após o recebimento e análise do produto devolvido em nosso centro de distribuição, a restituição poderá ocorrer via:</p>
+        <ul>
+            <li>Substituição pelo mesmo produto ou item equivalente;</li>
+            <li>Emissão de crédito para compras futuras;</li>
+            <li>Estorno ou reembolso do valor pago correspondente ao item.</li>
+        </ul>
+
+        <a href="./index.html" class="back-link">&larr; Voltar para a página inicial</a>
     </main>
 
-    <footer>
-        <div class="footer-links">
-            <a href="politica-privacidade.html">Política de Privacidade</a> |
-            <a href="regras-de-uso.html">Regras de Uso</a> |
-            <a href="politica-devolucao.html">Política de Devolução</a>
+    <!-- Rodapé -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="./politica-de-devolucao.html">Política de Devolução</a>
+                <span class="divider">|</span>
+                <a href="./politica-de-privacidade.html">Política de Privacidade</a>
+                <span class="divider">|</span>
+                <a href="./regras-de-uso.html">Regras de Uso</a>
+            </div>
+            <p class="copyright">&copy; Distribuidora Frazão. Todos os direitos reservados.</p>
         </div>
-        <p>&copy; 2026 Distribuidora Frazão.</p>
     </footer>
 
 </body>

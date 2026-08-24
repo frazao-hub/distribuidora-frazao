@@ -1,14 +1,132 @@
-<h1 align="center">Distribuidora Frazão</h1>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Higiene - Distribuidora Frazão</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: #1a1a1a;
+      margin-bottom: 30px;
+    }
+    .grid-produtos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .card-produto {
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      width: 240px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card-produto h3 {
+      font-size: 1.1rem;
+      color: #333;
+      margin-top: 0;
+      text-align: center;
+    }
+    .botoes {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .btn {
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: background-color 0.2s;
+    }
+    .btn-adicionar {
+      background-color: #0d6efd;
+      color: white;
+    }
+    .btn-adicionar:hover {
+      background-color: #0b5ed7;
+    }
+    .btn-whatsapp {
+      background-color: #25d366;
+      color: white;
+    }
+    .btn-whatsapp:hover {
+      background-color: #128c7e;
+    }
+  </style>
+</head>
+<body>
 
-<p align="center">
-  <a href="#balas-e-pirulitos"><img src="https://img.shields.io/badge/🍬_Balas_e_Pirulitos-333333?style=for-the-badge" /></a>
-  <a href="#bebidas"><img src="https://img.shields.io/badge/🥤_Bebidas-333333?style=for-the-badge" /></a>
-  <a href="#biscoitos"><img src="https://img.shields.io/badge/🍪_Biscoitos-333333?style=for-the-badge" /></a>
-  <a href="#chicletes-e-drops"><img src="https://img.shields.io/badge/🍬_Chicletes_e_Drops-333333?style=for-the-badge" /></a>
-  <a href="#descartaveis"><img src="https://img.shields.io/badge/🍽️_Descartáveis-333333?style=for-the-badge" /></a>
-  <a href="#doces"><img src="https://img.shields.io/badge/🍫_Doces-333333?style=for-the-badge" /></a>
-  <a href="#higiene"><img src="https://img.shields.io/badge/🧼_Higiene-333333?style=for-the-badge" /></a>
-  <a href="#limpeza"><img src="https://img.shields.io/badge/🧹_Limpeza-333333?style=for-the-badge" /></a>
-  <a href="#mercearia"><img src="https://img.shields.io/badge/🛒_Mercearia-333333?style=for-the-badge" /></a>
-  <a href="#papelaria"><img src="https://img.shields.io/badge/✏️_Papelaria-333333?style=for-the-badge" /></a>
-</p>
+  <div class="container">
+    <h1>🧼 Categoria: Higiene</h1>
+
+    <div class="grid-produtos">
+
+      <!-- Item 1 -->
+      <div class="card-produto">
+        <h3>Sabonete em Barra</h3>
+        <div class="botoes">
+          <button class="btn btn-adicionar" onclick="adicionarItem('Sabonete em Barra')">Adicionar</button>
+          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar%20o%20item:%20Sabonete%20em%20Barra" target="_blank">Cotar no WhatsApp</a>
+        </div>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="card-produto">
+        <h3>Creme Dental</h3>
+        <div class="botoes">
+          <button class="btn btn-adicionar" onclick="adicionarItem('Creme Dental')">Adicionar</button>
+          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar%20o%20item:%20Creme%20Dental" target="_blank">Cotar no WhatsApp</a>
+        </div>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="card-produto">
+        <h3>Shampoo</h3>
+        <div class="botoes">
+          <button class="btn btn-adicionar" onclick="adicionarItem('Shampoo')">Adicionar</button>
+          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar%20o%20item:%20Shampoo" target="_blank">Cotar no WhatsApp</a>
+        </div>
+      </div>
+
+      <!-- Item 4 -->
+      <div class="card-produto">
+        <h3>Desodorante</h3>
+        <div class="botoes">
+          <button class="btn btn-adicionar" onclick="adicionarItem('Desodorante')">Adicionar</button>
+          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar%20o%20item:%20Desodorante" target="_blank">Cotar no WhatsApp</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function adicionarItem(nome) {
+      alert(nome + " adicionado ao seu carrinho!");
+    }
+  </script>
+
+</body>
+</html>

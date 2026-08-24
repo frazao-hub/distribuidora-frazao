@@ -1,73 +1,199 @@
-<div class="category-grid">
-    
-    <!-- Mercearia -->
-    <a href="./mercearia.html" class="category-card">
-        <div class="card-icon">🛒</div>
-        <h3>Mercearia</h3>
-        <p>Alimentos secos, conservas, condimentos e produtos básicos.</p>
+<!-- Estilos CSS dos Retângulos Horizontais -->
+<style>
+    .category-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 0 15px;
+    }
+
+    .category-rectangle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #ffffff;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 16px 24px;
+        text-decoration: none;
+        color: #1e293b;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Efeito ao passar o mouse e ao clicar */
+    .category-rectangle:hover {
+        border-color: #1b365d;
+        background-color: #f8fafc;
+        transform: translateX(6px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .category-rectangle:active {
+        transform: scale(0.99);
+    }
+
+    .category-content {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .category-icon {
+        font-size: 2rem;
+        background-color: #f1f5f9;
+        padding: 10px 14px;
+        border-radius: 8px;
+    }
+
+    .category-text h3 {
+        margin: 0 0 4px 0;
+        font-size: 1.15rem;
+        color: #1b365d;
+        font-weight: 700;
+    }
+
+    .category-text p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #64748b;
+    }
+
+    .category-arrow {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #d97706;
+        transition: transform 0.2s ease;
+    }
+
+    .category-rectangle:hover .category-arrow {
+        transform: translateX(4px);
+    }
+</style>
+
+<!-- Estrutura dos Retângulos Horizontais Clicáveis (.html) -->
+<div class="category-container">
+
+    <!-- Retângulo 1: Mercearia -->
+    <a href="./mercearia.html" class="category-rectangle">
+        <div class="category-content">
+            <div class="category-icon">🛒</div>
+            <div class="category-text">
+                <h3>Mercearia</h3>
+                <p>Alimentos secos, conservas, condimentos e atacado geral.</p>
+            </div>
+        </div>
+        <div class="category-arrow">&rarr;</div>
     </a>
 
-    <!-- Bebidas -->
-    <a href="./bebidas.html" class="category-card">
-        <div class="card-icon">🥤</div>
-        <h3>Bebidas</h3>
-        <p>Sucos, refrigerantes, águas e destilados no atacado.</p>
+    <!-- Retângulo 2: Bebidas -->
+    <a href="./bebidas.html" class="category-rectangle">
+        <div class="category-content">
+            <div class="category-icon">🥤</div>
+            <div class="category-text">
+                <h3>Bebidas</h3>
+                <p>Sucos, refrigerantes, águas e destilados no atacado.</p>
+            </div>
+        </div>
+        <div class="category-arrow">&rarr;</div>
     </a>
 
-    <!-- Doces -->
-    <a href="./doces.html" class="category-card">
-        <div class="card-icon">🍫</div>
-        <h3>Doces</h3>
-        <p>Chocolates, sobremesas e variados da confeitaria.</p>
+    <!-- Retângulo 3: Doces -->
+    <a href="./doces.html" class="category-rectangle">
+        <div class="category-content">
+            <div class="category-icon">🍫</div>
+            <div class="category-text">
+                <h3>Doces</h3>
+                <p>Chocolates, sobremesas e itens variados de confeitaria.</p>
+            </div>
+        </div>
+        <div class="category-arrow">&rarr;</div>
     </a>
 
-    <!-- Balas e Pirulitos -->
-    <a href="./balas-e-pirulitos.html" class="category-card">
-        <div class="card-icon">🍭</div>
-        <h3>Balas & Pirulitos</h3>
-        <p>Grande variedade de balas mastigáveis, duras e pirulitos.</p>
+    <!-- Retângulo 4: Balas e Pirulitos -->
+    <a href="./balas-e-pirulitos.html" class="category-rectangle">
+        <div class="category-content">
+            <div class="category-icon">🍭</div>
+            <div class="category-text">
+                <h3>Balas & Pirulitos</h3>
+                <p>Balas mastigáveis, recheadas, duras e pirulitos variados.</p>
+            </div>
+        </div>
+        <div class="category-arrow">&rarr;</div>
     </a>
 
-    <!-- Chicletes e Drops -->
-    <a href="./chicletes-e-drops.html" class="category-card">
-        <div class="card-icon">🍬</div>
-        <h3>Chicletes & Drops</h3>
-        <p>Gomas de mascar, pastilhas e drops refrescantes.</p>
+    <!-- Retângulo 5: Chicletes e Drops -->
+    <a href="./chicletes-e-drops.html" class="category-rectangle">
+        <div class="category-content">
+            <div class="category-icon">🍬</div>
+            <div class="category-text">
+                <h3>Chicletes & Drops</h3>
+                <p>Gomas de mascar, pastilhas e drops refrescantes.</p>
+            </div>
+        </div>
+        <div class="category-arrow">&rarr;</div>
     </a>
 
-    <!-- Biscoitos -->
-    <a href="./biscoitos.html" class="category-card">
-        <div class="card-icon">🍪</div>
-        <h3>Biscoitos</h3>
-        <p>Biscoitos recheados, wafers, salgados e rosquinhas.</p>
+    <!-- Retângulo 6: Biscoitos -->
+    <a href="./biscoitos.html" class="category-rectangle">
+        <div class="category-content">
+            <div class="category-icon">🍪</div>
+            <div class="category-text">
+                <h3>Biscoitos</h3>
+                <p>Biscoitos recheados, wafers, salgados e rosquinhas.</p>
+            </div>
+        </div>
+        <div class="category-arrow">&rarr;</div>
     </a>
 
-    <!-- Higiene -->
-    <a href="./higiene.html" class="category-card">
-        <div class="card-icon">🧴</div>
-        <h3>Higiene Personal</h3>
-        <p>Sabonetes, cremes dentais, shampoos e cuidados diários.</p>
+    <!-- Retângulo 7: Higiene -->
+    <a href="./higiene.html" class="category-rectangle">
+        <div class="category-content">
+            <div class="category-icon">🧴</div>
+            <div class="category-text">
+                <h3>Higiene</h3>
+                <p>Sabonetes, cremes dentais, shampoos e cuidados pessoais.</p>
+            </div>
+        </div>
+        <div class="category-arrow">&rarr;</div>
     </a>
 
-    <!-- Limpeza -->
-    <a href="./limpeza.html" class="category-card">
-        <div class="card-icon">🧹</div>
-        <h3>Limpeza</h3>
-        <p>Detergentes, desinfetantes, sabões e produtos de limpeza pesada.</p>
+    <!-- Retângulo 8: Limpeza -->
+    <a href="./limpeza.html" class="category-rectangle">
+        <div class="category-content">
+            <div class="category-icon">🧹</div>
+            <div class="category-text">
+                <h3>Limpeza</h3>
+                <p>Detergentes, desinfetantes, sabões e saneantes comerciais.</p>
+            </div>
+        </div>
+        <div class="category-arrow">&rarr;</div>
     </a>
 
-    <!-- Descartáveis -->
-    <a href="./descartaveis.html" class="category-card">
-        <div class="card-icon">🍽️</div>
-        <h3>Descartáveis</h3>
-        <p>Copos, pratos, talheres, guardanapos e embalagens.</p>
+    <!-- Retângulo 9: Descartáveis -->
+    <a href="./descartaveis.html" class="category-rectangle">
+        <div class="category-content">
+            <div class="category-icon">🍽️</div>
+            <div class="category-text">
+                <h3>Descartáveis</h3>
+                <p>Copos, pratos, talheres, guardanapos e embalagens comerciais.</p>
+            </div>
+        </div>
+        <div class="category-arrow">&rarr;</div>
     </a>
 
-    <!-- Papelaria -->
-    <a href="./papelaria.html" class="category-card">
-        <div class="card-icon">📦</div>
-        <h3>Papelaria & Escritório</h3>
-        <p>Artigos escolares, bobinas térmicas e materiais de escritório.</p>
+    <!-- Retângulo 10: Papelaria -->
+    <a href="./papelaria.html" class="category-rectangle">
+        <div class="category-content">
+            <div class="category-icon">📦</div>
+            <div class="category-text">
+                <h3>Papelaria & Escritório</h3>
+                <p>Artigos escolares, bobinas térmicas e materiais de escritório.</p>
+            </div>
+        </div>
+        <div class="category-arrow">&rarr;</div>
     </a>
 
 </div>

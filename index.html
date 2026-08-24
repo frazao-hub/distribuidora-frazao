@@ -1,106 +1,261 @@
-<style>
-/* Estilos do Cabeçalho */
-.header-frazao {
-    background-color: #ffffff;
-    border-bottom: 3px solid #3b82f6;
-    padding: 15px 20px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    margin-bottom: 25px;
-}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribuidora Frazão - Catálogo</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        body { background-color: #f8fafc; color: #1e293b; padding-bottom: 40px; }
 
-.header-container {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-}
+        /* Estilos do Cabeçalho */
+        .header-frazao { background-color: #ffffff; border-bottom: 3px solid #3b82f6; padding: 15px 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 25px; }
+        .header-container { max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 15px; }
+        .logo-area h1 { margin: 0; color: #1e293b; font-size: 26px; font-weight: 800; }
+        .logo-area span { color: #3b82f6; }
+        .subtitulo-header { color: #64748b; font-size: 13px; margin-top: 3px; }
+        .busca-header { display: flex; align-items: center; flex-grow: 1; max-width: 400px; }
+        .busca-header input { width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px 0 0 6px; outline: none; font-size: 14px; }
+        .busca-header button { background-color: #3b82f6; color: #ffffff; border: none; padding: 10px 16px; border-radius: 0 6px 6px 0; cursor: pointer; font-weight: bold; }
+        .busca-header button:hover { background-color: #1d4ed8; }
+        .contato-header { text-align: right; font-size: 13px; color: #334155; }
+        .contato-header strong { color: #25d366; display: block; font-size: 14px; }
 
-.logo-area h1 {
-    margin: 0;
-    color: #1e293b;
-    font-size: 26px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-}
+        /* Container Principal */
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
 
-.logo-area span {
-    color: #3b82f6;
-}
+        /* Pastas Retangulares */
+        .categorias-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 30px; }
+        .btn-categoria { background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 8px; padding: 14px 16px; font-size: 15px; font-weight: bold; color: #334155; cursor: pointer; text-align: center; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
+        .btn-categoria:hover { border-color: #3b82f6; color: #3b82f6; transform: translateY(-2px); }
+        .btn-categoria.ativo { background-color: #3b82f6; color: #ffffff; border-color: #3b82f6; }
 
-.subtitulo-header {
-    margin: 3px 0 0 0;
-    color: #64748b;
-    font-size: 13px;
-}
+        /* Área de Produtos */
+        .secao-titulo { font-size: 22px; color: #0f172a; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+        .grid-produtos { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .produto-card { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .produto-card img { width: 100%; height: 120px; object-fit: contain; margin-bottom: 10px; border-radius: 4px; }
+        .produto-card h3 { font-size: 15px; color: #1e293b; margin-bottom: 10px; height: 36px; display: flex; align-items: center; justify-content: center; }
+        .qtd-container { margin-bottom: 12px; font-size: 14px; color: #64748b; }
+        .input-qtd { width: 60px; padding: 4px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px; margin-left: 6px; }
+        .acoes-card button { width: 100%; padding: 8px; margin-top: 6px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .btn-carrinho { background-color: #e2e8f0; color: #334155; }
+        .btn-carrinho:hover { background-color: #cbd5e1; }
+        .btn-whatsapp { background-color: #25d366; color: #ffffff; }
+        .btn-whatsapp:hover { background-color: #1ebd56; }
+    </style>
+</head>
+<body>
 
-.busca-header {
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-    max-width: 400px;
-}
+    <!-- CABEÇALHO -->
+    <header class="header-frazao">
+        <div class="header-container">
+            <div class="logo-area">
+                <h1>Distribuidora <span>Frazão</span></h1>
+                <p class="subtitulo-header">Catálogo de Produtos & Cotações</p>
+            </div>
+            <div class="busca-header">
+                <input type="text" placeholder="Buscar produto no catálogo...">
+                <button type="button">Buscar</button>
+            </div>
+            <div class="contato-header">
+                <span>Atendimento Rápido:</span>
+                <strong>📱 (21) 96865-9086</strong>
+            </div>
+        </div>
+    </header>
 
-.busca-header input {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px 0 0 6px;
-    outline: none;
-    font-size: 14px;
-}
-
-.busca-header button {
-    background-color: #3b82f6;
-    color: #ffffff;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 0 6px 6px 0;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s;
-}
-
-.busca-header button:hover {
-    background-color: #1d4ed8;
-}
-
-.contato-header {
-    text-align: right;
-    font-size: 13px;
-    color: #334155;
-}
-
-.contato-header strong {
-    color: #25d366;
-    display: block;
-    font-size: 14px;
-}
-</style>
-
-<!-- ESTRUTURA DO CABEÇALHO -->
-<header class="header-frazao">
-    <div class="header-container">
-        
-        <!-- LOGO / NOME -->
-        <div class="logo-area">
-            <h1>Distribuidora <span>Frazão</span></h1>
-            <p class="subtitulo-header">Catálogo de Produtos & Cotações</p>
+    <main class="container">
+        <!-- PASTAS RETANGULARES -->
+        <div class="categorias-grid">
+            <button type="button" class="btn-categoria" onclick="abrirPasta('balas', this)">🍬 Balas e Pirulitos</button>
+            <button type="button" class="btn-categoria" onclick="abrirPasta('doces', this)">🍩 Doces</button>
+            <button type="button" class="btn-categoria" onclick="abrirPasta('higiene', this)">🧴 Higiene</button>
+            <button type="button" class="btn-categoria" onclick="abrirPasta('limpeza', this)">🧹 Limpeza</button>
+            <button type="button" class="btn-categoria" onclick="abrirPasta('mercearia', this)">🛒 Mercearia</button>
         </div>
 
-        <!-- BARRA DE BUSCA -->
-        <div class="busca-header">
-            <input type="text" placeholder="Buscar produto no catálogo...">
-            <button type="button">Buscar</button>
-        </div>
+        <!-- ÁREA DOS PRODUTOS DAS PASTAS -->
+        <div id="painel-produtos">
+            <p id="msg-padrao" style="text-align: center; color: #64748b; font-size: 16px; margin-top: 40px;">Clique em uma pasta acima para visualizar os produtos inseridos.</p>
 
-        <!-- INFORMAÇÃO DE CONTATO/WHATSAPP -->
-        <div class="contato-header">
-            <span>Atendimento Rápido:</span>
-            <strong>📱 (21) 96865-9086</strong>
-        </div>
+            <!-- PASTA: BALAS E PIRULITOS -->
+            <div id="pasta-balas" class="conteudo-pasta" style="display: none;">
+                <h2 class="secao-titulo">Balas e Pirulitos</h2>
+                <div class="grid-produtos">
+                    <div class="produto-card">
+                        <img src="https://via.placeholder.com/150?text=Azedinha+Morango" alt="AZEDINHA MORANGO">
+                        <h3>AZEDINHA MORANGO</h3>
+                        <div class="qtd-container"><label>Qtd:</label><input type="number" value="1" min="1" class="input-qtd"></div>
+                        <div class="acoes-card">
+                            <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('AZEDINHA MORANGO', this)">Adicionar ao Carrinho</button>
+                            <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('AZEDINHA MORANGO', this)">Cotar no WhatsApp</button>
+                        </div>
+                    </div>
+                    <div class="produto-card">
+                        <img src="https://via.placeholder.com/150?text=Bala+7+Belo" alt="BALA 7 BELO">
+                        <h3>BALA 7 BELO</h3>
+                        <div class="qtd-container"><label>Qtd:</label><input type="number" value="1" min="1" class="input-qtd"></div>
+                        <div class="acoes-card">
+                            <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA 7 BELO', this)">Adicionar ao Carrinho</button>
+                            <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA 7 BELO', this)">Cotar no WhatsApp</button>
+                        </div>
+                    </div>
+                    <div class="produto-card">
+                        <img src="https://via.placeholder.com/150?text=Bala+Juquinha" alt="BALA JUQUINHA">
+                        <h3>BALA JUQUINHA</h3>
+                        <div class="qtd-container"><label>Qtd:</label><input type="number" value="1" min="1" class="input-qtd"></div>
+                        <div class="acoes-card">
+                            <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BALA JUQUINHA', this)">Adicionar ao Carrinho</button>
+                            <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BALA JUQUINHA', this)">Cotar no WhatsApp</button>
+                        </div>
+                    </div>
+                    <div class="produto-card">
+                        <img src="https://via.placeholder.com/150?text=Pirulito+Blong" alt="PIRULITO BLONG SORTIDO">
+                        <h3>PIRULITO BLONG SORTIDO</h3>
+                        <div class="qtd-container"><label>Qtd:</label><input type="number" value="1" min="1" class="input-qtd"></div>
+                        <div class="acoes-card">
+                            <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PIRULITO BLONG SORTIDO', this)">Adicionar ao Carrinho</button>
+                            <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('PIRULITO BLONG SORTIDO', this)">Cotar no WhatsApp</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    </div>
-</header>
+            <!-- PASTA: DOCES -->
+            <div id="pasta-doces" class="conteudo-pasta" style="display: none;">
+                <h2 class="secao-titulo">Doces</h2>
+                <div class="grid-produtos">
+                    <div class="produto-card">
+                        <img src="https://via.placeholder.com/150?text=Pacoca+Rolha" alt="PAÇOCA ROLHA">
+                        <h3>PAÇOCA ROLHA</h3>
+                        <div class="qtd-container"><label>Qtd:</label><input type="number" value="1" min="1" class="input-qtd"></div>
+                        <div class="acoes-card">
+                            <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PAÇOCA ROLHA', this)">Adicionar ao Carrinho</button>
+                            <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('PAÇOCA ROLHA', this)">Cotar no WhatsApp</button>
+                        </div>
+                    </div>
+                    <div class="produto-card">
+                        <img src="https://via.placeholder.com/150?text=Doce+de+Leite" alt="DOCE DE LEITE POTE">
+                        <h3>DOCE DE LEITE POTE</h3>
+                        <div class="qtd-container"><label>Qtd:</label><input type="number" value="1" min="1" class="input-qtd"></div>
+                        <div class="acoes-card">
+                            <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('DOCE DE LEITE POTE', this)">Adicionar ao Carrinho</button>
+                            <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('DOCE DE LEITE POTE', this)">Cotar no WhatsApp</button>
+                        </div>
+                    </div>
+                    <div class="produto-card">
+                        <img src="https://via.placeholder.com/150?text=Pe+de+Moca" alt="PÉ DE MOÇA">
+                        <h3>PÉ DE MOÇA</h3>
+                        <div class="qtd-container"><label>Qtd:</label><input type="number" value="1" min="1" class="input-qtd"></div>
+                        <div class="acoes-card">
+                            <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PÉ DE MOÇA', this)">Adicionar ao Carrinho</button>
+                            <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('PÉ DE MOÇA', this)">Cotar no WhatsApp</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASTA: HIGIENE -->
+            <div id="pasta-higiene" class="conteudo-pasta" style="display: none;">
+                <h2 class="secao-titulo">Higiene</h2>
+                <div class="grid-produtos">
+                    <div class="produto-card">
+                        <img src="https://via.placeholder.com/150?text=Papel+Higienico" alt="PAPEL HIGIÊNICO">
+                        <h3>PAPEL HIGIÊNICO</h3>
+                        <div class="qtd-container"><label>Qtd:</label><input type="number" value="1" min="1" class="input-qtd"></div>
+                        <div class="acoes-card">
+                            <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('PAPEL HIGIÊNICO', this)">Adicionar ao Carrinho</button>
+                            <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('PAPEL HIGIÊNICO', this)">Cotar no WhatsApp</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASTA: LIMPEZA -->
+            <div id="pasta-limpeza" class="conteudo-pasta" style="display: none;">
+                <h2 class="secao-titulo">Limpeza</h2>
+                <div class="grid-produtos">
+                    <div class="produto-card">
+                        <img src="https://via.placeholder.com/150?text=Detergente" alt="DETERGENTE LIQUIDO">
+                        <h3>DETERGENTE LIQUIDO</h3>
+                        <div class="qtd-container"><label>Qtd:</label><input type="number" value="1" min="1" class="input-qtd"></div>
+                        <div class="acoes-card">
+                            <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('DETERGENTE LIQUIDO', this)">Adicionar ao Carrinho</button>
+                            <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('DETERGENTE LIQUIDO', this)">Cotar no WhatsApp</button>
+                        </div>
+                    </div>
+                    <div class="produto-card">
+                        <img src="https://via.placeholder.com/150?text=Sabao+em+Po" alt="SABÃO EM PÓ">
+                        <h3>SABÃO EM PÓ</h3>
+                        <div class="qtd-container"><label>Qtd:</label><input type="number" value="1" min="1" class="input-qtd"></div>
+                        <div class="acoes-card">
+                            <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('SABÃO EM PÓ', this)">Adicionar ao Carrinho</button>
+                            <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('SABÃO EM PÓ', this)">Cotar no WhatsApp</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASTA: MERCEARIA -->
+            <div id="pasta-mercearia" class="conteudo-pasta" style="display: none;">
+                <h2 class="secao-titulo">Mercearia</h2>
+                <div class="grid-produtos">
+                    <div class="produto-card">
+                        <img src="https://via.placeholder.com/150?text=Biscoito+Recheado" alt="BISCOITO RECHEADO">
+                        <h3>BISCOITO RECHEADO</h3>
+                        <div class="qtd-container"><label>Qtd:</label><input type="number" value="1" min="1" class="input-qtd"></div>
+                        <div class="acoes-card">
+                            <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('BISCOITO RECHEADO', this)">Adicionar ao Carrinho</button>
+                            <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('BISCOITO RECHEADO', this)">Cotar no WhatsApp</button>
+                        </div>
+                    </div>
+                    <div class="produto-card">
+                        <img src="https://via.placeholder.com/150?text=Salgadinho+Torcida" alt="SALGADINHO TORCIDA">
+                        <h3>SALGADINHO TORCIDA</h3>
+                        <div class="qtd-container"><label>Qtd:</label><input type="number" value="1" min="1" class="input-qtd"></div>
+                        <div class="acoes-card">
+                            <button type="button" class="btn-carrinho" onclick="adicionarAoCarrinho('SALGADINHO TORCIDA', this)">Adicionar ao Carrinho</button>
+                            <button type="button" class="btn-whatsapp" onclick="cotarWhatsapp('SALGADINHO TORCIDA', this)">Cotar no WhatsApp</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- JAVASCRIPT DE INTERAÇÃO -->
+    <script>
+        function abrirPasta(nomePasta, botaoClicado) {
+            const msg = document.getElementById('msg-padrao');
+            if (msg) msg.style.display = 'none';
+
+            const pastas = document.querySelectorAll('.conteudo-pasta');
+            pastas.forEach(pasta => pasta.style.display = 'none');
+
+            const botoes = document.querySelectorAll('.btn-categoria');
+            botoes.forEach(btn => btn.classList.remove('ativo'));
+
+            const pastaAlvo = document.getElementById('pasta-' + nomePasta);
+            if (pastaAlvo) {
+                pastaAlvo.style.display = 'block';
+                botaoClicado.classList.add('ativo');
+            }
+        }
+
+        function cotarWhatsapp(nomeProduto, elemento) {
+            const card = elemento.closest('.produto-card');
+            const quantidade = card.querySelector('.input-qtd').value || 1;
+            const telefone = "5521968659086";
+            const mensagem = `Olá! Gostaria de cotar na Distribuidora Frazão o produto: ${nomeProduto} (Qtd: ${quantidade})`;
+            window.open(`https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`, '_blank');
+        }
+
+        function adicionarAoCarrinho(nomeProduto, elemento) {
+            const card = elemento.closest('.produto-card');
+            const quantidade = card.querySelector('.input-qtd').value || 1;
+            alert(`Adicionado ao carrinho: ${quantidade}x ${nomeProduto}`);
+        }
+    </script>
+</body>
+</html>

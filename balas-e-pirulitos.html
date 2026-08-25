@@ -1,44 +1,844 @@
-[
-  {
-    "id": "bal-001",
-    "nome": "Bala Mastigável Yogurte 100 600g",
-    "categoria": "Balas e Pirulitos",
-    "preco": 12.50,
-    "imagem": "imagens/yogurte100.jpg"
-  },
-  {
-    "id": "bal-002",
-    "nome": "Bala Recheada Dori Lua Cheia Chantilly 600g",
-    "categoria": "Balas e Pirulitos",
-    "preco": 11.90,
-    "imagem": "imagens/lua_cheia.jpg"
-  },
-  {
-    "id": "bal-003",
-    "nome": "Bala Durinha Butter Toffees Leite 500g",
-    "categoria": "Balas e Pirulitos",
-    "preco": 18.90,
-    "imagem": "imagens/butter_toffees.jpg"
-  },
-  {
-    "id": "pir-001",
-    "nome": "Pirulito Pop Mania Morango Recheado 600g",
-    "categoria": "Balas e Pirulitos",
-    "preco": 14.20,
-    "imagem": "imagens/pop_mania.jpg"
-  },
-  {
-    "id": "pir-002",
-    "nome": "Pirulito Big Pop Mastigável Sortido 500g",
-    "categoria": "Balas e Pirulitos",
-    "preco": 13.50,
-    "imagem": "imagens/big_pop.jpg"
-  },
-  {
-    "id": "pir-003",
-    "nome": "Pirulito Blong Pinta Língua Recheado 600g",
-    "categoria": "Balas e Pirulitos",
-    "preco": 15.00,
-    "imagem": "imagens/blong_pinta_lingua.jpg"
-  }
-]
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balas e Pirulitos - Distribuidora Frazão</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Cabeçalho */
+        .main-header {
+            background-color: #1b365d;
+            padding: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .brand-logo h1 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .brand-logo span {
+            color: #d97706;
+        }
+
+        .brand-logo {
+            text-decoration: none;
+        }
+
+        /* Banner da Categoria */
+        .category-header {
+            max-width: 1200px;
+            margin: 30px auto 10px auto;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .category-header h2 {
+            color: #1b365d;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-link {
+            color: #d97706;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Grid de Produtos (4 por linha) */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            gap: 12px;
+        }
+
+        .product-card:hover {
+            border-color: #1b365d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .product-info-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .product-icon {
+            font-size: 1.4rem;
+            background-color: #f1f5f9;
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .product-info h3 {
+            margin: 0;
+            font-size: 0.88rem;
+            color: #1b365d;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        /* Container de Ações (Botões) */
+        .product-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        /* Botão Adicionar */
+        .btn-add {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background-color: #1b365d;
+            color: #ffffff;
+            border: none;
+            font-weight: 600;
+            font-size: 0.78rem;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn-add:hover {
+            background-color: #0f2342;
+        }
+
+        /* Botão do WhatsApp */
+        .btn-whatsapp {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background-color: #25d366;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.78rem;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+            text-align: center;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #1eb954;
+        }
+
+        /* Estilos da Paginação */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 20px auto 40px auto;
+            max-width: 1200px;
+        }
+
+        .pagination-btn {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #1b365d;
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background-color: #1b365d;
+            color: #ffffff;
+            border-color: #1b365d;
+        }
+
+        .pagination-btn.active {
+            background-color: #d97706;
+            color: #ffffff;
+            border-color: #d97706;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Rodapé */
+        .main-footer {
+            background-color: #1b365d;
+            color: #ffffff;
+            padding: 25px 15px;
+            margin-top: auto;
+            text-align: center;
+            border-top: 3px solid #d97706;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.88rem;
+        }
+
+        .footer-links a:hover {
+            color: #d97706;
+            text-decoration: underline;
+        }
+
+        .footer-links .divider {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .copyright {
+            margin: 0;
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            .footer-links .divider {
+                display: none;
+            }
+            .footer-links {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cabeçalho -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="./index.html" class="brand-logo">
+                <h1>Distribuidora <span>Frazão</span></h1>
+            </a>
+        </div>
+    </header>
+
+    <!-- Título da Categoria -->
+    <div class="category-header">
+        <h2>🍬 Balas e Pirulitos</h2>
+        <a href="./index.html" class="back-link">&larr; Voltar às categorias</a>
+    </div>
+
+    <!-- Lista de Produtos (Ordem Alfabética) -->
+    <div class="product-grid" id="productGrid">
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍬</div>
+                <div class="product-info"><h3>Bala 7 Belo</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%207%20Belo" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍓</div>
+                <div class="product-info"><h3>Bala Azedinha Morango</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Azedinha%20Morango" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍉</div>
+                <div class="product-info"><h3>Bala Azedinha Melancia</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Azedinha%20Melancia" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍇</div>
+                <div class="product-info"><h3>Bala Azedinha Uva</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Azedinha%20Uva" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍦</div>
+                <div class="product-info"><h3>Bala Azedinha Yogurt</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Azedinha%20Yogurt" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍬</div>
+                <div class="product-info"><h3>Bala Berbau</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Berbau" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍬</div>
+                <div class="product-info"><h3>Bala Bolete</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Bolete" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍌</div>
+                <div class="product-info"><h3>Bala de Banana Joice</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20de%20Banana%20Joice" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">☕</div>
+                <div class="product-info"><h3>Bala de Café</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20de%20Café" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🥥</div>
+                <div class="product-info"><h3>Bala de Coco</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20de%20Coco" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍯</div>
+                <div class="product-info"><h3>Bala de Mel Dori</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20de%20Mel%20Dori" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍯</div>
+                <div class="product-info"><h3>Bala de Mel e Gengibre</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20de%20Mel%20e%20Gengibre" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🌿</div>
+                <div class="product-info"><h3>Bala Erva Cidreira</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Erva%20Cidreira" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍬</div>
+                <div class="product-info"><h3>Bala Gamadinho</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Gamadinho" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍃</div>
+                <div class="product-info"><h3>Bala Hortelã</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Hortelã" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍬</div>
+                <div class="product-info"><h3>Bala Juquinha</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Juquinha" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍬</div>
+                <div class="product-info"><h3>Bala Juquinha Sortida</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Juquinha%20Sortida" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🥥</div>
+                <div class="product-info"><h3>Bala Leite e Coco</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Leite%20e%20Coco" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🌕</div>
+                <div class="product-info"><h3>Bala Lua Cheia</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Lua%20Cheia" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍏</div>
+                <div class="product-info"><h3>Bala Maçã Verde</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Maçã%20Verde" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🌽</div>
+                <div class="product-info"><h3>Bala Milho Verde</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Milho%20Verde" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍓</div>
+                <div class="product-info"><h3>Bala Moranguinho</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Moranguinho" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🥜</div>
+                <div class="product-info"><h3>Bala Paçoquita</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Paçoquita" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍬</div>
+                <div class="product-info"><h3>Bala Sortida Erlan</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Sortida%20Erlan" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍬</div>
+                <div class="product-info"><h3>Bala Tamarindo</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Tamarindo" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍫</div>
+                <div class="product-info"><h3>Bala Toffee Choc</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Toffee%20Choc" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍬</div>
+                <div class="product-info"><h3>Bala Toffee Maracujá</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Toffee%20Maracujá" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍦</div>
+                <div class="product-info"><h3>Bala Yogurt</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bala%20Yogurt" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍯</div>
+                <div class="product-info"><h3>Caramelo Embaré</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Caramelo%20Embaré" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍭</div>
+                <div class="product-info"><h3>Pirulito Blong Azul</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Azul" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍉</div>
+                <div class="product-info"><h3>Pirulito Blong Melancia</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Melancia" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍓</div>
+                <div class="product-info"><h3>Pirulito Blong Morango</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Morango" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍭</div>
+                <div class="product-info"><h3>Pirulito Blong Preto</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Preto" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍇</div>
+                <div class="product-info"><h3>Pirulito Blong Uva</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pirulito%20Blong%20Uva" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍭</div>
+                <div class="product-info"><h3>Pirulito Ch. Pop</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pirulito%20Ch.%20Pop" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍓</div>
+                <div class="product-info"><h3>Pirulito Ch. Pop Morango</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pirulito%20Ch.%20Pop%20Morango" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🌈</div>
+                <div class="product-info"><h3>Pirulito Florestal Colorido</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pirulito%20Florestal%20Colorido" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🔴</div>
+                <div class="product-info"><h3>Pirulito Florestal Vermelho</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pirulito%20Florestal%20Vermelho" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍎</div>
+                <div class="product-info"><h3>Pirulito Maçã do Amor</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pirulito%20Maçã%20do%20Amor" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">💋</div>
+                <div class="product-info"><h3>Pirulito Pop Kiss</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pirulito%20Pop%20Kiss" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-info-wrapper">
+                <div class="product-icon">🍇</div>
+                <div class="product-info"><h3>Pirulito Uva do Amor</h3></div>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pirulito%20Uva%20do%20Amor" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Controles da Paginação -->
+    <div class="pagination-container" id="paginationControls"></div>
+
+    <!-- Rodapé -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="./politica-de-devolucao.html">Política de Devolução</a>
+                <span class="divider">|</span>
+                <a href="./politica-de-privacidade.html">Política de Privacidade</a>
+                <span class="divider">|</span>
+                <a href="./regras-de-uso.html">Regras de Uso</a>
+            </div>
+            <p class="copyright">&copy; Distribuidora Frazão. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Script de Paginação -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const itemsPerPage = 12; // Número de itens por página
+            const productGrid = document.getElementById('productGrid');
+            const products = Array.from(productGrid.getElementsByClassName('product-card'));
+            const paginationControls = document.getElementById('paginationControls');
+            let currentPage = 1;
+
+            const totalPages = Math.ceil(products.length / itemsPerPage);
+
+            function displayPage(page) {
+                currentPage = page;
+                const start = (page - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+
+                products.forEach((product, index) => {
+                    if (index >= start && index < end) {
+                        product.style.display = 'flex';
+                    } else {
+                        product.style.display = 'none';
+                    }
+                });
+
+                renderControls();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function renderControls() {
+                paginationControls.innerHTML = '';
+
+                // Botão Anterior
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'pagination-btn';
+                prevBtn.innerHTML = '&laquo; Anterior';
+                prevBtn.disabled = currentPage === 1;
+                prevBtn.addEventListener('click', () => displayPage(currentPage - 1));
+                paginationControls.appendChild(prevBtn);
+
+                // Botões de Páginas
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+                    pageBtn.innerText = i;
+                    pageBtn.addEventListener('click', () => displayPage(i));
+                    paginationControls.appendChild(pageBtn);
+                }
+
+                // Botão Próximo
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'pagination-btn';
+                nextBtn.innerHTML = 'Próximo &raquo;';
+                nextBtn.disabled = currentPage === totalPages;
+                nextBtn.addEventListener('click', () => displayPage(currentPage + 1));
+                paginationControls.appendChild(nextBtn);
+            }
+
+            // Inicializa a primeira página
+            displayPage(1);
+        });
+    </script>
+</body>
+</html>

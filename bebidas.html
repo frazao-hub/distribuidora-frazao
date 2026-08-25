@@ -3,330 +3,403 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bebidas - Distribuidora Frazão</title>
+    <title>AR Frazão Ltda - Catálogo de Bebidas</title>
     <style>
         :root {
-            --primary: #25d366;
-            --primary-dark: #128c7e;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #0f172a;
-            --text-muted: #64748b;
+            --primary: #1a252f;
+            --secondary: #e67e22;
+            --success: #27ae60;
+            --bg-light: #f8f9fa;
             --border: #e2e8f0;
-            --btn-cart: #007bff;
-            --btn-cart-hover: #0056b3;
+            --text-dark: #2d3748;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 2rem 1rem 5rem 1rem; }
-
-        .header { text-align: center; margin-bottom: 2rem; }
-        .header h1 { font-size: 1.8rem; color: var(--text); margin-bottom: 0.5rem; }
-        .header p { color: var(--text-muted); font-size: 0.95rem; }
-
-        .container { max-width: 1200px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
-
-        .card { 
-            background: var(--card-bg); 
-            border: 1px solid var(--border); 
-            border-radius: 12px; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
         }
-
-        .card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
-
-        .img-container { 
-            width: 100%; 
-            height: 180px; 
-            background-color: #f1f5f9; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .img-container img { width: 100%; height: 100%; object-fit: contain; }
-
-        .card-body { padding: 1rem; flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
-        .badge { background: #e0e7ff; color: #3730a3; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 9999px; align-self: flex-start; }
-        .card-title { font-size: 1rem; margin: 0; font-weight: 600; }
-        
-        .qtd-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-top: 5px;
-        }
-        .input-qtd {
-            width: 60px;
-            padding: 4px 8px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
+        header {
+            background: linear-gradient(135deg, var(--primary), #34495e);
+            color: white;
             text-align: center;
-            font-weight: 600;
+            padding: 30px 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-
-        .card-footer { 
-            padding: 0.8rem 1rem; 
-            border-top: 1px solid var(--border); 
-            background: #fafafa; 
-            display: flex; 
-            flex-direction: column;
-            gap: 8px;
+        header h1 { margin: 0; font-size: 26px; letter-spacing: 1px; }
+        header p { margin: 8px 0 0 0; color: #bdc3c7; font-size: 14px; }
+        
+        .container {
+            max-width: 1300px;
+            margin: 25px auto;
+            padding: 0 15px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
         }
-
-        .code-row {
+        @media (max-width: 850px) {
+            .container { grid-template-columns: 1fr; }
+        }
+        
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        h2 { 
+            border-bottom: 2px solid var(--border); 
+            padding-bottom: 12px; 
+            margin-top: 0; 
+            color: var(--primary); 
+            font-size: 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 100%;
         }
-
-        .code { font-family: monospace; background: #e2e8f0; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.8rem; color: #475569; font-weight: 600; }
         
-        .btn-add-cart {
-            background-color: var(--btn-cart);
-            color: #ffffff;
-            font-weight: 600;
-            border: none;
-            font-size: 0.85rem;
-            padding: 0.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.2s;
-            width: 100%;
-            text-align: center;
-        }
-        .btn-add-cart:hover { background-color: var(--btn-cart-hover); }
-
-        .btn-wa { 
-            background-color: var(--primary);
-            color: #ffffff;
-            font-weight: 600; 
-            text-decoration: none; 
-            font-size: 0.85rem; 
-            padding: 0.5rem;
-            border-radius: 6px;
-            transition: background 0.2s;
-            text-align: center;
-            display: block;
-            width: 100%;
-        }
-        .btn-wa:hover { background-color: var(--primary-dark); }
-
-        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 2.5rem; }
-        .page-btn {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            padding: 0.5rem 0.9rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text);
-            transition: all 0.2s;
-        }
-        .page-btn.active, .page-btn:hover {
-            background: var(--primary-dark);
-            color: #ffffff;
-            border-color: var(--primary-dark);
-        }
-
-        /* Widget Fixo do Carrinho */
-        #carrinho-widget {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #0f172a;
-            color: #ffffff;
-            padding: 12px 20px;
-            border-radius: 50px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
+        /* Grid de Produtos com Imagens */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 15px;
-            z-index: 1000;
-            font-size: 0.9rem;
+            max-height: 650px;
+            overflow-y: auto;
+            padding-right: 5px;
         }
-        #carrinho-widget button {
-            background-color: var(--primary);
-            color: #ffffff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
+        .product-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        }
+        .product-img-container {
+            width: 100%;
+            height: 140px;
+            background-color: #edf2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .product-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .placeholder-text {
+            color: #a0aec0;
+            font-size: 12px;
+            text-align: center;
+            padding: 10px;
+        }
+        .product-body {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+        .product-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+        .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .product-price {
+            font-size: 14px;
             font-weight: bold;
+            color: var(--secondary);
+            margin: 0;
+        }
+        .btn-add {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 5px;
             cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
             transition: background 0.2s;
         }
-        #carrinho-widget button:hover { background-color: var(--primary-dark); }
+        .btn-add:hover { background-color: #219653; }
+
+        /* Carrinho Lateral */
+        .cart-items-container {
+            max-height: 350px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .cart-item-controls button {
+            background: #cbd5e0;
+            border: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        .cart-item-controls button:hover { background: #a0aec0; }
+        
+        .total-section {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 15px 0;
+            text-align: right;
+            color: var(--primary);
+            border-top: 2px solid var(--border);
+            padding-top: 10px;
+        }
+        .btn-whatsapp {
+            background-color: #25d366;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+        .btn-whatsapp:hover { background-color: #1ebe5d; }
+        
+        .search-box {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Distribuidora Frazão — Setor de Bebidas</h1>
-        <p>Catálogo com links diretos de imagens da internet</p>
-    </div>
+    <header>
+        <h1>AR Frazão Ltda</h1>
+        <p>Catálogo Digital de Bebidas - Cotação via WhatsApp</p>
+    </header>
 
     <div class="container">
-        <div id="product-grid" class="grid"></div>
-        <div id="pagination" class="pagination"></div>
-    </div>
+        <!-- Vitrine de Produtos -->
+        <div class="card">
+            <h2>
+                <span>Bebidas Disponíveis</span>
+                <span id="product-count" style="font-size: 13px; color: #718096; font-weight: normal;"></span>
+            </h2>
+            <input type="text" id="searchInput" class="search-box" placeholder="Buscar bebida por nome..." onkeyup="filtrarProdutos()">
+            
+            <div class="product-grid" id="product-grid">
+                <!-- Preenchido via JavaScript -->
+            </div>
+        </div>
 
-    <!-- Widget Fixo de Finalização -->
-    <div id="carrinho-widget">
-        <span>Itens na cotação: <strong id="qtd-total-carrinho">0</strong></span>
-        <button onclick="enviarCarrinhoWhatsApp()">Enviar Cotação via WhatsApp</button>
+        <!-- Carrinho de Pedidos -->
+        <div class="card">
+            <h2>Seu Pedido</h2>
+            <div class="cart-items-container" id="cart-items">
+                <p style="color: #a0aec0; font-style: italic; text-align: center; margin-top: 30px;">O carrinho está vazio.</p>
+            </div>
+            
+            <div class="total-section">
+                Total: R$ <span id="cart-total">0,00</span>
+            </div>
+            
+            <button class="btn-whatsapp" onclick="enviarWhatsApp()">
+                Finalizar Cotação no WhatsApp
+            </button>
+        </div>
     </div>
 
     <script>
-        const produtos = [
-            {"id": "BEB-001", "nome": "Achocolatado Pirakids", "categoria": "Lácteos / Achocolatados", "imagem": "https://tse1.mm.bing.net/th/id/OIP.YB9Kli2hoASo4GpQSQcHZAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"},
-            {"id": "BEB-002", "nome": "Aguardente 51", "categoria": "Destilados", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-003", "nome": "Aguardente 88", "categoria": "Destilados", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-004", "nome": "Aguardente Jararaca", "categoria": "Destilados", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-005", "nome": "Água Mineral Papucaia 1,5l c/gás", "categoria": "Águas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-006", "nome": "Água Mineral Papucaia 1,5l s/gás", "categoria": "Águas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-007", "nome": "Água Mineral Papucaia c/gás 500ml", "categoria": "Águas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-008", "nome": "Água Mineral Papucaia s/gás 500ml", "categoria": "Águas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-009", "nome": "Cachaça Cana Boa", "categoria": "Cachaças", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-010", "nome": "Cachaça Caninha da Roca", "categoria": "Cachaças", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-011", "nome": "Canelinha Reggiani", "categoria": "Bebidas Mistas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-012", "nome": "Cantina da Serra 1,5l Guaramor c/36", "categoria": "Vinhos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-013", "nome": "Catuaba Reggiani", "categoria": "Bebidas Mistas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-014", "nome": "Conhaque Alcatrão", "categoria": "Destilados", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-015", "nome": "Conhaque Dreher", "categoria": "Destilados", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-016", "nome": "Coquetel Melfort", "categoria": "Coquetéis", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-017", "nome": "Coquetel Menta Be Long", "categoria": "Coquetéis", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-018", "nome": "Fogo Paulista", "categoria": "Bebidas Mistas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-019", "nome": "Genebra", "categoria": "Destilados", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-020", "nome": "Licor de Bananinha", "categoria": "Licores", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-021", "nome": "Paratudo Raízes", "categoria": "Bebidas Mistas", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-022", "nome": "Ping Moon 600ml", "categoria": "Destilados", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-023", "nome": "Vinho Quinado", "categoria": "Vinhos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-024", "nome": "Vinho Tinto Suave Monte Carmo 2l", "categoria": "Vinhos", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-025", "nome": "Whisky Old Eight", "categoria": "Whisky", "imagem": "COLE_O_LINK_AQUI"},
-            {"id": "BEB-026", "nome": "Ypióca Ouro", "categoria": "Cachaças", "imagem": "COLE_O_LINK_AQUI"}
+        // COLE OS LINKS DAS FOTOS DA INTERNET DENTRO DAS ASPAS DA PROPRIEDADE 'imagem'
+        const bebidas = [
+            { id: "beb_01", nome: "Achou. Pirakids c/27", preco: 45.30, imagem: "" },
+            { id: "beb_02", nome: "Água mineral c/g c/12", preco: 21.00, imagem: "" },
+            { id: "beb_03", nome: "Água mineral s/g c/12", preco: 12.90, imagem: "" },
+            { id: "beb_04", nome: "Aguardente 51 und", preco: 14.10, imagem: "" },
+            { id: "beb_05", nome: "Aguardente 88 und", preco: 14.50, imagem: "" },
+            { id: "beb_06", nome: "Aguardente Jararaca und", preco: 16.50, imagem: "" },
+            { id: "beb_07", nome: "Cachaça cana boa c/12", preco: 35.90, imagem: "" },
+            { id: "beb_08", nome: "Cachaça caninha da roça c/12", preco: 46.80, imagem: "" },
+            { id: "beb_09", nome: "Catuaba Regianni und", preco: 13.99, imagem: "" },
+            { id: "beb_10", nome: "Conhaque Dreher und", preco: 23.40, imagem: "" },
+            { id: "beb_11", nome: "Conhaque de alcatrão und", preco: 22.00, imagem: "" },
+            { id: "beb_12", nome: "Coquetel mel fort und", preco: 15.90, imagem: "" },
+            { id: "beb_13", nome: "Coquetel de menta und", preco: 9.95, imagem: "" },
+            { id: "beb_14", nome: "Fogo paulista und", preco: 35.40, imagem: "" },
+            { id: "beb_15", nome: "Genebra und", preco: 31.90, imagem: "" },
+            { id: "beb_16", nome: "Guaramor c/12", preco: 14.30, imagem: "" },
+            { id: "beb_17", nome: "Guaramor c/36", preco: 35.90, imagem: "" },
+            { id: "beb_18", nome: "Licor de bananinha und", preco: 25.00, imagem: "" },
+            { id: "beb_19", nome: "Paratudo und", preco: 16.90, imagem: "" },
+            { id: "beb_20", nome: "Pink moon 600ml c/06", preco: 45.00, imagem: "" },
+            { id: "beb_21", nome: "Vinho quinado und", preco: 28.30, imagem: "" },
+            { id: "beb_22", nome: "Vinho tinto suave 2l und", preco: 21.90, imagem: "" },
+            { id: "beb_23", nome: "Whisky Old eight und", preco: 34.99, imagem: "" },
+            { id: "beb_24", nome: "Ypióca ouro s/p und", preco: 25.99, imagem: "" }
         ];
 
-        const itensPorPagina = 10;
-        let paginaAtual = 1;
+        let carrinho = [];
 
-        function atualizarContadorCarrinho() {
-            let carrinho = JSON.parse(localStorage.getItem('carrinhoFrazao')) || [];
-            let totalItens = carrinho.reduce((sum, item) => sum + parseInt(item.quantidade), 0);
-            document.getElementById('qtd-total-carrinho').innerText = totalItens;
-        }
+        function renderizarProdutos(listaProdutos) {
+            const grid = document.getElementById("product-grid");
+            document.getElementById("product-count").innerText = `${listaProdutos.length} itens`;
+            grid.innerHTML = "";
 
-        function adicionarAoCarrinho(id, nome) {
-            const inputQtd = document.getElementById(`qtd-${id}`);
-            const quantidade = parseInt(inputQtd.value);
-
-            if (isNaN(quantidade) || quantidade <= 0) {
-                alert('Insira uma quantidade válida.');
+            if (listaProdutos.length === 0) {
+                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 20px;">Nenhuma bebida encontrada.</p>`;
                 return;
             }
 
-            let carrinho = JSON.parse(localStorage.getItem('carrinhoFrazao')) || [];
+            listaProdutos.forEach(prod => {
+                let imagemHtml = prod.imagem 
+                    ? `<img src="${prod.imagem}" alt="${prod.nome}" onerror="this.onerror=null; this.parentNode.innerHTML='<span class=\\'placeholder-text\\'>Erro ao carregar imagem</span>';">`
+                    : `<span class="placeholder-text">Sem foto<br><small style="font-size:10px; color:#cbd5e0;">(Cole o link no código)</small></span>`;
+
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <div class="product-img-container">
+                            ${imagemHtml}
+                        </div>
+                        <div class="product-body">
+                            <h3 class="product-title">${prod.nome}</h3>
+                            <div class="product-footer">
+                                <p class="product-price">R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
+                                <button class="btn-add" onclick="adicionarAoCarrinho('${prod.id}')">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filtrarProdutos() {
+            const termo = document.getElementById("searchInput").value.toLowerCase();
+            const filtrados = bebidas.filter(b => b.nome.toLowerCase().includes(termo));
+            renderizarProdutos(filtrados);
+        }
+
+        function adicionarAoCarrinho(id) {
+            const produto = bebidas.find(p => p.id === id);
             const itemExistente = carrinho.find(item => item.id === id);
 
             if (itemExistente) {
-                itemExistente.quantidade += quantidade;
+                itemExistente.qtd++;
             } else {
-                carrinho.push({ id: id, nome: nome, quantidade: quantidade });
+                carrinho.push({ ...produto, qtd: 1 });
             }
-
-            localStorage.setItem('carrinhoFrazao', JSON.stringify(carrinho));
-            atualizarContadorCarrinho();
-            alert(`${quantidade}x "${nome}" adicionado(s) à cotação!`);
+            atualizarCarrinho();
         }
 
-        function renderizarProdutos(pagina) {
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = '';
-
-            const inicio = (pagina - 1) * itensPorPagina;
-            const fim = inicio + itensPorPagina;
-            const produtosPagina = produtos.slice(inicio, fim);
-
-            produtosPagina.forEach(prod => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                
-                card.innerHTML = `
-                    <div class="img-container">
-                        <img src="${prod.imagem}" alt="${prod.nome}" onerror="this.src='https://via.placeholder.com/300x200?text=Sem+Imagem'">
-                    </div>
-                    <div class="card-body">
-                        <span class="badge">${prod.categoria}</span>
-                        <h3 class="card-title">${prod.nome}</h3>
-                        <div class="qtd-container">
-                            <label for="qtd-${prod.id}">Qtd:</label>
-                            <input type="number" id="qtd-${prod.id}" class="input-qtd" value="1" min="1">
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="code-row">
-                            <span class="code">${prod.id}</span>
-                        </div>
-                        <button type="button" class="btn-add-cart" onclick="adicionarAoCarrinho('${prod.id}', '${prod.nome.replace(/'/g, "\\'")}')">🛒 Adicionar ao Carrinho</button>
-                        <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20${encodeURIComponent(prod.nome)}%20(${prod.id})" target="_blank" class="btn-wa">📲 Cotar este item</a>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function renderizarPaginacao() {
-            const paginationContainer = document.getElementById('pagination');
-            paginationContainer.innerHTML = '';
-
-            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
-
-            for (let i = 1; i <= totalPaginas; i++) {
-                const btn = document.createElement('button');
-                btn.className = `page-btn ${i === paginaAtual ? 'active' : ''}`;
-                btn.innerText = i;
-                btn.onclick = () => {
-                    paginaAtual = i;
-                    renderizarProdutos(paginaAtual);
-                    renderizarPaginacao();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                };
-                paginationContainer.appendChild(btn);
+        function alterarQtd(id, delta) {
+            const item = carrinho.find(i => i.id === id);
+            if (item) {
+                item.qtd += delta;
+                if (item.qtd <= 0) {
+                    carrinho = carrinho.filter(i => i.id !== id);
+                }
             }
+            atualizarCarrinho();
         }
 
-        function enviarCarrinhoWhatsApp() {
-            let carrinho = JSON.parse(localStorage.getItem('carrinhoFrazao')) || [];
-            
+        function atualizarCarrinho() {
+            const container = document.getElementById("cart-items");
+            const totalEl = document.getElementById("cart-total");
+
             if (carrinho.length === 0) {
-                alert('Sua cotação está vazia! Adicione produtos antes de enviar.');
+                container.innerHTML = `<p style="color: #a0aec0; font-style: italic; text-align: center; margin-top: 30px;">O carrinho está vazio.</p>`;
+                totalEl.innerText = "0,00";
                 return;
             }
 
-            let mensagem = "Olá! Gostaria de cotar a seguinte lista de produtos:\n\n";
+            container.innerHTML = "";
+            let total = 0;
+
             carrinho.forEach(item => {
-                mensagem += `- ${item.quantidade}x ${item.nome} (${item.id})\n`;
+                let subtotal = item.preco * item.qtd;
+                total += subtotal;
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <div>
+                            <strong>${item.nome}</strong><br>
+                            <small style="color: #718096;">R$ ${item.preco.toFixed(2).replace('.', ',')} un</small>
+                        </div>
+                        <div class="cart-item-controls">
+                            <button onclick="alterarQtd('${item.id}', -1)">-</button>
+                            <span>${item.qtd}</span>
+                            <button onclick="alterarQtd('${item.id}', 1)">+</button>
+                        </div>
+                    </div>
+                `;
             });
 
-            let url = `https://wa.me/5521968659086?text=${encodeURIComponent(mensagem)}`;
+            totalEl.innerText = total.toFixed(2).replace('.', ',');
+        }
+
+        function enviarWhatsApp() {
+            if (carrinho.length === 0) {
+                alert("Adicione pelo menos uma bebida ao carrinho antes de enviar a cotação!");
+                return;
+            }
+
+            let mensagem = "Olá! Gostaria de solicitar a seguinte cotação de bebidas:\n\n";
+            let total = 0;
+
+            carrinho.forEach(item => {
+                let subtotal = item.preco * item.qtd;
+                total += subtotal;
+                mensagem += `• ${item.qtd}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+            });
+
+            mensagem += `\n*Total da Cotação: R$ ${total.toFixed(2).replace('.', ',')}*`;
+
+            const numeroWhatsApp = "5521968659086";
+            const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
+            
             window.open(url, '_blank');
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderizarProdutos(paginaAtual);
-            renderizarPaginacao();
-            atualizarContadorCarrinho();
-        });
+        window.onload = () => renderizarProdutos(bebidas);
     </script>
-
 </body>
 </html>

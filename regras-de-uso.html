@@ -1,79 +1,223 @@
-regras-de-uso.html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Regras de Uso - Distribuidora Frazão</title>
-    <link rel="stylesheet" href="style.css">
     <style>
-        .conteudo-legal {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Cabeçalho */
+        .main-header {
+            background-color: #1b365d;
+            padding: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .brand-logo h1 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .brand-logo span {
+            color: #d97706;
+        }
+
+        .brand-logo {
+            text-decoration: none;
+        }
+
+        /* Conteúdo da Página */
+        .page-container {
             max-width: 900px;
             margin: 40px auto;
-            padding: 0 20px;
-            color: #334155;
+            padding: 40px;
+            flex: 1;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .page-container h2 {
+            color: #1b365d;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .page-container h3 {
+            color: #1b365d;
+            font-size: 1.2rem;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .page-container p, .page-container ul {
+            font-size: 0.95rem;
             line-height: 1.6;
-        }
-        .conteudo-legal h2 {
-            color: #0f172a;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 22px;
-        }
-        .conteudo-legal p {
+            color: #475569;
             margin-bottom: 15px;
         }
-        .conteudo-legal ul {
-            margin-bottom: 15px;
+
+        .page-container ul {
             padding-left: 20px;
         }
-        .conteudo-legal li {
+
+        .page-container li {
             margin-bottom: 8px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #d97706;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Rodapé */
+        .main-footer {
+            background-color: #1b365d;
+            color: #ffffff;
+            padding: 25px 15px;
+            margin-top: 50px;
+            text-align: center;
+            border-top: 3px solid #d97706;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.88rem;
+        }
+
+        .footer-links a:hover {
+            color: #d97706;
+            text-decoration: underline;
+        }
+
+        .footer-links .divider {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .copyright {
+            margin: 0;
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        @media (max-width: 576px) {
+            .page-container {
+                padding: 20px;
+                margin: 20px 10px;
+            }
+            .footer-links .divider {
+                display: none;
+            }
+            .footer-links {
+                flex-direction: column;
+                gap: 8px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <header class="topo-interna">
-        <h1>Distribuidora Frazão</h1>
-        <a href="index.html" class="btn-voltar">&larr; Voltar para a Página Inicial</a>
+    <!-- Cabeçalho -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="./index.html" class="brand-logo">
+                <h1>Distribuidora <span>Frazão</span></h1>
+            </a>
+        </div>
     </header>
 
-    <main class="conteudo-legal">
-        <h2>Regras de Uso do Site</h2>
-        <p>Bem-vindo ao site da <strong>Distribuidora Frazão</strong>. Ao acessar e navegar em nosso catálogo virtual, você concorda com os termos e regras de uso descritos abaixo. Leia com atenção.</p>
+    <!-- Conteúdo Principal -->
+    <main class="page-container">
+        <h2>Regras de Uso e Termos Gerais</h2>
+        
+        <p>Bem-vindo ao site da <strong>Distribuidora Frazão</strong>. Ao navegar por este portal ou realizar cotações e compras, você concorda com as regras e condições estabelecidas abaixo.</p>
 
-        <h2>1. Finalidade do Site</h2>
-        <p>Este site tem como objetivo exclusivo a apresentação do nosso catálogo de produtos, marcas e categorias para consulta de clientes e parceiros comerciais.</p>
-
-        <h2>2. Preços e Disponibilidade</h2>
-        <p>Os produtos exibidos no catálogo estão sujeitos à disponibilidade de estoque. Nos reservamos o direito de alterar informações, descrições e valores dos produtos a qualquer momento, sem aviso prévio.</p>
-
-        <h2>3. Propriedade Intelectual</h2>
-        <p>Todo o conteúdo disponibilizado neste site — incluindo logotipos, textos, imagens, layout e código-fonte — é de propriedade exclusiva da Distribuidora Frazão ou licenciado para uso. É proibida a reprodução, cópia ou uso comercial de qualquer material sem autorização prévia por escrito.</p>
-
-        <h2>4. Conduta do Usuário</h2>
-        <p>Ao utilizar nosso site, você concorda em:</p>
+        <h3>1. Cadastro e Responsabilidade do Usuário</h3>
+        <p>Para efetuar pedidos no atacado, o usuário compromete-se a fornecer informações verdadeiras e atualizadas:</p>
         <ul>
-            <li>Não utilizar robôs, scripts ou ferramentas de extração de dados para fins maliciosos ou sobrecarga do sistema.</li>
-            <li>Não tentar burlar a segurança ou acessar áreas restritas do site.</li>
-            <li>Fornecer informações verídicas caso entre em contato conosco por meio dos canais oficiais.</li>
+            <li>Manter dados cadastrais e de faturamento (CPF/CNPJ) devidamente atualizados;</li>
+            <li>Garantir o sigilo de credenciais de acesso caso possua conta de cliente;</li>
+            <li>Não utilizar o site para fins ilícitos, fraudulentos ou desautorizados.</li>
         </ul>
 
-        <h2>5. Modificações nas Regras</h2>
-        <p>A Distribuidora Frazão poderá modificar estas Regras de Uso a qualquer momento. Recomendamos a consulta periódica desta página para se manter atualizado sobre eventuais mudanças.</p>
+        <h3>2. Informações de Produtos e Estoque</h3>
+        <p>Trabalhamos para manter o catálogo de produtos sempre atualizado. No entanto:</p>
+        <ul>
+            <li>As imagens dos produtos são meramente ilustrativas e podem sofrer alterações de embalagem por parte dos fabricantes;</li>
+            <li>A inclusão de um item no catálogo não garante a disponibilidade imediata em estoque;</li>
+            <li>Preços, promoções e condições comerciais podem ser alterados sem aviso prévio.</li>
+        </ul>
 
-        <h2>6. Contato</h2>
-        <p>Se tiver dúvidas sobre estas regras, entre em contato conosco através dos nossos canais oficiais de atendimento disponíveis no site.</p>
+        <h3>3. Pedidos e Faturamento</h3>
+        <p>Por se tratar de vendas no atacado, a Distribuidora Frazão reserva-se o direito de estipular valor mínimo de pedido e validar cadastros cadastrais/fiscais antes da aprovação final e envio das mercadorias.</p>
+
+        <h3>4. Propriedade Intelectual</h3>
+        <p>Todo o conteúdo deste site (textos, logotipos, marcas, layout e código-fonte) é de propriedade exclusiva da Distribuidora Frazão ou de seus parceiros comerciais, sendo proibida a cópia ou reprodução não autorizada.</p>
+
+        <h3>5. Alterações nos Termos</h3>
+        <p>A Distribuidora Frazão poderá atualizar estas Regras de Uso a qualquer momento para refletir melhorias operacionais ou adequações legais.</p>
+
+        <a href="./index.html" class="back-link">&larr; Voltar para a página inicial</a>
     </main>
 
-    <footer>
-        <div class="footer-links">
-            <a href="politica-privacidade.html">Política de Privacidade</a> |
-            <a href="regras-de-uso.html">Regras de Uso</a> |
-            <a href="politica-devolucao.html">Política de Devolução</a>
+    <!-- Rodapé -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="./politica-de-devolucao.html">Política de Devolução</a>
+                <span class="divider">|</span>
+                <a href="./politica-de-privacidade.html">Política de Privacidade</a>
+                <span class="divider">|</span>
+                <a href="./regras-de-uso.html">Regras de Uso</a>
+            </div>
+            <p class="copyright">&copy; Distribuidora Frazão. Todos os direitos reservados.</p>
         </div>
-        <p>&copy; 2026 Distribuidora Frazão.</p>
     </footer>
 
 </body>

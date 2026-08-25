@@ -5,607 +5,207 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Higiene - Distribuidora Frazão</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --primary: #1e3a8a;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --radius: 12px;
         }
 
-        body {
-            background-color: #f8fafc;
-            color: #1e293b;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); padding: 24px 16px; max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 32px; padding-bottom: 16px; border-bottom: 2px solid var(--border); }
+        header h1 { color: var(--primary); font-size: 28px; margin-bottom: 8px; }
 
-        /* Cabeçalho */
-        .main-header {
-            background-color: #1b365d;
-            padding: 20px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            text-align: center;
-        }
+        .admin-panel { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 32px; box-shadow: var(--shadow); }
+        .admin-panel h2 { font-size: 18px; color: var(--primary); margin-bottom: 16px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 16px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 13px; font-weight: 600; }
+        .form-group input { padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
+        .form-group input:focus { border-color: var(--primary); }
+        
+        .btn-add { background-color: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; transition: background-color 0.2s; }
+        .btn-add:hover { background-color: var(--primary-hover); }
 
-        .brand-logo h1 {
-            margin: 0;
-            color: #ffffff;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-bottom: 32px; min-height: 400px; }
+        .product-card { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; justify-content: space-between; }
+        .product-info-wrapper { display: flex; align-items: center; gap: 16px; }
+        
+        .product-icon { width: 70px; height: 70px; border-radius: 8px; background-color: #f1f5f9; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; border: 1px solid var(--border); }
+        .product-icon img { width: 100%; height: 100%; object-fit: contain; }
+        .product-icon .emoji-fallback { font-size: 30px; }
+        .product-info h3 { font-size: 16px; margin-bottom: 4px; }
+        
+        .product-actions { display: flex; justify-content: flex-end; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+        .btn-delete { background: none; border: none; color: #ef4444; font-size: 13px; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+        .btn-delete:hover { background-color: #fef2f2; }
 
-        .brand-logo span {
-            color: #d97706;
-        }
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 24px; }
+        .page-btn { background-color: var(--card-bg); border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; color: var(--text-dark); }
+        .page-btn.active { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .brand-logo {
-            text-decoration: none;
-        }
-
-        /* Banner da Categoria */
-        .category-header {
-            max-width: 1200px;
-            margin: 30px auto 10px auto;
-            padding: 0 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-        }
-
-        .category-header h2 {
-            color: #1b365d;
-            font-size: 1.6rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .back-link {
-            color: #d97706;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.95rem;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Grid de Produtos (4 por linha) */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 15px;
-            flex: 1;
-            width: 100%;
-        }
-
-        .product-card {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            background-color: #ffffff;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 14px;
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-            gap: 12px;
-        }
-
-        .product-card:hover {
-            border-color: #1b365d;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-        }
-
-        .product-info-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .product-icon {
-            font-size: 1.4rem;
-            background-color: #f1f5f9;
-            padding: 8px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .product-info h3 {
-            margin: 0;
-            font-size: 0.88rem;
-            color: #1b365d;
-            font-weight: 600;
-            line-height: 1.3;
-        }
-
-        /* Botão do WhatsApp */
-        .btn-whatsapp {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            background-color: #25d366;
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.78rem;
-            padding: 8px;
-            border-radius: 6px;
-            transition: background-color 0.2s ease;
-            text-align: center;
-        }
-
-        .btn-whatsapp:hover {
-            background-color: #1eb954;
-        }
-
-        /* Estilos da Paginação */
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            margin: 20px auto 40px auto;
-            max-width: 1200px;
-        }
-
-        .pagination-btn {
-            background-color: #ffffff;
-            border: 1px solid #cbd5e1;
-            color: #1b365d;
-            padding: 8px 14px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .pagination-btn:hover:not(:disabled) {
-            background-color: #1b365d;
-            color: #ffffff;
-            border-color: #1b365d;
-        }
-
-        .pagination-btn.active {
-            background-color: #d97706;
-            color: #ffffff;
-            border-color: #d97706;
-        }
-
-        .pagination-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        /* Rodapé */
-        .main-footer {
-            background-color: #1b365d;
-            color: #ffffff;
-            padding: 25px 15px;
-            margin-top: auto;
-            text-align: center;
-            border-top: 3px solid #d97706;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .footer-links {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .footer-links a {
-            color: #e2e8f0;
-            text-decoration: none;
-            font-size: 0.88rem;
-        }
-
-        .footer-links a:hover {
-            color: #d97706;
-            text-decoration: underline;
-        }
-
-        .footer-links .divider {
-            color: #64748b;
-            font-size: 0.85rem;
-        }
-
-        .copyright {
-            margin: 0;
-            font-size: 0.78rem;
-            color: #94a3b8;
-        }
-
-        /* Responsividade */
-        @media (max-width: 992px) {
-            .product-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 576px) {
-            .product-grid {
-                grid-template-columns: 1fr;
-            }
-            .footer-links .divider {
-                display: none;
-            }
-            .footer-links {
-                flex-direction: column;
-                gap: 8px;
-            }
-        }
+        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <!-- Cabeçalho -->
-    <header class="main-header">
-        <div class="header-container">
-            <a href="./index.html" class="brand-logo">
-                <h1>Distribuidora <span>Frazão</span></h1>
-            </a>
-        </div>
+    <header>
+        <h1>Catálogo de Higiene e Limpeza</h1>
+        <p>Distribuidora Frazão — Gestão de Produtos</p>
     </header>
 
-    <!-- Título da Categoria -->
-    <div class="category-header">
-        <h2>🧴 Higiene Pessoal</h2>
-        <a href="./index.html" class="back-link">&larr; Voltar às categorias</a>
-    </div>
+    <section class="admin-panel">
+        <h2>📦 Adicionar Novo Produto com Foto</h2>
+        <form id="productForm" onsubmit="adicionarProduto(event)">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="nomeProduto">Nome do Produto</label>
+                    <input type="text" id="nomeProduto" placeholder="Ex: Absorvente Intimus Gel" required>
+                </div>
 
-    <!-- Lista de Produtos -->
-    <div class="product-grid" id="productGrid">
+                <div class="form-group">
+                    <label for="precoProduto">Preço (R$)</label>
+                    <input type="text" id="precoProduto" placeholder="Ex: 12,50">
+                </div>
 
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="https://">https://</div>
-                <div class="product-info"><h3>Absorvente Intimus Gel</h3></div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label for="linkImagem">Link da Imagem da Internet (URL)</label>
+                    <input type="url" id="linkImagem" placeholder="Cole o link da foto da internet aqui">
+                </div>
             </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Absorvente%20Intimus%20Gel" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
 
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🧴</div>
-                <div class="product-info"><h3>Acetona Bruna</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Acetona%20Bruna" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
+            <button type="submit" class="btn-add">➕ Adicionar Produto</button>
+        </form>
+    </section>
 
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🧴</div>
-                <div class="product-info"><h3>Acetona Farmax</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Acetona%20Farmax" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
+    <main>
+        <div class="products-grid" id="productsGrid"></div>
+        <div class="pagination" id="pagination"></div>
+    </main>
 
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🧪</div>
-                <div class="product-info"><h3>Água Oxigenada Márcia 30 Vol</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Água%20Oxigenada%20Márcia%2030%20Vol" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🧪</div>
-                <div class="product-info"><h3>Água Oxigenada Márcia 40 Vol</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Água%20Oxigenada%20Márcia%2040%20Vol" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">☁️</div>
-                <div class="product-info"><h3>Algodão Apolo</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Algodão%20Apolo" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">☁️</div>
-                <div class="product-info"><h3>Algodão Nathy</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Algodão%20Nathy" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🧪</div>
-                <div class="product-info"><h3>Amônia Radar</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Amônia%20Radar" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🪒</div>
-                <div class="product-info"><h3>Ap. Prestobarba</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Ap.%20Prestobarba" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🪒</div>
-                <div class="product-info"><h3>Ap. Probak</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Ap.%20Probak" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">👶</div>
-                <div class="product-info"><h3>Chupeta Silicone</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Chupeta%20Silicone" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">✂️</div>
-                <div class="product-info"><h3>Cortador de Unha Pequeno</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cortador%20de%20Unha%20Pequeno" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">✂️</div>
-                <div class="product-info"><h3>Cortador de Unha Grande</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cortador%20de%20Unha%20Grande" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🥢</div>
-                <div class="product-info"><h3>Cotonetes Nathy</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cotonetes%20Nathy" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🪥</div>
-                <div class="product-info"><h3>Creme Dental Oral B</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Creme%20Dental%20Oral%20B" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🩹</div>
-                <div class="product-info"><h3>Band-Aid</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Band-Aid" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">✨</div>
-                <div class="product-info"><h3>Descolorante Márcia</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Descolorante%20Márcia" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🌹</div>
-                <div class="product-info"><h3>Desodorante Leite de Rosas</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Desodorante%20Leite%20de%20Rosas" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🪥</div>
-                <div class="product-info"><h3>Escova de Dente Condor</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Escova%20de%20Dente%20Condor" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🧹</div>
-                <div class="product-info"><h3>Escova Pata-Pata</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Escova%20Pata-Pata" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🪒</div>
-                <div class="product-info"><h3>Lâmina Lord</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Lâmina%20Lord" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🪒</div>
-                <div class="product-info"><h3>Lâmina Super Maxi</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Lâmina%20Super%20Maxi" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🪒</div>
-                <div class="product-info"><h3>Lâmina Wilkinson</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Lâmina%20Wilkinson" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🧻</div>
-                <div class="product-info"><h3>Papel Higiênico Belisoft Gold</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Papel%20Higiênico%20Belisoft%20Gold" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🧻</div>
-                <div class="product-info"><h3>Papel Higiênico Silver</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Papel%20Higiênico%20Silver" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">💈</div>
-                <div class="product-info"><h3>Pente Carioca</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pente%20Carioca" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">💈</div>
-                <div class="product-info"><h3>Pente CP Luxo</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pente%20CP%20Luxo" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">✂️</div>
-                <div class="product-info"><h3>Pinça Merheje</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pinça%20Merheje" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🦶</div>
-                <div class="product-info"><h3>Rala Calo Plástico</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Rala%20Calo%20Plástico" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🧼</div>
-                <div class="product-info"><h3>Sabonete Francis</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Sabonete%20Francis" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-        <div class="product-card">
-            <div class="product-info-wrapper">
-                <div class="product-icon">🧼</div>
-                <div class="product-info"><h3>Sabonete Lux</h3></div>
-            </div>
-            <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Sabonete%20Lux" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-        </div>
-
-    </div>
-
-    <!-- Controles da Paginação -->
-    <div class="pagination-container" id="paginationControls"></div>
-
-    <!-- Rodapé -->
-    <footer class="main-footer">
-        <div class="footer-container">
-            <div class="footer-links">
-                <a href="./politica-de-devolucao.html">Política de Devolução</a>
-                <span class="divider">|</span>
-                <a href="./politica-de-privacidade.html">Política de Privacidade</a>
-                <span class="divider">|</span>
-                <a href="./regras-de-uso.html">Regras de Uso</a>
-            </div>
-            <p class="copyright">&copy; Distribuidora Frazão. Todos os direitos reservados.</p>
-        </div>
-    </footer>
-
-    <!-- Script de Paginação -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const itemsPerPage = 12; // Número de itens por página
-            const productGrid = document.getElementById('productGrid');
-            const products = Array.from(productGrid.getElementsByClassName('product-card'));
-            const paginationControls = document.getElementById('paginationControls');
-            let currentPage = 1;
+        let produtos = [
+            { nome: 'Absorvente Intimus Gel', preco: '', imagem: '' },
+            { nome: 'Acetonas', preco: '', imagem: '' },
+            { nome: 'Água Oxigenada', preco: '', imagem: '' },
+            { nome: 'Algodão', preco: '', imagem: '' },
+            { nome: 'Amônia', preco: '', imagem: '' },
+            { nome: 'Aparelhos de Barbear', preco: '', imagem: '' },
+            { nome: 'Band-Aid', preco: '', imagem: '' },
+            { nome: 'Chupeta de Silicone', preco: '', imagem: '' },
+            { nome: 'Cotonetes Nathy', preco: '', imagem: '' },
+            { nome: 'Creme Dental Oral-B', preco: '', imagem: '' },
+            { nome: 'Descolorantes', preco: '', imagem: '' },
+            { nome: 'Desodorante Leite de Rosas', preco: '', imagem: '' },
+            { nome: 'Escova de Dente Condor', preco: '', imagem: '' },
+            { nome: 'Escova de Dente Pata-Pata', preco: '', imagem: '' },
+            { nome: 'Lâminas de Barbear', preco: '', imagem: '' },
+            { nome: 'Papel Higiênico', preco: '', imagem: '' },
+            { nome: 'Pentes', preco: '', imagem: '' },
+            { nome: 'Pinça Merheje', preco: '', imagem: '' },
+            { nome: 'Produtos para Unhas', preco: '', imagem: '' },
+            { nome: 'Rala Calo', preco: '', imagem: '' },
+            { nome: 'Sabonete Francis', preco: '', imagem: '' },
+            { nome: 'Sabonete Lux', preco: '', imagem: '' },
+            { nome: 'Sabonetes Diversos', preco: '', imagem: '' }
+        ];
 
-            const totalPages = Math.ceil(products.length / itemsPerPage);
+        const itensPorPagina = 8;
+        let paginaAtual = 1;
 
-            function displayPage(page) {
-                currentPage = page;
-                const start = (page - 1) * itemsPerPage;
-                const end = start + itemsPerPage;
+        function renderizarProdutos() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
 
-                products.forEach((product, index) => {
-                    if (index >= start && index < end) {
-                        product.style.display = 'flex';
-                    } else {
-                        product.style.display = 'none';
-                    }
-                });
+            const inicio = (paginaAtual - 1) * itensPorPagina;
+            const fim = inicio + itensPorPagina;
+            const produtosPagina = produtos.slice(inicio, fim);
 
-                renderControls();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            produtosPagina.forEach((p, index) => {
+                const indexReal = inicio + index;
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                
+                let iconeHTML = p.imagem && p.imagem.trim() !== "" 
+                    ? `<img src="${p.imagem}" alt="${p.nome}" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'emoji-fallback\'>📦</span>';">`
+                    : `<span class="emoji-fallback">🧴</span>`;
+
+                card.innerHTML = `
+                    <div class="product-info-wrapper">
+                        <div class="product-icon">${iconeHTML}</div>
+                        <div class="product-info">
+                            <h3>${p.nome}</h3>
+                            ${p.preco ? `<div style="font-weight:700; color:#10b981;">R$ ${p.preco}</div>` : ''}
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <button class="btn-delete" onclick="removerProduto(${indexReal})">Excluir</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            renderizarPaginacao();
+        }
+
+        function renderizarPaginacao() {
+            const paginationEl = document.getElementById('pagination');
+            paginationEl.innerHTML = '';
+
+            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
+
+            const btnPrev = document.createElement('button');
+            btnPrev.className = 'page-btn';
+            btnPrev.innerText = '«';
+            btnPrev.disabled = paginaAtual === 1;
+            btnPrev.onclick = () => { paginaAtual--; renderizarProdutos(); };
+            paginationEl.appendChild(btnPrev);
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${i === paginaAtual ? 'active' : ''}`;
+                btn.innerText = i;
+                btn.onclick = () => { paginaAtual = i; renderizarProdutos(); };
+                paginationEl.appendChild(btn);
             }
 
-            function renderControls() {
-                paginationControls.innerHTML = '';
+            const btnNext = document.createElement('button');
+            btnNext.className = 'page-btn';
+            btnNext.innerText = '»';
+            btnNext.disabled = paginaAtual === totalPaginas;
+            btnNext.onclick = () => { paginaAtual++; renderizarProdutos(); };
+            paginationEl.appendChild(btnNext);
+        }
 
-                // Botão Anterior
-                const prevBtn = document.createElement('button');
-                prevBtn.className = 'pagination-btn';
-                prevBtn.innerHTML = '&laquo; Anterior';
-                prevBtn.disabled = currentPage === 1;
-                prevBtn.addEventListener('click', () => displayPage(currentPage - 1));
-                paginationControls.appendChild(prevBtn);
+        function adicionarProduto(event) {
+            event.preventDefault();
+            const nome = document.getElementById('nomeProduto').value;
+            const preco = document.getElementById('precoProduto').value;
+            const imagem = document.getElementById('linkImagem').value;
 
-                // Botões de Páginas
-                for (let i = 1; i <= totalPages; i++) {
-                    const pageBtn = document.createElement('button');
-                    pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
-                    pageBtn.innerText = i;
-                    pageBtn.addEventListener('click', () => displayPage(i));
-                    paginationControls.appendChild(pageBtn);
-                }
+            produtos.unshift({ nome, preco, imagem });
+            document.getElementById('productForm').reset();
+            paginaAtual = 1;
+            renderizarProdutos();
+        }
 
-                // Botão Próximo
-                const nextBtn = document.createElement('button');
-                nextBtn.className = 'pagination-btn';
-                nextBtn.innerHTML = 'Próximo &raquo;';
-                nextBtn.disabled = currentPage === totalPages;
-                nextBtn.addEventListener('click', () => displayPage(currentPage + 1));
-                paginationControls.appendChild(nextBtn);
+        function removerProduto(index) {
+            produtos.splice(index, 1);
+            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
+            if (paginaAtual > totalPaginas && totalPaginas > 0) {
+                paginaAtual = totalPaginas;
             }
+            renderizarProdutos();
+        }
 
-            // Inicializa a primeira página
-            displayPage(1);
-        });
+        renderizarProdutos();
     </script>
 </body>
 </html>

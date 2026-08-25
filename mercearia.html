@@ -1,1371 +1,495 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mercearia - Distribuidora Frazão</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f8f9fa;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .header-nav {
-      margin-bottom: 20px;
-    }
-    .btn-voltar {
-      display: inline-block;
-      padding: 8px 16px;
-      background-color: #6c757d;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      font-size: 0.9rem;
-      font-weight: bold;
-    }
-    .btn-voltar:hover {
-      background-color: #5a6268;
-    }
-    h1 {
-      text-align: center;
-      color: #1a1a1a;
-      margin-bottom: 30px;
-    }
-    .grid-produtos {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-    }
-    .card-produto {
-      background: #ffffff;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 15px;
-      width: 230px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .card-produto h3 {
-      font-size: 1rem;
-      color: #333;
-      margin-top: 0;
-      text-align: center;
-      min-height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .botoes {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    .btn {
-      border: none;
-      padding: 8px 12px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      text-align: center;
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: background-color 0.2s;
-    }
-    .btn-adicionar {
-      background-color: #0d6efd;
-      color: white;
-    }
-    .btn-adicionar:hover {
-      background-color: #0b5ed7;
-    }
-    .btn-whatsapp {
-      background-color: #25d366;
-      color: white;
-    }
-    .btn-whatsapp:hover {
-      background-color: #128c7e;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercearia - Distribuidora Frazão</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Cabeçalho */
+        .main-header {
+            background-color: #1b365d;
+            padding: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .brand-logo h1 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .brand-logo span {
+            color: #d97706;
+        }
+
+        .brand-logo {
+            text-decoration: none;
+        }
+
+        /* Banner da Categoria */
+        .category-header {
+            max-width: 1200px;
+            margin: 30px auto 10px auto;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .category-header h2 {
+            color: #1b365d;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-link {
+            color: #d97706;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Grid de Produtos (4 por linha) */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            gap: 12px;
+        }
+
+        .product-card:hover {
+            border-color: #1b365d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .product-image-container {
+            width: 100%;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info h3 {
+            margin: 4px 0 0 0;
+            font-size: 0.95rem;
+            color: #1b365d;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        /* Container de Ações (Botões) */
+        .product-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        /* Botão Adicionar */
+        .btn-add {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background-color: #1b365d;
+            color: #ffffff;
+            border: none;
+            font-weight: 600;
+            font-size: 0.78rem;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn-add:hover {
+            background-color: #0f2342;
+        }
+
+        /* Botão do WhatsApp */
+        .btn-whatsapp {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background-color: #25d366;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.78rem;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+            text-align: center;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #1eb954;
+        }
+
+        /* Paginação */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 20px auto 40px auto;
+            max-width: 1200px;
+        }
+
+        .pagination-btn {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #1b365d;
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background-color: #1b365d;
+            color: #ffffff;
+            border-color: #1b365d;
+        }
+
+        .pagination-btn.active {
+            background-color: #d97706;
+            color: #ffffff;
+            border-color: #d97706;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Rodapé */
+        .main-footer {
+            background-color: #1b365d;
+            color: #ffffff;
+            padding: 25px 15px;
+            margin-top: auto;
+            text-align: center;
+            border-top: 3px solid #d97706;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.88rem;
+        }
+
+        .footer-links a:hover {
+            color: #d97706;
+            text-decoration: underline;
+        }
+
+        .footer-links .divider {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .copyright {
+            margin: 0;
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            .footer-links .divider {
+                display: none;
+            }
+            .footer-links {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="header-nav">
-      <a href="../" class="btn-voltar">← Voltar ao Início</a>
+    <!-- Cabeçalho -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="./index.html" class="brand-logo">
+                <h1>Distribuidora <span>Frazão</span></h1>
+            </a>
+        </div>
+    </header>
+
+    <!-- Título da Categoria -->
+    <div class="category-header">
+        <h2>🛒 Mercearia</h2>
+        <a href="./index.html" class="back-link">&larr; Voltar às categorias</a>
     </div>
 
-    <h1>🛒 Categoria: Mercearia</h1>
-
-    <div class="grid-produtos">
-
-      <!-- Item 1 -->
-      <div class="card-produto">
-        <h3>Abridor de Garrafa</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Abridor de Garrafa')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Abridor%20de%20Garrafa" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 2 -->
-      <div class="card-produto">
-        <h3>Abridor de Lata</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Abridor de Lata')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Abridor%20de%20Lata" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 3 -->
-      <div class="card-produto">
-        <h3>Adoçante Assugrin</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Adoçante Assugrin')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Ado%C3%A7ante%20Assugrin" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 4 -->
-      <div class="card-produto">
-        <h3>Agulha de Fogão</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Agulha de Fogão')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Agulha%20de%20Fog%C3%A3o" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 5 -->
-      <div class="card-produto">
-        <h3>Agulha de Mão nº 1</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Agulha de Mão nº 1')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Agulha%20de%20M%C3%A3o%20n%C2%BA%201" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 6 -->
-      <div class="card-produto">
-        <h3>Agulha de Mão nº 2</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Agulha de Mão nº 2')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Agulha%20de%20M%C3%A3o%20n%C2%BA%202" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 7 -->
-      <div class="card-produto">
-        <h3>Agulha de Mão nº 5</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Agulha de Mão nº 5')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Agulha%20de%20M%C3%A3o%20n%C2%BA%205" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 8 -->
-      <div class="card-produto">
-        <h3>Agulha de Mão nº 6</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Agulha de Mão nº 6')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Agulha%20de%20M%C3%A3o%20n%C2%BA%206" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 9 -->
-      <div class="card-produto">
-        <h3>Agulha de Mão nº 7</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Agulha de Mão nº 7')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Agulha%20de%20M%C3%A3o%20n%C2%BA%207" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 10 -->
-      <div class="card-produto">
-        <h3>Agulha de Máquina nº 11</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Agulha de Máquina nº 11')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Agulha%20de%20M%C3%A1quina%20n%C2%BA%2011" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 11 -->
-      <div class="card-produto">
-        <h3>Agulha de Máquina nº 14</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Agulha de Máquina nº 14')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Agulha%20de%20M%C3%A1quina%20n%C2%BA%2014" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 12 -->
-      <div class="card-produto">
-        <h3>Amido de Milho Apti</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Amido de Milho Apti')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Amido%20de%20Milho%20Apti" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 13 -->
-      <div class="card-produto">
-        <h3>Amolador de Faca 3x1</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Amolador de Faca 3x1')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Amolador%20de%20Faca%203x1" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 14 -->
-      <div class="card-produto">
-        <h3>Aroma de Baunilha Barreto</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Aroma de Baunilha Barreto')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Aroma%20de%20Baunilha%20Barreto" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 15 -->
-      <div class="card-produto">
-        <h3>Azeitona Zille</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Azeitona Zille')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Azeitona%20Zille" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 16 -->
-      <div class="card-produto">
-        <h3>Barbante Lyne 200m</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Barbante Lyne 200m')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Barbante%20Lyne%20200m" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 17 -->
-      <div class="card-produto">
-        <h3>Batata Palha Rei</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Batata Palha Rei')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Batata%20Palha%20Rei" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 18 -->
-      <div class="card-produto">
-        <h3>Bateria 626A 1.55</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Bateria 626A 1.55')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Bateria%20626A%201.55" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 19 -->
-      <div class="card-produto">
-        <h3>Bateria Elgin 2032</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Bateria Elgin 2032')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Bateria%20Elgin%202032" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 20 -->
-      <div class="card-produto">
-        <h3>Bateria Elgin AG13/LR41</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Bateria Elgin AG13/LR41')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Bateria%20Elgin%20AG13%2FLR41" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 21 -->
-      <div class="card-produto">
-        <h3>Bateria Elgin AG13/LR44</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Bateria Elgin AG13/LR44')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Bateria%20Elgin%20AG13%2FLR44" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 22 -->
-      <div class="card-produto">
-        <h3>Borracha Panela de Pressão 10l</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Borracha Panela de Pressão 10l')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Borracha%20Panela%20de%20Press%C3%A3o%2010l" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 23 -->
-      <div class="card-produto">
-        <h3>Borracha Panela de Pressão 4/7l</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Borracha Panela de Pressão 4/7l')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Borracha%20Panela%20de%20Press%C3%A3o%204%2F7l" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 24 -->
-      <div class="card-produto">
-        <h3>Borracha Panela Silicone 3/7l</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Borracha Panela Silicone 3/7l')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Borracha%20Panela%20Silicone%203%2F7l" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 25 -->
-      <div class="card-produto">
-        <h3>Cadeado 20-25-30mm</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Cadeado 20-25-30mm')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Cadeado%2020-25-30mm" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 26 -->
-      <div class="card-produto">
-        <h3>Café Pimpinela 100g</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Café Pimpinela 100g')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Caf%C3%A9%20Pimpinela%20100g" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 27 -->
-      <div class="card-produto">
-        <h3>Caldo Arisco Carne</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Caldo Arisco Carne')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Caldo%20Arisco%20Carne" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 28 -->
-      <div class="card-produto">
-        <h3>Caldo Arisco Galinha</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Caldo Arisco Galinha')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Caldo%20Arisco%20Galinha" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 29 -->
-      <div class="card-produto">
-        <h3>Caldo Knorr Carne</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Caldo Knorr Carne')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Caldo%20Knorr%20Carne" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 30 -->
-      <div class="card-produto">
-        <h3>Caldo Knorr Galinha</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Caldo Knorr Galinha')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Caldo%20Knorr%20Galinha" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 31 -->
-      <div class="card-produto">
-        <h3>Carnê INSS</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Carnê INSS')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Carn%C3%AA%20INSS" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 32 -->
-      <div class="card-produto">
-        <h3>Chá 7 Ervas Italianinho</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Chá 7 Ervas Italianinho')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Ch%C3%A1%207%20Ervas%20Italianinho" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 33 -->
-      <div class="card-produto">
-        <h3>Chá Boldo Italianinho</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Chá Boldo Italianinho')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Ch%C3%A1%20Boldo%20Italianinho" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 34 -->
-      <div class="card-produto">
-        <h3>Chá Camomila Italianinho</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Chá Camomila Italianinho')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Ch%C3%A1%20Camomila%20Italianinho" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 35 -->
-      <div class="card-produto">
-        <h3>Chá Erva Doce Italianinho</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Chá Erva Doce Italianinho')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Ch%C3%A1%20Erva%20Doce%20Italianinho" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 36 -->
-      <div class="card-produto">
-        <h3>Chá Hortelã Italianinho</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Chá Hortelã Italianinho')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Ch%C3%A1%20Hortel%C3%A3%20Italianinho" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 37 -->
-      <div class="card-produto">
-        <h3>Chá Maçã c/ Canela Italianinho</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Chá Maçã c/ Canela Italianinho')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Ch%C3%A1%20Ma%C3%A7%C3%A3%20c%2F%20Canela%20Italianinho" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 38 -->
-      <div class="card-produto">
-        <h3>Chá Preto</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Chá Preto')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Ch%C3%A1%20Preto" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 39 -->
-      <div class="card-produto">
-        <h3>Coador Flanelado nº 7</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Coador Flanelado nº 7')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Coador%20Flanelado%20n%C2%BA%207" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 40 -->
-      <div class="card-produto">
-        <h3>Coco Ralado Menina 50g</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Coco Ralado Menina 50g')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Coco%20Ralado%20Menina%2050g" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 41 -->
-      <div class="card-produto">
-        <h3>Cola Tek Bonder 2g CT</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Cola Tek Bonder 2g CT')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Cola%20Tek%20Bonder%202g%20CT" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 42 -->
-      <div class="card-produto">
-        <h3>Cola Tek Bonder 793</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Cola Tek Bonder 793')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Cola%20Tek%20Bonder%20793" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 43 -->
-      <div class="card-produto">
-        <h3>Colorau Chinezinho</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Colorau Chinezinho')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Colorau%20Chinezinho" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 44 -->
-      <div class="card-produto">
-        <h3>Cond. Bicarbonato</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Cond. Bicarbonato')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Cond.%20Bicarbonato" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 45 -->
-      <div class="card-produto">
-        <h3>Cond. Canela Casca</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Cond. Canela Casca')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Cond.%20Canela%20Casca" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 46 -->
-      <div class="card-produto">
-        <h3>Cond. Colorau</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Cond. Colorau')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Cond.%20Colorau" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 47 -->
-      <div class="card-produto">
-        <h3>Cond. Cominho Pó</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Cond. Cominho Pó')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Cond.%20Cominho%20P%C3%B3" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 48 -->
-      <div class="card-produto">
-        <h3>Cond. Cravo</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Cond. Cravo')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Cond.%20Cravo" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 49 -->
-      <div class="card-produto">
-        <h3>Cond. Erva Doce</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Cond. Erva Doce')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Cond.%20Erva%20Doce" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 50 -->
-      <div class="card-produto">
-        <h3>Cond. Louro Folha</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Cond. Louro Folha')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Cond.%20Louro%20Folha" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 51 -->
-      <div class="card-produto">
-        <h3>Cond. Orégano</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Cond. Orégano')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Cond.%20Or%C3%A9gano" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 52 -->
-      <div class="card-produto">
-        <h3>Cond. Pimenta Pó</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Cond. Pimenta Pó')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Cond.%20Pimenta%20P%C3%B3" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 53 -->
-      <div class="card-produto">
-        <h3>Cond. Tempero Misto</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Cond. Tempero Misto')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Cond.%20Tempero%20Misto" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 54 -->
-      <div class="card-produto">
-        <h3>Copo Americano</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Copo Americano')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Copo%20Americano" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 55 -->
-      <div class="card-produto">
-        <h3>Corda de Varal nº 5</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Corda de Varal nº 5')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Corda%20de%20Varal%20n%C2%BA%205" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 56 -->
-      <div class="card-produto">
-        <h3>Creme de Leite Piracanjuba</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Creme de Leite Piracanjuba')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Creme%20de%20Leite%20Piracanjuba" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 57 -->
-      <div class="card-produto">
-        <h3>Durepoxi 100g</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Durepoxi 100g')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Durepoxi%20100g" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 58 -->
-      <div class="card-produto">
-        <h3>Durepoxi 50g</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Durepoxi 50g')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Durepoxi%2050g" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 59 -->
-      <div class="card-produto">
-        <h3>Ervilha Lata Pramesa</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Ervilha Lata Pramesa')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Ervilha%20Lata%20Pramesa" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 60 -->
-      <div class="card-produto">
-        <h3>Estalinhos Panda</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Estalinhos Panda')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Estalinhos%20Panda" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 61 -->
-      <div class="card-produto">
-        <h3>Fermento Apti 100g</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Fermento Apti 100g')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Fermento%20Apti%20100g" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 62 -->
-      <div class="card-produto">
-        <h3>Filtro de Papel 102</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Filtro de Papel 102')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Filtro%20de%20Papel%20102" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 63 -->
-      <div class="card-produto">
-        <h3>Filtro de Papel 103</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Filtro de Papel 103')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Filtro%20de%20Papel%20103" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 64 -->
-      <div class="card-produto">
-        <h3>Fita Isolante 3M</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Fita Isolante 3M')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Fita%20Isolante%203M" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 65 -->
-      <div class="card-produto">
-        <h3>Fita Vedaflon</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Fita Vedaflon')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Fita%20Vedaflon" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 66 -->
-      <div class="card-produto">
-        <h3>Fósforo Gaboardi</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Fósforo Gaboardi')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20F%C3%B3sforo%20Gaboardi" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 67 -->
-      <div class="card-produto">
-        <h3>Fresh Abacaxi</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Fresh Abacaxi')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Fresh%20Abacaxi" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 68 -->
-      <div class="card-produto">
-        <h3>Fresh Caju</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Fresh Caju')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Fresh%20Caju" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 69 -->
-      <div class="card-produto">
-        <h3>Fresh Guaraná</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Fresh Guaraná')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Fresh%20Guaran%C3%A1" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 70 -->
-      <div class="card-produto">
-        <h3>Fresh Laranja</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Fresh Laranja')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Fresh%20Laranja" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 71 -->
-      <div class="card-produto">
-        <h3>Fresh Limão</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Fresh Limão')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Fresh%20Lim%C3%A3o" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 72 -->
-      <div class="card-produto">
-        <h3>Fresh Manga</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Fresh Manga')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Fresh%20Manga" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 73 -->
-      <div class="card-produto">
-        <h3>Fresh Maracujá</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Fresh Maracujá')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Fresh%20Maracuj%C3%A1" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 74 -->
-      <div class="card-produto">
-        <h3>Fresh Morango</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Fresh Morango')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Fresh%20Morango" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 75 -->
-      <div class="card-produto">
-        <h3>Fresh Uva</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Fresh Uva')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Fresh%20Uva" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 76 -->
-      <div class="card-produto">
-        <h3>Funil c/12</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Funil c/12')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Funil%20c%2F12" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 77 -->
-      <div class="card-produto">
-        <h3>Goiabada Predilecta</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Goiabada Predilecta')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Goiabada%20Predilecta" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 78 -->
-      <div class="card-produto">
-        <h3>Granulado Colorido</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Granulado Colorido')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Granulado%20Colorido" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 79 -->
-      <div class="card-produto">
-        <h3>Granulado Preto</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Granulado Preto')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Granulado%20Preto" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 80 -->
-      <div class="card-produto">
-        <h3>Isqueiro Bic Maxi</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Isqueiro Bic Maxi')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Isqueiro%20Bic%20Maxi" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 81 -->
-      <div class="card-produto">
-        <h3>Isqueiro Bic Mini</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Isqueiro Bic Mini')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Isqueiro%20Bic%20Mini" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 82 -->
-      <div class="card-produto">
-        <h3>Isqueiro Cricket Grande</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Isqueiro Cricket Grande')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Isqueiro%20Cricket%20Grande" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 83 -->
-      <div class="card-produto">
-        <h3>Isqueiro Eletrônico</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Isqueiro Eletrônico')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Isqueiro%20Eletr%C3%B4nico" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 84 -->
-      <div class="card-produto">
-        <h3>Isqueiro Mini Cricket</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Isqueiro Mini Cricket')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Isqueiro%20Mini%20Cricket" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 85 -->
-      <div class="card-produto">
-        <h3>Lâmpada 42w</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Lâmpada 42w')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20L%C3%A2mpada%2042w" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 86 -->
-      <div class="card-produto">
-        <h3>Lâmpada Hal. Ourolux 42w</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Lâmpada Hal. Ourolux 42w')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20L%C3%A2mpada%20Hal.%20Ourolux%2042w" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 87 -->
-      <div class="card-produto">
-        <h3>Lâmpada Ourolux 70w</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Lâmpada Ourolux 70w')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20L%C3%A2mpada%20Ourolux%2070w" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 88 -->
-      <div class="card-produto">
-        <h3>Lâmpada Ourolux LED 40w</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Lâmpada Ourolux LED 40w')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20L%C3%A2mpada%20Ourolux%20LED%2040w" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 89 -->
-      <div class="card-produto">
-        <h3>Lâmpada Ourolux LED 9w</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Lâmpada Ourolux LED 9w')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20L%C3%A2mpada%20Ourolux%20LED%209w" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 90 -->
-      <div class="card-produto">
-        <h3>Leite Condensado 270g</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Leite Condensado 270g')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Leite%20Condensado%20270g" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 91 -->
-      <div class="card-produto">
-        <h3>Leite de Coco Menina</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Leite de Coco Menina')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Leite%20de%20Coco%20Menina" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 92 -->
-      <div class="card-produto">
-        <h3>Linha Magna Azul Marinho</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Linha Magna Azul Marinho')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Linha%20Magna%20Azul%20Marinho" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 93 -->
-      <div class="card-produto">
-        <h3>Linha Magna Branca</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Linha Magna Branca')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Linha%20Magna%20Branca" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 94 -->
-      <div class="card-produto">
-        <h3>Linha Magna Preta</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Linha Magna Preta')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Linha%20Magna%20Preta" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 95 -->
-      <div class="card-produto">
-        <h3>Linha Magna Sortida</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Linha Magna Sortida')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Linha%20Magna%20Sortida" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 96 -->
-      <div class="card-produto">
-        <h3>Linha Magna Vermelha</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Linha Magna Vermelha')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Linha%20Magna%20Vermelha" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 97 -->
-      <div class="card-produto">
-        <h3>Milho de Pipoca 500g</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Milho de Pipoca 500g')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Milho%20de%20Pipoca%20500g" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 98 -->
-      <div class="card-produto">
-        <h3>Milho Verde</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Milho Verde')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Milho%20Verde" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 99 -->
-      <div class="card-produto">
-        <h3>Miojo Carne</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Miojo Carne')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Miojo%20Carne" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 100 -->
-      <div class="card-produto">
-        <h3>Miojo Galinha</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Miojo Galinha')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Miojo%20Galinha" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 101 -->
-      <div class="card-produto">
-        <h3>Molho Pimenta Gota</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Molho Pimenta Gota')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Molho%20Pimenta%20Gota" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 102 -->
-      <div class="card-produto">
-        <h3>Molho Tomate Predilecta</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Molho Tomate Predilecta')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Molho%20Tomate%20Predilecta" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 103 -->
-      <div class="card-produto">
-        <h3>Palito Churrasco</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Palito Churrasco')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Palito%20Churrasco" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 104 -->
-      <div class="card-produto">
-        <h3>Palito de Dente</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Palito de Dente')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Palito%20de%20Dente" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 105 -->
-      <div class="card-produto">
-        <h3>Pilha 23a</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Pilha 23a')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Pilha%2023a" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 106 -->
-      <div class="card-produto">
-        <h3>Pilha AAA Panasonic</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Pilha AAA Panasonic')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Pilha%20AAA%20Panasonic" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 107 -->
-      <div class="card-produto">
-        <h3>Pilha Alfacel AA c/60</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Pilha Alfacel AA c/60')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Pilha%20Alfacel%20AA%20c%2F60" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 108 -->
-      <div class="card-produto">
-        <h3>Pilha Alfacel AAA</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Pilha Alfacel AAA')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Pilha%20Alfacel%20AAA" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 109 -->
-      <div class="card-produto">
-        <h3>Pilha Panasonic AA</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Pilha Panasonic AA')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Pilha%20Panasonic%20AA" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 110 -->
-      <div class="card-produto">
-        <h3>Pilha Panasonic Grande</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Pilha Panasonic Grande')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Pilha%20Panasonic%20Grande" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 111 -->
-      <div class="card-produto">
-        <h3>Pilha Panasonic Grande D Alcalina</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Pilha Panasonic Grande D Alcalina')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Pilha%20Panasonic%20Grande%20D%20Alcalina" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 112 -->
-      <div class="card-produto">
-        <h3>Pilha Rayovac AA</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Pilha Rayovac AA')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Pilha%20Rayovac%20AA" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 113 -->
-      <div class="card-produto">
-        <h3>Pilha Rayovac Grande c/12</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Pilha Rayovac Grande c/12')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Pilha%20Rayovac%20Grande%20c%2F12" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 114 -->
-      <div class="card-produto">
-        <h3>Pregador de Roupa Grande</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Pregador de Roupa Grande')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Pregador%20de%20Roupa%20Grande" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 115 -->
-      <div class="card-produto">
-        <h3>Pregador de Roupa Pequeno</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Pregador de Roupa Pequeno')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Pregador%20de%20Roupa%20Pequeno" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 116 -->
-      <div class="card-produto">
-        <h3>Queijo Ralado Selete</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Queijo Ralado Selete')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Queijo%20Ralado%20Selete" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 117 -->
-      <div class="card-produto">
-        <h3>Refresco Tandy Laranja</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Refresco Tandy Laranja')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Refresco%20Tandy%20Laranja" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 118 -->
-      <div class="card-produto">
-        <h3>Refresco Tandy Maracujá</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Refresco Tandy Maracujá')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Refresco%20Tandy%20Maracuj%C3%A1" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 119 -->
-      <div class="card-produto">
-        <h3>Refresco Tandy Uva</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Refresco Tandy Uva')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Refresco%20Tandy%20Uva" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 120 -->
-      <div class="card-produto">
-        <h3>Sal Fino</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Sal Fino')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Sal%20Fino" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 121 -->
-      <div class="card-produto">
-        <h3>Sal Grosso</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Sal Grosso')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Sal%20Grosso" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 122 -->
-      <div class="card-produto">
-        <h3>Sal Refinado</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Sal Refinado')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Sal%20Refinado" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 123 -->
-      <div class="card-produto">
-        <h3>Salsicha Frisa</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Salsicha Frisa')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Salsicha%20Frisa" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 124 -->
-      <div class="card-produto">
-        <h3>Sardinha Óleo</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Sardinha Óleo')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Sardinha%20%C3%93leo" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 125 -->
-      <div class="card-produto">
-        <h3>Sardinha Tomate</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Sardinha Tomate')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Sardinha%20Tomate" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 126 -->
-      <div class="card-produto">
-        <h3>Tang Abacaxi</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Tang Abacaxi')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Tang%20Abacaxi" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 127 -->
-      <div class="card-produto">
-        <h3>Tang Goiaba</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Tang Goiaba')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Tang%20Goiaba" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 128 -->
-      <div class="card-produto">
-        <h3>Tang Guaraná</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Tang Guaraná')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Tang%20Guaran%C3%A1" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 129 -->
-      <div class="card-produto">
-        <h3>Tang Laranja</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Tang Laranja')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Tang%20Laranja" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 130 -->
-      <div class="card-produto">
-        <h3>Tang Limão</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Tang Limão')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Tang%20Lim%C3%A3o" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 131 -->
-      <div class="card-produto">
-        <h3>Tang Manga</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Tang Manga')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Tang%20Manga" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 132 -->
-      <div class="card-produto">
-        <h3>Tang Maracujá</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Tang Maracujá')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Tang%20Maracuj%C3%A1" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 133 -->
-      <div class="card-produto">
-        <h3>Tang Morango</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Tang Morango')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Tang%20Morango" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 134 -->
-      <div class="card-produto">
-        <h3>Tang Uva</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Tang Uva')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Tang%20Uva" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 135 -->
-      <div class="card-produto">
-        <h3>Tempero Sazon Carne</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Tempero Sazon Carne')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Tempero%20Sazon%20Carne" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 136 -->
-      <div class="card-produto">
-        <h3>Vela Padroeira nº 4</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Vela Padroeira nº 4')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Vela%20Padroeira%20n%C2%BA%204" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 137 -->
-      <div class="card-produto">
-        <h3>Vela Padroeira nº 5</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Vela Padroeira nº 5')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Vela%20Padroeira%20n%C2%BA%205" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 138 -->
-      <div class="card-produto">
-        <h3>Vela Padroeira nº 8</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Vela Padroeira nº 8')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Vela%20Padroeira%20n%C2%BA%208" target="_blank">Cotar no WhatsApp</a>
-        </div>
-      </div>
-
-      <!-- Item 139 -->
-      <div class="card-produto">
-        <h3>Vinagre Bulnez 500ml</h3>
-        <div class="botoes">
-          <button class="btn btn-adicionar" onclick="adicionarItem('Vinagre Bulnez 500ml')">Adicionar</button>
-          <a class="btn btn-whatsapp" href="https://wa.me/5521968659086?text=Ol%C3%A1%2C%20gostaria%20de%20cotar%20o%20item%3A%20Vinagre%20Bulnez%20500ml" target="_blank">Cotar no WhatsApp</a>
+    <!-- Lista de Produtos (Em ordem alfabética) -->
+    <div class="product-grid" id="productGrid">
+
+        <div class="product-card">
+            <div class="product-image-container">
+                <img class="product-image" src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&auto=format&fit=crop" alt="Arroz Blanco" loading="lazy">
+            </div>
+            <div class="product-info">
+                <h3>Arroz Branco Tipo 1 5kg</h3>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Arroz%20Branco%20Tipo%201%205kg" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image-container">
+                <img class="product-image" src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" alt="Açúcar Refinado" loading="lazy">
+            </div>
+            <div class="product-info">
+                <h3>Açúcar Refinado 1kg</h3>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Açúcar%20Refinado%201kg" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image-container">
+                <img class="product-image" src="https://images.unsplash.com/photo-1517093728432-a0440f8d0780?w=400&auto=format&fit=crop" alt="Café Moído" loading="lazy">
+            </div>
+            <div class="product-info">
+                <h3>Café Torrado e Moído 500g</h3>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Café%20Torrado%20e%20Moído%20500g" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image-container">
+                <img class="product-image" src="https://images.unsplash.com/photo-1551462147-37885acc36f1?w=400&auto=format&fit=crop" alt="Farinha de Trigo" loading="lazy">
+            </div>
+            <div class="product-info">
+                <h3>Farinha de Trigo Tipo 1 1kg</h3>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Farinha%20de%20Trigo%20Tipo%201%201kg" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image-container">
+                <img class="product-image" src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&auto=format&fit=crop" alt="Feijão Preto" loading="lazy">
+            </div>
+            <div class="product-info">
+                <h3>Feijão Preto Tipo 1 1kg</h3>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Feijão%20Preto%20Tipo%201%201kg" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image-container">
+                <img class="product-image" src="https://images.unsplash.com/photo-1621996346565-e3d5d6281292?w=400&auto=format&fit=crop" alt="Macarrão Espaguete" loading="lazy">
+            </div>
+            <div class="product-info">
+                <h3>Macarrão Espaguete 500g</h3>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Macarrão%20Espaguete%20500g" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image-container">
+                <img class="product-image" src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&auto=format&fit=crop" alt="Óleo de Soja" loading="lazy">
+            </div>
+            <div class="product-info">
+                <h3>Óleo de Soja Refinado 900ml</h3>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Óleo%20de%20Soja%20Refinado%20900ml" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image-container">
+                <img class="product-image" src="https://images.unsplash.com/photo-1518110168401-f2877ee2c88c?w=400&auto=format&fit=crop" alt="Sal Refinado" loading="lazy">
+            </div>
+            <div class="product-info">
+                <h3>Sal Refinado Iodado 1kg</h3>
+            </div>
+            <div class="product-actions">
+                <button class="btn-add">🛒 Adicionar</button>
+                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Sal%20Refinado%20Iodado%201kg" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
+            </div>
         </div>
-      </div>
 
     </div>
-  </div>
 
-  <script>
-    function adicionarItem(nome) {
-      alert(nome + " adicionado ao seu carrinho!");
-    }
-  </script>
+    <!-- Controles de Paginação -->
+    <div class="pagination-container" id="paginationControls"></div>
 
+    <!-- Rodapé -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="./politica-de-devolucao.html">Política de Devolução</a>
+                <span class="divider">|</span>
+                <a href="./politica-de-privacidade.html">Política de Privacidade</a>
+                <span class="divider">|</span>
+                <a href="./regras-de-uso.html">Regras de Uso</a>
+            </div>
+            <p class="copyright">&copy; Distribuidora Frazão. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Script de Paginação -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const itemsPerPage = 12;
+            const productGrid = document.getElementById('productGrid');
+            const products = Array.from(productGrid.getElementsByClassName('product-card'));
+            const paginationControls = document.getElementById('paginationControls');
+            let currentPage = 1;
+
+            const totalPages = Math.ceil(products.length / itemsPerPage);
+
+            function displayPage(page) {
+                currentPage = page;
+                const start = (page - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+
+                products.forEach((product, index) => {
+                    if (index >= start && index < end) {
+                        product.style.display = 'flex';
+                    } else {
+                        product.style.display = 'none';
+                    }
+                });
+
+                renderControls();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function renderControls() {
+                paginationControls.innerHTML = '';
+
+                if (totalPages <= 1) return;
+
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'pagination-btn';
+                prevBtn.innerHTML = '&laquo; Anterior';
+                prevBtn.disabled = currentPage === 1;
+                prevBtn.addEventListener('click', () => displayPage(currentPage - 1));
+                paginationControls.appendChild(prevBtn);
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+                    pageBtn.innerText = i;
+                    pageBtn.addEventListener('click', () => displayPage(i));
+                    paginationControls.appendChild(pageBtn);
+                }
+
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'pagination-btn';
+                nextBtn.innerHTML = 'Próximo &raquo;';
+                nextBtn.disabled = currentPage === totalPages;
+                nextBtn.addEventListener('click', () => displayPage(currentPage + 1));
+                paginationControls.appendChild(nextBtn);
+            }
+
+            displayPage(1);
+        });
+    </script>
 </body>
 </html>

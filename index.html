@@ -3,10 +3,560 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Frazão Ltda - Mercearia</title>
+    <title>AR Frazão Ltda - Catálogo Geral</title>
+    <style>
+        :root {
+            --primary: #1a252f;
+            --secondary: #e67e22;
+            --success: #27ae60;
+            --bg-light: #f8f9fa;
+            --border: #e2e8f0;
+            --text-dark: #2d3748;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+        }
+        header {
+            background: linear-gradient(135deg, var(--primary), #34495e);
+            color: white;
+            text-align: center;
+            padding: 25px 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        header h1 { margin: 0; font-size: 26px; letter-spacing: 1px; }
+        header p { margin: 8px 0 0 0; color: #bdc3c7; font-size: 14px; }
+        
+        /* Menu de Categorias (Abas) */
+        .category-nav {
+            background-color: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+        .cat-btn {
+            background: #edf2f7;
+            border: 1px solid var(--border);
+            color: var(--text-dark);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cat-btn:hover { background: #e2e8f0; }
+        .cat-btn.active {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 20px auto;
+            padding: 0 15px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+        @media (max-width: 850px) {
+            .container { grid-template-columns: 1fr; }
+        }
+        
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        h2 { 
+            border-bottom: 2px solid var(--border); 
+            padding-bottom: 12px; 
+            margin-top: 0; 
+            color: var(--primary); 
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Grid de Produtos */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 15px;
+            min-height: 380px;
+        }
+        .product-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        }
+        .product-img-container {
+            width: 100%;
+            height: 120px;
+            background-color: #edf2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .product-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .placeholder-text {
+            color: #a0aec0;
+            font-size: 11px;
+            text-align: center;
+            padding: 10px;
+        }
+        .product-body {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+        .product-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin: 0 0 6px 0;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+        .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+        .product-price {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--secondary);
+            margin: 0;
+        }
+        .btn-add {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 11px;
+            transition: background 0.2s;
+        }
+        .btn-add:hover { background-color: #219653; }
+
+        /* Paginação */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+        .pagination button {
+            background-color: #edf2f7;
+            color: var(--text-dark);
+            border: 1px solid var(--border);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .pagination button.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Carrinho Lateral */
+        .cart-items-container {
+            max-height: 350px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+        }
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cart-item-controls button {
+            background: #cbd5e0;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .total-section {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 15px 0;
+            text-align: right;
+            color: var(--primary);
+            border-top: 2px solid var(--border);
+            padding-top: 10px;
+        }
+        .btn-whatsapp {
+            background-color: #25d366;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-whatsapp:hover { background-color: #1ebe5d; }
+        
+        .search-box {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Catálogo de Mercearia</h1>
-    <p>Página limpa. Adicione seus novos códigos aqui quando estiver pronto.</p>
+
+    <header>
+        <h1>AR Frazão Ltda</h1>
+        <p>Catálogo Geral - Cotação via WhatsApp</p>
+    </header>
+
+    <!-- Menu de Categorias -->
+    <div class="category-nav">
+        <button class="cat-btn active" onclick="mudarCategoria('mercearia')">Mercearia</button>
+        <button class="cat-btn" onclick="mudarCategoria('bebidas')">Bebidas</button>
+        <button class="cat-btn" onclick="mudarCategoria('doces')">Doces</button>
+        <button class="cat-btn" onclick="mudarCategoria('higiene')">Higiene</button>
+        <button class="cat-btn" onclick="mudarCategoria('limpeza')">Limpeza</button>
+        <button class="cat-btn" onclick="mudarCategoria('descartaveis')">Descartáveis</button>
+        <button class="cat-btn" onclick="mudarCategoria('biscoitos')">Biscoitos</button>
+        <button class="cat-btn" onclick="mudarCategoria('balas_pirulitos')">Balas e Pirulitos</button>
+        <button class="cat-btn" onclick="mudarCategoria('papelaria')">Papelaria</button>
+    </div>
+
+    <div class="container">
+        <!-- Vitrine de Produtos -->
+        <div class="card">
+            <h2>
+                <span id="category-title">Produtos de Mercearia</span>
+                <span id="product-count" style="font-size: 13px; color: #718096; font-weight: normal;"></span>
+            </h2>
+            <input type="text" id="searchInput" class="search-box" placeholder="Buscar produto nesta categoria..." onkeyup="filtrarProdutos()">
+            
+            <div class="product-grid" id="product-grid"></div>
+
+            <div class="pagination" id="pagination-controls"></div>
+        </div>
+
+        <!-- Carrinho / Pedido -->
+        <div class="card">
+            <h2>Seu Pedido</h2>
+            <div class="cart-items-container" id="cart-items">
+                <p style="color: #a0aec0; font-style: italic; text-align: center; margin-top: 30px;">O carrinho está vazio.</p>
+            </div>
+            
+            <div class="total-section">
+                Total: R$ <span id="cart-total">0,00</span>
+            </div>
+            
+            <button class="btn-whatsapp" onclick="enviarWhatsApp()">
+                Finalizar Cotação no WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // BANCO DE DADOS COMPLETO POR CATEGORIAS
+        const catalogo = {
+            mercearia: [
+                { id: "merc_01", nome: "Abridor de garrafa c/12", preco: 21.50, imagem: "" },
+                { id: "merc_02", nome: "Abridor de lata c/12", preco: 21.50, imagem: "" },
+                { id: "merc_03", nome: "Adoçante assugtin c/04", preco: 15.38, imagem: "" },
+                { id: "merc_04", nome: "Agulha de fogão c/50", preco: 9.50, imagem: "" },
+                { id: "merc_05", nome: "Amido de milho c/06", preco: 22.30, imagem: "" },
+                { id: "merc_06", nome: "Café Pimpinela 100g c/05", preco: 33.95, imagem: "" },
+                { id: "merc_07", nome: "Copo americano c/24", preco: 33.90, imagem: "" },
+                { id: "merc_08", nome: "Fosforo gaboardi c/05", preco: 17.00, imagem: "" }
+            ],
+            bebidas: [
+                { id: "beb_01", nome: "Refrigerante Cola 2L c/6", preco: 45.00, imagem: "" },
+                { id: "beb_02", nome: "Água Mineral 500ml c/12", preco: 12.00, imagem: "" }
+            ],
+            doces: [
+                { id: "doc_01", nome: "Chocolate Barra c/10", preco: 35.00, imagem: "" },
+                { id: "doc_02", nome: "Pé de Moleque c/20", preco: 18.50, imagem: "" }
+            ],
+            higiene: [
+                { id: "hig_01", nome: "Sabonete Lux c/12", preco: 24.00, imagem: "" },
+                { id: "hig_02", nome: "Pasta de Dente c/12", preco: 32.50, imagem: "" }
+            ],
+            limpeza: [
+                { id: "lim_01", nome: "Água Sanitária 2L c/6", preco: 28.00, imagem: "" },
+                { id: "lim_02", nome: "Sabão em Pó 1kg c/10", preco: 65.00, imagem: "" }
+            ],
+            descartaveis: [
+                { id: "desc_01", nome: "Copo Descartável 200ml c/100", preco: 8.50, imagem: "" },
+                { id: "desc_02", nome: "Prato Descartável c/10", preco: 5.00, imagem: "" }
+            ],
+            biscoitos: [
+                { id: "bisc_01", nome: "Biscoito Recheado c/10", preco: 22.00, imagem: "" },
+                { id: "bisc_02", nome: "Biscoito Maisena c/10", preco: 25.00, imagem: "" }
+            ],
+            balas_pirulitos: [
+                { id: "bal_01", nome: "Bala de Hortelã pct", preco: 6.50, imagem: "" },
+                { id: "bal_02", nome: "Pirulito Pop c/50", preco: 14.00, imagem: "" }
+            ],
+            papelaria: [
+                { id: "pap_01", nome: "Caderno Universitário", preco: 12.90, imagem: "" },
+                { id: "pap_02", nome: "Caneta Esferográfica c/50", preco: 25.00, imagem: "" }
+            ]
+        };
+
+        let categoriaAtiva = 'mercearia';
+        let carrinho = [];
+        let paginaAtual = 1;
+        const itensPorPagina = 8;
+        let produtosFiltrados = [...catalogo[categoriaAtiva]];
+
+        const titulosCategorias = {
+            mercearia: "Produtos de Mercearia",
+            bebidas: "Bebidas",
+            doces: "Doces",
+            higiene: "Higiene",
+            limpeza: "Limpeza",
+            descartaveis: "Descartáveis",
+            biscoitos: "Biscoitos",
+            balas_pirulitos: "Balas e Pirulitos",
+            papelaria: "Papelaria"
+        };
+
+        function mudarCategoria(cat) {
+            categoriaAtiva = cat;
+            paginaAtual = 1;
+            document.getElementById("searchInput").value = "";
+            produtosFiltrados = [...catalogo[categoriaAtiva]];
+            
+            // Atualiza botões ativos
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById("category-title").innerText = titulosCategorias[cat];
+            renderizarPagina();
+        }
+
+        function renderizarPagina() {
+            const grid = document.getElementById("product-grid");
+            const pagControls = document.getElementById("pagination-controls");
+            document.getElementById("product-count").innerText = `${produtosFiltrados.length} itens`;
+            
+            grid.innerHTML = "";
+
+            if (produtosFiltrados.length === 0) {
+                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">Nenhum produto encontrado.</p>`;
+                pagControls.innerHTML = "";
+                return;
+            }
+
+            const inicio = (paginaAtual - 1) * itensPorPagina;
+            const fim = inicio + itensPorPagina;
+            const itensPagina = produtosFiltrados.slice(inicio, fim);
+
+            itensPagina.forEach(prod => {
+                let imagemHtml = prod.imagem 
+                    ? `<img src="${prod.imagem}" alt="${prod.nome}" onerror="this.onerror=null; this.parentNode.innerHTML='<span class=\'placeholder-text\'>Erro ao carregar</span>';">`
+                    : `<span class="placeholder-text">Sem foto</span>`;
+
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <div class="product-img-container">${imagemHtml}</div>
+                        <div class="product-body">
+                            <h3 class="product-title">${prod.nome}</h3>
+                            <div class="product-footer">
+                                <p class="product-price">R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
+                                <button class="btn-add" onclick="adicionarAoCarrinho('${prod.id}')">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            renderizarBotoesPagina();
+        }
+
+        function renderizarBotoesPagina() {
+            const pagControls = document.getElementById("pagination-controls");
+            const totalPaginas = Math.ceil(produtosFiltrados.length / itensPorPagina);
+            
+            if (totalPaginas <= 1) {
+                pagControls.innerHTML = "";
+                return;
+            }
+
+            let html = `<button onclick="mudarPagina(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled' : ''}>Anterior</button>`;
+            for (let i = 1; i <= totalPaginas; i++) {
+                html += `<button onclick="mudarPagina(${i})" class="${paginaAtual === i ? 'active' : ''}">${i}</button>`;
+            }
+            html += `<button onclick="mudarPagina(${paginaAtual + 1})" ${paginaAtual === totalPaginas ? 'disabled' : ''}>Próxima</button>`;
+            
+            pagControls.innerHTML = html;
+        }
+
+        function mudarPagina(novaPagina) {
+            const totalPaginas = Math.ceil(produtosFiltrados.length / itensPorPagina);
+            if (novaPagina >= 1 && novaPagina <= totalPaginas) {
+                paginaAtual = novaPagina;
+                renderizarPagina();
+            }
+        }
+
+        function filtrarProdutos() {
+            const termo = document.getElementById("searchInput").value.toLowerCase();
+            produtosFiltrados = catalogo[categoriaAtiva].filter(b => b.nome.toLowerCase().includes(termo));
+            paginaAtual = 1;
+            renderizarPagina();
+        }
+
+        function adicionarAoCarrinho(id) {
+            // Procura o produto em qualquer categoria
+            let produto = null;
+            for (let cat in catalogo) {
+                let encontrado = catalogo[cat].find(p => p.id === id);
+                if (encontrado) {
+                    produto = encontrado;
+                    break;
+                }
+            }
+
+            if (!produto) return;
+
+            const itemExistente = carrinho.find(item => item.id === id);
+            if (itemExistente) {
+                itemExistente.qtd++;
+            } else {
+                carrinho.push({ ...produto, qtd: 1 });
+            }
+            atualizarCarrinho();
+        }
+
+        function alterarQtd(id, delta) {
+            const item = carrinho.find(i => i.id === id);
+            if (item) {
+                item.qtd += delta;
+                if (item.qtd <= 0) {
+                    carrinho = carrinho.filter(i => i.id !== id);
+                }
+            }
+            atualizarCarrinho();
+        }
+
+        function atualizarCarrinho() {
+            const container = document.getElementById("cart-items");
+            const totalEl = document.getElementById("cart-total");
+
+            if (carrinho.length === 0) {
+                container.innerHTML = `<p style="color: #a0aec0; font-style: italic; text-align: center; margin-top: 30px;">O carrinho está vazio.</p>`;
+                totalEl.innerText = "0,00";
+                return;
+            }
+
+            container.innerHTML = "";
+            let total = 0;
+
+            carrinho.forEach(item => {
+                let subtotal = item.preco * item.qtd;
+                total += subtotal;
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <div>
+                            <strong>${item.nome}</strong><br>
+                            <small style="color: #718096;">R$ ${item.preco.toFixed(2).replace('.', ',')} un</small>
+                        </div>
+                        <div class="cart-item-controls">
+                            <button onclick="alterarQtd('${item.id}', -1)">-</button>
+                            <span>${item.qtd}</span>
+                            <button onclick="alterarQtd('${item.id}', 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            totalEl.innerText = total.toFixed(2).replace('.', ',');
+        }
+
+        function enviarWhatsApp() {
+            if (carrinho.length === 0) {
+                alert("Adicione pelo menos um produto ao carrinho antes de enviar a cotação!");
+                return;
+            }
+
+            let mensagem = "Olá! Gostaria de solicitar a seguinte cotação:\n\n";
+            let total = 0;
+
+            carrinho.forEach(item => {
+                let subtotal = item.preco * item.qtd;
+                total += subtotal;
+                mensagem += `• ${item.qtd}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+            });
+
+            mensagem += `\n*Total da Cotação: R$ ${total.toFixed(2).replace('.', ',')}*`;
+
+            const numeroWhatsApp = "5521968659086";
+            const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
+            
+            window.open(url, '_blank');
+        }
+
+        window.onload = () => renderizarPagina();
+    </script>
 </body>
 </html>

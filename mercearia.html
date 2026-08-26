@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Frazão Ltda - Catálogo de Mercearia</title>
+    <title>AR Frazão Ltda - Catálogo Geral</title>
     <style>
         :root {
             --primary: #1a252f;
@@ -25,15 +25,45 @@
             background: linear-gradient(135deg, var(--primary), #34495e);
             color: white;
             text-align: center;
-            padding: 30px 15px;
+            padding: 25px 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         header h1 { margin: 0; font-size: 26px; letter-spacing: 1px; }
         header p { margin: 8px 0 0 0; color: #bdc3c7; font-size: 14px; }
         
+        /* Menu de Categorias (Abas) */
+        .category-nav {
+            background-color: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+        .cat-btn {
+            background: #edf2f7;
+            border: 1px solid var(--border);
+            color: var(--text-dark);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cat-btn:hover { background: #e2e8f0; }
+        .cat-btn.active {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
         .container {
             max-width: 1300px;
-            margin: 25px auto;
+            margin: 20px auto;
             padding: 0 15px;
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -64,7 +94,7 @@
         /* Grid de Produtos */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
             gap: 15px;
             min-height: 380px;
         }
@@ -83,7 +113,7 @@
         }
         .product-img-container {
             width: 100%;
-            height: 130px;
+            height: 120px;
             background-color: #edf2f7;
             display: flex;
             align-items: center;
@@ -238,17 +268,30 @@
 
     <header>
         <h1>AR Frazão Ltda</h1>
-        <p>Catálogo de Mercearia - Cotação via WhatsApp</p>
+        <p>Catálogo Geral - Cotação via WhatsApp</p>
     </header>
+
+    <!-- Menu de Categorias -->
+    <div class="category-nav">
+        <button class="cat-btn active" onclick="mudarCategoria('mercearia')">Mercearia</button>
+        <button class="cat-btn" onclick="mudarCategoria('bebidas')">Bebidas</button>
+        <button class="cat-btn" onclick="mudarCategoria('doces')">Doces</button>
+        <button class="cat-btn" onclick="mudarCategoria('higiene')">Higiene</button>
+        <button class="cat-btn" onclick="mudarCategoria('limpeza')">Limpeza</button>
+        <button class="cat-btn" onclick="mudarCategoria('descartaveis')">Descartáveis</button>
+        <button class="cat-btn" onclick="mudarCategoria('biscoitos')">Biscoitos</button>
+        <button class="cat-btn" onclick="mudarCategoria('balas_pirulitos')">Balas e Pirulitos</button>
+        <button class="cat-btn" onclick="mudarCategoria('papelaria')">Papelaria</button>
+    </div>
 
     <div class="container">
         <!-- Vitrine de Produtos -->
         <div class="card">
             <h2>
-                <span>Produtos de Mercearia</span>
+                <span id="category-title">Produtos de Mercearia</span>
                 <span id="product-count" style="font-size: 13px; color: #718096; font-weight: normal;"></span>
             </h2>
-            <input type="text" id="searchInput" class="search-box" placeholder="Buscar produto na mercearia..." onkeyup="filtrarProdutos()">
+            <input type="text" id="searchInput" class="search-box" placeholder="Buscar produto nesta categoria..." onkeyup="filtrarProdutos()">
             
             <div class="product-grid" id="product-grid"></div>
 
@@ -273,161 +316,221 @@
     </div>
 
     <script>
-        // LISTA COMPLETA DE MERCEARIA
-        const mercearia = [
-            { id: "merc_01", nome: "Abridor de garrafa c/12", preco: 21.50, imagem: "" },
-            { id: "merc_02", nome: "Abridor de lata c/12", preco: 21.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQikf5sXSIWGXoV6jZmjsLMbwb8A2HENN9Kj95emsOvIg&s=10" },
-            { id: "merc_03", nome: "Adoçante assugtin c/04", preco: 15.38, imagem: "" },
-            { id: "merc_04", nome: "Agulha de fogão c/50", preco: 9.50, imagem: "" },
-            { id: "merc_05", nome: "Agulha de máquina 11 c/10", preco: 11.50, imagem: "" },
-            { id: "merc_06", nome: "Agulha de máquina 14 c/10", preco: 11.50, imagem: "" },
-            { id: "merc_07", nome: "Agulha de máquina 16 c/10", preco: 11.50, imagem: "" },
-            { id: "merc_08", nome: "Agulha de mão 1 c/20", preco: 8.90, imagem: "" },
-            { id: "merc_09", nome: "Agulha de mão 2 c/20", preco: 10.50, imagem: "" },
-            { id: "merc_10", nome: "Agulha de mão 3 c/20", preco: 8.50, imagem: "" },
-            { id: "merc_11", nome: "Agulha de mão 5 c/20", preco: 6.50, imagem: "" },
-            { id: "merc_12", nome: "Agulha de mão 7 c/20", preco: 6.50, imagem: "" },
-            { id: "merc_13", nome: "Amido de milho c/06", preco: 22.30, imagem: "" },
-            { id: "merc_14", nome: "Amolador de faca 3x1", preco: 11.30, imagem: "" },
-            { id: "merc_15", nome: "Azeitona zille c/10", preco: 38.50, imagem: "" },
-            { id: "merc_16", nome: "Barbante lyne 200m", preco: 10.20, imagem: "" },
-            { id: "merc_17", nome: "Batata palha 100g c/05", preco: 17.99, imagem: "" },
-            { id: "merc_18", nome: "Bateria Elgin 2032 c/05", preco: 9.80, imagem: "" },
-            { id: "merc_19", nome: "Bateria Elgin ag13/lr41 c/10", preco: 8.60, imagem: "" },
-            { id: "merc_20", nome: "Bateria 626A c/10", preco: 8.60, imagem: "" },
-            { id: "merc_21", nome: "Borracha panela Sil. 3/7l c/10", preco: 28.60, imagem: "" },
-            { id: "merc_22", nome: "Borracha panela 10l c/10", preco: 16.40, imagem: "" },
-            { id: "merc_23", nome: "Borracha panela 4/7l c/10", preco: 16.40, imagem: "" },
-            { id: "merc_24", nome: "Cadeado 20-25-30mm c/12", preco: 52.00, imagem: "" },
-            { id: "merc_25", nome: "Café Pimpinela 100g c/05", preco: 33.95, imagem: "" },
-            { id: "merc_26", nome: "Caldo arisco 19g carne c/24", preco: 21.90, imagem: "" },
-            { id: "merc_27", nome: "Caldo arisco 19g galinha c/24", preco: 21.90, imagem: "" },
-            { id: "merc_28", nome: "Caldo Knorr 19g carne c/24", preco: 22.90, imagem: "" },
-            { id: "merc_29", nome: "Caldo Knorr 19g galinha c/24", preco: 22.90, imagem: "" },
-            { id: "merc_30", nome: "Canela pó pote c/12", preco: 28.55, imagem: "" },
-            { id: "merc_31", nome: "Catchup predileta 200g c/06", preco: 23.95, imagem: "" },
-            { id: "merc_32", nome: "Chá 7 ervas c/05", preco: 17.49, imagem: "" },
-            { id: "merc_33", nome: "Chá boldo c/05", preco: 17.49, imagem: "" },
-            { id: "merc_34", nome: "Chá camomila c/05", preco: 17.49, imagem: "" },
-            { id: "merc_35", nome: "Chá capim cidreira c/05", preco: 17.49, imagem: "" },
-            { id: "merc_36", nome: "Chá erva doce c/05", preco: 17.49, imagem: "" },
-            { id: "merc_37", nome: "Chá hortelã c/05", preco: 17.49, imagem: "" },
-            { id: "merc_38", nome: "Chá maçã c/ canela c/05", preco: 17.49, imagem: "" },
-            { id: "merc_39", nome: "Chá preto c/05", preco: 17.49, imagem: "" },
-            { id: "merc_40", nome: "Coador de café nº 7 c/12", preco: 22.30, imagem: "" },
-            { id: "merc_41", nome: "Coco ralado 50g c/10", preco: 20.89, imagem: "" },
-            { id: "merc_42", nome: "Cola tek bonder 2g c/12", preco: 20.90, imagem: "" },
-            { id: "merc_43", nome: "Cola tek bonder 793 c/05", preco: 42.50, imagem: "" },
-            { id: "merc_44", nome: "Colorau chinezinho 90g c/15", preco: 38.90, imagem: "" },
-            { id: "merc_45", nome: "Cond. bicabornato c/10", preco: 3.50, imagem: "" },
-            { id: "merc_46", nome: "Cond. canela casca c/10", preco: 5.45, imagem: "" },
-            { id: "merc_47", nome: "Cond. canela pó c/10", preco: 3.50, imagem: "" },
-            { id: "merc_48", nome: "Cond. colorau c/10", preco: 3.50, imagem: "" },
-            { id: "merc_49", nome: "Cond. cominho c/10", preco: 3.50, imagem: "" },
-            { id: "merc_50", nome: "Cond. cravo c/10", preco: 7.99, imagem: "" },
-            { id: "merc_51", nome: "Cond. erva doce c/10", preco: 3.50, imagem: "" },
-            { id: "merc_52", nome: "Cond. louro folha c/10", preco: 3.50, imagem: "" },
-            { id: "merc_53", nome: "Cond. louro pó c/10", preco: 3.50, imagem: "" },
-            { id: "merc_54", nome: "Cond. oregano c/10", preco: 3.50, imagem: "" },
-            { id: "merc_55", nome: "Cond. pimenta pó c/10", preco: 3.50, imagem: "" },
-            { id: "merc_56", nome: "Cond. tempero misto c/10", preco: 3.50, imagem: "" },
-            { id: "merc_57", nome: "Copo americano c/24", preco: 33.90, imagem: "" },
-            { id: "merc_58", nome: "Corda de varal nº 5 c/10", preco: 15.90, imagem: "" },
-            { id: "merc_59", nome: "Creme de leite piracanjuba c/06", preco: 18.65, imagem: "" },
-            { id: "merc_60", nome: "Durepoxi 100g c/06", preco: 59.75, imagem: "" },
-            { id: "merc_61", nome: "Durepoxi 50g c/06", preco: 35.49, imagem: "" },
-            { id: "merc_62", nome: "Ervilha pramesa c/06", preco: 21.80, imagem: "" },
-            { id: "merc_63", nome: "Estalinhos panda c/40", preco: 24.70, imagem: "" },
-            { id: "merc_64", nome: "Fermento apti c/06", preco: 21.79, imagem: "" },
-            { id: "merc_65", nome: "Filtro 102 pimpinela c/05", preco: 22.30, imagem: "" },
-            { id: "merc_66", nome: "Filtro 103 brigitta c/06", preco: 25.20, imagem: "" },
-            { id: "merc_67", nome: "Fita isolante 3m c/12", preco: 38.50, imagem: "" },
-            { id: "merc_68", nome: "Fita vedaflon 12x10mm c/10", preco: 12.90, imagem: "" },
-            { id: "merc_69", nome: "Fosforo gaboardi c/05", preco: 17.00, imagem: "" },
-            { id: "merc_70", nome: "Fresh abacaxi c/15", preco: 24.70, imagem: "" },
-            { id: "merc_71", nome: "Fresh caju c/15", preco: 24.70, imagem: "" },
-            { id: "merc_72", nome: "Fresh guaraná c/15", preco: 24.70, imagem: "" },
-            { id: "merc_73", nome: "Fresh laranja c/15", preco: 24.70, imagem: "" },
-            { id: "merc_74", nome: "Fresh limão c/15", preco: 24.70, imagem: "" },
-            { id: "merc_75", nome: "Fresh manga c/15", preco: 24.70, imagem: "" },
-            { id: "merc_76", nome: "Fresh maracujá c/15", preco: 24.70, imagem: "" },
-            { id: "merc_77", nome: "Fresh morango c/15", preco: 24.70, imagem: "" },
-            { id: "merc_78", nome: "Fresh uva c/15", preco: 24.70, imagem: "" },
-            { id: "merc_79", nome: "Goiabada predilecta c/06", preco: 23.99, imagem: "" },
-            { id: "merc_80", nome: "Granulado art chocolate c/10", preco: 23.50, imagem: "" },
-            { id: "merc_81", nome: "Granulado art colorido c/10", preco: 23.50, imagem: "" },
-            { id: "merc_82", nome: "Isqueiro bic maxi c/12", preco: 58.50, imagem: "" },
-            { id: "merc_83", nome: "Isqueiro bic mini c/12", preco: 46.50, imagem: "" },
-            { id: "merc_84", nome: "Isqueiro cricket grande c/10", preco: 28.90, imagem: "" },
-            { id: "merc_85", nome: "Isqueiro cricket mini c/10", preco: 27.70, imagem: "" },
-            { id: "merc_86", nome: "Isqueiro eletrônico c/10", preco: 17.90, imagem: "" },
-            { id: "merc_87", nome: "Lampada hal. 42w c/10", preco: 34.30, imagem: "" },
-            { id: "merc_88", nome: "Lampada hal. 70w c/10", preco: 34.30, imagem: "" },
-            { id: "merc_89", nome: "Lampada led 9w c/10", preco: 27.50, imagem: "" },
-            { id: "merc_90", nome: "Lampada led 12w c/10", preco: 36.75, imagem: "" },
-            { id: "merc_91", nome: "Lampada led 15w c/10", preco: 43.40, imagem: "" },
-            { id: "merc_92", nome: "Lampada led 20w c/10", preco: 59.90, imagem: "" },
-            { id: "merc_93", nome: "Lampada led 30w und", preco: 11.00, imagem: "" },
-            { id: "merc_94", nome: "Lampada led 40w und", preco: 12.75, imagem: "" },
-            { id: "merc_95", nome: "Lampada led presença und", preco: 18.50, imagem: "" },
-            { id: "merc_96", nome: "Leite cond. tp piracanjuba 270g c/06", preco: 33.00, imagem: "" },
-            { id: "merc_97", nome: "Leite de coco menina vd c/06", preco: 22.50, imagem: "" },
-            { id: "merc_98", nome: "Linha magna az. marinho c/10", preco: 15.50, imagem: "" },
-            { id: "merc_99", nome: "Linha magna branca c/10", preco: 15.50, imagem: "" },
-            { id: "merc_100", nome: "Linha magna preta c/10", preco: 15.50, imagem: "" },
-            { id: "merc_101", nome: "Linha magna sortida c/10", preco: 15.50, imagem: "" },
-            { id: "merc_102", nome: "Luminaria em. 30 led elgin", preco: 16.50, imagem: "" },
-            { id: "merc_103", nome: "Milho pipoca 500g", preco: 17.20, imagem: "" },
-            { id: "merc_104", nome: "Milho verde lt c/06", preco: 21.76, imagem: "" },
-            { id: "merc_105", nome: "Molho de pimenta gota c/06", preco: 20.98, imagem: "" },
-            { id: "merc_106", nome: "Molho tomate 300g c/06", preco: 10.95, imagem: "" },
-            { id: "merc_107", nome: "Nissin miojo carne c/10", preco: 27.40, imagem: "" },
-            { id: "merc_108", nome: "Nissin miojo galinha c/10", preco: 27.40, imagem: "" },
-            { id: "merc_109", nome: "Palito churrasco c/05", preco: 13.00, imagem: "" },
-            { id: "merc_110", nome: "Palito de madeira c/25", preco: 15.99, imagem: "" },
-            { id: "merc_111", nome: "Pano de prato 40x65 c/10", preco: 31.20, imagem: "" },
-            { id: "merc_112", nome: "Pilha panasonic gd c/20", preco: 74.50, imagem: "" },
-            { id: "merc_113", nome: "Pilha a23 alfacel c/05", preco: 9.90, imagem: "" },
-            { id: "merc_114", nome: "Pilha alc. grande D Panasonic c/02", preco: 30.60, imagem: "" },
-            { id: "merc_115", nome: "Pilha alfacel aa c/60", preco: 48.55, imagem: "" },
-            { id: "merc_116", nome: "Pilha alfacel aaa c/60", preco: 39.90, imagem: "" },
-            { id: "merc_117", nome: "Pilha panasonic aa c/52", preco: 53.15, imagem: "" },
-            { id: "merc_118", nome: "Pilha panasonic aaa c/40", preco: 57.70, imagem: "" },
-            { id: "merc_119", nome: "Pilha rayovac aa c/48", preco: 47.99, imagem: "" },
-            { id: "merc_120", nome: "Pilha rayovac aaa c/40", preco: 48.00, imagem: "" },
-            { id: "merc_121", nome: "Pilha rayovac gd c/12", preco: 50.45, imagem: "" },
-            { id: "merc_122", nome: "Pregador de roupa gd c/10", preco: 22.30, imagem: "" },
-            { id: "merc_123", nome: "Pregador de roupa peq. c/10", preco: 15.00, imagem: "" },
-            { id: "merc_124", nome: "Queijo ralado selete c/05", preco: 15.00, imagem: "" },
-            { id: "merc_125", nome: "Ref. tandy laranja c/15", preco: 11.85, imagem: "" },
-            { id: "merc_126", nome: "Ref. tandy maracujá c/15", preco: 11.85, imagem: "" },
-            { id: "merc_127", nome: "Ref. tandy uva c/15", preco: 11.85, imagem: "" },
-            { id: "merc_128", nome: "Tang abacaxi c/18", preco: 23.50, imagem: "" },
-            { id: "merc_129", nome: "Tang goiaba c/18", preco: 23.50, imagem: "" },
-            { id: "merc_130", nome: "Tang guarana c/18", preco: 23.50, imagem: "" },
-            { id: "merc_131", nome: "Tang laranja c/18", preco: 23.50, imagem: "" },
-            { id: "merc_132", nome: "Tang limão c/18", preco: 23.50, imagem: "" },
-            { id: "merc_133", nome: "Tang manga c/18", preco: 23.50, imagem: "" },
-            { id: "merc_134", nome: "Tang maracujá c/18", preco: 23.50, imagem: "" },
-            { id: "merc_135", nome: "Tang morango c/18", preco: 23.50, imagem: "" },
-            { id: "merc_136", nome: "Tang uva c/18", preco: 23.50, imagem: "" },
-            { id: "merc_137", nome: "Saca rolhas c/12", preco: 21.50, imagem: "" },
-            { id: "merc_138", nome: "Sal fino c/10", preco: 20.90, imagem: "" },
-            { id: "merc_139", nome: "Sal grosso c/10", preco: 21.95, imagem: "" },
-            { id: "merc_140", nome: "Salsicha frisa c/06", preco: 22.95, imagem: "" },
-            { id: "merc_141", nome: "Sardinha palmeira oleo c/05", preco: 22.50, imagem: "" },
-            { id: "merc_142", nome: "Sardinha palmeira tomate c/05", preco: 22.50, imagem: "" },
-            { id: "merc_143", nome: "Tempero sazon verm. c/06", preco: 35.40, imagem: "" },
-            { id: "merc_144", nome: "Vela padroeira nº 4 c/05", preco: 29.95, imagem: "" },
-            { id: "merc_145", nome: "Vela padroeira nº 5 c/05", preco: 27.65, imagem: "" },
-            { id: "merc_146", nome: "Vela nº 8 c/05", preco: 54.50, imagem: "" },
-            { id: "merc_147", nome: "Vinagre álcool 500ml c/12", preco: 20.00, imagem: "" }
-        ];
+        // BANCO DE DADOS COMPLETO POR CATEGORIAS
+        const catalogo = {
+            mercearia: [
+                { id: "merc_01", nome: "Abridor de garrafa c/12", preco: 21.50, imagem: "" },
+                { id: "merc_02", nome: "Abridor de lata c/12", preco: 21.50, imagem: "" },
+                { id: "merc_03", nome: "Adoçante assugtin c/04", preco: 15.38, imagem: "" },
+                { id: "merc_04", nome: "Agulha de fogão c/50", preco: 9.50, imagem: "" },
+                { id: "merc_05", nome: "Agulha de máquina 11 c/10", preco: 11.50, imagem: "" },
+                { id: "merc_06", nome: "Agulha de máquina 14 c/10", preco: 11.50, imagem: "" },
+                { id: "merc_07", nome: "Agulha de máquina 16 c/10", preco: 11.50, imagem: "" },
+                { id: "merc_08", nome: "Agulha de mão 1 c/20", preco: 8.90, imagem: "" },
+                { id: "merc_09", nome: "Agulha de mão 2 c/20", preco: 10.50, imagem: "" },
+                { id: "merc_10", nome: "Agulha de mão 3 c/20", preco: 8.50, imagem: "" },
+                { id: "merc_11", nome: "Agulha de mão 5 c/20", preco: 6.50, imagem: "" },
+                { id: "merc_12", nome: "Agulha de mão 7 c/20", preco: 6.50, imagem: "" },
+                { id: "merc_13", nome: "Amido de milho c/06", preco: 22.30, imagem: "" },
+                { id: "merc_14", nome: "Amolador de faca 3x1", preco: 11.30, imagem: "" },
+                { id: "merc_15", nome: "Azeitona zille c/10", preco: 38.50, imagem: "" },
+                { id: "merc_16", nome: "Barbante lyne 200m", preco: 10.20, imagem: "" },
+                { id: "merc_17", nome: "Batata palha 100g c/05", preco: 17.99, imagem: "" },
+                { id: "merc_18", nome: "Bateria Elgin 2032 c/05", preco: 9.80, imagem: "" },
+                { id: "merc_19", nome: "Bateria Elgin ag13/lr41 c/10", preco: 8.60, imagem: "" },
+                { id: "merc_20", nome: "Bateria 626A c/10", preco: 8.60, imagem: "" },
+                { id: "merc_21", nome: "Borracha panela Sil. 3/7l c/10", preco: 28.60, imagem: "" },
+                { id: "merc_22", nome: "Borracha panela 10l c/10", preco: 16.40, imagem: "" },
+                { id: "merc_23", nome: "Borracha panela 4/7l c/10", preco: 16.40, imagem: "" },
+                { id: "merc_24", nome: "Cadeado 20-25-30mm c/12", preco: 52.00, imagem: "" },
+                { id: "merc_25", nome: "Café Pimpinela 100g c/05", preco: 33.95, imagem: "" },
+                { id: "merc_26", nome: "Caldo arisco 19g carne c/24", preco: 21.90, imagem: "" },
+                { id: "merc_27", nome: "Caldo arisco 19g galinha c/24", preco: 21.90, imagem: "" },
+                { id: "merc_28", nome: "Caldo Knorr 19g carne c/24", preco: 22.90, imagem: "" },
+                { id: "merc_29", nome: "Caldo Knorr 19g galinha c/24", preco: 22.90, imagem: "" },
+                { id: "merc_30", nome: "Canela pó pote c/12", preco: 28.55, imagem: "" },
+                { id: "merc_31", nome: "Catchup predileta 200g c/06", preco: 23.95, imagem: "" },
+                { id: "merc_32", nome: "Chá 7 ervas c/05", preco: 17.49, imagem: "" },
+                { id: "merc_33", nome: "Chá boldo c/05", preco: 17.49, imagem: "" },
+                { id: "merc_34", nome: "Chá camomila c/05", preco: 17.49, imagem: "" },
+                { id: "merc_35", nome: "Chá capim cidreira c/05", preco: 17.49, imagem: "" },
+                { id: "merc_36", nome: "Chá erva doce c/05", preco: 17.49, imagem: "" },
+                { id: "merc_37", nome: "Chá hortelã c/05", preco: 17.49, imagem: "" },
+                { id: "merc_38", nome: "Chá maçã c/ canela c/05", preco: 17.49, imagem: "" },
+                { id: "merc_39", nome: "Chá preto c/05", preco: 17.49, imagem: "" },
+                { id: "merc_40", nome: "Coador de café nº 7 c/12", preco: 22.30, imagem: "" },
+                { id: "merc_41", nome: "Coco ralado 50g c/10", preco: 20.89, imagem: "" },
+                { id: "merc_42", nome: "Cola tek bonder 2g c/12", preco: 20.90, imagem: "" },
+                { id: "merc_43", nome: "Cola tek bonder 793 c/05", preco: 42.50, imagem: "" },
+                { id: "merc_44", nome: "Colorau chinezinho 90g c/15", preco: 38.90, imagem: "" },
+                { id: "merc_45", nome: "Cond. bicabornato c/10", preco: 3.50, imagem: "" },
+                { id: "merc_46", nome: "Cond. canela casca c/10", preco: 5.45, imagem: "" },
+                { id: "merc_47", nome: "Cond. canela pó c/10", preco: 3.50, imagem: "" },
+                { id: "merc_48", nome: "Cond. colorau c/10", preco: 3.50, imagem: "" },
+                { id: "merc_49", nome: "Cond. cominho c/10", preco: 3.50, imagem: "" },
+                { id: "merc_50", nome: "Cond. cravo c/10", preco: 7.99, imagem: "" },
+                { id: "merc_51", nome: "Cond. erva doce c/10", preco: 3.50, imagem: "" },
+                { id: "merc_52", nome: "Cond. louro folha c/10", preco: 3.50, imagem: "" },
+                { id: "merc_53", nome: "Cond. louro pó c/10", preco: 3.50, imagem: "" },
+                { id: "merc_54", nome: "Cond. oregao c/10", preco: 3.50, imagem: "" },
+                { id: "merc_55", nome: "Cond. pimenta pó c/10", preco: 3.50, imagem: "" },
+                { id: "merc_56", nome: "Cond. tempero misto c/10", preco: 3.50, imagem: "" },
+                { id: "merc_57", nome: "Copo americano c/24", preco: 33.90, imagem: "" },
+                { id: "merc_58", nome: "Corda de varal nº 5 c/10", preco: 15.90, imagem: "" },
+                { id: "merc_59", nome: "Creme de leite piracanjuba c/06", preco: 18.65, imagem: "" },
+                { id: "merc_60", nome: "Durepoxi 100g c/06", preco: 59.75, imagem: "" },
+                { id: "merc_61", nome: "Durepoxi 50g c/06", preco: 35.49, imagem: "" },
+                { id: "merc_62", nome: "Ervilha pramesa c/06", preco: 21.80, imagem: "" },
+                { id: "merc_63", nome: "Estalinhos panda c/40", preco: 24.70, imagem: "" },
+                { id: "merc_64", nome: "Fermento apti c/06", preco: 21.79, imagem: "" },
+                { id: "merc_65", nome: "Filtro 102 pimpinela c/05", preco: 22.30, imagem: "" },
+                { id: "merc_66", nome: "Filtro 103 brigitta c/06", preco: 25.20, imagem: "" },
+                { id: "merc_67", nome: "Fita isolante 3m c/12", preco: 38.50, imagem: "" },
+                { id: "merc_68", nome: "Fita vedaflon 12x10mm c/10", preco: 12.90, imagem: "" },
+                { id: "merc_69", nome: "Fosforo gaboardi c/05", preco: 17.00, imagem: "" },
+                { id: "merc_70", nome: "Fresh abacaxi c/15", preco: 24.70, imagem: "" },
+                { id: "merc_71", nome: "Fresh caju c/15", preco: 24.70, imagem: "" },
+                { id: "merc_72", nome: "Fresh guaraná c/15", preco: 24.70, imagem: "" },
+                { id: "merc_73", nome: "Fresh laranja c/15", preco: 24.70, imagem: "" },
+                { id: "merc_74", nome: "Fresh limão c/15", preco: 24.70, imagem: "" },
+                { id: "merc_75", nome: "Fresh manga c/15", preco: 24.70, imagem: "" },
+                { id: "merc_76", nome: "Fresh maracujá c/15", preco: 24.70, imagem: "" },
+                { id: "merc_77", nome: "Fresh morango c/15", preco: 24.70, imagem: "" },
+                { id: "merc_78", nome: "Fresh uva c/15", preco: 24.70, imagem: "" },
+                { id: "merc_79", nome: "Goiabada predilecta c/06", preco: 23.99, imagem: "" },
+                { id: "merc_80", nome: "Granulado art chocolate c/10", preco: 23.50, imagem: "" },
+                { id: "merc_81", nome: "Granulado art colorido c/10", preco: 23.50, imagem: "" },
+                { id: "merc_82", nome: "Isqueiro bic maxi c/12", preco: 58.50, imagem: "" },
+                { id: "merc_83", nome: "Isqueiro bic mini c/12", preco: 46.50, imagem: "" },
+                { id: "merc_84", nome: "Isqueiro cricket grande c/10", preco: 28.90, imagem: "" },
+                { id: "merc_85", nome: "Isqueiro cricket mini c/10", preco: 27.70, imagem: "" },
+                { id: "merc_86", nome: "Isqueiro eletrônico c/10", preco: 17.90, imagem: "" },
+                { id: "merc_87", nome: "Lampada hal. 42w c/10", preco: 34.30, imagem: "" },
+                { id: "merc_88", nome: "Lampada hal. 70w c/10", preco: 34.30, imagem: "" },
+                { id: "merc_89", nome: "Lampada led 9w c/10", preco: 27.50, imagem: "" },
+                { id: "merc_90", nome: "Lampada led 12w c/10", preco: 36.75, imagem: "" },
+                { id: "merc_91", nome: "Lampada led 15w c/10", preco: 43.40, imagem: "" },
+                { id: "merc_92", nome: "Lampada led 20w c/10", preco: 59.90, imagem: "" },
+                { id: "merc_93", nome: "Lampada led 30w und", preco: 11.00, imagem: "" },
+                { id: "merc_94", nome: "Lampada led 40w und", preco: 12.75, imagem: "" },
+                { id: "merc_95", nome: "Lampada led presença und", preco: 18.50, imagem: "" },
+                { id: "merc_96", nome: "Leite cond. tp piracanjuba 270g c/06", preco: 33.00, imagem: "" },
+                { id: "merc_97", nome: "Leite de coco menina vd c/06", preco: 22.50, imagem: "" },
+                { id: "merc_98", nome: "Linha magna az. marinho c/10", preco: 15.50, imagem: "" },
+                { id: "merc_99", nome: "Linha magna branca c/10", preco: 15.50, imagem: "" },
+                { id: "merc_100", nome: "Linha magna preta c/10", preco: 15.50, imagem: "" },
+                { id: "merc_101", nome: "Linha magna sortida c/10", preco: 15.50, imagem: "" },
+                { id: "merc_102", nome: "Luminaria em. 30 led elgin", preco: 16.50, imagem: "" },
+                { id: "merc_103", nome: "Milho pipoca 500g", preco: 17.20, imagem: "" },
+                { id: "merc_104", nome: "Milho verde lt c/06", preco: 21.76, imagem: "" },
+                { id: "merc_105", nome: "Molho de pimenta gota c/06", preco: 20.98, imagem: "" },
+                { id: "merc_106", nome: "Molho tomate 300g c/06", preco: 10.95, imagem: "" },
+                { id: "merc_107", nome: "Nissin miojo carne c/10", preco: 27.40, imagem: "" },
+                { id: "merc_108", nome: "Nissin miojo galinha c/10", preco: 27.40, imagem: "" },
+                { id: "merc_109", nome: "Palito churrasco c/05", preco: 13.00, imagem: "" },
+                { id: "merc_110", nome: "Palito de madeira c/25", preco: 15.99, imagem: "" },
+                { id: "merc_111", nome: "Pano de prato 40x65 c/10", preco: 31.20, imagem: "" },
+                { id: "merc_112", nome: "Pilha panasonic gd c/20", preco: 74.50, imagem: "" },
+                { id: "merc_113", nome: "Pilha a23 alfacel c/05", preco: 9.90, imagem: "" },
+                { id: "merc_114", nome: "Pilha alc. grande D Panasonic c/02", preco: 30.60, imagem: "" },
+                { id: "merc_115", nome: "Pilha alfacel aa c/60", preco: 48.55, imagem: "" },
+                { id: "merc_116", nome: "Pilha alfacel aaa c/60", preco: 39.90, imagem: "" },
+                { id: "merc_117", nome: "Pilha panasonic aa c/52", preco: 53.15, imagem: "" },
+                { id: "merc_118", nome: "Pilha panasonic aaa c/40", preco: 57.70, imagem: "" },
+                { id: "merc_119", nome: "Pilha rayovac aa c/48", preco: 47.99, imagem: "" },
+                { id: "merc_120", nome: "Pilha rayovac aaa c/40", preco: 48.00, imagem: "" },
+                { id: "merc_121", nome: "Pilha rayovac gd c/12", preco: 50.45, imagem: "" },
+                { id: "merc_122", nome: "Pregador de roupa gd c/10", preco: 22.30, imagem: "" },
+                { id: "merc_123", nome: "Pregador de roupa peq. c/10", preco: 15.00, imagem: "" },
+                { id: "merc_124", nome: "Queijo ralado selete c/05", preco: 15.00, imagem: "" },
+                { id: "merc_125", nome: "Ref. tandy laranja c/15", preco: 11.85, imagem: "" },
+                { id: "merc_126", nome: "Ref. tandy maracujá c/15", preco: 11.85, imagem: "" },
+                { id: "merc_127", nome: "Ref. tandy uva c/15", preco: 11.85, imagem: "" },
+                { id: "merc_128", nome: "Tang abacaxi c/18", preco: 23.50, imagem: "" },
+                { id: "merc_129", nome: "Tang goiaba c/18", preco: 23.50, imagem: "" },
+                { id: "merc_130", nome: "Tang guarana c/18", preco: 23.50, imagem: "" },
+                { id: "merc_131", nome: "Tang laranja c/18", preco: 23.50, imagem: "" },
+                { id: "merc_132", nome: "Tang limão c/18", preco: 23.50, imagem: "" },
+                { id: "merc_133", nome: "Tang manga c/18", preco: 23.50, imagem: "" },
+                { id: "merc_134", nome: "Tang maracujá c/18", preco: 23.50, imagem: "" },
+                { id: "merc_135", nome: "Tang morango c/18", preco: 23.50, imagem: "" },
+                { id: "merc_136", nome: "Tang uva c/18", preco: 23.50, imagem: "" },
+                { id: "merc_137", nome: "Saca rolhas c/12", preco: 21.50, imagem: "" },
+                { id: "merc_138", nome: "Sal fino c/10", preco: 20.90, imagem: "" },
+                { id: "merc_139", nome: "Sal grosso c/10", preco: 21.95, imagem: "" },
+                { id: "merc_140", nome: "Salsicha frisa c/06", preco: 22.95, imagem: "" },
+                { id: "merc_141", nome: "Sardinha palmeira oleo c/05", preco: 22.50, imagem: "" },
+                { id: "merc_142", nome: "Sardinha palmeira tomate c/05", preco: 22.50, imagem: "" },
+                { id: "merc_143", nome: "Tempero sazon verm. c/06", preco: 35.40, imagem: "" },
+                { id: "merc_144", nome: "Vela padroeira nº 4 c/05", preco: 29.95, imagem: "" },
+                { id: "merc_145", nome: "Vela padroeira nº 5 c/05", preco: 27.65, imagem: "" },
+                { id: "merc_146", nome: "Vela nº 8 c/05", preco: 54.50, imagem: "" },
+                { id: "merc_147", nome: "Vinagre álcool 500ml c/12", preco: 20.00, imagem: "" }
+            ],
+            bebidas: [
+                { id: "beb_01", nome: "Refrigerante Cola 2L c/6", preco: 45.00, imagem: "" },
+                { id: "beb_02", nome: "Água Mineral 500ml c/12", preco: 12.00, imagem: "" }
+            ],
+            doces: [
+                { id: "doc_01", nome: "Chocolate Barra c/10", preco: 35.00, imagem: "" },
+                { id: "doc_02", nome: "Pé de Moleque c/20", preco: 18.50, imagem: "" }
+            ],
+            higiene: [
+                { id: "hig_01", nome: "Sabonete Lux c/12", preco: 24.00, imagem: "" },
+                { id: "hig_02", nome: "Pasta de Dente c/12", preco: 32.50, imagem: "" }
+            ],
+            limpeza: [
+                { id: "lim_01", nome: "Água Sanitária 2L c/6", preco: 28.00, imagem: "" },
+                { id: "lim_02", nome: "Sabão em Pó 1kg c/10", preco: 65.00, imagem: "" }
+            ],
+            descartaveis: [
+                { id: "desc_01", nome: "Copo Descartável 200ml c/100", preco: 8.50, imagem: "" },
+                { id: "desc_02", nome: "Prato Descartável c/10", preco: 5.00, imagem: "" }
+            ],
+            biscoitos: [
+                { id: "bisc_01", nome: "Biscoito Recheado c/10", preco: 22.00, imagem: "" },
+                { id: "bisc_02", nome: "Biscoito Maisena c/10", preco: 25.00, imagem: "" }
+            ],
+            balas_pirulitos: [
+                { id: "bal_01", nome: "Bala de Hortelã pct", preco: 6.50, imagem: "" },
+                { id: "bal_02", nome: "Pirulito Pop c/50", preco: 14.00, imagem: "" }
+            ],
+            papelaria: [
+                { id: "pap_01", nome: "Caderno Universitário", preco: 12.90, imagem: "" },
+                { id: "pap_02", nome: "Caneta Esferográfica c/50", preco: 25.00, imagem: "" }
+            ]
+        };
 
+        let categoriaAtiva = 'mercearia';
         let carrinho = [];
         let paginaAtual = 1;
         const itensPorPagina = 8;
-        let produtosFiltrados = [...mercearia];
+        let produtosFiltrados = [...catalogo[categoriaAtiva]];
+
+        const titulosCategorias = {
+            mercearia: "Produtos de Mercearia",
+            bebidas: "Bebidas",
+            doces: "Doces",
+            higiene: "Higiene",
+            limpeza: "Limpeza",
+            descartaveis: "Descartáveis",
+            biscoitos: "Biscoitos",
+            balas_pirulitos: "Balas e Pirulitos",
+            papelaria: "Papelaria"
+        };
+
+        function mudarCategoria(cat) {
+            categoriaAtiva = cat;
+            paginaAtual = 1;
+            document.getElementById("searchInput").value = "";
+            produtosFiltrados = [...catalogo[categoriaAtiva]];
+            
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById("category-title").innerText = titulosCategorias[cat];
+            renderizarPagina();
+        }
 
         function renderizarPagina() {
             const grid = document.getElementById("product-grid");
@@ -449,7 +552,7 @@
             itensPagina.forEach(prod => {
                 let imagemHtml = prod.imagem 
                     ? `<img src="${prod.imagem}" alt="${prod.nome}" onerror="this.onerror=null; this.parentNode.innerHTML='<span class=\'placeholder-text\'>Erro ao carregar</span>';">`
-                    : `<span class="placeholder-text">Sem foto<br><small style="font-size:9px; color:#cbd5e0;">(Cole o link)</small></span>`;
+                    : `<span class="placeholder-text">Sem foto</span>`;
 
                 grid.innerHTML += `
                     <div class="product-card">
@@ -496,15 +599,24 @@
 
         function filtrarProdutos() {
             const termo = document.getElementById("searchInput").value.toLowerCase();
-            produtosFiltrados = mercearia.filter(b => b.nome.toLowerCase().includes(termo));
+            produtosFiltrados = catalogo[categoriaAtiva].filter(b => b.nome.toLowerCase().includes(termo));
             paginaAtual = 1;
             renderizarPagina();
         }
 
         function adicionarAoCarrinho(id) {
-            const produto = mercearia.find(p => p.id === id);
-            const itemExistente = carrinho.find(item => item.id === id);
+            let produto = null;
+            for (let cat in catalogo) {
+                let encontrado = catalogo[cat].find(p => p.id === id);
+                if (encontrado) {
+                    produto = encontrado;
+                    break;
+                }
+            }
 
+            if (!produto) return;
+
+            const itemExistente = carrinho.find(item => item.id === id);
             if (itemExistente) {
                 itemExistente.qtd++;
             } else {
@@ -564,7 +676,7 @@
                 return;
             }
 
-            let mensagem = "Olá! Gostaria de solicitar a seguinte cotação de Mercearia:\n\n";
+            let mensagem = "Olá! Gostaria de solicitar a seguinte cotação:\n\n";
             let total = 0;
 
             carrinho.forEach(item => {

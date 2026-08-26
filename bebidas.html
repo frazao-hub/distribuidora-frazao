@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Frazão Ltda - Catálogo de Bebidas</title>
+    <title>AR Frazão Ltda - Bebidas</title>
     <style>
         :root {
             --primary: #1a252f;
@@ -14,263 +14,64 @@
             --text-dark: #2d3748;
         }
         * { box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-light);
-            margin: 0;
-            padding: 0;
-            color: var(--text-dark);
-        }
-        header {
-            background: linear-gradient(135deg, var(--primary), #34495e);
-            color: white;
-            text-align: center;
-            padding: 30px 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        header h1 { margin: 0; font-size: 26px; letter-spacing: 1px; }
-        header p { margin: 8px 0 0 0; color: #bdc3c7; font-size: 14px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-light); margin: 0; padding: 0; color: var(--text-dark); }
+        header { background: linear-gradient(135deg, var(--primary), #34495e); color: white; text-align: center; padding: 20px 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        header h1 { margin: 0; font-size: 24px; }
+        header a { color: #bdc3c7; font-size: 13px; text-decoration: underline; display: inline-block; margin-top: 5px; }
         
-        .container {
-            max-width: 1300px;
-            margin: 25px auto;
-            padding: 0 15px;
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 25px;
-        }
-        @media (max-width: 850px) {
-            .container { grid-template-columns: 1fr; }
-        }
+        .container { max-width: 1300px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
+        @media (max-width: 850px) { .container { grid-template-columns: 1fr; } }
         
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-        h2 { 
-            border-bottom: 2px solid var(--border); 
-            padding-bottom: 12px; 
-            margin-top: 0; 
-            color: var(--primary); 
-            font-size: 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        h2 { border-bottom: 2px solid var(--border); padding-bottom: 12px; margin-top: 0; color: var(--primary); font-size: 18px; display: flex; justify-content: space-between; align-items: center; }
         
-        /* Grid de Produtos com Imagens */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 15px;
-            min-height: 380px;
-        }
-        .product-card {
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .product-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-        }
-        .product-img-container {
-            width: 100%;
-            height: 140px;
-            background-color: #edf2f7;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .product-img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .placeholder-text {
-            color: #a0aec0;
-            font-size: 12px;
-            text-align: center;
-            padding: 10px;
-        }
-        .product-body {
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            justify-content: space-between;
-        }
-        .product-title {
-            font-size: 13px;
-            font-weight: 600;
-            margin: 0 0 8px 0;
-            color: var(--text-dark);
-            line-height: 1.3;
-        }
-        .product-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-        .product-price {
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--secondary);
-            margin: 0;
-        }
-        .btn-add {
-            background-color: var(--success);
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 12px;
-            transition: background 0.2s;
-        }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 15px; min-height: 380px; }
+        .product-card { border: 1px solid var(--border); border-radius: 8px; background: white; display: flex; flex-direction: column; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+        .product-card:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
+        .product-img-container { width: 100%; height: 120px; background-color: #edf2f7; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .placeholder-text { color: #a0aec0; font-size: 11px; text-align: center; padding: 10px; }
+        .product-body { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
+        .product-title { font-size: 12px; font-weight: 600; margin: 0 0 6px 0; color: var(--text-dark); line-height: 1.3; }
+        .product-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+        .product-price { font-size: 13px; font-weight: bold; color: var(--secondary); margin: 0; }
+        .btn-add { background-color: var(--success); color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; }
         .btn-add:hover { background-color: #219653; }
 
-        /* Paginação */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 6px;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid var(--border);
-        }
-        .pagination button {
-            background-color: #edf2f7;
-            color: var(--text-dark);
-            border: 1px solid var(--border);
-            padding: 6px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: background 0.2s, color 0.2s;
-        }
-        .pagination button:hover:not(:disabled) {
-            background-color: #cbd5e0;
-        }
-        .pagination button.active {
-            background-color: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        .pagination button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border); }
+        .pagination button { background-color: #edf2f7; color: var(--text-dark); border: 1px solid var(--border); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: 600; }
+        .pagination button.active { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Carrinho Lateral */
-        .cart-items-container {
-            max-height: 350px;
-            overflow-y: auto;
-            margin-bottom: 15px;
-        }
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 13px;
-        }
-        .cart-item-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .cart-item-controls button {
-            background: #cbd5e0;
-            border: none;
-            width: 22px;
-            height: 22px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #2d3748;
-        }
-        .cart-item-controls button:hover { background: #a0aec0; }
+        .cart-items-container { max-height: 350px; overflow-y: auto; margin-bottom: 15px; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+        .cart-item-controls { display: flex; align-items: center; gap: 6px; }
+        .cart-item-controls button { background: #cbd5e0; border: none; width: 20px; height: 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         
-        .total-section {
-            font-size: 16px;
-            font-weight: bold;
-            margin: 15px 0;
-            text-align: right;
-            color: var(--primary);
-            border-top: 2px solid var(--border);
-            padding-top: 10px;
-        }
-        .btn-whatsapp {
-            background-color: #25d366;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: background 0.2s;
-        }
+        .total-section { font-size: 16px; font-weight: bold; margin: 15px 0; text-align: right; color: var(--primary); border-top: 2px solid var(--border); padding-top: 10px; }
+        .btn-whatsapp { background-color: #25d366; color: white; border: none; width: 100%; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-whatsapp:hover { background-color: #1ebe5d; }
-        
-        .search-box {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
+        .search-box { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; margin-bottom: 12px; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>AR Frazão Ltda</h1>
-        <p>Catálogo Digital de Bebidas - Cotação via WhatsApp</p>
+        <h1>AR Frazão Ltda - Bebidas</h1>
+        <a href="index.html">← Voltar para o Menu Principal</a>
     </header>
 
     <div class="container">
-        <!-- Vitrine de Produtos -->
         <div class="card">
             <h2>
-                <span>Bebidas Disponíveis</span>
+                <span>Produtos de Bebidas</span>
                 <span id="product-count" style="font-size: 13px; color: #718096; font-weight: normal;"></span>
             </h2>
-            <input type="text" id="searchInput" class="search-box" placeholder="Buscar bebida por nome..." onkeyup="filtrarProdutos()">
+            <input type="text" id="searchInput" class="search-box" placeholder="Buscar produto nesta categoria..." onkeyup="filtrarProdutos()">
             
-            <div class="product-grid" id="product-grid">
-                <!-- Preenchido via JavaScript -->
-            </div>
-
-            <!-- Controles de Paginação -->
-            <div class="pagination" id="pagination-controls">
-                <!-- Gerado via JavaScript -->
-            </div>
+            <div class="product-grid" id="product-grid"></div>
+            <div class="pagination" id="pagination-controls"></div>
         </div>
 
-        <!-- Carrinho de Pedidos -->
         <div class="card">
             <h2>Seu Pedido</h2>
             <div class="cart-items-container" id="cart-items">
@@ -281,45 +82,42 @@
                 Total: R$ <span id="cart-total">0,00</span>
             </div>
             
-            <button class="btn-whatsapp" onclick="enviarWhatsApp()">
-                Finalizar Cotação no WhatsApp
-            </button>
+            <button class="btn-whatsapp" onclick="enviarWhatsApp()">Finalizar Cotação no WhatsApp</button>
         </div>
     </div>
 
     <script>
-        // LISTA DE BEBIDAS (Insira os links das fotos entre as aspas de 'imagem')
-        const bebidas = [
-            { id: "beb_01", nome: "Achoc. Pirakids c/27", preco: 45.30, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPfL9fmIn_t9ABodohd7279OOxaGvJLUcJNCr_pcc6mQ&s" },
-            { id: "beb_02", nome: "Água mineral c/g c/12", preco: 21.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM_kGydmVQ53DW2rsF8ZKZ0eUmTejHqkKPLYklEPMSww&s=10" },
-            { id: "beb_03", nome: "Água mineral s/g c/12", preco: 12.90, imagem: "" },
-            { id: "beb_04", nome: "Aguardente 51 und", preco: 14.10, imagem: "" },
-            { id: "beb_05", nome: "Aguardente 88 und", preco: 14.50, imagem: "" },
-            { id: "beb_06", nome: "Aguardente Jararaca und", preco: 16.50, imagem: "" },
-            { id: "beb_07", nome: "Cachaça cana boa c/12", preco: 35.90, imagem: "" },
-            { id: "beb_08", nome: "Cachaça caninha da roça c/12", preco: 46.80, imagem: "" },
-            { id: "beb_09", nome: "Catuaba Regianni und", preco: 13.99, imagem: "" },
-            { id: "beb_10", nome: "Conhaque Dreher und", preco: 23.40, imagem: "" },
-            { id: "beb_11", nome: "Conhaque de alcatrão und", preco: 22.00, imagem: "" },
-            { id: "beb_12", nome: "Coquetel mel fort und", preco: 15.90, imagem: "" },
-            { id: "beb_13", nome: "Coquetel de menta und", preco: 9.95, imagem: "" },
-            { id: "beb_14", nome: "Fogo paulista und", preco: 35.40, imagem: "" },
-            { id: "beb_15", nome: "Genebra und", preco: 31.90, imagem: "" },
-            { id: "beb_16", nome: "Guaramor c/12", preco: 14.30, imagem: "" },
-            { id: "beb_17", nome: "Guaramor c/36", preco: 35.90, imagem: "" },
-            { id: "beb_18", nome: "Licor de bananinha und", preco: 25.00, imagem: "" },
-            { id: "beb_19", nome: "Paratudo und", preco: 16.90, imagem: "" },
-            { id: "beb_20", nome: "Pink moon 600ml c/06", preco: 45.00, imagem: "" },
-            { id: "beb_21", nome: "Vinho quinado und", preco: 28.30, imagem: "" },
-            { id: "beb_22", nome: "Vinho tinto suave 2l und", preco: 21.90, imagem: "" },
-            { id: "beb_23", nome: "Whisky Old eight und", preco: 34.99, imagem: "" },
-            { id: "beb_24", nome: "Ypióca ouro s/p und", preco: 25.99, imagem: "" }
+        const produtos = [
+            { id: "beb_01", nome: "Acho. Pirakids c/27", preco: 45.30 },
+            { id: "beb_02", nome: "Água mineral c/g c/12", preco: 21.00 },
+            { id: "beb_03", nome: "Água mineral s/g c/12", preco: 12.90 },
+            { id: "beb_04", nome: "Aguardente 51 und", preco: 14.10 },
+            { id: "beb_05", nome: "Aguardente 88 und", preco: 14.50 },
+            { id: "beb_06", nome: "Aguardente Jararaca und", preco: 16.50 },
+            { id: "beb_07", nome: "Cachaça cana boa c/12", preco: 35.90 },
+            { id: "beb_08", nome: "Cachaça caninha da roça c/12", preco: 46.80 },
+            { id: "beb_09", nome: "Catuaba Regianni und", preco: 13.99 },
+            { id: "beb_10", nome: "Conhaque Dreher und", preco: 23.40 },
+            { id: "beb_11", nome: "Conhaque de alcatrão und", preco: 22.00 },
+            { id: "beb_12", nome: "Coquetel mel fort und", preco: 15.90 },
+            { id: "beb_13", nome: "Coquetel de menta und", preco: 9.95 },
+            { id: "beb_14", nome: "Fogo paulista und", preco: 35.40 },
+            { id: "beb_15", nome: "Genebra und", preco: 31.90 },
+            { id: "beb_16", nome: "Guaramor c/12", preco: 14.30 },
+            { id: "beb_17", nome: "Guaramor c/36", preco: 35.90 },
+            { id: "beb_18", nome: "Licor de bananinha und", preco: 25.00 },
+            { id: "beb_19", nome: "Paratudo und", preco: 16.90 },
+            { id: "beb_20", nome: "Pink moon 600ml c/06", preco: 45.00 },
+            { id: "beb_21", nome: "Vinho quinado und", preco: 28.30 },
+            { id: "beb_22", nome: "Vinho tinto suave 2l und", preco: 21.90 },
+            { id: "beb_23", nome: "Whisky Old eight und", preco: 34.99 },
+            { id: "beb_24", nome: "Ypióca ouro s/p und", preco: 25.99 }
         ];
 
-        let carrinho = [];
+        let carrinho = JSON.parse(localStorage.getItem('carrinho_arfrazao')) || [];
         let paginaAtual = 1;
-        const itensPorPagina = 8; // Quantidade de produtos por página
-        let produtosFiltrados = [...bebidas];
+        const itensPorPagina = 8;
+        let produtosFiltrados = [...produtos];
 
         function renderizarPagina() {
             const grid = document.getElementById("product-grid");
@@ -327,28 +125,20 @@
             document.getElementById("product-count").innerText = `${produtosFiltrados.length} itens`;
             
             grid.innerHTML = "";
-
             if (produtosFiltrados.length === 0) {
-                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">Nenhuma bebida encontrada.</p>`;
+                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">Nenhum produto encontrado.</p>`;
                 pagControls.innerHTML = "";
                 return;
             }
 
-            // Cálculo dos itens da página atual
             const inicio = (paginaAtual - 1) * itensPorPagina;
             const fim = inicio + itensPorPagina;
             const itensPagina = produtosFiltrados.slice(inicio, fim);
 
             itensPagina.forEach(prod => {
-                let imagemHtml = prod.imagem 
-                    ? `<img src="${prod.imagem}" alt="${prod.nome}" onerror="this.onerror=null; this.parentNode.innerHTML='<span class=\'placeholder-text\'>Erro ao carregar imagem</span>';">`
-                    : `<span class="placeholder-text">Sem foto<br><small style="font-size:10px; color:#cbd5e0;">(Cole o link no código)</small></span>`;
-
                 grid.innerHTML += `
                     <div class="product-card">
-                        <div class="product-img-container">
-                            ${imagemHtml}
-                        </div>
+                        <div class="product-img-container"><span class="placeholder-text">Sem foto</span></div>
                         <div class="product-body">
                             <h3 class="product-title">${prod.nome}</h3>
                             <div class="product-footer">
@@ -359,67 +149,55 @@
                     </div>
                 `;
             });
-
             renderizarBotoesPagina();
+            atualizarCarrinho();
         }
 
         function renderizarBotoesPagina() {
             const pagControls = document.getElementById("pagination-controls");
             const totalPaginas = Math.ceil(produtosFiltrados.length / itensPorPagina);
-            
-            if (totalPaginas <= 1) {
-                pagControls.innerHTML = "";
-                return;
-            }
+            if (totalPaginas <= 1) { pagControls.innerHTML = ""; return; }
 
             let html = `<button onclick="mudarPagina(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled' : ''}>Anterior</button>`;
-
             for (let i = 1; i <= totalPaginas; i++) {
                 html += `<button onclick="mudarPagina(${i})" class="${paginaAtual === i ? 'active' : ''}">${i}</button>`;
             }
-
             html += `<button onclick="mudarPagina(${paginaAtual + 1})" ${paginaAtual === totalPaginas ? 'disabled' : ''}>Próxima</button>`;
-            
             pagControls.innerHTML = html;
         }
 
         function mudarPagina(novaPagina) {
             const totalPaginas = Math.ceil(produtosFiltrados.length / itensPorPagina);
-            if (novaPagina >= 1 && novaPagina <= totalPaginas) {
-                paginaAtual = novaPagina;
-                renderizarPagina();
-                // Rolar levemente para o topo da lista ao trocar de página
-                document.getElementById("product-grid").scrollIntoView({ behavior: 'smooth' });
-            }
+            if (novaPagina >= 1 && novaPagina <= totalPaginas) { paginaAtual = novaPagina; renderizarPagina(); }
         }
 
         function filtrarProdutos() {
             const termo = document.getElementById("searchInput").value.toLowerCase();
-            produtosFiltrados = bebidas.filter(b => b.nome.toLowerCase().includes(termo));
-            paginaAtual = 1; // Volta para a primeira página ao pesquisar
+            produtosFiltrados = produtos.filter(b => b.nome.toLowerCase().includes(termo));
+            paginaAtual = 1;
             renderizarPagina();
         }
 
         function adicionarAoCarrinho(id) {
-            const produto = bebidas.find(p => p.id === id);
+            const produto = produtos.find(p => p.id === id);
+            if (!produto) return;
             const itemExistente = carrinho.find(item => item.id === id);
-
-            if (itemExistente) {
-                itemExistente.qtd++;
-            } else {
-                carrinho.push({ ...produto, qtd: 1 });
-            }
-            atualizarCarrinho();
+            if (itemExistente) { itemExistente.qtd++; } 
+            else { carrinho.push({ ...produto, qtd: 1 }); }
+            salvarEAtualizar();
         }
 
         function alterarQtd(id, delta) {
             const item = carrinho.find(i => i.id === id);
             if (item) {
                 item.qtd += delta;
-                if (item.qtd <= 0) {
-                    carrinho = carrinho.filter(i => i.id !== id);
-                }
+                if (item.qtd <= 0) { carrinho = carrinho.filter(i => i.id !== id); }
             }
+            salvarEAtualizar();
+        }
+
+        function salvarEAtualizar() {
+            localStorage.setItem('carrinho_arfrazao', JSON.stringify(carrinho));
             atualizarCarrinho();
         }
 
@@ -435,7 +213,6 @@
 
             container.innerHTML = "";
             let total = 0;
-
             carrinho.forEach(item => {
                 let subtotal = item.preco * item.qtd;
                 total += subtotal;
@@ -453,34 +230,23 @@
                     </div>
                 `;
             });
-
             totalEl.innerText = total.toFixed(2).replace('.', ',');
         }
 
         function enviarWhatsApp() {
-            if (carrinho.length === 0) {
-                alert("Adicione pelo menos uma bebida ao carrinho antes de enviar a cotação!");
-                return;
-            }
-
-            let mensagem = "Olá! Gostaria de solicitar a seguinte cotação de bebidas:\n\n";
+            if (carrinho.length === 0) { alert("Adicione pelo menos um produto ao carrinho!"); return; }
+            let mensagem = "Olá! Gostaria de solicitar a seguinte cotação:\n\n";
             let total = 0;
-
             carrinho.forEach(item => {
                 let subtotal = item.preco * item.qtd;
                 total += subtotal;
                 mensagem += `• ${item.qtd}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
             });
-
             mensagem += `\n*Total da Cotação: R$ ${total.toFixed(2).replace('.', ',')}*`;
-
             const numeroWhatsApp = "5521968659086";
-            const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
-            
-            window.open(url, '_blank');
+            window.open(`https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`, '_blank');
         }
 
-        // Inicializar a listagem ao abrir a página
         window.onload = () => renderizarPagina();
     </script>
 </body>

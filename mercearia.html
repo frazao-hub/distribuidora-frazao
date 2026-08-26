@@ -3,1929 +3,585 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mercearia - Distribuidora Frazão</title>
+    <title>AR Frazão Ltda - Catálogo de Mercearia</title>
     <style>
-        * {
-            box-sizing: border-box;
+        :root {
+            --primary: #1a252f;
+            --secondary: #e67e22;
+            --success: #27ae60;
+            --bg-light: #f8f9fa;
+            --border: #e2e8f0;
+            --text-dark: #2d3748;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
         }
-
-        body {
-            background-color: #f8fafc;
-            color: #1e293b;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Cabeçalho */
-        .main-header {
-            background-color: #1b365d;
-            padding: 20px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        header {
+            background: linear-gradient(135deg, var(--primary), #34495e);
+            color: white;
             text-align: center;
+            padding: 30px 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-
-        .brand-logo h1 {
-            margin: 0;
-            color: #ffffff;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        .brand-logo span {
-            color: #d97706;
-        }
-
-        .brand-logo {
-            text-decoration: none;
-        }
-
-        /* Banner da Categoria */
-        .category-header {
-            max-width: 1200px;
-            margin: 30px auto 10px auto;
+        header h1 { margin: 0; font-size: 26px; letter-spacing: 1px; }
+        header p { margin: 8px 0 0 0; color: #bdc3c7; font-size: 14px; }
+        
+        .container {
+            max-width: 1300px;
+            margin: 25px auto;
             padding: 0 15px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+        @media (max-width: 850px) {
+            .container { grid-template-columns: 1fr; }
+        }
+        
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        h2 { 
+            border-bottom: 2px solid var(--border); 
+            padding-bottom: 12px; 
+            margin-top: 0; 
+            color: var(--primary); 
+            font-size: 18px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            width: 100%;
-        }
-
-        .category-header h2 {
-            color: #1b365d;
-            font-size: 1.6rem;
-            display: flex;
             align-items: center;
-            gap: 10px;
         }
-
-        .back-link {
-            color: #d97706;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.95rem;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Grid de Produtos (4 por linha no desktop) */
+        
+        /* Grid de Produtos */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 15px;
-            flex: 1;
-            width: 100%;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            min-height: 380px;
         }
-
         .product-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            background-color: #ffffff;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 14px;
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-            gap: 12px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-
         .product-card:hover {
-            border-color: #1b365d;
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
         }
-
-        .product-image-container {
+        .product-img-container {
             width: 100%;
-            height: 140px;
+            height: 130px;
+            background-color: #edf2f7;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #f1f5f9;
-            border-radius: 8px;
-            overflow: hidden;
             position: relative;
+            overflow: hidden;
         }
-
-        .product-image {
+        .product-img-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
-        .product-info h3 {
-            margin: 4px 0 0 0;
-            font-size: 0.92rem;
-            color: #1b365d;
-            font-weight: 600;
-            line-height: 1.3;
-            min-height: 2.6em;
+        .placeholder-text {
+            color: #a0aec0;
+            font-size: 11px;
+            text-align: center;
+            padding: 10px;
         }
-
-        /* Botões de Ação */
-        .product-actions {
+        .product-body {
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            flex-grow: 1;
+            justify-content: space-between;
         }
-
+        .product-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin: 0 0 6px 0;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+        .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+        .product-price {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--secondary);
+            margin: 0;
+        }
         .btn-add {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            background-color: #1b365d;
-            color: #ffffff;
+            background-color: var(--success);
+            color: white;
             border: none;
-            font-weight: 600;
-            font-size: 0.78rem;
-            padding: 8px;
-            border-radius: 6px;
+            padding: 5px 8px;
+            border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.2s ease;
-            width: 100%;
+            font-weight: bold;
+            font-size: 11px;
+            transition: background 0.2s;
         }
-
-        .btn-add:hover {
-            background-color: #0f2342;
-        }
-
-        .btn-whatsapp {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            background-color: #25d366;
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.78rem;
-            padding: 8px;
-            border-radius: 6px;
-            transition: background-color 0.2s ease;
-            text-align: center;
-        }
-
-        .btn-whatsapp:hover {
-            background-color: #1eb954;
-        }
+        .btn-add:hover { background-color: #219653; }
 
         /* Paginação */
-        .pagination-container {
+        .pagination {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 8px;
-            margin: 20px auto 40px auto;
-            max-width: 1200px;
-            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
         }
-
-        .pagination-btn {
-            background-color: #ffffff;
-            border: 1px solid #cbd5e1;
-            color: #1b365d;
-            padding: 8px 14px;
-            font-size: 0.9rem;
+        .pagination button {
+            background-color: #edf2f7;
+            color: var(--text-dark);
+            border: 1px solid var(--border);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
             font-weight: 600;
+        }
+        .pagination button.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Carrinho Lateral */
+        .cart-items-container {
+            max-height: 350px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+        }
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cart-item-controls button {
+            background: #cbd5e0;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .total-section {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 15px 0;
+            text-align: right;
+            color: var(--primary);
+            border-top: 2px solid var(--border);
+            padding-top: 10px;
+        }
+        .btn-whatsapp {
+            background-color: #25d366;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .pagination-btn:hover:not(:disabled) {
-            background-color: #1b365d;
-            color: #ffffff;
-            border-color: #1b365d;
-        }
-
-        .pagination-btn.active {
-            background-color: #d97706;
-            color: #ffffff;
-            border-color: #d97706;
-        }
-
-        .pagination-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        /* Rodapé */
-        .main-footer {
-            background-color: #1b365d;
-            color: #ffffff;
-            padding: 25px 15px;
-            margin-top: auto;
-            text-align: center;
-            border-top: 3px solid #d97706;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
+            text-transform: uppercase;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 12px;
-        }
-
-        .footer-links {
-            display: flex;
-            flex-wrap: wrap;
             justify-content: center;
-            align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
-
-        .footer-links a {
-            color: #e2e8f0;
-            text-decoration: none;
-            font-size: 0.88rem;
-        }
-
-        .footer-links a:hover {
-            color: #d97706;
-            text-decoration: underline;
-        }
-
-        .footer-links .divider {
-            color: #64748b;
-            font-size: 0.85rem;
-        }
-
-        .copyright {
-            margin: 0;
-            font-size: 0.78rem;
-            color: #94a3b8;
-        }
-
-        /* Responsividade */
-        @media (max-width: 992px) {
-            .product-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 576px) {
-            .product-grid {
-                grid-template-columns: 1fr;
-            }
-            .footer-links .divider {
-                display: none;
-            }
-            .footer-links {
-                flex-direction: column;
-                gap: 8px;
-            }
+        .btn-whatsapp:hover { background-color: #1ebe5d; }
+        
+        .search-box {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 12px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Cabeçalho -->
-    <header class="main-header">
-        <div class="header-container">
-            <a href="./index.html" class="brand-logo">
-                <h1>Distribuidora <span>Frazão</span></h1>
-            </a>
-        </div>
+    <header>
+        <h1>AR Frazão Ltda</h1>
+        <p>Catálogo de Mercearia - Cotação via WhatsApp</p>
     </header>
 
-    <!-- Título da Categoria -->
-    <div class="category-header">
-        <h2>🛒 Mercearia</h2>
-        <a href="./index.html" class="back-link">&larr; Voltar às categorias</a>
+    <div class="container">
+        <!-- Vitrine de Produtos -->
+        <div class="card">
+            <h2>
+                <span>Produtos de Mercearia</span>
+                <span id="product-count" style="font-size: 13px; color: #718096; font-weight: normal;"></span>
+            </h2>
+            <input type="text" id="searchInput" class="search-box" placeholder="Buscar produto na mercearia..." onkeyup="filtrarProdutos()">
+            
+            <div class="product-grid" id="product-grid"></div>
+
+            <div class="pagination" id="pagination-controls"></div>
+        </div>
+
+        <!-- Carrinho / Pedido -->
+        <div class="card">
+            <h2>Seu Pedido</h2>
+            <div class="cart-items-container" id="cart-items">
+                <p style="color: #a0aec0; font-style: italic; text-align: center; margin-top: 30px;">O carrinho está vazio.</p>
+            </div>
+            
+            <div class="total-section">
+                Total: R$ <span id="cart-total">0,00</span>
+            </div>
+            
+            <button class="btn-whatsapp" onclick="enviarWhatsApp()">
+                Finalizar Cotação no WhatsApp
+            </button>
+        </div>
     </div>
 
-    <!-- Grid com os 117 Produtos em Ordem Alfabética -->
-    <div class="product-grid" id="productGrid">
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://http2.mlstatic.com/D_Q_NP_2X_950474-MLB113287967230_072026-P.webp" alt="Abridor de Garrafa" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Abridor de Garrafa</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Abridor%20de%20Garrafa" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Abridor de Lata" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Abridor de Lata</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Abridor%20de%20Lata" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Adoçante Assugrin" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Adoçante Assugrin</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Adoçante%20Assugrin" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Agulha de Fogão" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Agulha de Fogão</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Agulha%20de%20Fogão" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Agulha de Mão nº 1" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Agulha de Mão nº 1</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Agulha%20de%20Mão%20nº%201" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Agulha de Mão nº 2" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Agulha de Mão nº 2</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Agulha%20de%20Mão%20nº%202" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Agulha de Mão nº 5" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Agulha de Mão nº 5</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Agulha%20de%20Mão%20nº%205" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Agulha de Mão nº 6" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Agulha de Mão nº 6</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Agulha%20de%20Mão%20nº%206" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Agulha de Mão nº 7" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Agulha de Mão nº 7</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Agulha%20de%20Mão%20nº%207" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Agulha de Máquina nº 11" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Agulha de Máquina nº 11</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Agulha%20de%20Máquina%20nº%2011" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Agulha de Máquina nº 14" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Agulha de Máquina nº 14</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Agulha%20de%20Máquina%20nº%2014" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Amido de Milho Apti" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Amido de Milho Apti</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Amido%20de%20Milho%20Apti" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Amolador de Faca 3x1" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Amolador de Faca 3x1</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Amolador%20de%20Faca%203x1" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Aroma de Baunilha Barreto" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Aroma de Baunilha Barreto</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Aroma%20de%20Baunilha%20Barreto" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Azeitona Zille" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Azeitona Zille</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Azeitona%20Zille" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Barbante Lyne 200m" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Barbante Lyne 200m</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Barbante%20Lyne%20200m" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Batata Palha Rei" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Batata Palha Rei</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Batata%20Palha%20Rei" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Bateria 626A 1.55" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Bateria 626A 1.55</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bateria%20626A%201.55" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Bateria Elgin 2032" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Bateria Elgin 2032</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bateria%20Elgin%202032" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Bateria Elgin AG13/LR41" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Bateria Elgin AG13/LR41</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bateria%20Elgin%20AG13/LR41" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Bateria Elgin AG13/LR44" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Bateria Elgin AG13/LR44</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Bateria%20Elgin%20AG13/LR44" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Borracha Panela Pressão 10L" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Borracha Panela Pressão 10L</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Borracha%20Panela%20Pressão%2010L" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Borracha Panela Pressão 4/7L" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Borracha Panela Pressão 4/7L</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Borracha%20Panela%20Pressão%204/7L" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Borracha Panela Silicone 3/7" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Borracha Panela Silicone 3/7</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Borracha%20Panela%20Silicone%203/7" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Cadeado 20-25-30mm" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Cadeado 20-25-30mm</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cadeado%2020-25-30mm" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1517093728432-a0440f8d0780?w=400&auto=format&fit=crop" alt="Café Pimpinela 100g" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Café Pimpinela 100g</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Café%20Pimpinela%20100g" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Caldo Arisco Carne" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Caldo Arisco Carne</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Caldo%20Arisco%20Carne" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Caldo Arisco Galinha" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Caldo Arisco Galinha</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Caldo%20Arisco%20Galinha" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Caldo Knorr Carne" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Caldo Knorr Carne</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Caldo%20Knorr%20Carne" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Caldo Knorr Galinha" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Caldo Knorr Galinha</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Caldo%20Knorr%20Galinha" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Carnê INSS" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Carnê INSS</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Carnê%20INSS" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&auto=format&fit=crop" alt="Chá 7 Ervas Italianinho" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Chá 7 Ervas Italianinho</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Chá%207%20Ervas%20Italianinho" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&auto=format&fit=crop" alt="Chá Boldo Italianinho" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Chá Boldo Italianinho</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Chá%20Boldo%20Italianinho" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&auto=format&fit=crop" alt="Chá Camomila Italianinho" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Chá Camomila Italianinho</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Chá%20Camomila%20Italianinho" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&auto=format&fit=crop" alt="Chá Erva Doce Italianinho" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Chá Erva Doce Italianinho</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Chá%20Erva%20Doce%20Italianinho" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&auto=format&fit=crop" alt="Chá Hortelã Italianinho" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Chá Hortelã Italianinho</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Chá%20Hortelã%20Italianinho" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&auto=format&fit=crop" alt="Chá Maçã c/ Canela Italianinho" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Chá Maçã c/ Canela Italianinho</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Chá%20Maçã%20c/%20Canela%20Italianinho" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&auto=format&fit=crop" alt="Chá Preto" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Chá Preto</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Chá%20Preto" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Coador Flanelado nº 7" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Coador Flanelado nº 7</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Coador%20Flanelado%20nº%207" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Coco Ralado Menina 50g" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Coco Ralado Menina 50g</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Coco%20Ralado%20Menina%2050g" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Cola Tek Bonder 2g ct" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Cola Tek Bonder 2g ct</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cola%20Tek%20Bonder%202g%20ct" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Cola Tek Bonder 793" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Cola Tek Bonder 793</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cola%20Tek%20Bonder%20793" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" alt="Colorau Chinezinho" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Colorau Chinezinho</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Colorau%20Chinezinho" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" alt="Cond. Bicarbonato" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Cond. Bicarbonato</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cond.%20Bicarbonato" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" alt="Cond. Canela Casca" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Cond. Canela Casca</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cond.%20Canela%20Casca" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" alt="Cond. Colorau" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Cond. Colorau</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cond.%20Colorau" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" alt="Cond. Cominho Pó" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Cond. Cominho Pó</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cond.%20Cominho%20Pó" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" alt="Cond. Cravo" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Cond. Cravo</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cond.%20Cravo" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" alt="Cond. Erva Doce" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Cond. Erva Doce</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cond.%20Erva%20Doce" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" alt="Cond. Louro Folha" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Cond. Louro Folha</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cond.%20Louro%20Folha" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" alt="Cond. Orégano" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Cond. Orégano</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cond.%20Orégano" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" alt="Cond. Pimenta Pó" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Cond. Pimenta Pó</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cond.%20Pimenta%20Pó" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" alt="Cond. Tempero Misto" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Cond. Tempero Misto</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Cond.%20Tempero%20Misto" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Copo Americano" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Copo Americano</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Copo%20Americano" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Corda de Varal nº 5" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Corda de Varal nº 5</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Corda%20de%20Varal%20nº%205" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&auto=format&fit=crop" alt="Creme de Leite Piracanjuba" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Creme de Leite Piracanjuba</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Creme%20de%20Leite%20Piracanjuba" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Durepoxi 100g" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Durepoxi 100g</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Durepoxi%20100g" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Durepoxi 50g" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Durepoxi 50g</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Durepoxi%2050g" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&auto=format&fit=crop" alt="Ervilha Lata Pramesa" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Ervilha Lata Pramesa</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Ervilha%20Lata%20Pramesa" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Estalinhos Panda" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Estalinhos Panda</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Estalinhos%20Panda" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1551462147-37885acc36f1?w=400&auto=format&fit=crop" alt="Fermento Apti 100g" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Fermento Apti 100g</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Fermento%20Apti%20100g" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1517093728432-a0440f8d0780?w=400&auto=format&fit=crop" alt="Filtro 102" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Filtro 102</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Filtro%20102" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1517093728432-a0440f8d0780?w=400&auto=format&fit=crop" alt="Filtro 103" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Filtro 103</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Filtro%20103" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1517093728432-a0440f8d0780?w=400&auto=format&fit=crop" alt="Filtro de Papel 103" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Filtro de Papel 103</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Filtro%20de%20Papel%20103" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Fita Isolante 3M" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Fita Isolante 3M</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Fita%20Isolante%203M" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Fita Vedaflon" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Fita Vedaflon</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Fita%20Vedaflon" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Fósforo Gaboardi" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Fósforo Gaboardi</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Fósforo%20Gaboardi" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Fresh Abacaxi" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Fresh Abacaxi</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Fresh%20Abacaxi" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Fresh Caju" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Fresh Caju</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Fresh%20Caju" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Fresh Guaraná" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Fresh Guaraná</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Fresh%20Guaraná" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Fresh Laranja" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Fresh Laranja</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Fresh%20Laranja" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Fresh Limão" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Fresh Limão</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Fresh%20Limão" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Fresh Manga" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Fresh Manga</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Fresh%20Manga" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Fresh Maracujá" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Fresh Maracujá</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Fresh%20Maracujá" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Fresh Morango" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Fresh Morango</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Fresh%20Morango" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Fresh Uva" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Fresh Uva</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Fresh%20Uva" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Funil c/12" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Funil c/12</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Funil%20c/12" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Goiabada Predilecta" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Goiabada Predilecta</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Goiabada%20Predilecta" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Granulado Colorido" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Granulado Colorido</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Granulado%20Colorido" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Granulado Preto" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Granulado Preto</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Granulado%20Preto" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Isqueiro Bic Maxi" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Isqueiro Bic Maxi</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Isqueiro%20Bic%20Maxi" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Isqueiro Bic Mini" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Isqueiro Bic Mini</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Isqueiro%20Bic%20Mini" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Isqueiro Cricket Grande" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Isqueiro Cricket Grande</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Isqueiro%20Cricket%20Grande" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Isqueiro Eletrônico" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Isqueiro Eletrônico</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Isqueiro%20Eletrônico" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Isqueiro Mini Cricket" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Isqueiro Mini Cricket</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Isqueiro%20Mini%20Cricket" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Lâmpada 42w" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Lâmpada 42w</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Lâmpada%2042w" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Lâmpada Hal. Ourolux 42w" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Lâmpada Hal. Ourolux 42w</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Lâmpada%20Hal.%20Ourolux%2042w" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Lâmpada Ourolux 70w" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Lâmpada Ourolux 70w</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Lâmpada%20Ourolux%2070w" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Lâmpada Ourolux LED 40w" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Lâmpada Ourolux LED 40w</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Lâmpada%20Ourolux%20LED%2040w" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Lâmpada Ourolux LED 9w" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Lâmpada Ourolux LED 9w</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Lâmpada%20Ourolux%20LED%209w" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&auto=format&fit=crop" alt="Leite Cond. 270g" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Leite Cond. 270g</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Leite%20Cond.%20270g" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&auto=format&fit=crop" alt="Leite de Coco Menina" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Leite de Coco Menina</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Leite%20de%20Coco%20Menina" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Linha Magna Azul Marinho" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Linha Magna Azul Marinho</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Linha%20Magna%20Azul%20Marinho" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Linha Magna Branca" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Linha Magna Branca</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Linha%20Magna%20Branca" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Linha Magna Preta" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Linha Magna Preta</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Linha%20Magna%20Preta" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Linha Magna Sortida" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Linha Magna Sortida</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Linha%20Magna%20Sortida" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Linha Magna Vermelha" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Linha Magna Vermelha</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Linha%20Magna%20Vermelha" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1621996346565-e3d5d6281292?w=400&auto=format&fit=crop" alt="Miojo Carne" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Miojo Carne</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Miojo%20Carne" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1621996346565-e3d5d6281292?w=400&auto=format&fit=crop" alt="Miojo Galinha" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Miojo Galinha</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Miojo%20Galinha" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400&auto=format&fit=crop" alt="Milho de Pipoca 500g" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Milho de Pipoca 500g</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Milho%20de%20Pipoca%20500g" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400&auto=format&fit=crop" alt="Milho Verde" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Milho Verde</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Milho%20Verde" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400&auto=format&fit=crop" alt="Molho Pimenta Gota" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Molho Pimenta Gota</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Molho%20Pimenta%20Gota" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400&auto=format&fit=crop" alt="Molho Tomate Predilecta" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Molho Tomate Predilecta</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Molho%20Tomate%20Predilecta" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Palito Churrasco" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Palito Churrasco</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Palito%20Churrasco" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Palito de Dente" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Palito de Dente</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Palito%20de%20Dente" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Pilha 23A" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Pilha 23A</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pilha%2023A" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Pilha AAA Panasonic" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Pilha AAA Panasonic</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pilha%20AAA%20Panasonic" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Pilha Alfacel AA c/60" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Pilha Alfacel AA c/60</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pilha%20Alfacel%20AA%20c/60" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Pilha Alfacel AAA" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Pilha Alfacel AAA</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pilha%20Alfacel%20AAA" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Pilha Panasonic AA" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Pilha Panasonic AA</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pilha%20Panasonic%20AA" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Pilha Panasonic Grande" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Pilha Panasonic Grande</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pilha%20Panasonic%20Grande" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Pilha Panasonic Grande D Alcalina" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Pilha Panasonic Grande D Alcalina</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pilha%20Panasonic%20Grande%20D%20Alcalina" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Pilha Rayovac AA" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Pilha Rayovac AA</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pilha%20Rayovac%20AA" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Pilha Rayovac Grande c/12" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Pilha Rayovac Grande c/12</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pilha%20Rayovac%20Grande%20c/12" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Pregador de Roupa Grande" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Pregador de Roupa Grande</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pregador%20de%20Roupa%20Grande" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Pregador de Roupa Pequeno" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Pregador de Roupa Pequeno</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Pregador%20de%20Roupa%20Pequeno" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Queijo Ralado Selete" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Queijo Ralado Selete</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Queijo%20Ralado%20Selete" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Refresco Tandy Laranja" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Refresco Tandy Laranja</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Refresco%20Tandy%20Laranja" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Refresco Tandy Maracujá" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Refresco Tandy Maracujá</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Refresco%20Tandy%20Maracujá" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Refresco Tandy Uva" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Refresco Tandy Uva</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Refresco%20Tandy%20Uva" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1518110168401-f2877ee2c88c?w=400&auto=format&fit=crop" alt="Sal Fino" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Sal Fino</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Sal%20Fino" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1518110168401-f2877ee2c88c?w=400&auto=format&fit=crop" alt="Sal Grosso" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Sal Grosso</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Sal%20Grosso" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1518110168401-f2877ee2c88c?w=400&auto=format&fit=crop" alt="Sal Refinado" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Sal Refinado</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Sal%20Refinado" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Salsicha Frisa" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Salsicha Frisa</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Salsicha%20Frisa" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&auto=format&fit=crop" alt="Sardinha Óleo" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Sardinha Óleo</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Sardinha%20Óleo" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&auto=format&fit=crop" alt="Sardinha Tomate" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Sardinha Tomate</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Sardinha%20Tomate" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Tang Abacaxi" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Tang Abacaxi</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Tang%20Abacaxi" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Tang Goiaba" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Tang Goiaba</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Tang%20Goiaba" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Tang Guaraná" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Tang Guaraná</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Tang%20Guaraná" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Tang Laranja" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Tang Laranja</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Tang%20Laranja" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Tang Limão" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Tang Limão</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Tang%20Limão" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Tang Manga" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Tang Manga</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Tang%20Manga" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Tang Maracujá" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Tang Maracujá</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Tang%20Maracujá" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Tang Morango" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Tang Morango</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Tang%20Morango" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&auto=format&fit=crop" alt="Tang Uva" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Tang Uva</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Tang%20Uva" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" alt="Tempero Sazon Carne" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Tempero Sazon Carne</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Tempero%20Sazon%20Carne" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Vela Padroeira nº 4" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Vela Padroeira nº 4</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Vela%20Padroeira%20nº%204" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Vela Padroeira nº 5" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Vela Padroeira nº 5</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Vela%20Padroeira%20nº%205" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Vela Padroeira nº 8" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Vela Padroeira nº 8</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Vela%20Padroeira%20nº%208" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-        <div class="product-card">
-            <div class="product-image-container">
-                <img class="product-image" src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop" alt="Vinagre Bulnez 500ml" loading="lazy">
-            </div>
-            <div class="product-info"><h3>Vinagre Bulnez 500ml</h3></div>
-            <div class="product-actions">
-                <button class="btn-add">🛒 Adicionar</button>
-                <a href="https://wa.me/5521968659086?text=Olá,%20gostaria%20de%20cotar:%20Vinagre%20Bulnez%20500ml" target="_blank" class="btn-whatsapp">📲 Cotar no WhatsApp</a>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Paginação -->
-    <div class="pagination-container" id="paginationControls"></div>
-
-    <!-- Rodapé -->
-    <footer class="main-footer">
-        <div class="footer-container">
-            <div class="footer-links">
-                <a href="./politica-de-devolucao.html">Política de Devolução</a>
-                <span class="divider">|</span>
-                <a href="./politica-de-privacidade.html">Política de Privacidade</a>
-                <span class="divider">|</span>
-                <a href="./regras-de-uso.html">Regras de Uso</a>
-            </div>
-            <p class="copyright">&copy; Distribuidora Frazão. Todos os direitos reservados.</p>
-        </div>
-    </footer>
-
-    <!-- Lógica de Paginação (12 itens por página) -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const itemsPerPage = 12;
-            const productGrid = document.getElementById('productGrid');
-            const products = Array.from(productGrid.getElementsByClassName('product-card'));
-            const paginationControls = document.getElementById('paginationControls');
-            let currentPage = 1;
+        // LISTA COMPLETA DE MERCEARIA
+        const mercearia = [
+            { id: "merc_01", nome: "Abridor de garrafa c/12", preco: 21.50, imagem: "" },
+            { id: "merc_02", nome: "Abridor de lata c/12", preco: 21.50, imagem: "" },
+            { id: "merc_03", nome: "Adoçante assugtin c/04", preco: 15.38, imagem: "" },
+            { id: "merc_04", nome: "Agulha de fogão c/50", preco: 9.50, imagem: "" },
+            { id: "merc_05", nome: "Agulha de máquina 11 c/10", preco: 11.50, imagem: "" },
+            { id: "merc_06", nome: "Agulha de máquina 14 c/10", preco: 11.50, imagem: "" },
+            { id: "merc_07", nome: "Agulha de máquina 16 c/10", preco: 11.50, imagem: "" },
+            { id: "merc_08", nome: "Agulha de mão 1 c/20", preco: 8.90, imagem: "" },
+            { id: "merc_09", nome: "Agulha de mão 2 c/20", preco: 10.50, imagem: "" },
+            { id: "merc_10", nome: "Agulha de mão 3 c/20", preco: 8.50, imagem: "" },
+            { id: "merc_11", nome: "Agulha de mão 5 c/20", preco: 6.50, imagem: "" },
+            { id: "merc_12", nome: "Agulha de mão 7 c/20", preco: 6.50, imagem: "" },
+            { id: "merc_13", nome: "Amido de milho c/06", preco: 22.30, imagem: "" },
+            { id: "merc_14", nome: "Amolador de faca 3x1", preco: 11.30, imagem: "" },
+            { id: "merc_15", nome: "Azeitona zille c/10", preco: 38.50, imagem: "" },
+            { id: "merc_16", nome: "Barbante lyne 200m", preco: 10.20, imagem: "" },
+            { id: "merc_17", nome: "Batata palha 100g c/05", preco: 17.99, imagem: "" },
+            { id: "merc_18", nome: "Bateria Elgin 2032 c/05", preco: 9.80, imagem: "" },
+            { id: "merc_19", nome: "Bateria Elgin ag13/lr41 c/10", preco: 8.60, imagem: "" },
+            { id: "merc_20", nome: "Bateria 626A c/10", preco: 8.60, imagem: "" },
+            { id: "merc_21", nome: "Borracha panela Sil. 3/7l c/10", preco: 28.60, imagem: "" },
+            { id: "merc_22", nome: "Borracha panela 10l c/10", preco: 16.40, imagem: "" },
+            { id: "merc_23", nome: "Borracha panela 4/7l c/10", preco: 16.40, imagem: "" },
+            { id: "merc_24", nome: "Cadeado 20-25-30mm c/12", preco: 52.00, imagem: "" },
+            { id: "merc_25", nome: "Café Pimpinela 100g c/05", preco: 33.95, imagem: "" },
+            { id: "merc_26", nome: "Caldo arisco 19g carne c/24", preco: 21.90, imagem: "" },
+            { id: "merc_27", nome: "Caldo arisco 19g galinha c/24", preco: 21.90, imagem: "" },
+            { id: "merc_28", nome: "Caldo Knorr 19g carne c/24", preco: 22.90, imagem: "" },
+            { id: "merc_29", nome: "Caldo Knorr 19g galinha c/24", preco: 22.90, imagem: "" },
+            { id: "merc_30", nome: "Canela pó pote c/12", preco: 28.55, imagem: "" },
+            { id: "merc_31", nome: "Catchup predileta 200g c/06", preco: 23.95, imagem: "" },
+            { id: "merc_32", nome: "Chá 7 ervas c/05", preco: 17.49, imagem: "" },
+            { id: "merc_33", nome: "Chá boldo c/05", preco: 17.49, imagem: "" },
+            { id: "merc_34", nome: "Chá camomila c/05", preco: 17.49, imagem: "" },
+            { id: "merc_35", nome: "Chá capim cidreira c/05", preco: 17.49, imagem: "" },
+            { id: "merc_36", nome: "Chá erva doce c/05", preco: 17.49, imagem: "" },
+            { id: "merc_37", nome: "Chá hortelã c/05", preco: 17.49, imagem: "" },
+            { id: "merc_38", nome: "Chá maçã c/ canela c/05", preco: 17.49, imagem: "" },
+            { id: "merc_39", nome: "Chá preto c/05", preco: 17.49, imagem: "" },
+            { id: "merc_40", nome: "Coador de café nº 7 c/12", preco: 22.30, imagem: "" },
+            { id: "merc_41", nome: "Coco ralado 50g c/10", preco: 20.89, imagem: "" },
+            { id: "merc_42", nome: "Cola tek bonder 2g c/12", preco: 20.90, imagem: "" },
+            { id: "merc_43", nome: "Cola tek bonder 793 c/05", preco: 42.50, imagem: "" },
+            { id: "merc_44", nome: "Colorau chinezinho 90g c/15", preco: 38.90, imagem: "" },
+            { id: "merc_45", nome: "Cond. bicabornato c/10", preco: 3.50, imagem: "" },
+            { id: "merc_46", nome: "Cond. canela casca c/10", preco: 5.45, imagem: "" },
+            { id: "merc_47", nome: "Cond. canela pó c/10", preco: 3.50, imagem: "" },
+            { id: "merc_48", nome: "Cond. colorau c/10", preco: 3.50, imagem: "" },
+            { id: "merc_49", nome: "Cond. cominho c/10", preco: 3.50, imagem: "" },
+            { id: "merc_50", nome: "Cond. cravo c/10", preco: 7.99, imagem: "" },
+            { id: "merc_51", nome: "Cond. erva doce c/10", preco: 3.50, imagem: "" },
+            { id: "merc_52", nome: "Cond. louro folha c/10", preco: 3.50, imagem: "" },
+            { id: "merc_53", nome: "Cond. louro pó c/10", preco: 3.50, imagem: "" },
+            { id: "merc_54", nome: "Cond. oregano c/10", preco: 3.50, imagem: "" },
+            { id: "merc_55", nome: "Cond. pimenta pó c/10", preco: 3.50, imagem: "" },
+            { id: "merc_56", nome: "Cond. tempero misto c/10", preco: 3.50, imagem: "" },
+            { id: "merc_57", nome: "Copo americano c/24", preco: 33.90, imagem: "" },
+            { id: "merc_58", nome: "Corda de varal nº 5 c/10", preco: 15.90, imagem: "" },
+            { id: "merc_59", nome: "Creme de leite piracanjuba c/06", preco: 18.65, imagem: "" },
+            { id: "merc_60", nome: "Durepoxi 100g c/06", preco: 59.75, imagem: "" },
+            { id: "merc_61", nome: "Durepoxi 50g c/06", preco: 35.49, imagem: "" },
+            { id: "merc_62", nome: "Ervilha pramesa c/06", preco: 21.80, imagem: "" },
+            { id: "merc_63", nome: "Estalinhos panda c/40", preco: 24.70, imagem: "" },
+            { id: "merc_64", nome: "Fermento apti c/06", preco: 21.79, imagem: "" },
+            { id: "merc_65", nome: "Filtro 102 pimpinela c/05", preco: 22.30, imagem: "" },
+            { id: "merc_66", nome: "Filtro 103 brigitta c/06", preco: 25.20, imagem: "" },
+            { id: "merc_67", nome: "Fita isolante 3m c/12", preco: 38.50, imagem: "" },
+            { id: "merc_68", nome: "Fita vedaflon 12x10mm c/10", preco: 12.90, imagem: "" },
+            { id: "merc_69", nome: "Fosforo gaboardi c/05", preco: 17.00, imagem: "" },
+            { id: "merc_70", nome: "Fresh abacaxi c/15", preco: 24.70, imagem: "" },
+            { id: "merc_71", nome: "Fresh caju c/15", preco: 24.70, imagem: "" },
+            { id: "merc_72", nome: "Fresh guaraná c/15", preco: 24.70, imagem: "" },
+            { id: "merc_73", nome: "Fresh laranja c/15", preco: 24.70, imagem: "" },
+            { id: "merc_74", nome: "Fresh limão c/15", preco: 24.70, imagem: "" },
+            { id: "merc_75", nome: "Fresh manga c/15", preco: 24.70, imagem: "" },
+            { id: "merc_76", nome: "Fresh maracujá c/15", preco: 24.70, imagem: "" },
+            { id: "merc_77", nome: "Fresh morango c/15", preco: 24.70, imagem: "" },
+            { id: "merc_78", nome: "Fresh uva c/15", preco: 24.70, imagem: "" },
+            { id: "merc_79", nome: "Goiabada predilecta c/06", preco: 23.99, imagem: "" },
+            { id: "merc_80", nome: "Granulado art chocolate c/10", preco: 23.50, imagem: "" },
+            { id: "merc_81", nome: "Granulado art colorido c/10", preco: 23.50, imagem: "" },
+            { id: "merc_82", nome: "Isqueiro bic maxi c/12", preco: 58.50, imagem: "" },
+            { id: "merc_83", nome: "Isqueiro bic mini c/12", preco: 46.50, imagem: "" },
+            { id: "merc_84", nome: "Isqueiro cricket grande c/10", preco: 28.90, imagem: "" },
+            { id: "merc_85", nome: "Isqueiro cricket mini c/10", preco: 27.70, imagem: "" },
+            { id: "merc_86", nome: "Isqueiro eletrônico c/10", preco: 17.90, imagem: "" },
+            { id: "merc_87", nome: "Lampada hal. 42w c/10", preco: 34.30, imagem: "" },
+            { id: "merc_88", nome: "Lampada hal. 70w c/10", preco: 34.30, imagem: "" },
+            { id: "merc_89", nome: "Lampada led 9w c/10", preco: 27.50, imagem: "" },
+            { id: "merc_90", nome: "Lampada led 12w c/10", preco: 36.75, imagem: "" },
+            { id: "merc_91", nome: "Lampada led 15w c/10", preco: 43.40, imagem: "" },
+            { id: "merc_92", nome: "Lampada led 20w c/10", preco: 59.90, imagem: "" },
+            { id: "merc_93", nome: "Lampada led 30w und", preco: 11.00, imagem: "" },
+            { id: "merc_94", nome: "Lampada led 40w und", preco: 12.75, imagem: "" },
+            { id: "merc_95", nome: "Lampada led presença und", preco: 18.50, imagem: "" },
+            { id: "merc_96", nome: "Leite cond. tp piracanjuba 270g c/06", preco: 33.00, imagem: "" },
+            { id: "merc_97", nome: "Leite de coco menina vd c/06", preco: 22.50, imagem: "" },
+            { id: "merc_98", nome: "Linha magna az. marinho c/10", preco: 15.50, imagem: "" },
+            { id: "merc_99", nome: "Linha magna branca c/10", preco: 15.50, imagem: "" },
+            { id: "merc_100", nome: "Linha magna preta c/10", preco: 15.50, imagem: "" },
+            { id: "merc_101", nome: "Linha magna sortida c/10", preco: 15.50, imagem: "" },
+            { id: "merc_102", nome: "Luminaria em. 30 led elgin", preco: 16.50, imagem: "" },
+            { id: "merc_103", nome: "Milho pipoca 500g", preco: 17.20, imagem: "" },
+            { id: "merc_104", nome: "Milho verde lt c/06", preco: 21.76, imagem: "" },
+            { id: "merc_105", nome: "Molho de pimenta gota c/06", preco: 20.98, imagem: "" },
+            { id: "merc_106", nome: "Molho tomate 300g c/06", preco: 10.95, imagem: "" },
+            { id: "merc_107", nome: "Nissin miojo carne c/10", preco: 27.40, imagem: "" },
+            { id: "merc_108", nome: "Nissin miojo galinha c/10", preco: 27.40, imagem: "" },
+            { id: "merc_109", nome: "Palito churrasco c/05", preco: 13.00, imagem: "" },
+            { id: "merc_110", nome: "Palito de madeira c/25", preco: 15.99, imagem: "" },
+            { id: "merc_111", nome: "Pano de prato 40x65 c/10", preco: 31.20, imagem: "" },
+            { id: "merc_112", nome: "Pilha panasonic gd c/20", preco: 74.50, imagem: "" },
+            { id: "merc_113", nome: "Pilha a23 alfacel c/05", preco: 9.90, imagem: "" },
+            { id: "merc_114", nome: "Pilha alc. grande D Panasonic c/02", preco: 30.60, imagem: "" },
+            { id: "merc_115", nome: "Pilha alfacel aa c/60", preco: 48.55, imagem: "" },
+            { id: "merc_116", nome: "Pilha alfacel aaa c/60", preco: 39.90, imagem: "" },
+            { id: "merc_117", nome: "Pilha panasonic aa c/52", preco: 53.15, imagem: "" },
+            { id: "merc_118", nome: "Pilha panasonic aaa c/40", preco: 57.70, imagem: "" },
+            { id: "merc_119", nome: "Pilha rayovac aa c/48", preco: 47.99, imagem: "" },
+            { id: "merc_120", nome: "Pilha rayovac aaa c/40", preco: 48.00, imagem: "" },
+            { id: "merc_121", nome: "Pilha rayovac gd c/12", preco: 50.45, imagem: "" },
+            { id: "merc_122", nome: "Pregador de roupa gd c/10", preco: 22.30, imagem: "" },
+            { id: "merc_123", nome: "Pregador de roupa peq. c/10", preco: 15.00, imagem: "" },
+            { id: "merc_124", nome: "Queijo ralado selete c/05", preco: 15.00, imagem: "" },
+            { id: "merc_125", nome: "Ref. tandy laranja c/15", preco: 11.85, imagem: "" },
+            { id: "merc_126", nome: "Ref. tandy maracujá c/15", preco: 11.85, imagem: "" },
+            { id: "merc_127", nome: "Ref. tandy uva c/15", preco: 11.85, imagem: "" },
+            { id: "merc_128", nome: "Tang abacaxi c/18", preco: 23.50, imagem: "" },
+            { id: "merc_129", nome: "Tang goiaba c/18", preco: 23.50, imagem: "" },
+            { id: "merc_130", nome: "Tang guarana c/18", preco: 23.50, imagem: "" },
+            { id: "merc_131", nome: "Tang laranja c/18", preco: 23.50, imagem: "" },
+            { id: "merc_132", nome: "Tang limão c/18", preco: 23.50, imagem: "" },
+            { id: "merc_133", nome: "Tang manga c/18", preco: 23.50, imagem: "" },
+            { id: "merc_134", nome: "Tang maracujá c/18", preco: 23.50, imagem: "" },
+            { id: "merc_135", nome: "Tang morango c/18", preco: 23.50, imagem: "" },
+            { id: "merc_136", nome: "Tang uva c/18", preco: 23.50, imagem: "" },
+            { id: "merc_137", nome: "Saca rolhas c/12", preco: 21.50, imagem: "" },
+            { id: "merc_138", nome: "Sal fino c/10", preco: 20.90, imagem: "" },
+            { id: "merc_139", nome: "Sal grosso c/10", preco: 21.95, imagem: "" },
+            { id: "merc_140", nome: "Salsicha frisa c/06", preco: 22.95, imagem: "" },
+            { id: "merc_141", nome: "Sardinha palmeira oleo c/05", preco: 22.50, imagem: "" },
+            { id: "merc_142", nome: "Sardinha palmeira tomate c/05", preco: 22.50, imagem: "" },
+            { id: "merc_143", nome: "Tempero sazon verm. c/06", preco: 35.40, imagem: "" },
+            { id: "merc_144", nome: "Vela padroeira nº 4 c/05", preco: 29.95, imagem: "" },
+            { id: "merc_145", nome: "Vela padroeira nº 5 c/05", preco: 27.65, imagem: "" },
+            { id: "merc_146", nome: "Vela nº 8 c/05", preco: 54.50, imagem: "" },
+            { id: "merc_147", nome: "Vinagre álcool 500ml c/12", preco: 20.00, imagem: "" }
+        ];
 
-            const totalPages = Math.ceil(products.length / itemsPerPage);
+        let carrinho = [];
+        let paginaAtual = 1;
+        const itensPorPagina = 8;
+        let produtosFiltrados = [...mercearia];
 
-            function displayPage(page) {
-                currentPage = page;
-                const start = (page - 1) * itemsPerPage;
-                const end = start + itemsPerPage;
+        function renderizarPagina() {
+            const grid = document.getElementById("product-grid");
+            const pagControls = document.getElementById("pagination-controls");
+            document.getElementById("product-count").innerText = `${produtosFiltrados.length} itens`;
+            
+            grid.innerHTML = "";
 
-                products.forEach((product, index) => {
-                    if (index >= start && index < end) {
-                        product.style.display = 'flex';
-                    } else {
-                        product.style.display = 'none';
-                    }
-                });
-
-                renderControls();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (produtosFiltrados.length === 0) {
+                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">Nenhum produto encontrado.</p>`;
+                pagControls.innerHTML = "";
+                return;
             }
 
-            function renderControls() {
-                paginationControls.innerHTML = '';
+            const inicio = (paginaAtual - 1) * itensPorPagina;
+            const fim = inicio + itensPorPagina;
+            const itensPagina = produtosFiltrados.slice(inicio, fim);
 
-                if (totalPages <= 1) return;
+            itensPagina.forEach(prod => {
+                let imagemHtml = prod.imagem 
+                    ? `<img src="${prod.imagem}" alt="${prod.nome}" onerror="this.onerror=null; this.parentNode.innerHTML='<span class=\'placeholder-text\'>Erro ao carregar</span>';">`
+                    : `<span class="placeholder-text">Sem foto<br><small style="font-size:9px; color:#cbd5e0;">(Cole o link)</small></span>`;
 
-                const prevBtn = document.createElement('button');
-                prevBtn.className = 'pagination-btn';
-                prevBtn.innerHTML = '&laquo; Anterior';
-                prevBtn.disabled = currentPage === 1;
-                prevBtn.addEventListener('click', () => displayPage(currentPage - 1));
-                paginationControls.appendChild(prevBtn);
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <div class="product-img-container">${imagemHtml}</div>
+                        <div class="product-body">
+                            <h3 class="product-title">${prod.nome}</h3>
+                            <div class="product-footer">
+                                <p class="product-price">R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
+                                <button class="btn-add" onclick="adicionarAoCarrinho('${prod.id}')">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
 
-                for (let i = 1; i <= totalPages; i++) {
-                    const pageBtn = document.createElement('button');
-                    pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
-                    pageBtn.innerText = i;
-                    pageBtn.addEventListener('click', () => displayPage(i));
-                    paginationControls.appendChild(pageBtn);
+            renderizarBotoesPagina();
+        }
+
+        function renderizarBotoesPagina() {
+            const pagControls = document.getElementById("pagination-controls");
+            const totalPaginas = Math.ceil(produtosFiltrados.length / itensPorPagina);
+            
+            if (totalPaginas <= 1) {
+                pagControls.innerHTML = "";
+                return;
+            }
+
+            let html = `<button onclick="mudarPagina(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled' : ''}>Anterior</button>`;
+            for (let i = 1; i <= totalPaginas; i++) {
+                html += `<button onclick="mudarPagina(${i})" class="${paginaAtual === i ? 'active' : ''}">${i}</button>`;
+            }
+            html += `<button onclick="mudarPagina(${paginaAtual + 1})" ${paginaAtual === totalPaginas ? 'disabled' : ''}>Próxima</button>`;
+            
+            pagControls.innerHTML = html;
+        }
+
+        function mudarPagina(novaPagina) {
+            const totalPaginas = Math.ceil(produtosFiltrados.length / itensPorPagina);
+            if (novaPagina >= 1 && novaPagina <= totalPaginas) {
+                paginaAtual = novaPagina;
+                renderizarPagina();
+            }
+        }
+
+        function filtrarProdutos() {
+            const termo = document.getElementById("searchInput").value.toLowerCase();
+            produtosFiltrados = mercearia.filter(b => b.nome.toLowerCase().includes(termo));
+            paginaAtual = 1;
+            renderizarPagina();
+        }
+
+        function adicionarAoCarrinho(id) {
+            const produto = mercearia.find(p => p.id === id);
+            const itemExistente = carrinho.find(item => item.id === id);
+
+            if (itemExistente) {
+                itemExistente.qtd++;
+            } else {
+                carrinho.push({ ...produto, qtd: 1 });
+            }
+            atualizarCarrinho();
+        }
+
+        function alterarQtd(id, delta) {
+            const item = carrinho.find(i => i.id === id);
+            if (item) {
+                item.qtd += delta;
+                if (item.qtd <= 0) {
+                    carrinho = carrinho.filter(i => i.id !== id);
                 }
+            }
+            atualizarCarrinho();
+        }
 
-                const nextBtn = document.createElement('button');
-                nextBtn.className = 'pagination-btn';
-                nextBtn.innerHTML = 'Próximo &raquo;';
-                nextBtn.disabled = currentPage === totalPages;
-                nextBtn.addEventListener('click', () => displayPage(currentPage + 1));
-                paginationControls.appendChild(nextBtn);
+        function atualizarCarrinho() {
+            const container = document.getElementById("cart-items");
+            const totalEl = document.getElementById("cart-total");
+
+            if (carrinho.length === 0) {
+                container.innerHTML = `<p style="color: #a0aec0; font-style: italic; text-align: center; margin-top: 30px;">O carrinho está vazio.</p>`;
+                totalEl.innerText = "0,00";
+                return;
             }
 
-            displayPage(1);
-        });
+            container.innerHTML = "";
+            let total = 0;
+
+            carrinho.forEach(item => {
+                let subtotal = item.preco * item.qtd;
+                total += subtotal;
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <div>
+                            <strong>${item.nome}</strong><br>
+                            <small style="color: #718096;">R$ ${item.preco.toFixed(2).replace('.', ',')} un</small>
+                        </div>
+                        <div class="cart-item-controls">
+                            <button onclick="alterarQtd('${item.id}', -1)">-</button>
+                            <span>${item.qtd}</span>
+                            <button onclick="alterarQtd('${item.id}', 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            totalEl.innerText = total.toFixed(2).replace('.', ',');
+        }
+
+        function enviarWhatsApp() {
+            if (carrinho.length === 0) {
+                alert("Adicione pelo menos um produto ao carrinho antes de enviar a cotação!");
+                return;
+            }
+
+            let mensagem = "Olá! Gostaria de solicitar a seguinte cotação de Mercearia:\n\n";
+            let total = 0;
+
+            carrinho.forEach(item => {
+                let subtotal = item.preco * item.qtd;
+                total += subtotal;
+                mensagem += `• ${item.qtd}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+            });
+
+            mensagem += `\n*Total da Cotação: R$ ${total.toFixed(2).replace('.', ',')}*`;
+
+            const numeroWhatsApp = "5521968659086";
+            const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
+            
+            window.open(url, '_blank');
+        }
+
+        window.onload = () => renderizarPagina();
     </script>
 </body>
 </html>

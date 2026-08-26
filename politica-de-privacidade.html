@@ -3,227 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Política de Privacidade - Distribuidora Frazão</title>
+    <title>AR Frazão Ltda - Política de Privacidade</title>
     <style>
-        * {
-            box-sizing: border-box;
+        :root {
+            --primary: #1a252f;
+            --secondary: #e67e22;
+            --bg-light: #f8f9fa;
+            --border: #e2e8f0;
+            --text-dark: #2d3748;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #f8fafc;
-            color: #1e293b;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Cabeçalho */
-        .main-header {
-            background-color: #1b365d;
-            padding: 20px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .brand-logo h1 {
-            margin: 0;
-            color: #ffffff;
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .brand-logo span {
-            color: #d97706;
-        }
-
-        .brand-logo {
-            text-decoration: none;
-        }
-
-        /* Conteúdo da Página */
-        .page-container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 0 20px;
-            flex: 1;
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            padding: 40px;
-        }
-
-        .page-container h2 {
-            color: #1b365d;
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 10px;
-        }
-
-        .page-container h3 {
-            color: #1b365d;
-            font-size: 1.2rem;
-            margin-top: 25px;
-            margin-bottom: 10px;
-        }
-
-        .page-container p, .page-container ul {
-            font-size: 0.95rem;
+            color: var(--text-dark);
             line-height: 1.6;
-            color: #475569;
-            margin-bottom: 15px;
         }
-
-        .page-container ul {
-            padding-left: 20px;
-        }
-
-        .page-container li {
-            margin-bottom: 8px;
-        }
-
-        .back-link {
-            display: inline-block;
-            margin-top: 30px;
-            color: #d97706;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Rodapé */
-        .main-footer {
-            background-color: #1b365d;
-            color: #ffffff;
-            padding: 25px 15px;
-            margin-top: 50px;
+        header {
+            background: linear-gradient(135deg, var(--primary), #34495e);
+            color: white;
             text-align: center;
-            border-top: 3px solid #d97706;
+            padding: 30px 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
+        header h1 { margin: 0; font-size: 24px; }
+        header a { color: #bdc3c7; font-size: 13px; text-decoration: underline; display: inline-block; margin-top: 8px; }
+        
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
-
-        .footer-links {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .footer-links a {
-            color: #e2e8f0;
-            text-decoration: none;
-            font-size: 0.88rem;
-            transition: color 0.2s ease;
-        }
-
-        .footer-links a:hover {
-            color: #d97706;
-            text-decoration: underline;
-        }
-
-        .footer-links .divider {
-            color: #64748b;
-            font-size: 0.85rem;
-        }
-
-        .copyright {
-            margin: 0;
-            font-size: 0.78rem;
-            color: #94a3b8;
-        }
-
-        @media (max-width: 576px) {
-            .page-container {
-                padding: 20px;
-                margin: 20px 10px;
-            }
-            .footer-links .divider {
-                display: none;
-            }
-            .footer-links {
-                flex-direction: column;
-                gap: 8px;
-            }
-        }
+        h2 { color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-top: 30px; font-size: 18px; }
+        h2:first-of-type { margin-top: 0; }
+        p { margin-bottom: 15px; color: #4a5568; font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <!-- Cabeçalho -->
-    <header class="main-header">
-        <div class="header-container">
-            <a href="./index.html" class="brand-logo">
-                <h1>Distribuidora <span>Frazão</span></h1>
-            </a>
-        </div>
+    <header>
+        <h1>AR Frazão Ltda</h1>
+        <a href="index.html">← Voltar para o Menu Principal</a>
     </header>
 
-    <!-- Conteúdo do Texto -->
-    <main class="page-container">
-        <h2>Política de Privacidade</h2>
-        
-        <p>A <strong>Distribuidora Frazão</strong> tem o compromisso de proteger a privacidade e os dados pessoais dos seus clientes e parceiros comerciais. Esta política descreve como coletamos, usamos e protegemos suas informações.</p>
+    <div class="container">
+        <h2>1. Informações Gerais</h2>
+        <p>A <strong>AR Frazão Ltda</strong> valoriza a privacidade dos seus clientes e parceiros. Esta Política de Privacidade descreve como coletamos, usamos e protegemos as informações fornecidas ao utilizar nosso catálogo digital e realizar cotações via WhatsApp.</p>
 
-        <h3>1. Coleta de Informações</h3>
-        <p>Coletamos informações pessoais e comerciais fornecidas voluntariamente no momento do cadastro ou orçamento, tais como:</p>
-        <ul>
-            <li>Nome completo ou Razão Social;</li>
-            <li>CPF ou CNPJ e Inscrição Estadual;</li>
-            <li>Endereço para entrega e faturamento;</li>
-            <li>Telefone e e-mail de contato.</li>
-        </ul>
+        <h2>2. Coleta de Dados</h2>
+        <p>Nosso catálogo opera de forma local no seu navegador através de recursos como o armazenamento local (LocalStorage) apenas para gerenciar o seu carrinho de compras temporário. Nós não armazenamos dados bancários, senhas ou informações sensíveis em servidores externos.</p>
 
-        <h3>2. Uso das Informações</h3>
-        <p>Os dados coletados são utilizados estritamente para:</p>
-        <ul>
-            <li>Processamento e emissão de pedidos e notas fiscais;</li>
-            <li>Organização e realização da entrega de mercadorias;</li>
-            <li>Atendimento ao cliente e suporte pós-venda;</li>
-            <li>Comunicação sobre status do pedido e atualizações operacionais.</li>
-        </ul>
+        <h2>3. Uso das Informações</h2>
+        <p>Os dados dos produtos selecionados no carrinho são utilizados exclusivamente para montar a mensagem de cotação que você opta por enviar via WhatsApp para o nosso atendimento comercial.</p>
 
-        <h3>3. Compartilhamento de Dados</h3>
-        <p>A Distribuidora Frazão não vende nem aluga dados de clientes. O compartilhamento de dados ocorre unicamente com parceiros indispensáveis para a operação comercial, como transportadoras para envio das mercadorias e processadores de pagamento/faturamento.</p>
+        <h2>4. Compartilhamento de Dados</h2>
+        <p>A AR Frazão Ltda não vende, aluga ou repassa quaisquer informações dos usuários para terceiros. Os dados enviados pelo WhatsApp são direcionados estritamente para o fechamento de pedidos e atendimento interno.</p>
 
-        <h3>4. Segurança</h3>
-        <p>Adotamos medidas técnicas e organizacionais adequadas para proteger os dados pessoais contra acesso não autorizado, perda, destruição ou alteração.</p>
+        <h2>5. Alterações nesta Política</h2>
+        <p>Reservamo-nos o direito de atualizar esta Política de Privacidade a qualquer momento para refletir melhorias em nossos serviços.</p>
 
-        <h3>5. Seus Direitos</h3>
-        <p>Você pode solicitar a qualquer momento a atualização, correção ou confirmação dos dados armazenados em nosso cadastro entrando em contato com nosso atendimento.</p>
-
-        <a href="./index.html" class="back-link">&larr; Voltar para a página inicial</a>
-    </main>
-
-    <!-- Rodapé -->
-    <footer class="main-footer">
-        <div class="footer-container">
-            <div class="footer-links">
-                <a href="./politica-de-devolucao.html">Política de Devolução</a>
-                <span class="divider">|</span>
-                <a href="./politica-de-privacidade.html">Política de Privacidade</a>
-                <span class="divider">|</span>
-                <a href="./regras-de-uso.html">Regras de Uso</a>
-            </div>
-            <p class="copyright">&copy; Distribuidora Frazão. Todos os direitos reservados.</p>
-        </div>
-    </footer>
+        <p style="margin-top: 40px; font-size: 12px; color: #a0aec0; text-align: center;">© AR Frazão Ltda. Todos os direitos reservados.</p>
+    </div>
 
 </body>
 </html>

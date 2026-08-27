@@ -223,6 +223,23 @@ Clique em Commit changes para salvar.
 
 Pronto! Em instantes o seu site no GitHub Pages estará atualizado com o catálogo completo e pronto para receber pedidos e cotações dos clientes. Para colocar imagens, basta abrir este arquivo em um editor de texto e preencher os links da internet nas propriedades image: "..." de cada produto.
 
+quero que gere o catálogo com 4 por coluna e com paginação.
+
+O catálogo foi atualizado com layout de 4 colunas para telas grandes e sistema completo de paginação (além de busca em tempo real e barra flutuante de cotação via WhatsApp).
+
+Seu arquivo está pronto:
+
+Ícone do app HTML
+index
+ HTML 
+Aberto
+Principais melhorias aplicadas:
+Grade de 4 Colunas: Os produtos agora são dispostos perfeitamente em blocos de 4 colunas em desktops, adaptando-se responsivamente para celulares e tablets.
+
+Paginação Integrada: Os produtos foram divididos por páginas (12 itens por página), com botões de navegação numéricos limpos e intuitivos na parte inferior.
+
+Barra de Cotação Dinâmica: Continua flutuando na parte inferior conforme você seleciona os produtos, agrupando todos os itens em uma única mensagem organizada para enviar diretamente pelo WhatsApp.
+
 
 
 
@@ -282,7 +299,7 @@ Analisando
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
         }
 
@@ -308,11 +325,30 @@ Analisando
             border-color: var(--primary-color);
         }
 
+        /* Grade com exatamente 4 colunas em telas grandes */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .products-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .product-card {
@@ -333,7 +369,7 @@ Analisando
 
         .product-img-container {
             width: 100%;
-            height: 180px;
+            height: 160px;
             background-color: #f5f5f5;
             display: flex;
             align-items: center;
@@ -400,12 +436,12 @@ Analisando
 
         .btn {
             flex: 1;
-            padding: 10px;
+            padding: 9px;
             border: none;
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: background-color 0.2s;
             text-align: center;
             text-decoration: none;
@@ -441,7 +477,45 @@ Analisando
             background-color: #1ebe5d;
         }
 
-        /* Cart Floating Bar */
+        /* Paginação */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 30px;
+            margin-bottom: 40px;
+        }
+
+        .page-btn {
+            padding: 8px 14px;
+            border: 1px solid var(--border-color);
+            background-color: white;
+            color: var(--text-color);
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .page-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Barra flutuante de cotação via WhatsApp */
         .cart-bar {
             position: fixed;
             bottom: 0;
@@ -527,11 +601,16 @@ Analisando
         </header>
 
         <div class="search-filter">
-            <input type="text" id="searchInput" placeholder="Pesquisar bala ou pirulito..." onkeyup="filterProducts()">
+            <input type="text" id="searchInput" placeholder="Pesquisar bala ou pirulito..." oninput="handleSearch()">
         </div>
 
         <div class="products-grid" id="productsGrid">
             <!-- Renderizado dinamicamente via JS -->
+        </div>
+
+        <!-- Controles de Paginação -->
+        <div class="pagination" id="paginationControls">
+            <!-- Botões de página injetados via JS -->
         </div>
     </div>
 
@@ -595,19 +674,38 @@ Analisando
 
         let selectedProducts = {};
         const WHATSAPP_NUMBER = "5521968659086";
+        
+        // Paginação
+        let currentPage = 1;
+        const itemsPerPage = 12; // 3 linhas de 4 colunas por página
 
-        function renderProducts(filter = "") {
+        function getFilteredProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            return products.filter(p => p.name.toLowerCase().includes(query));
+        }
+
+        function renderCatalog() {
+            const filtered = getFilteredProducts();
+            const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
+
+            if (currentPage > totalPages) {
+                currentPage = totalPages;
+            }
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const currentItems = filtered.slice(start, end);
+
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = "";
 
-            const filtered = products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
-
-            if (filtered.length === 0) {
-                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color: #777;'>Nenhum produto encontrado.</p>";
+            if (currentItems.length === 0) {
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color: #777; padding: 40px;'>Nenhum produto encontrado.</p>";
+                document.getElementById('paginationControls').innerHTML = "";
                 return;
             }
 
-            filtered.forEach(p => {
+            currentItems.forEach(p => {
                 const isAdded = selectedProducts[p.id] ? true : false;
                 const imageHtml = p.image 
                     ? `<img src="${p.image}" alt="${p.name}" onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'no-image\'>Imagem indisponível</div>';">`
@@ -635,6 +733,61 @@ Analisando
                 `;
                 grid.appendChild(card);
             });
+
+            renderPagination(totalPages);
+        }
+
+        function renderPagination(totalPages) {
+            const paginationContainer = document.getElementById('paginationControls');
+            paginationContainer.innerHTML = "";
+
+            if (totalPages <= 1) return;
+
+            // Botão Anterior
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-btn';
+            prevBtn.innerText = '« Anterior';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderCatalog();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+            paginationContainer.appendChild(prevBtn);
+
+            // Números de página
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.innerText = i;
+                pageBtn.onclick = () => {
+                    currentPage = i;
+                    renderCatalog();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                paginationContainer.appendChild(pageBtn);
+            }
+
+            // Botão Próximo
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn';
+            nextBtn.innerText = 'Próximo »';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderCatalog();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+            paginationContainer.appendChild(nextBtn);
+        }
+
+        function handleSearch() {
+            currentPage = 1; // Reseta para a primeira página ao pesquisar
+            renderCatalog();
         }
 
         function toggleProduct(id) {
@@ -643,13 +796,13 @@ Analisando
             } else {
                 selectedProducts[id] = products.find(p => p.id === id);
             }
-            renderProducts(document.getElementById('searchInput').value);
+            renderCatalog();
             updateCartBar();
         }
 
         function clearCart() {
             selectedProducts = {};
-            renderProducts(document.getElementById('searchInput').value);
+            renderCatalog();
             updateCartBar();
         }
 
@@ -680,12 +833,8 @@ Analisando
             }
         }
 
-        function filterProducts() {
-            const query = document.getElementById('searchInput').value;
-            renderProducts(query);
-        }
-
-        renderProducts();
+        // Inicializar catálogo na carga da página
+        renderCatalog();
     </script>
 </body>
 </html>

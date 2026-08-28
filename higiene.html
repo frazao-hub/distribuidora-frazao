@@ -13,344 +13,319 @@
         .card h3 { margin: 10px 0 5px; font-size: 16px; }
         .price { color: #007600; font-weight: bold; font-size: 18px; margin: 10px 0; }
         .card p { color: #555; font-size: 13px; }
+        
+        /* Estilos da Paginação */
+        .page { display: none; }
+        .page.active { display: grid; }
+        .pagination { text-align: center; margin-top: 30px; }
+        .pagination button {
+            background-color: #007600;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            margin: 0 4px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .pagination button:hover, .pagination button.active-btn {
+            background-color: #005300;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>Catálogo de Produtos de Higiene</h2>
-    <div class="grid">
 
-        <!-- Absorvente Intimus Gel -->
+    <!-- ================= PÁGINA 1 ================= -->
+    <div id="pagina-1" class="page active grid">
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Absorvente intimus gel c/06">
             <h3>Absorvente intimus gel c/06</h3>
             <div class="price">R$ 25,10</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Acetona Bruna -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Acetona bruna c/12">
             <h3>Acetona bruna c/12</h3>
             <div class="price">R$ 31,20</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Acetona Farmax -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Acetona farmax c/12">
             <h3>Acetona farmax c/12</h3>
             <div class="price">R$ 38,40</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Água Oxigenada 30vol -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Água oxigenada 30vol c/12">
             <h3>Água oxigenada 30vol c/12</h3>
             <div class="price">R$ 24,40</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Água Oxigenada Márcia 40vol -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="agua oxigenada márcia 40vol c/12">
             <h3>Água oxigenada márcia 40vol c/12</h3>
             <div class="price">R$ 24,40</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Algodão Apolo -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="algodão apolo c/10">
             <h3>Algodão apolo c/10</h3>
             <div class="price">R$ 19,20</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Algodão Nathy -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="algodão nathy c/10">
             <h3>Algodão nathy c/10</h3>
             <div class="price">R$ 18,20</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Amonia Radar -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="amonia radar c/12">
             <h3>Amonia radar c/12</h3>
             <div class="price">R$ 23,50</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Aparelho Prestobarba -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="ap. prestobarba c/24 GT 2 c/26">
             <h3>Aparelho Prestobarba c/24 (GT 2 c/26)</h3>
             <div class="price">R$ 72,65</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Aparelho Probak -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="ap. probak c/28">
             <h3>Aparelho Probak c/28</h3>
             <div class="price">R$ 47,50</div>
             <p>Higiene Pessoal</p>
         </div>
+    </div>
 
-        <!-- Chupeta Silicone -->
+    <!-- ================= PÁGINA 2 ================= -->
+    <div id="pagina-2" class="page grid">
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="chupeta silicone c/10">
             <h3>Chupeta silicone c/10</h3>
             <div class="price">R$ 18,50</div>
             <p>Infantil / Higiene</p>
         </div>
-
-        <!-- Condicionador Monange -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Condicionador Monange c/03">
             <h3>Condicionador Monange c/03</h3>
             <div class="price">R$ 30,59</div>
             <p>Higiene / Cabelo</p>
         </div>
-
-        <!-- Cortador de Unha Pequeno -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="cortador de unha pequeno c/12">
             <h3>Cortador de unha pequeno c/12</h3>
             <div class="price">R$ 23,20</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Cortador de Unha Grande -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="cortador de unha grande c/12">
             <h3>Cortador de unha grande c/12</h3>
             <div class="price">R$ 33,95</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Cotonetes Nathy -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="cotonetes nathy c/12">
             <h3>Cotonetes nathy c/12</h3>
             <div class="price">R$ 21,50</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Creme Dental Oral B -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="creme dental oral b 70g c/12">
             <h3>Creme dental oral b 70g c/12</h3>
             <div class="price">R$ 29,50</div>
             <p>Higiene Bucal</p>
         </div>
-
-        <!-- Curativo Band Aid -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Curativo Band aid c/40">
             <h3>Curativo Band aid c/40</h3>
             <div class="price">R$ 13,30</div>
             <p>Higiene / Farmácia</p>
         </div>
-
-        <!-- Descolorante Márcia -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="descolorante marcia c/06">
             <h3>Descolorante marcia c/06</h3>
             <div class="price">R$ 22,30</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Desodorante Leite de Rosas -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="desodorante leite de rosas 60ml c/06">
             <h3>Desodorante leite de rosas 60ml c/06</h3>
             <div class="price">R$ 15,50</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Escova de Dente Condor Média -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="escova de dente condor média c/12">
             <h3>Escova de dente condor média c/12</h3>
             <div class="price">R$ 31,15</div>
             <p>Higiene Bucal</p>
         </div>
+    </div>
 
-        <!-- Escova de Dente Condor Macia -->
+    <!-- ================= PÁGINA 3 ================= -->
+    <div id="pagina-3" class="page grid">
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Escova de dente condor macia c/12">
             <h3>Escova de dente condor macia c/12</h3>
             <div class="price">R$ 31,15</div>
             <p>Higiene Bucal</p>
         </div>
-
-        <!-- Escova de Dente Condor Dura -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Escova de dente condor dura c/12">
             <h3>Escova de dente condor dura c/12</h3>
             <div class="price">R$ 31,15</div>
             <p>Higiene Bucal</p>
         </div>
-
-        <!-- Escova Pata-Pata -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="escova pata-pata c/24">
             <h3>Escova pata-pata c/24</h3>
             <div class="price">R$ 9,90</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Lâmina Lord -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="lâmina lord c/50">
             <h3>Lâmina lord c/50</h3>
             <div class="price">R$ 19,90</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Lâmina Super Maxi -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="lâmina super maxi c/50">
             <h3>Lâmina super maxi c/50</h3>
             <div class="price">R$ 19,90</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Lâmina Wilkinson -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="lâmina wilkinson c/60">
             <h3>Lâmina wilkinson c/60</h3>
             <div class="price">R$ 27,70</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Lixa de Unha Bella -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Lixa de unha Bella c/100">
             <h3>Lixa de unha Bella c/100</h3>
             <div class="price">R$ 12,65</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Papel Higiênico Belisoft Gold -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="papel higiênico belisoft gold c/16">
             <h3>Papel higiênico belisoft gold c/16</h3>
             <div class="price">R$ 49,90</div>
             <p>Higiene / Papelaria</p>
         </div>
-
-        <!-- Papel Higiênico Silver -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="papel higiênico silver c/16">
             <h3>Papel higiênico silver c/16</h3>
             <div class="price">R$ 47,20</div>
             <p>Higiene / Papelaria</p>
         </div>
-
-        <!-- Pente Carioca -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="pente carioca c/12">
             <h3>Pente carioca c/12</h3>
             <div class="price">R$ 10,50</div>
             <p>Higiene / Cabelo</p>
         </div>
+    </div>
 
-        <!-- Pente CP Luxo -->
+    <!-- ================= PÁGINA 4 ================= -->
+    <div id="pagina-4" class="page grid">
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="pente cp luxo c/12">
             <h3>Pente cp luxo c/12</h3>
             <div class="price">R$ 8,95</div>
             <p>Higiene / Cabelo</p>
         </div>
-
-        <!-- Pinça Merheje -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="pinça merheje c/12">
             <h3>Pinça merheje c/12</h3>
             <div class="price">R$ 19,90</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Pinça Cruz de Ouro -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Pinça cruz de ouro c/12">
             <h3>Pinça cruz de ouro c/12</h3>
             <div class="price">R$ 10,40</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Rala Calo Plástico -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="rala calo plastico c/12">
             <h3>Rala calo plastico c/12</h3>
             <div class="price">R$ 24,50</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Sabonete Francis -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="sabonete francis c/12">
             <h3>Sabonete francis c/12</h3>
             <div class="price">R$ 29,50</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Sabonete Lux -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="sabonete lux c/12">
             <h3>Sabonete lux c/12</h3>
             <div class="price">R$ 32,90</div>
             <p>Higiene Pessoal</p>
         </div>
-
-        <!-- Espelho Lands -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Espelho Lands n. 14 c/06">
             <h3>Espelho Lands n. 14 c/06</h3>
             <div class="price">R$ 31,50</div>
             <p>Higiene / Acessórios</p>
         </div>
-
-        <!-- Gel Bellus Branco -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Gel Bellus branco c/06">
             <h3>Gel Bellus branco c/06</h3>
             <div class="price">R$ 30,50</div>
             <p>Higiene / Cabelo</p>
         </div>
-
-        <!-- Grampo Cabelo -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Grampo cabelo n. 5 c/05">
             <h3>Grampo cabelo n. 5 c/05</h3>
             <div class="price">R$ 30,90</div>
             <p>Higiene / Acessórios</p>
         </div>
-
-        <!-- Shampoo Monange -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Shampoo Monange c/03">
             <h3>Shampoo Monange c/03</h3>
             <div class="price">R$ 24,30</div>
             <p>Higiene / Cabelo</p>
         </div>
-
-        <!-- Tintura Márcia -->
         <div class="card">
             <img src="URL_DA_FOTO_AQUI" alt="Tintura Márcia preto 1.0 c/06">
             <h3>Tintura Márcia preto 1.0 c/06</h3>
             <div class="price">R$ 34,99</div>
             <p>Higiene / Cabelo</p>
         </div>
+    </div>
 
+    <!-- Botões de Navegação (Paginação) -->
+    <div class="pagination">
+        <button onclick="mudarPagina(1)" id="btn-1" class="active-btn">1</button>
+        <button onclick="mudarPagina(2)" id="btn-2">2</button>
+        <button onclick="mudarPagina(3)" id="btn-3">3</button>
+        <button onclick="mudarPagina(4)" id="btn-4">4</button>
     </div>
 </div>
+
+<!-- Script para trocar de página ao clicar nos botões -->
+<script>
+    function mudarPagina(num) {
+        // Esconde todas as páginas
+        const pages = document.querySelectorAll('.page');
+        pages.forEach(p => p.classList.remove('active'));
+
+        // Remove a classe ativa de todos os botões
+        const buttons = document.querySelectorAll('.pagination button');
+        buttons.forEach(b => b.classList.remove('active-btn'));
+
+        // Mostra a página escolhida e ativa o botão correspondente
+        document.getElementById('pagina-' + num).classList.add('active');
+        document.getElementById('btn-' + num).classList.add('active-btn');
+    }
+</script>
 
 </body>
 </html>

@@ -3,209 +3,354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Higiene - Distribuidora Frazão</title>
+    <title>Produtos de Higiene - Distribuidora</title>
     <style>
-        :root {
-            --primary: #1e3a8a;
-            --primary-hover: #1d4ed8;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-dark: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            --radius: 12px;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-dark); padding: 24px 16px; max-width: 1200px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 32px; padding-bottom: 16px; border-bottom: 2px solid var(--border); }
-        header h1 { color: var(--primary); font-size: 28px; margin-bottom: 8px; }
-
-        .admin-panel { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 32px; box-shadow: var(--shadow); }
-        .admin-panel h2 { font-size: 18px; color: var(--primary); margin-bottom: 16px; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 16px; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-group label { font-size: 13px; font-weight: 600; }
-        .form-group input { padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
-        .form-group input:focus { border-color: var(--primary); }
-        
-        .btn-add { background-color: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; transition: background-color 0.2s; }
-        .btn-add:hover { background-color: var(--primary-hover); }
-
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-bottom: 32px; min-height: 400px; }
-        .product-card { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; justify-content: space-between; }
-        .product-info-wrapper { display: flex; align-items: center; gap: 16px; }
-        
-        .product-icon { width: 70px; height: 70px; border-radius: 8px; background-color: #f1f5f9; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; border: 1px solid var(--border); }
-        .product-icon img { width: 100%; height: 100%; object-fit: contain; }
-        .product-icon .emoji-fallback { font-size: 30px; }
-        .product-info h3 { font-size: 16px; margin-bottom: 4px; }
-        
-        .product-actions { display: flex; justify-content: flex-end; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
-        .btn-delete { background: none; border: none; color: #ef4444; font-size: 13px; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
-        .btn-delete:hover { background-color: #fef2f2; }
-
-        .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 24px; }
-        .page-btn { background-color: var(--card-bg); border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; color: var(--text-dark); }
-        .page-btn.active { background-color: var(--primary); color: white; border-color: var(--primary); }
-        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .container { max-width: 1200px; margin: auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        .card img { max-width: 100%; height: 140px; object-fit: contain; margin-bottom: 10px; }
+        .card h3 { margin: 10px 0 5px; font-size: 16px; }
+        .price { color: #007600; font-weight: bold; font-size: 18px; margin: 10px 0; }
+        .card p { color: #555; font-size: 13px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Catálogo de Higiene e Limpeza</h1>
-        <p>Distribuidora Frazão — Gestão de Produtos</p>
-    </header>
+<div class="container">
+    <h2>Catálogo de Produtos de Higiene</h2>
+    <div class="grid">
 
-    <section class="admin-panel">
-        <h2>📦 Adicionar Novo Produto com Foto</h2>
-        <form id="productForm" onsubmit="adicionarProduto(event)">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="nomeProduto">Nome do Produto</label>
-                    <input type="text" id="nomeProduto" placeholder="Ex: Absorvente Intimus Gel" required>
-                </div>
+        <!-- Absorvente Intimus Gel -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Absorvente intimus gel c/06">
+            <h3>Absorvente intimus gel c/06</h3>
+            <div class="price">R$ 25,10</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-                <div class="form-group">
-                    <label for="precoProduto">Preço (R$)</label>
-                    <input type="text" id="precoProduto" placeholder="Ex: 12,50">
-                </div>
+        <!-- Acetona Bruna -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Acetona bruna c/12">
+            <h3>Acetona bruna c/12</h3>
+            <div class="price">R$ 31,20</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-                <div class="form-group" style="grid-column: span 2;">
-                    <label for="linkImagem">Link da Imagem da Internet (URL)</label>
-                    <input type="url" id="linkImagem" placeholder="Cole o link da foto da internet aqui">
-                </div>
-            </div>
+        <!-- Acetona Farmax -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Acetona farmax c/12">
+            <h3>Acetona farmax c/12</h3>
+            <div class="price">R$ 38,40</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-            <button type="submit" class="btn-add">➕ Adicionar Produto</button>
-        </form>
-    </section>
+        <!-- Água Oxigenada 30vol -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Água oxigenada 30vol c/12">
+            <h3>Água oxigenada 30vol c/12</h3>
+            <div class="price">R$ 24,40</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-    <main>
-        <div class="products-grid" id="productsGrid"></div>
-        <div class="pagination" id="pagination"></div>
-    </main>
+        <!-- Água Oxigenada Márcia 40vol -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="agua oxigenada márcia 40vol c/12">
+            <h3>Água oxigenada márcia 40vol c/12</h3>
+            <div class="price">R$ 24,40</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-    <script>
-        let produtos = [
-            { nome: 'Absorvente Intimus Gel', preco: ''https:// '' },
-            { nome: 'Acetonas', preco: '', imagem: '' },
-            { nome: 'Água Oxigenada', preco: '', imagem: '' },
-            { nome: 'Algodão', preco: '', imagem: '' },
-            { nome: 'Amônia', preco: '', imagem: '' },
-            { nome: 'Aparelhos de Barbear', preco: '', imagem: '' },
-            { nome: 'Band-Aid', preco: '', imagem: '' },
-            { nome: 'Chupeta de Silicone', preco: '', imagem: '' },
-            { nome: 'Cotonetes Nathy', preco: '', imagem: '' },
-            { nome: 'Creme Dental Oral-B', preco: '', imagem: '' },
-            { nome: 'Descolorantes', preco: '', imagem: '' },
-            { nome: 'Desodorante Leite de Rosas', preco: '', imagem: '' },
-            { nome: 'Escova de Dente Condor', preco: '', imagem: '' },
-            { nome: 'Escova de Dente Pata-Pata', preco: '', imagem: '' },
-            { nome: 'Lâminas de Barbear', preco: '', imagem: '' },
-            { nome: 'Papel Higiênico', preco: '', imagem: '' },
-            { nome: 'Pentes', preco: '', imagem: '' },
-            { nome: 'Pinça Merheje', preco: '', imagem: '' },
-            { nome: 'Produtos para Unhas', preco: '', imagem: '' },
-            { nome: 'Rala Calo', preco: '', imagem: '' },
-            { nome: 'Sabonete Francis', preco: '', imagem: '' },
-            { nome: 'Sabonete Lux', preco: '', imagem: '' },
-            { nome: 'Sabonetes Diversos', preco: '', imagem: '' }
-        ];
+        <!-- Algodão Apolo -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="algodão apolo c/10">
+            <h3>Algodão apolo c/10</h3>
+            <div class="price">R$ 19,20</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-        const itensPorPagina = 8;
-        let paginaAtual = 1;
+        <!-- Algodão Nathy -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="algodão nathy c/10">
+            <h3>Algodão nathy c/10</h3>
+            <div class="price">R$ 18,20</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-        function renderizarProdutos() {
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = '';
+        <!-- Amonia Radar -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="amonia radar c/12">
+            <h3>Amonia radar c/12</h3>
+            <div class="price">R$ 23,50</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-            const inicio = (paginaAtual - 1) * itensPorPagina;
-            const fim = inicio + itensPorPagina;
-            const produtosPagina = produtos.slice(inicio, fim);
+        <!-- Aparelho Prestobarba -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="ap. prestobarba c/24 GT 2 c/26">
+            <h3>Aparelho Prestobarba c/24 (GT 2 c/26)</h3>
+            <div class="price">R$ 72,65</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-            produtosPagina.forEach((p, index) => {
-                const indexReal = inicio + index;
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                
-                let iconeHTML = p.imagem && p.imagem.trim() !== "" 
-                    ? `<img src="${p.imagem}" alt="${p.nome}" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'emoji-fallback\'>📦</span>';">`
-                    : `<span class="emoji-fallback">🧴</span>`;
+        <!-- Aparelho Probak -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="ap. probak c/28">
+            <h3>Aparelho Probak c/28</h3>
+            <div class="price">R$ 47,50</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-                card.innerHTML = `
-                    <div class="product-info-wrapper">
-                        <div class="product-icon">${iconeHTML}</div>
-                        <div class="product-info">
-                            <h3>${p.nome}</h3>
-                            ${p.preco ? `<div style="font-weight:700; color:#10b981;">R$ ${p.preco}</div>` : ''}
-                        </div>
-                    </div>
-                    <div class="product-actions">
-                        <button class="btn-delete" onclick="removerProduto(${indexReal})">Excluir</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
+        <!-- Chupeta Silicone -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="chupeta silicone c/10">
+            <h3>Chupeta silicone c/10</h3>
+            <div class="price">R$ 18,50</div>
+            <p>Infantil / Higiene</p>
+        </div>
 
-            renderizarPaginacao();
-        }
+        <!-- Condicionador Monange -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Condicionador Monange c/03">
+            <h3>Condicionador Monange c/03</h3>
+            <div class="price">R$ 30,59</div>
+            <p>Higiene / Cabelo</p>
+        </div>
 
-        function renderizarPaginacao() {
-            const paginationEl = document.getElementById('pagination');
-            paginationEl.innerHTML = '';
+        <!-- Cortador de Unha Pequeno -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="cortador de unha pequeno c/12">
+            <h3>Cortador de unha pequeno c/12</h3>
+            <div class="price">R$ 23,20</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
+        <!-- Cortador de Unha Grande -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="cortador de unha grande c/12">
+            <h3>Cortador de unha grande c/12</h3>
+            <div class="price">R$ 33,95</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-            const btnPrev = document.createElement('button');
-            btnPrev.className = 'page-btn';
-            btnPrev.innerText = '«';
-            btnPrev.disabled = paginaAtual === 1;
-            btnPrev.onclick = () => { paginaAtual--; renderizarProdutos(); };
-            paginationEl.appendChild(btnPrev);
+        <!-- Cotonetes Nathy -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="cotonetes nathy c/12">
+            <h3>Cotonetes nathy c/12</h3>
+            <div class="price">R$ 21,50</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-            for (let i = 1; i <= totalPaginas; i++) {
-                const btn = document.createElement('button');
-                btn.className = `page-btn ${i === paginaAtual ? 'active' : ''}`;
-                btn.innerText = i;
-                btn.onclick = () => { paginaAtual = i; renderizarProdutos(); };
-                paginationEl.appendChild(btn);
-            }
+        <!-- Creme Dental Oral B -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="creme dental oral b 70g c/12">
+            <h3>Creme dental oral b 70g c/12</h3>
+            <div class="price">R$ 29,50</div>
+            <p>Higiene Bucal</p>
+        </div>
 
-            const btnNext = document.createElement('button');
-            btnNext.className = 'page-btn';
-            btnNext.innerText = '»';
-            btnNext.disabled = paginaAtual === totalPaginas;
-            btnNext.onclick = () => { paginaAtual++; renderizarProdutos(); };
-            paginationEl.appendChild(btnNext);
-        }
+        <!-- Curativo Band Aid -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Curativo Band aid c/40">
+            <h3>Curativo Band aid c/40</h3>
+            <div class="price">R$ 13,30</div>
+            <p>Higiene / Farmácia</p>
+        </div>
 
-        function adicionarProduto(event) {
-            event.preventDefault();
-            const nome = document.getElementById('nomeProduto').value;
-            const preco = document.getElementById('precoProduto').value;
-            const imagem = document.getElementById('linkImagem').value;
+        <!-- Descolorante Márcia -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="descolorante marcia c/06">
+            <h3>Descolorante marcia c/06</h3>
+            <div class="price">R$ 22,30</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-            produtos.unshift({ nome, preco, imagem });
-            document.getElementById('productForm').reset();
-            paginaAtual = 1;
-            renderizarProdutos();
-        }
+        <!-- Desodorante Leite de Rosas -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="desodorante leite de rosas 60ml c/06">
+            <h3>Desodorante leite de rosas 60ml c/06</h3>
+            <div class="price">R$ 15,50</div>
+            <p>Higiene Pessoal</p>
+        </div>
 
-        function removerProduto(index) {
-            produtos.splice(index, 1);
-            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
-            if (paginaAtual > totalPaginas && totalPaginas > 0) {
-                paginaAtual = totalPaginas;
-            }
-            renderizarProdutos();
-        }
+        <!-- Escova de Dente Condor Média -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="escova de dente condor média c/12">
+            <h3>Escova de dente condor média c/12</h3>
+            <div class="price">R$ 31,15</div>
+            <p>Higiene Bucal</p>
+        </div>
 
-        renderizarProdutos();
-    </script>
+        <!-- Escova de Dente Condor Macia -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Escova de dente condor macia c/12">
+            <h3>Escova de dente condor macia c/12</h3>
+            <div class="price">R$ 31,15</div>
+            <p>Higiene Bucal</p>
+        </div>
+
+        <!-- Escova de Dente Condor Dura -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Escova de dente condor dura c/12">
+            <h3>Escova de dente condor dura c/12</h3>
+            <div class="price">R$ 31,15</div>
+            <p>Higiene Bucal</p>
+        </div>
+
+        <!-- Escova Pata-Pata -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="escova pata-pata c/24">
+            <h3>Escova pata-pata c/24</h3>
+            <div class="price">R$ 9,90</div>
+            <p>Higiene Pessoal</p>
+        </div>
+
+        <!-- Lâmina Lord -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="lâmina lord c/50">
+            <h3>Lâmina lord c/50</h3>
+            <div class="price">R$ 19,90</div>
+            <p>Higiene Pessoal</p>
+        </div>
+
+        <!-- Lâmina Super Maxi -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="lâmina super maxi c/50">
+            <h3>Lâmina super maxi c/50</h3>
+            <div class="price">R$ 19,90</div>
+            <p>Higiene Pessoal</p>
+        </div>
+
+        <!-- Lâmina Wilkinson -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="lâmina wilkinson c/60">
+            <h3>Lâmina wilkinson c/60</h3>
+            <div class="price">R$ 27,70</div>
+            <p>Higiene Pessoal</p>
+        </div>
+
+        <!-- Lixa de Unha Bella -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Lixa de unha Bella c/100">
+            <h3>Lixa de unha Bella c/100</h3>
+            <div class="price">R$ 12,65</div>
+            <p>Higiene Pessoal</p>
+        </div>
+
+        <!-- Papel Higiênico Belisoft Gold -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="papel higiênico belisoft gold c/16">
+            <h3>Papel higiênico belisoft gold c/16</h3>
+            <div class="price">R$ 49,90</div>
+            <p>Higiene / Papelaria</p>
+        </div>
+
+        <!-- Papel Higiênico Silver -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="papel higiênico silver c/16">
+            <h3>Papel higiênico silver c/16</h3>
+            <div class="price">R$ 47,20</div>
+            <p>Higiene / Papelaria</p>
+        </div>
+
+        <!-- Pente Carioca -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="pente carioca c/12">
+            <h3>Pente carioca c/12</h3>
+            <div class="price">R$ 10,50</div>
+            <p>Higiene / Cabelo</p>
+        </div>
+
+        <!-- Pente CP Luxo -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="pente cp luxo c/12">
+            <h3>Pente cp luxo c/12</h3>
+            <div class="price">R$ 8,95</div>
+            <p>Higiene / Cabelo</p>
+        </div>
+
+        <!-- Pinça Merheje -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="pinça merheje c/12">
+            <h3>Pinça merheje c/12</h3>
+            <div class="price">R$ 19,90</div>
+            <p>Higiene Pessoal</p>
+        </div>
+
+        <!-- Pinça Cruz de Ouro -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Pinça cruz de ouro c/12">
+            <h3>Pinça cruz de ouro c/12</h3>
+            <div class="price">R$ 10,40</div>
+            <p>Higiene Pessoal</p>
+        </div>
+
+        <!-- Rala Calo Plástico -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="rala calo plastico c/12">
+            <h3>Rala calo plastico c/12</h3>
+            <div class="price">R$ 24,50</div>
+            <p>Higiene Pessoal</p>
+        </div>
+
+        <!-- Sabonete Francis -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="sabonete francis c/12">
+            <h3>Sabonete francis c/12</h3>
+            <div class="price">R$ 29,50</div>
+            <p>Higiene Pessoal</p>
+        </div>
+
+        <!-- Sabonete Lux -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="sabonete lux c/12">
+            <h3>Sabonete lux c/12</h3>
+            <div class="price">R$ 32,90</div>
+            <p>Higiene Pessoal</p>
+        </div>
+
+        <!-- Espelho Lands -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Espelho Lands n. 14 c/06">
+            <h3>Espelho Lands n. 14 c/06</h3>
+            <div class="price">R$ 31,50</div>
+            <p>Higiene / Acessórios</p>
+        </div>
+
+        <!-- Gel Bellus Branco -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Gel Bellus branco c/06">
+            <h3>Gel Bellus branco c/06</h3>
+            <div class="price">R$ 30,50</div>
+            <p>Higiene / Cabelo</p>
+        </div>
+
+        <!-- Grampo Cabelo -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Grampo cabelo n. 5 c/05">
+            <h3>Grampo cabelo n. 5 c/05</h3>
+            <div class="price">R$ 30,90</div>
+            <p>Higiene / Acessórios</p>
+        </div>
+
+        <!-- Shampoo Monange -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Shampoo Monange c/03">
+            <h3>Shampoo Monange c/03</h3>
+            <div class="price">R$ 24,30</div>
+            <p>Higiene / Cabelo</p>
+        </div>
+
+        <!-- Tintura Márcia -->
+        <div class="card">
+            <img src="URL_DA_FOTO_AQUI" alt="Tintura Márcia preto 1.0 c/06">
+            <h3>Tintura Márcia preto 1.0 c/06</h3>
+            <div class="price">R$ 34,99</div>
+            <p>Higiene / Cabelo</p>
+        </div>
+
+    </div>
+</div>
+
 </body>
 </html>

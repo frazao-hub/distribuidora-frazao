@@ -1,224 +1,24 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regras de Uso - Distribuidora Frazão</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+# Termos e Regras de Uso — Distribuidora
 
-        body {
-            background-color: #f8fafc;
-            color: #1e293b;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+Seja bem-vindo(a) ao catálogo digital da **Distribuidora Frazão**. Abaixo estão descritas as regras e condições para consulta de produtos, pedidos e atuação em nossa plataforma.
 
-        /* Cabeçalho */
-        .main-header {
-            background-color: #1b365d;
-            padding: 20px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            text-align: center;
-        }
+---
 
-        .brand-logo h1 {
-            margin: 0;
-            color: #ffffff;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
+## 1. Condições Gerais para Atacado
+* **Público-Alvo:** Nosso atendimento é voltado prioritariamente para o comércio varejista e lojistas cadastrados.
+* **Consulta de Preços:** Os valores exibidos no catálogo referem-se aos lotes ou quantidades mínimas descritas em cada produto (ex: caixas fechadas, fardos ou kits).
+* **Atualização de Estoque:** Os produtos e preços estão sujeitos a alterações sem aviso prévio conforme a disponibilidade em nosso estoque físico em São Gonçalo - RJ.
 
-        .brand-logo span {
-            color: #d97706;
-        }
+## 2. Realização de Pedidos
+* **Fechamento:** A seleção de itens pelo catálogo digital serve como base para a montagem do pedido. A confirmação de estoque, valores finais e formas de pagamento deve ser validada diretamente através dos nossos canais de atendimento oficiais.
+* **Quantidades:** Respeitamos os padrões de fechamento de fábrica e pacotes informados na descrição de cada mercadoria.
 
-        .brand-logo {
-            text-decoration: none;
-        }
+## 3. Entrega e Retirada
+* **Logística:** As condições de entrega, prazos e valores de frete variam de acordo com a localidade de destino.
+* **Retirada na Base:** Pedidos também podem ser ajustados para retirada pré-agendada conforme a disponibilidade operacional.
 
-        /* Conteúdo da Página */
-        .page-container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 40px;
-            flex: 1;
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
+## 4. Direitos Autorais e Uso das Imagens
+* As imagens, logotipos e conteúdos disponibilizados neste repositório pertencem à distribuidora e aos seus respectivos fabricantes. É proibida a reprodução comercial não autorizada do material gráfico.
 
-        .page-container h2 {
-            color: #1b365d;
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 10px;
-        }
-
-        .page-container h3 {
-            color: #1b365d;
-            font-size: 1.2rem;
-            margin-top: 25px;
-            margin-bottom: 10px;
-        }
-
-        .page-container p, .page-container ul {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #475569;
-            margin-bottom: 15px;
-        }
-
-        .page-container ul {
-            padding-left: 20px;
-        }
-
-        .page-container li {
-            margin-bottom: 8px;
-        }
-
-        .back-link {
-            display: inline-block;
-            margin-top: 30px;
-            color: #d97706;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Rodapé */
-        .main-footer {
-            background-color: #1b365d;
-            color: #ffffff;
-            padding: 25px 15px;
-            margin-top: 50px;
-            text-align: center;
-            border-top: 3px solid #d97706;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .footer-links {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .footer-links a {
-            color: #e2e8f0;
-            text-decoration: none;
-            font-size: 0.88rem;
-        }
-
-        .footer-links a:hover {
-            color: #d97706;
-            text-decoration: underline;
-        }
-
-        .footer-links .divider {
-            color: #64748b;
-            font-size: 0.85rem;
-        }
-
-        .copyright {
-            margin: 0;
-            font-size: 0.78rem;
-            color: #94a3b8;
-        }
-
-        @media (max-width: 576px) {
-            .page-container {
-                padding: 20px;
-                margin: 20px 10px;
-            }
-            .footer-links .divider {
-                display: none;
-            }
-            .footer-links {
-                flex-direction: column;
-                gap: 8px;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Cabeçalho -->
-    <header class="main-header">
-        <div class="header-container">
-            <a href="./index.html" class="brand-logo">
-                <h1>Distribuidora <span>Frazão</span></h1>
-            </a>
-        </div>
-    </header>
-
-    <!-- Conteúdo Principal -->
-    <main class="page-container">
-        <h2>Regras de Uso e Termos Gerais</h2>
-        
-        <p>Bem-vindo ao site da <strong>Distribuidora Frazão</strong>. Ao navegar por este portal ou realizar cotações e compras, você concorda com as regras e condições estabelecidas abaixo.</p>
-
-        <h3>1. Cadastro e Responsabilidade do Usuário</h3>
-        <p>Para efetuar pedidos no atacado, o usuário compromete-se a fornecer informações verdadeiras e atualizadas:</p>
-        <ul>
-            <li>Manter dados cadastrais e de faturamento (CPF/CNPJ) devidamente atualizados;</li>
-            <li>Garantir o sigilo de credenciais de acesso caso possua conta de cliente;</li>
-            <li>Não utilizar o site para fins ilícitos, fraudulentos ou desautorizados.</li>
-        </ul>
-
-        <h3>2. Informações de Produtos e Estoque</h3>
-        <p>Trabalhamos para manter o catálogo de produtos sempre atualizado. No entanto:</p>
-        <ul>
-            <li>As imagens dos produtos são meramente ilustrativas e podem sofrer alterações de embalagem por parte dos fabricantes;</li>
-            <li>A inclusão de um item no catálogo não garante a disponibilidade imediata em estoque;</li>
-            <li>Preços, promoções e condições comerciais podem ser alterados sem aviso prévio.</li>
-        </ul>
-
-        <h3>3. Pedidos e Faturamento</h3>
-        <p>Por se tratar de vendas no atacado, a Distribuidora Frazão reserva-se o direito de estipular valor mínimo de pedido e validar cadastros cadastrais/fiscais antes da aprovação final e envio das mercadorias.</p>
-
-        <h3>4. Propriedade Intelectual</h3>
-        <p>Todo o conteúdo deste site (textos, logotipos, marcas, layout e código-fonte) é de propriedade exclusiva da Distribuidora Frazão ou de seus parceiros comerciais, sendo proibida a cópia ou reprodução não autorizada.</p>
-
-        <h3>5. Alterações nos Termos</h3>
-        <p>A Distribuidora Frazão poderá atualizar estas Regras de Uso a qualquer momento para refletir melhorias operacionais ou adequações legais.</p>
-
-        <a href="./index.html" class="back-link">&larr; Voltar para a página inicial</a>
-    </main>
-
-    <!-- Rodapé -->
-    <footer class="main-footer">
-        <div class="footer-container">
-            <div class="footer-links">
-                <a href="./politica-de-devolucao.html">Política de Devolução</a>
-                <span class="divider">|</span>
-                <a href="./politica-de-privacidade.html">Política de Privacidade</a>
-                <span class="divider">|</span>
-                <a href="./regras-de-uso.html">Regras de Uso</a>
-            </div>
-            <p class="copyright">&copy; Distribuidora Frazão. Todos os direitos reservados.</p>
-        </div>
-    </footer>
-
-</body>
-</html>
+---
+*Em caso de dúvidas sobre cadastros, faturamento ou negociações, entre em contato com nossa equipe.*

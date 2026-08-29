@@ -1,1 +1,209 @@
-chicletes-e-drops.hmtl
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo - Chicletes e Drops | Distribuidora Frazão</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+        h1 { text-align: center; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .card { background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
+        .card img { width: 100%; height: 150px; object-fit: cover; border-radius: 4px; background: #eee; margin-bottom: 10px; }
+        .card h3 { font-size: 16px; margin: 0 0 10px 0; color: #444; }
+        .card p { font-size: 18px; font-weight: bold; color: #27ae60; margin: 0 0 15px 0; }
+        .btn-add { background: #3498db; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+        .btn-add:hover { background: #2980b9; }
+        
+        /* Paginação */
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; }
+        .pagination button { padding: 8px 12px; border: none; background: #ddd; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .pagination button.active { background: #27ae60; color: white; }
+
+        /* Barra de Cotação WhatsApp */
+        .whatsapp-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #25d366; color: white; text-align: center; padding: 15px; font-size: 18px; font-weight: bold; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 15px; }
+        .whatsapp-bar a { background: white; color: #25d366; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+        .whatsapp-bar a:hover { background: #f0f0f0; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Chicletes e Drops</h1>
+        
+        <!-- Grade de Produtos -->
+        <div id="product-grid" class="grid"></div>
+
+        <!-- Botões de Paginação -->
+        <div id="pagination" class="pagination"></div>
+    </div>
+
+    <!-- Barra Fixa para Cotar no WhatsApp -->
+    <div class="whatsapp-bar">
+        <span>Itens selecionados para cotação: <span id="contador-itens">0</span></span>
+        <a id="btn-cotar" href="#" target="_blank">Cotar pelo WhatsApp</a>
+    </div>
+
+    <script>
+        // Lista de produtos com espaço para o link da imagem da internet
+        const produtos = [
+            { id: "doc_001", nome: "Adams cx hortelã c/100", preco: 43.90, imagem: "" },
+            { id: "doc_002", nome: "Adams cx Tutti c/100", preco: 43.90, imagem: "" },
+            { id: "doc_003", nome: "Ch. A metro cereja c/12", preco: 19.80, imagem: "" },
+            { id: "doc_004", nome: "Ch. A metro melancia c/12", preco: 19.80, imagem: "" },
+            { id: "doc_005", nome: "Ch. A metro Tutti c/12", preco: 19.80, imagem: "" },
+            { id: "doc_006", nome: "Ch. A metro uva c/12", preco: 19.80, imagem: "" },
+            { id: "doc_007", nome: "Ch. Barbie hortelã c/100", preco: 10.90, imagem: "" },
+            { id: "doc_008", nome: "Ch. Barbie Tutti c/100", preco: 10.90, imagem: "" },
+            { id: "doc_009", nome: "Ch. Big Big hortelã c/100", preco: 9.95, imagem: "" },
+            { id: "doc_010", nome: "Ch. Big Big morango c/100", preco: 9.95, imagem: "" },
+            { id: "doc_011", nome: "Ch. Big Big Tutti c/1000", preco: 9.95, imagem: "" },
+            { id: "doc_012", nome: "Ch. Big Big uva c/100", preco: 9.95, imagem: "" },
+            { id: "doc_013", nome: "Ch. Blong azul c/40", preco: 7.70, imagem: "" },
+            { id: "doc_014", nome: "Ch. Blong energético c/40", preco: 7.70, imagem: "" },
+            { id: "doc_015", nome: "Ch. Blong hortelã c/40", preco: 7.70, imagem: "" },
+            { id: "doc_016", nome: "Ch. Blong melancia c/40", preco: 7.70, imagem: "" },
+            { id: "doc_017", nome: "Ch. Blong morango c/40", preco: 7.70, imagem: "" },
+            { id: "doc_018", nome: "Ch. Blong napolitano c/40", preco: 7.70, imagem: "" },
+            { id: "doc_019", nome: "Ch. Blong preto c/40", preco: 7.70, imagem: "" },
+            { id: "doc_020", nome: "Ch. Blong Tutti c/40", preco: 7.70, imagem: "" },
+            { id: "doc_021", nome: "Ch. Blong uva c/40", preco: 7.70, imagem: "" },
+            { id: "doc_022", nome: "Ch. Bubbaloo hortelã c/60", preco: 15.80, imagem: "" },
+            { id: "doc_023", nome: "Ch. Bubbaloo morango c/60", preco: 15.80, imagem: "" },
+            { id: "doc_024", nome: "Ch. Bubbaloo Tutti c/60", preco: 15.80, imagem: "" },
+            { id: "doc_025", nome: "Ch. Bubbaloo uva c/60", preco: 15.80, imagem: "" },
+            { id: "doc_026", nome: "Ch. Danny hall c/18", preco: 10.50, imagem: "" },
+            { id: "doc_027", nome: "Ch. Pica pau hortelã c/100", preco: 10.90, imagem: "" },
+            { id: "doc_028", nome: "Ch. Pica pau Tutti c/100", preco: 10.90, imagem: "" },
+            { id: "doc_029", nome: "Ch. Plutonita abraço cong. c/40", preco: 9.50, imagem: "" },
+            { id: "doc_030", nome: "Ch. Plutonita atomic", preco: 15.50, imagem: "" },
+            { id: "doc_031", nome: "Ch. Plutonita baba de bruxa c/40", preco: 9.50, imagem: "" },
+            { id: "doc_032", nome: "Ch. Plutonita cabeça abobora c/40", preco: 9.50, imagem: "" },
+            { id: "doc_033", nome: "Ch. Plutonita zumbiss c/15", preco: 13.70, imagem: "" },
+            { id: "doc_034", nome: "Ch. Tatoo hortelã c/100", preco: 10.90, imagem: "" },
+            { id: "doc_035", nome: "Ch. Tatoo morango c/100", preco: 10.90, imagem: "" },
+            { id: "doc_036", nome: "Ch. Tatoo Tutti c/100", preco: 10.90, imagem: "" },
+            { id: "doc_037", nome: "Ch. Tatoo uva c/100", preco: 10.90, imagem: "" },
+            { id: "doc_038", nome: "Ch. Trident azul c/21", preco: 46.90, imagem: "" },
+            { id: "doc_039", nome: "Ch. Trident canela c/12", preco: 46.90, imagem: "" },
+            { id: "doc_040", nome: "Ch. Trident melancia c/21", preco: 46.90, imagem: "" },
+            { id: "doc_041", nome: "Ch. Trident menta verde c/21", preco: 46.90, imagem: "" },
+            { id: "doc_042", nome: "Ch. Flics azul c/12", preco: 10.39, imagem: "" },
+            { id: "doc_043", nome: "Ch. Flics hortela c/12", preco: 10.39, imagem: "" },
+            { id: "doc_044", nome: "Ch. Flics morango c/12", preco: 10.39, imagem: "" },
+            { id: "doc_045", nome: "Ch. Flics tutti c/12", preco: 10.39, imagem: "" },
+            { id: "doc_046", nome: "Ch. Flics uva c/12", preco: 10.39, imagem: "" },
+            { id: "doc_047", nome: "Ch. Zone c/40", preco: 12.35, imagem: "" },
+            { id: "doc_048", nome: "Freegell drops 3x1 c/12", preco: 11.50, imagem: "" },
+            { id: "doc_049", nome: "Freegell drops az. morango c/12", preco: 11.50, imagem: "" },
+            { id: "doc_050", nome: "Freegell drops az. uva c/12", preco: 11.50, imagem: "" },
+            { id: "doc_051", nome: "Freegell drops azul c/12", preco: 11.50, imagem: "" },
+            { id: "doc_052", nome: "Freegell drops cereja c/ choc. c/12", preco: 11.50, imagem: "" },
+            { id: "doc_053", nome: "Freegell drops cereja mentol c/12", preco: 11.50, imagem: "" },
+            { id: "doc_054", nome: "Freegell drops hortelã mentol c/12", preco: 11.50, imagem: "" },
+            { id: "doc_055", nome: "Freegell drops maracujá c/12", preco: 11.50, imagem: "" },
+            { id: "doc_056", nome: "Freegell drops melancia c/12", preco: 11.50, imagem: "" },
+            { id: "doc_057", nome: "Freegell drops melão c/12", preco: 11.50, imagem: "" },
+            { id: "doc_058", nome: "Freegell drops menta c/choc. c/12", preco: 11.50, imagem: "" },
+            { id: "doc_059", nome: "Freegell drops morango c/ choc. c/12", preco: 11.50, imagem: "" },
+            { id: "doc_060", nome: "Freegel drops morango cremoso c/12", preco: 11.50, imagem: "" },
+            { id: "doc_061", nome: "Freegell drops preto c/12", preco: 11.50, imagem: "" },
+            { id: "doc_062", nome: "Freegell drops vit-c c/12", preco: 11.50, imagem: "" },
+            { id: "doc_063", nome: "Goma Fini chicle clássico c/18", preco: 15.60, imagem: "" },
+            { id: "doc_064", nome: "Halls cereja c/21", preco: 31.90, imagem: "" },
+            { id: "doc_065", nome: "Halls melancia c/21", preco: 31.90, imagem: "" },
+            { id: "doc_066", nome: "Halls menta verde c/21", preco: 31.90, imagem: "" },
+            { id: "doc_067", nome: "Halls mentol c/21", preco: 31.90, imagem: "" },
+            { id: "doc_068", nome: "Halls morango c/21", preco: 31.90, imagem: "" },
+            { id: "doc_069", nome: "Halls prata c/21", preco: 31.90, imagem: "" },
+            { id: "doc_070", nome: "Halls preto c/21", preco: 31.90, imagem: "" },
+            { id: "doc_071", nome: "Halls uva verde c/21", preco: 31.90, imagem: "" },
+            { id: "doc_072", nome: "Mentos flip top crazy fruit c/12", preco: 18.20, imagem: "" },
+            { id: "doc_073", nome: "Mentos flip top f. vermelhas c/12", preco: 18.20, imagem: "" },
+            { id: "doc_074", nome: "Mentos flip top fruit c/12", preco: 18.20, imagem: "" },
+            { id: "doc_075", nome: "Mentos flip top mint c/12", preco: 18.20, imagem: "" },
+            { id: "doc_076", nome: "Mentos flip top tutti c/12", preco: 18.20, imagem: "" },
+            { id: "doc_077", nome: "Mentos flip top uva c/12", preco: 18.20, imagem: "" },
+            { id: "doc_078", nome: "Mentos flip top yogurt c/12", preco: 18.20, imagem: "" },
+            { id: "doc_079", nome: "Mentos stick azull c/12", preco: 36.99, imagem: "" },
+            { id: "doc_080", nome: "Mentos stick fruit c/12", preco: 36.99, imagem: "" },
+            { id: "doc_081", nome: "Mentos stick frutas vermelhas c/16", preco: 36.99, imagem: "" },
+            { id: "doc_082", nome: "Mentos stick mor/yogurt c/16", preco: 36.99, imagem: "" },
+            { id: "doc_083", nome: "Mentos stick rainbow c/16", preco: 36.99, imagem: "" },
+            { id: "doc_084", nome: "Mentos stick tutti c/16", preco: 36.99, imagem: "" },
+            { id: "doc_085", nome: "Pastilha Minty hortelã c/40", preco: 33.80, imagem: "" },
+            { id: "doc_086", nome: "Tic tac laranja c/14", preco: 28.00, imagem: "" },
+            { id: "doc_087", nome: "Tic tac menta c/14", preco: 28.00, imagem: "" }
+        ];
+
+        let paginaAtual = 1;
+        const itensPorPagina = 12; // Quantos produtos aparecem por página
+        let carrinho = [];
+
+        function renderizarProdutos() {
+            const grid = document.getElementById("product-grid");
+            grid.innerHTML = "";
+
+            const inicio = (paginaAtual - 1) * itensPorPagina;
+            const fim = inicio + itensPorPagina;
+            const itensPagina = produtos.slice(inicio, fim);
+
+            itensPagina.forEach(prod => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <img src="${prod.imagem || 'https://via.placeholder.com/150?text=Sem+Foto'}" alt="${prod.nome}">
+                    <h3>${prod.nome}</h3>
+                    <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
+                    <button class="btn-add" onclick="adicionarItem('${prod.nome}', ${prod.preco})">Adicionar</button>
+                `;
+                grid.appendChild(card);
+            });
+
+            renderizarPaginacao();
+        }
+
+        function renderizarPaginacao() {
+            const paginacao = document.getElementById("pagination");
+            paginacao.innerHTML = "";
+
+            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                const btn = document.createElement("button");
+                btn.innerText = i;
+                if (i === paginaAtual) btn.className = "active";
+                btn.onclick = () => {
+                    paginaAtual = i;
+                    renderizarProdutos();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                paginacao.appendChild(btn);
+            }
+        }
+
+        function adicionarItem(nome, preco) {
+            carrinho.push({ nome, preco });
+            document.getElementById("contador-itens").innerText = carrinho.length;
+            atualizarLinkWhatsApp();
+        }
+
+        function atualizarLinkWhatsApp() {
+            const numeroWhatsApp = "5521968659086";
+            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes produtos:\n\n";
+            
+            carrinho.forEach((item, index) => {
+                mensagem += `${index + 1}. ${item.nome} - R$ ${item.preco.toFixed(2).replace('.', ',')}\n`;
+            });
+
+            const linkEncoded = encodeURI(mensagem);
+            document.getElementById("btn-cotar").href = `https://wa.me/${numeroWhatsApp}?text=${linkEncoded}`;
+        }
+
+        // Inicializar a página
+        renderizarProdutos();
+    </script>
+
+</body>
+</html>

@@ -3,298 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Frazão Ltda - Doces</title>
+    <title>Catálogo - Doces | Distribuidora Frazão</title>
     <style>
-        :root {
-            --primary: #1a252f;
-            --secondary: #e67e22;
-            --success: #27ae60;
-            --bg-light: #f8f9fa;
-            --border: #e2e8f0;
-            --text-dark: #2d3748;
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; padding-bottom: 120px; }
+        h1 { text-align: center; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .loja-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+        .produtos-area { flex: 3; min-width: 300px; }
+        
+        /* Carrinho Lateral */
+        .carrinho-lateral { flex: 1; min-width: 280px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
+        .carrinho-lateral h2 { font-size: 18px; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333; }
+        .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
+        .item-carrinho .detalhes { flex: 1; margin-right: 10px; }
+        .item-carrinho .controles { display: flex; align-items: center; gap: 5px; }
+        .item-carrinho button { background: #e0e0e0; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .item-carrinho button:hover { background: #d0d0d0; }
+        .carrinho-total { font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; color: #27ae60; }
+        
+        .btn-limpar { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; font-weight: bold; }
+        .btn-limpar:hover { background: #c0392b; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .card { background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
+        .card img { width: 100%; height: 140px; object-fit: contain; border-radius: 4px; background: #fff; margin-bottom: 10px; }
+        .card h3 { font-size: 15px; margin: 0 0 8px 0; color: #444; }
+        .card p { font-size: 16px; font-weight: bold; color: #27ae60; margin: 0 0 12px 0; }
+        
+        /* Botões do Card */
+        .btn-add { background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.2s; }
+        .btn-add:hover { background: #2980b9; }
+        
+        .card-controles { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; border: 1px solid #ddd; border-radius: 5px; padding: 4px; }
+        .card-controles button { background: #3498db; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 14px; }
+        .card-controles button:hover { background: #2980b9; }
+        .card-controles span { font-weight: bold; font-size: 15px; color: #333; }
+
+        /* Paginação */
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .pagination button { padding: 8px 12px; border: none; background: #ddd; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .pagination button.active { background: #27ae60; color: white; }
+
+        /* Barra Fixa do WhatsApp */
+        .whatsapp-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #25d366; color: white; text-align: center; padding: 12px; font-size: 16px; font-weight: bold; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 20px; box-sizing: border-box; }
+        .whatsapp-bar a { background: white; color: #25d366; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+        .whatsapp-bar a:hover { background: #f0f0f0; }
+
+        @media (max-width: 768px) {
+            .loja-layout { flex-direction: column-reverse; }
+            .carrinho-lateral { position: static; width: 100%; margin-bottom: 20px; }
         }
-        * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-light); margin: 0; padding: 0; color: var(--text-dark); }
-        header { background: linear-gradient(135deg, var(--primary), #34495e); color: white; text-align: center; padding: 20px 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        header h1 { margin: 0; font-size: 24px; }
-        header a { color: #bdc3c7; font-size: 13px; text-decoration: underline; display: inline-block; margin-top: 5px; }
-        
-        .container { max-width: 1300px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
-        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
-        
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h2 { border-bottom: 2px solid var(--border); padding-bottom: 12px; margin-top: 0; color: var(--primary); font-size: 18px; display: flex; justify-content: space-between; align-items: center; }
-        
-        /* 4 produtos por linha */
-        .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; min-height: 400px; }
-        @media (max-width: 1024px) { .product-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 550px) { .product-grid { grid-template-columns: 1fr; } }
-
-        .product-card { border: 1px solid var(--border); border-radius: 8px; background: white; display: flex; flex-direction: column; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
-        .product-card:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
-        .product-img-container { width: 100%; height: 110px; background-color: #edf2f7; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .placeholder-text { color: #a0aec0; font-size: 11px; text-align: center; padding: 10px; }
-        .product-body { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
-        .product-title { font-size: 12px; font-weight: 600; margin: 0 0 6px 0; color: var(--text-dark); line-height: 1.3; }
-        .product-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
-        .product-price { font-size: 13px; font-weight: bold; color: var(--secondary); margin: 0; }
-        .btn-add { background-color: var(--success); color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; }
-        .btn-add:hover { background-color: #219653; }
-
-        .pagination { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border); }
-        .pagination button { background-color: #edf2f7; color: var(--text-dark); border: 1px solid var(--border); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: 600; }
-        .pagination button.active { background-color: var(--primary); color: white; border-color: var(--primary); }
-        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .cart-items-container { max-height: 350px; overflow-y: auto; margin-bottom: 15px; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
-        .cart-item-controls { display: flex; align-items: center; gap: 6px; }
-        .cart-item-controls button { background: #cbd5e0; border: none; width: 20px; height: 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        
-        .total-section { font-size: 16px; font-weight: bold; margin: 15px 0; text-align: right; color: var(--primary); border-top: 2px solid var(--border); padding-top: 10px; }
-        .btn-whatsapp { background-color: #25d366; color: white; border: none; width: 100%; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-whatsapp:hover { background-color: #1ebe5d; }
-        .search-box { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; margin-bottom: 12px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>AR Frazão Ltda - Doces</h1>
-        <a href="index.html">← Voltar para o Menu Principal</a>
-    </header>
-
     <div class="container">
-        <div class="card">
-            <h2>
-                <span>Produtos de Doces</span>
-                <span id="product-count" style="font-size: 13px; color: #718096; font-weight: normal;"></span>
-            </h2>
-            <input type="text" id="searchInput" class="search-box" placeholder="Buscar produto nesta categoria..." onkeyup="filtrarProdutos()">
-            
-            <div class="product-grid" id="product-grid"></div>
-            <div class="pagination" id="pagination-controls"></div>
-        </div>
+        <h1>Doces</h1>
+        
+        <div class="loja-layout">
+            <div class="produtos-area">
+                <div id="product-grid" class="grid"></div>
+                <div id="pagination" class="pagination"></div>
+            </div>
 
-        <div class="card">
-            <h2>Seu Pedido</h2>
-            <div class="cart-items-container" id="cart-items">
-                <p style="color: #a0aec0; font-style: italic; text-align: center; margin-top: 30px;">O carrinho está vazio.</p>
+            <div class="carrinho-lateral">
+                <h2>Seu Carrinho Global</h2>
+                <div id="lista-carrinho">
+                    <p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
+                </div>
+                <div id="carrinho-total" class="carrinho-total" style="display: none;">
+                    Total: R$ 0,00
+                </div>
+                <button class="btn-limpar" onclick="limparCarrinho()" id="btn-limpar-carrinho" style="display: none;">Esvaziar Carrinho</button>
             </div>
-            
-            <div class="total-section">
-                Total: R$ <span id="cart-total">0,00</span>
-            </div>
-            
-            <button class="btn-whatsapp" onclick="enviarWhatsApp()">Finalizar Cotação no WhatsApp</button>
         </div>
+    </div>
+
+    <div class="whatsapp-bar">
+        <span>Total: <span id="footer-total">R$ 0,00</span></span>
+        <a id="btn-cotar" href="#" target="_blank">Enviar Cotação WhatsApp</a>
     </div>
 
     <script>
         const produtos = [
-            { id: "doc_01", nome: 'doce de amendoim 1,5 kg c/50', preco: 29.90, imagem: 'https://lojasmel1.vtexassets.com/arquivos/ids/262567-800-800?v=639119673858100000&width=800&height=800&aspect=true' },
-            { id: "doc_02", nome: 'doce de amendoim 1,65 kg c/30', preco: 33.00, imagem: '' },
-            { id: "doc_03", nome: 'doce de amendoim liso Aurora c/20', preco: 20.90, imagem: '' },
-            { id: "doc_04", nome: 'doce de abóbora c/20', preco: 20.90, imagem: '' },
-            { id: "doc_05", nome: 'baton preto c/30', preco: 53.90, imagem: '' },
-            { id: "doc_06", nome: 'bombom serenata', preco: 59.90, imagem: '' },
-            { id: "doc_07", nome: 'chup-chup biba c/50', preco: 34.90, imagem: '' },
-            { id: "doc_08", nome: 'cocada Aurora c/20', preco: 28.70, imagem: '' },
-            { id: "doc_09", nome: 'disqueti  c/18', preco: 41.90, imagem: '' },
-            { id: "doc_10", nome: 'doce de leite c/20', preco: 19.90, imagem: '' },
-            { id: "doc_11", nome: 'doce de leite ninho c/40', preco: 23.90, imagem: '' },
-            { id: "doc_12", nome: 'famoso beijinho de coco c/21', preco: 46.65, imagem: '' },
-            { id: "doc_13", nome: 'famoso beijinho goiabada c/21', preco: 46.65, imagem: '' },
-            { id: "doc_14", nome: 'famoso brigadeiro c/21', preco: 46.65, imagem: '' },
-            { id: "doc_15", nome: 'geladinho gel fruta c/40', preco: 11.70, imagem: '' },
-            { id: "doc_16", nome: 'geladão gel fruta c/20', preco: 11.70, imagem: '' },
-            { id: "doc_17", nome: 'goma fini morango c/12', preco: 9.80, imagem: '' },
-            { id: "doc_18", nome: 'goma fini morango cítrico c/12', preco: 9.80, imagem: '' },
-            { id: "doc_19", nome: 'mariola lisa 800g c/50', preco: 14.80, imagem: '' },
-            { id: "doc_20", nome: 'nucita chocolate c/48', preco: 20.70, imagem: '' },
-            { id: "doc_21", nome: 'nucita morango c/48', preco: 20.70, imagem: '' },
-            { id: "doc_22", nome: 'nucita napolitano c/24', preco: 17.55, imagem: '' },
-            { id: "doc_23", nome: 'nucita sortida c/48', preco: 20.90, imagem: '' },
-            { id: "doc_24", nome: 'paçoca rolha santa helena c/100', preco: 38.35, imagem: '' },
-            { id: "doc_25", nome: 'pezão crocante c/20', preco: 20.90, imagem: '' },
-            { id: "doc_26", nome: 'pingo de leite c/50', preco: 19.50, imagem: '' },
-            { id: "doc_27", nome: 'cajuzinho c/20', preco: 20.90, imagem: '' },
-            { id: "doc_28", nome: 'crokissimo c/36', preco: 22.95, imagem: '' },
-            { id: "doc_29", nome: 'goma docile eucalipto c/24', preco: 14.40, imagem: '' },
-            { id: "doc_30", nome: 'goma fini angry c/12', preco: 9.80, imagem: '' },
-            { id: "doc_31", nome: 'goma fini pinta língua c/12', preco: 9.80, imagem: '' },
-            { id: "doc_32", nome: 'goma fini sortido c/12', preco: 9.80, imagem: '' },
-            { id: "doc_33", nome: 'goma mini sortida c/24', preco: 14.40, imagem: '' },
-            { id: "doc_34", nome: 'goma fini amora c/12', preco: 11.70, imagem: '' },
-            { id: "doc_35", nome: 'goma fini minhoca c/12', preco: 11.70, imagem: '' },
-            { id: "doc_36", nome: 'goma fini uva c/12', preco: 9.80, imagem: '' },
-            { id: "doc_37", nome: 'goma fini tutti frutti c/12', preco: 9.80, imagem: '' },
-            { id: "doc_38", nome: 'quebra queixão c/20', preco: 28.70, imagem: '' },
-            { id: "doc_39", nome: 'goma fini twister c/12', preco: 9.80, imagem: '' },
-            { id: "doc_40", nome: 'goma fini twister ácido c/12', preco: 9.80, imagem: '' },
-            { id: "doc_41", nome: 'goma fini dentadura c/12', preco: 11.70, imagem: '' },
-            { id: "doc_42", nome: 'mariola açucarada c/50', preco: 15.95, imagem: '' },
-            { id: "doc_43", nome: 'goma fini beijinho c/12', preco: 11.70, imagem: '' },
-            { id: "doc_44", nome: 'goma fini morango c/12', preco: 9.80, imagem: '' },
-            { id: "doc_45", nome: 'goma fini morango cítrico c/12', preco: 9.80, imagem: '' },
-            { id: "doc_46", nome: 'goma fini ursinho c/12', preco: 11.70, imagem: '' },
-            { id: "doc_47", nome: 'goma fini uva cítrico c/12', preco: 9.80, imagem: '' },
-            { id: "doc_48", nome: 'goma fini banana c/12', preco: 11.70, imagem: '' },
-            { id: "doc_49", nome: 'mariiola 3,0kg c/50', preco: 43.49, imagem: '' },
-            { id: "doc_50", nome: 'geleia Aurora c/20', preco: 20.90, imagem: '' },
-            { id: "doc_51", nome: 'mariola 2,5kg c/50', preco: 37.99, imagem: '' },
-            { id: "doc_52", nome: 'mendorato c/30', preco: 20.90, imagem: '' },
-            { id: "doc_53", nome: 'grelhaditos c/30', preco: 20.90, imagem: '' },
-            { id: "doc_54", nome: 'bananinha cremosa famoso c/24', preco: 36.10, imagem: '' },
-            { id: "doc_55", nome: 'paçocao c/20', preco: 20.90, imagem: '' },
-            { id: "doc_56", nome: 'goma tubo Dori c/30', preco: 22.50, imagem: '' },
-            { id: "doc_57", nome: 'pé de moça c/20', preco: 22.50, imagem: '' }
+            { id: "doc_001", nome: "Doce de amendoim 1,5 kg c/50", preco: 29.90, imagem: "" },
+            { id: "doc_002", nome: "Doce de amendoim 1,65 kg c/30", preco: 33.00, imagem: "" },
+            { id: "doc_003", nome: "Doce de amendoim liso Aurora c/20", preco: 20.90, imagem: "" },
+            { id: "doc_004", nome: "Doce de abóbora c/20", preco: 20.90, imagem: "" },
+            { id: "doc_005", nome: "Baton preto c/30", preco: 53.90, imagem: "" },
+            { id: "doc_006", nome: "Bombom serenata", preco: 59.90, imagem: "" },
+            { id: "doc_007", nome: "Chup-chup biba c/50", preco: 34.90, imagem: "" },
+            { id: "doc_008", nome: "Cocada Aurora c/20", preco: 28.70, imagem: "" },
+            { id: "doc_009", nome: "Disqueti c/18", preco: 41.90, imagem: "" },
+            { id: "doc_010", nome: "Doce de leite c/20", preco: 19.90, imagem: "" },
+            { id: "doc_011", nome: "Doce de leite ninho c/40", preco: 23.90, imagem: "" },
+            { id: "doc_012", nome: "Famoso beijinho de coco c/21", preco: 46.65, imagem: "" },
+            { id: "doc_013", nome: "Famoso beijinho goiabada c/21", preco: 46.65, imagem: "" },
+            { id: "doc_014", nome: "Famoso brigadeiro c/21", preco: 46.65, imagem: "" },
+            { id: "doc_015", nome: "Geladinho gel fruta c/40", preco: 11.70, imagem: "" },
+            { id: "doc_016", nome: "Geladão gel fruta c/20", preco: 11.70, imagem: "" },
+            { id: "doc_017", nome: "Goma fini morango c/12", preco: 9.80, imagem: "" },
+            { id: "doc_018", nome: "Goma fini morango cítrico c/12", preco: 9.80, imagem: "" },
+            { id: "doc_019", nome: "Mariola lisa 800g c/50", preco: 14.80, imagem: "" },
+            { id: "doc_020", nome: "Nucita chocolate c/48", preco: 20.70, imagem: "" },
+            { id: "doc_021", nome: "Nucita morango c/48", preco: 20.70, imagem: "" },
+            { id: "doc_022", nome: "Nucita napolitano c/24", preco: 17.55, imagem: "" },
+            { id: "doc_023", nome: "Nucita sortida c/48", preco: 20.90, imagem: "" },
+            { id: "doc_024", nome: "Paçoca rolha santa helena c/100", preco: 38.35, imagem: "" },
+            { id: "doc_025", nome: "Pezão crocante c/20", preco: 20.90, imagem: "" },
+            { id: "doc_026", nome: "Pingo de leite c/50", preco: 19.50, imagem: "" },
+            { id: "doc_027", nome: "Cajuzinho c/20", preco: 20.90, imagem: "" },
+            { id: "doc_028", nome: "Crokissimo c/36", preco: 22.95, imagem: "" },
+            { id: "doc_029", nome: "Goma docile eucalipto c/24", preco: 14.40, imagem: "" },
+            { id: "doc_030", nome: "Goma fini angry c/12", preco: 9.80, imagem: "" },
+            { id: "doc_031", nome: "Goma fini pinta língua c/12", preco: 9.80, imagem: "" },
+            { id: "doc_032", nome: "Goma fini sortido c/12", preco: 9.80, imagem: "" },
+            { id: "doc_033", nome: "Goma mini sortida c/24", preco: 14.40, imagem: "" },
+            { id: "doc_034", nome: "Goma fini amora c/12", preco: 11.70, imagem: "" },
+            { id: "doc_035", nome: "Goma fini minhoca c/12", preco: 11.70, imagem: "" },
+            { id: "doc_036", nome: "Goma fini uva c/12", preco: 9.80, imagem: "" },
+            { id: "doc_037", nome: "Goma fini tutti frutti c/12", preco: 9.80, imagem: "" },
+            { id: "doc_038", nome: "Quebra queixão c/20", preco: 28.70, imagem: "" },
+            { id: "doc_039", nome: "Goma fini twister c/12", preco: 9.80, imagem: "" },
+            { id: "doc_040", nome: "Goma fini twister ácido c/12", preco: 9.80, imagem: "" },
+            { id: "doc_041", nome: "Goma fini dentadura c/12", preco: 11.70, imagem: "" },
+            { id: "doc_042", nome: "Mariola açucarada c/50", preco: 15.95, imagem: "" },
+            { id: "doc_043", nome: "Goma fini beijinho c/12", preco: 11.70, imagem: "" },
+            { id: "doc_044", nome: "Goma fini ursinho c/12", preco: 11.70, imagem: "" },
+            { id: "doc_045", nome: "Goma fini uva cítrico c/12", preco: 9.80, imagem: "" },
+            { id: "doc_046", nome: "Goma fini banana c/12", preco: 11.70, imagem: "" },
+            { id: "doc_047", nome: "Mariola 3,0kg c/50", preco: 43.49, imagem: "" },
+            { id: "doc_048", nome: "Geleia Aurora c/20", preco: 20.90, imagem: "" },
+            { id: "doc_049", nome: "Mariola 2,5kg c/50", preco: 37.99, imagem: "" },
+            { id: "doc_050", nome: "Mendorato c/30", preco: 20.90, imagem: "" },
+            { id: "doc_051", nome: "Grelhaditos c/30", preco: 20.90, imagem: "" },
+            { id: "doc_052", nome: "Bananinha cremosa famoso c/24", preco: 36.10, imagem: "" },
+            { id: "doc_053", nome: "Paçocão c/20", preco: 20.90, imagem: "" },
+            { id: "doc_054", nome: "Goma tubo Dori c/30", preco: 22.50, imagem: "" },
+            { id: "doc_055", nome: "Pé de moça c/20", preco: 22.50, imagem: "" }
         ];
 
-        let carrinho = JSON.parse(localStorage.getItem('carrinho_arfrazao')) || [];
         let paginaAtual = 1;
-        const itensPorPagina = 12; // 3 linhas completas de 4 produtos
-        let produtosFiltrados = [...produtos];
+        const itensPorPagina = 12;
+        let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
 
-        function renderizarPagina() {
+        function renderizarProdutos() {
             const grid = document.getElementById("product-grid");
-            const pagControls = document.getElementById("pagination-controls");
-            document.getElementById("product-count").innerText = `${produtosFiltrados.length} itens`;
-            
             grid.innerHTML = "";
-            if (produtosFiltrados.length === 0) {
-                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">Nenhum produto encontrado.</p>`;
-                pagControls.innerHTML = "";
-                return;
-            }
 
             const inicio = (paginaAtual - 1) * itensPorPagina;
             const fim = inicio + itensPorPagina;
-            const itensPagina = produtosFiltrados.slice(inicio, fim);
+            const itensPagina = produtos.slice(inicio, fim);
 
             itensPagina.forEach(prod => {
-                let imgHtml = prod.imagem 
-                    ? `<img src="${prod.imagem}" alt="${prod.nome}" style="width: 100%; height: 100%; object-fit: contain;">` 
-                    : `<span class="placeholder-text">Sem foto</span>`;
-
-                grid.innerHTML += `
-                    <div class="product-card">
-                        <div class="product-img-container">${imgHtml}</div>
-                        <div class="product-body">
-                            <h3 class="product-title">${prod.nome}</h3>
-                            <div class="product-footer">
-                                <p class="product-price">R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
-                                <button class="btn-add" onclick="adicionarAoCarrinho('${prod.id}')">Adicionar</button>
-                            </div>
+                const card = document.createElement("div");
+                card.className = "card";
+                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${prod.nome}">` : '';
+                
+                const qtdNoCarrinho = carrinho[prod.id] ? carrinho[prod.id].quantidade : 0;
+                
+                let acaoHTML = "";
+                if (qtdNoCarrinho === 0) {
+                    acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">Adicionar</button>`;
+                } else {
+                    acaoHTML = `
+                        <div class="card-controles">
+                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, -1)">-</button>
+                            <span>${qtdNoCarrinho}</span>
+                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">+</button>
                         </div>
-                    </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    ${imgTag}
+                    <h3>${prod.nome}</h3>
+                    <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
+                    ${acaoHTML}
                 `;
+                grid.appendChild(card);
             });
-            renderizarBotoesPagina();
-            atualizarCarrinho();
+
+            renderizarPaginacao();
         }
 
-        function renderizarBotoesPagina() {
-            const pagControls = document.getElementById("pagination-controls");
-            const totalPaginas = Math.ceil(produtosFiltrados.length / itensPorPagina);
-            if (totalPaginas <= 1) { pagControls.innerHTML = ""; return; }
+        function renderizarPaginacao() {
+            const paginacao = document.getElementById("pagination");
+            paginacao.innerHTML = "";
 
-            let html = `<button onclick="mudarPagina(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled' : ''}>Anterior</button>`;
+            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
+
             for (let i = 1; i <= totalPaginas; i++) {
-                html += `<button onclick="mudarPagina(${i})" class="${paginaAtual === i ? 'active' : ''}">${i}</button>`;
+                const btn = document.createElement("button");
+                btn.innerText = i;
+                if (i === paginaAtual) btn.className = "active";
+                btn.onclick = () => {
+                    paginaAtual = i;
+                    renderizarProdutos();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                paginacao.appendChild(btn);
             }
-            html += `<button onclick="mudarPagina(${paginaAtual + 1})" ${paginaAtual === totalPaginas ? 'disabled' : ''}>Próxima</button>`;
-            pagControls.innerHTML = html;
         }
 
-        function mudarPagina(novaPagina) {
-            const totalPaginas = Math.ceil(produtosFiltrados.length / itensPorPagina);
-            if (novaPagina >= 1 && novaPagina <= totalPaginas) { paginaAtual = novaPagina; renderizarPagina(); }
-        }
-
-        function filtrarProdutos() {
-            const termo = document.getElementById("searchInput").value.toLowerCase();
-            produtosFiltrados = produtos.filter(b => b.nome.toLowerCase().includes(termo));
-            paginaAtual = 1;
-            renderizarPagina();
-        }
-
-        function adicionarAoCarrinho(id) {
-            const produto = produtos.find(p => p.id === id);
-            if (!produto) return;
-            const itemExistente = carrinho.find(item => item.id === id);
-            if (itemExistente) { itemExistente.qtd++; } 
-            else { carrinho.push({ ...produto, qtd: 1 }); }
-            salvarEAtualizar();
-        }
-
-        function alterarQtd(id, delta) {
-            const item = carrinho.find(i => i.id === id);
-            if (item) {
-                item.qtd += delta;
-                if (item.qtd <= 0) { carrinho = carrinho.filter(i => i.id !== id); }
+        function alterarQuantidade(id, nome, preco, delta) {
+            if (!carrinho[id]) {
+                if (delta > 0) {
+                    carrinho[id] = { nome, preco, quantidade: delta };
+                }
+            } else {
+                carrinho[id].quantidade += delta;
+                if (carrinho[id].quantidade <= 0) {
+                    delete carrinho[id];
+                }
             }
-            salvarEAtualizar();
+            salvarESincronizar();
         }
 
-        function salvarEAtualizar() {
-            localStorage.setItem('carrinho_arfrazao', JSON.stringify(carrinho));
-            atualizarCarrinho();
+        function limparCarrinho() {
+            carrinho = {};
+            salvarESincronizar();
         }
 
-        function atualizarCarrinho() {
-            const container = document.getElementById("cart-items");
-            const totalEl = document.getElementById("cart-total");
+        function salvarESincronizar() {
+            localStorage.setItem('carrinho_distribuidora', JSON.stringify(carrinho));
+            renderizarProdutos();
+            atualizarCarrinhoUI();
+        }
 
-            if (carrinho.length === 0) {
-                container.innerHTML = `<p style="color: #a0aec0; font-style: italic; text-align: center; margin-top: 30px;">O carrinho está vazio.</p>`;
-                totalEl.innerText = "0,00";
-                return;
-            }
+        function atualizarCarrinhoUI() {
+            const listaDiv = document.getElementById("lista-carrinho");
+            const totalDiv = document.getElementById("carrinho-total");
+            const btnLimpar = document.getElementById("btn-limpar-carrinho");
+            const footerTotal = document.getElementById("footer-total");
+            
+            listaDiv.innerHTML = "";
+            let valorTotal = 0;
+            let temItens = false;
 
-            container.innerHTML = "";
-            let total = 0;
-            carrinho.forEach(item => {
-                let subtotal = item.preco * item.qtd;
-                total += subtotal;
-                container.innerHTML += `
-                    <div class="cart-item">
-                        <div>
-                            <strong>${item.nome}</strong><br>
-                            <small style="color: #718096;">R$ ${item.preco.toFixed(2).replace('.', ',')} un</small>
-                        </div>
-                        <div class="cart-item-controls">
-                            <button onclick="alterarQtd('${item.id}', -1)">-</button>
-                            <span>${item.qtd}</span>
-                            <button onclick="alterarQtd('${item.id}', 1)">+</button>
-                        </div>
+            const numeroWhatsApp = "5521968659086";
+            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes produtos:\n\n";
+            let contador = 1;
+
+            for (let id in carrinho) {
+                temItens = true;
+                let item = carrinho[id];
+                let subtotal = item.preco * item.quantidade;
+                valorTotal += subtotal;
+
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "item-carrinho";
+                itemDiv.innerHTML = `
+                    <div class="detalhes">
+                        <strong>${item.nome}</strong><br>
+                        <small>R$ ${item.preco.toFixed(2).replace('.', ',')} x ${item.quantidade}</small>
+                    </div>
+                    <div class="controles">
+                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, -1)">-</button>
+                        <span>${item.quantidade}</span>
+                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, 1)">+</button>
                     </div>
                 `;
-            });
-            totalEl.innerText = total.toFixed(2).replace('.', ',');
+                listaDiv.appendChild(itemDiv);
+
+                mensagem += `${contador}. ${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+                contador++;
+            }
+
+            if (!temItens) {
+                listaDiv.innerHTML = '<p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>';
+                totalDiv.style.display = "none";
+                btnLimpar.style.display = "none";
+            } else {
+                totalDiv.style.display = "block";
+                btnLimpar.style.display = "block";
+                totalDiv.innerText = `Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+            }
+
+            footerTotal.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+            mensagem += `\n*Valor Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}*`;
+
+            const linkEncoded = encodeURI(mensagem);
+            document.getElementById("btn-cotar").href = `https://wa.me/${numeroWhatsApp}?text=${linkEncoded}`;
         }
 
-        function enviarWhatsApp() {
-            if (carrinho.length === 0) { alert("Adicione pelo menos um produto ao carrinho!"); return; }
-            let mensagem = "Olá! Gostaria de solicitar a seguinte cotação:\n\n";
-            let total = 0;
-            carrinho.forEach(item => {
-                let subtotal = item.preco * item.qtd;
-                total += subtotal;
-                mensagem += `• ${item.qtd}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
-            });
-            mensagem += `\n*Total da Cotação: R$ ${total.toFixed(2).replace('.', ',')}*`;
-            const numeroWhatsApp = "5521968659086";
-            window.open(`https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`, '_blank');
-        }
-
-        window.onload = () => renderizarPagina();
+        renderizarProdutos();
+        atualizarCarrinhoUI();
     </script>
-
-    <!-- Rodapé integrado com a política de privacidade -->
-    <footer style="text-align: center; padding: 25px 15px; font-size: 13px; color: #718096; margin-top: 50px; border-top: 1px solid #e2e8f0; background-color: #ffffff;">
-        © AR Frazão Ltda — <a href="politica-de-privacidade.html" style="color: #e67e22; text-decoration: none; font-weight: 600;">Política de Privacidade</a>
-    </footer>
 
 </body>
 </html>

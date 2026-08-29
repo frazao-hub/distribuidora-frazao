@@ -22,10 +22,14 @@
         .item-carrinho button { background: #e0e0e0; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-weight: bold; }
         .item-carrinho button:hover { background: #d0d0d0; }
         .carrinho-total { font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; color: #27ae60; }
+        
+        /* Botão para limpar carrinho */
+        .btn-limpar { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; font-weight: bold; }
+        .btn-limpar:hover { background: #c0392b; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .card { background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
-        .card img { width: 100%; height: 140px; object-fit: cover; border-radius: 4px; background: #eee; margin-bottom: 10px; }
+        .card img { width: 100%; height: 140px; object-fit: contain; border-radius: 4px; background: #fff; margin-bottom: 10px; }
         .card h3 { font-size: 15px; margin: 0 0 8px 0; color: #444; }
         .card p { font-size: 16px; font-weight: bold; color: #27ae60; margin: 0 0 12px 0; }
         .btn-add { background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
@@ -61,13 +65,14 @@
 
             <!-- Carrinho com botões de + e - -->
             <div class="carrinho-lateral">
-                <h2>Seu Carrinho</h2>
+                <h2>Seu Carrinho Global</h2>
                 <div id="lista-carrinho">
                     <p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
                 </div>
                 <div id="carrinho-total" class="carrinho-total" style="display: none;">
                     Total: R$ 0,00
                 </div>
+                <button class="btn-limpar" onclick="limparCarrinho()" id="btn-limpar-carrinho" style="display: none;">Esvaziar Carrinho</button>
             </div>
         </div>
     </div>
@@ -125,7 +130,9 @@
 
         let paginaAtual = 1;
         const itensPorPagina = 12;
-        let carrinho = {};
+        
+        // Carrega o carrinho salvo no navegador (funciona entre diferentes páginas do site)
+        let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
 
         function renderizarProdutos() {
             const grid = document.getElementById("product-grid");
@@ -138,8 +145,10 @@
             itensPagina.forEach(prod => {
                 const card = document.createElement("div");
                 card.className = "card";
+                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${prod.nome}">` : '';
+                
                 card.innerHTML = `
-                    <img src="${prod.imagem || 'https://via.placeholder.com/150?text=Sem+Foto'}" alt="${prod.nome}">
+                    ${imgTag}
                     <h3>${prod.nome}</h3>
                     <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
                     <button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">Adicionar</button>
@@ -180,12 +189,24 @@
                     delete carrinho[id];
                 }
             }
+            salvarESincronizar();
+        }
+
+        function limparCarrinho() {
+            carrinho = {};
+            salvarESincronizar();
+        }
+
+        function salvarESincronizar() {
+            // Salva na memória do navegador para cruzar dados entre as pastas
+            localStorage.setItem('carrinho_distribuidora', JSON.stringify(carrinho));
             atualizarCarrinhoUI();
         }
 
         function atualizarCarrinhoUI() {
             const listaDiv = document.getElementById("lista-carrinho");
             const totalDiv = document.getElementById("carrinho-total");
+            const btnLimpar = document.getElementById("btn-limpar-carrinho");
             const footerTotal = document.getElementById("footer-total");
             
             listaDiv.innerHTML = "";
@@ -202,7 +223,6 @@
                 let subtotal = item.preco * item.quantidade;
                 valorTotal += subtotal;
 
-                // Montar visual do carrinho na tela
                 const itemDiv = document.createElement("div");
                 itemDiv.className = "item-carrinho";
                 itemDiv.innerHTML = `
@@ -218,7 +238,6 @@
                 `;
                 listaDiv.appendChild(itemDiv);
 
-                // Montar mensagem para o WhatsApp
                 mensagem += `${contador}. ${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
                 contador++;
             }
@@ -226,8 +245,10 @@
             if (!temItens) {
                 listaDiv.innerHTML = '<p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>';
                 totalDiv.style.display = "none";
+                btnLimpar.style.display = "none";
             } else {
                 totalDiv.style.display = "block";
+                btnLimpar.style.display = "block";
                 totalDiv.innerText = `Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
             }
 
@@ -238,7 +259,9 @@
             document.getElementById("btn-cotar").href = `https://wa.me/${numeroWhatsApp}?text=${linkEncoded}`;
         }
 
+        // Inicializa a página carregando o carrinho global
         renderizarProdutos();
+        atualizarCarrinhoUI();
     </script>
 
 </body>

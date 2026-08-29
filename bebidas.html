@@ -3,303 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Frazão Ltda - Bebidas</title>
+    <title>Catálogo - Bebidas | Distribuidora Frazão</title>
     <style>
-        :root {
-            --primary: #1a252f;
-            --secondary: #e67e22;
-            --success: #27ae60;
-            --bg-light: #f8f9fa;
-            --border: #e2e8f0;
-            --text-dark: #2d3748;
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; padding-bottom: 120px; }
+        h1 { text-align: center; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .loja-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+        .produtos-area { flex: 3; min-width: 300px; }
+        .carrinho-lateral { flex: 1; min-width: 280px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
+        .carrinho-lateral h2 { font-size: 18px; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333; }
+        .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
+        .item-carrinho .detalhes { flex: 1; margin-right: 10px; }
+        .item-carrinho .controles { display: flex; align-items: center; gap: 5px; }
+        .item-carrinho button { background: #e0e0e0; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .item-carrinho button:hover { background: #d0d0d0; }
+        .carrinho-total { font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; color: #27ae60; }
+        .btn-limpar { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; font-weight: bold; }
+        .btn-limpar:hover { background: #c0392b; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .card { background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
+        .card img { width: 100%; height: 140px; object-fit: contain; border-radius: 4px; background: #fff; margin-bottom: 10px; }
+        .card h3 { font-size: 15px; margin: 0 0 8px 0; color: #444; }
+        .card p { font-size: 16px; font-weight: bold; color: #27ae60; margin: 0 0 12px 0; }
+        .btn-add { background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+        .btn-add:hover { background: #2980b9; }
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .pagination button { padding: 8px 12px; border: none; background: #ddd; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .pagination button.active { background: #27ae60; color: white; }
+        .whatsapp-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #25d366; color: white; text-align: center; padding: 12px; font-size: 16px; font-weight: bold; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 20px; box-sizing: border-box; }
+        .whatsapp-bar a { background: white; color: #25d366; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+        .whatsapp-bar a:hover { background: #f0f0f0; }
+        @media (max-width: 768px) {
+            .loja-layout { flex-direction: column-reverse; }
+            .carrinho-lateral { position: static; width: 100%; margin-bottom: 20px; }
         }
-        * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-light); margin: 0; padding: 0; color: var(--text-dark); }
-        header { background: linear-gradient(135deg, var(--primary), #34495e); color: white; text-align: center; padding: 20px 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        header h1 { margin: 0; font-size: 24px; }
-        header a { color: #bdc3c7; font-size: 13px; text-decoration: underline; display: inline-block; margin-top: 5px; }
-        
-        .container { max-width: 1300px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
-        @media (max-width: 850px) { .container { grid-template-columns: 1fr; } }
-        
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h2 { border-bottom: 2px solid var(--border); padding-bottom: 12px; margin-top: 0; color: var(--primary); font-size: 18px; display: flex; justify-content: space-between; align-items: center; }
-        
-        /* Grid com 4 colunas fixas em desktop */
-        .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; min-height: 380px; }
-        @media (max-width: 1024px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 768px) { .product-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 480px) { .product-grid { grid-template-columns: 1fr; } }
-
-        .product-card { border: 1px solid var(--border); border-radius: 8px; background: white; display: flex; flex-direction: column; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
-        .product-card:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
-        
-        .product-img-container { width: 100%; height: 120px; background-color: #edf2f7; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
-        .product-img-container img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
-        .placeholder-text { color: #a0aec0; font-size: 11px; text-align: center; padding: 10px; }
-        
-        .product-body { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
-        .product-title { font-size: 12px; font-weight: 600; margin: 0 0 6px 0; color: var(--text-dark); line-height: 1.3; }
-        .product-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
-        .product-price { font-size: 13px; font-weight: bold; color: var(--secondary); margin: 0; }
-        .btn-add { background-color: var(--success); color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; }
-        .btn-add:hover { background-color: #219653; }
-
-        .pagination { display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border); }
-        .pagination button { background-color: #edf2f7; color: var(--text-dark); border: 1px solid var(--border); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: 600; }
-        .pagination button.active { background-color: var(--primary); color: white; border-color: var(--primary); }
-        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .cart-items-container { max-height: 350px; overflow-y: auto; margin-bottom: 15px; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
-        .cart-item-controls { display: flex; align-items: center; gap: 6px; }
-        .cart-item-controls button { background: #cbd5e0; border: none; width: 20px; height: 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        
-        .total-section { font-size: 16px; font-weight: bold; margin: 15px 0; text-align: right; color: var(--primary); border-top: 2px solid var(--border); padding-top: 10px; }
-        .btn-whatsapp { background-color: #25d366; color: white; border: none; width: 100%; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-whatsapp:hover { background-color: #1ebe5d; }
-        .search-box { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; margin-bottom: 12px; }
     </style>
 </head>
 <body>
-
-    <header>
-        <h1>AR Frazão Ltda - Bebidas</h1>
-        <a href="index.html">← Voltar para o Menu Principal</a>
-    </header>
-
     <div class="container">
-        <div class="card">
-            <h2>
-                <span>Produtos de Bebidas</span>
-                <span id="product-count" style="font-size: 13px; color: #718096; font-weight: normal;"></span>
-            </h2>
-            <input type="text" id="searchInput" class="search-box" placeholder="Buscar produto nesta categoria..." onkeyup="filtrarProdutos()">
-            
-            <div class="product-grid" id="product-grid"></div>
-            <div class="pagination" id="pagination-controls"></div>
-        </div>
-
-        <div class="card">
-            <h2>Seu Pedido</h2>
-            <div class="cart-items-container" id="cart-items">
-                <p style="color: #a0aec0; font-style: italic; text-align: center; margin-top: 30px;">O carrinho está vazio.</p>
+        <h1>Bebidas</h1>
+        <div class="loja-layout">
+            <div class="produtos-area">
+                <div id="product-grid" class="grid"></div>
+                <div id="pagination" class="pagination"></div>
             </div>
-            
-            <div class="total-section">
-                Total: R$ <span id="cart-total">0,00</span>
+            <div class="carrinho-lateral">
+                <h2>Seu Carrinho Global</h2>
+                <div id="lista-carrinho"><p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p></div>
+                <div id="carrinho-total" class="carrinho-total" style="display: none;">Total: R$ 0,00</div>
+                <button class="btn-limpar" onclick="limparCarrinho()" id="btn-limpar-carrinho" style="display: none;">Esvaziar Carrinho</button>
             </div>
-            
-            <button class="btn-whatsapp" onclick="enviarWhatsApp()">Finalizar Cotação no WhatsApp</button>
         </div>
     </div>
-
+    <div class="whatsapp-bar">
+        <span>Total: <span id="footer-total">R$ 0,00</span></span>
+        <a id="btn-cotar" href="#" target="_blank">Enviar Cotação WhatsApp</a>
+    </div>
     <script>
-        // Adicione o link da imagem na propriedade 'imagem' (ou deixe vazio se não tiver)
+        // Adicione seus produtos de bebidas aqui no formato abaixo:
         const produtos = [
-            { id: "beb_01", nome: "Acho. Pirakids c/27", preco: 45.30, imagem: "" },
-            { id: "beb_02", nome: "Água mineral c/g c/12", preco: 21.00, imagem: "" },
-            { id: "beb_03", nome: "Água mineral s/g c/12", preco: 12.90, imagem: "" },
-            { id: "beb_04", nome: "Aguardente 51 und", preco: 14.10, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi9T88rklqKee3LUd0KfU8eA0AlwI3smIklwTja4KZDg&s=10" },
-            { id: "beb_05", nome: "Aguardente 88 und", preco: 14.50, imagem: "" },
-            { id: "beb_06", nome: "Aguardente Jararaca und", preco: 16.50, imagem: "" },
-            { id: "beb_07", nome: "Cachaça cana boa c/12", preco: 35.90, imagem: "" },
-            { id: "beb_08", nome: "Cachaça caninha da roça c/12", preco: 46.80, imagem: "" },
-            { id: "beb_09", nome: "Catuaba Regianni und", preco: 13.99, imagem: "" },
-            { id: "beb_10", nome: "Conhaque Dreher und", preco: 23.40, imagem: "" },
-            { id: "beb_11", nome: "Conhaque de alcatrão und", preco: 22.00, imagem: "" },
-            { id: "beb_12", nome: "Coquetel mel fort und", preco: 15.90, imagem: "" },
-            { id: "beb_13", nome: "Coquetel de menta und", preco: 9.95, imagem: "" },
-            { id: "beb_14", nome: "Fogo paulista und", preco: 35.40, imagem: "" },
-            { id: "beb_15", nome: "Genebra und", preco: 31.90, imagem: "" },
-            { id: "beb_16", nome: "Guaramor c/12", preco: 14.30, imagem: "" },
-            { id: "beb_17", nome: "Guaramor c/36", preco: 35.90, imagem: "" },
-            { id: "beb_18", nome: "Licor de bananinha und", preco: 25.00, imagem: "" },
-            { id: "beb_19", nome: "Paratudo und", preco: 16.90, imagem: "" },
-            { id: "beb_20", nome: "Pink moon 600ml c/06", preco: 45.00, imagem: "" },
-            { id: "beb_21", nome: "Vinho quinado und", preco: 28.30, imagem: "" },
-            { id: "beb_22", nome: "Vinho tinto suave 2l und", preco: 21.90, imagem: "" },
-            { id: "beb_23", nome: "Whisky Old eight und", preco: 34.99, imagem: "" },
-            { id: "beb_24", nome: "Ypióca ouro s/p und", preco: 25.99, imagem: "" }
+            { id: "beb_001", nome: "Exemplo Refrigerante 2L", preco: 9.50, imagem: "" }
         ];
 
-        let carrinho = JSON.parse(localStorage.getItem('carrinho_arfrazao')) || [];
         let paginaAtual = 1;
-        const itensPorPagina = 8;
-        let produtosFiltrados = [...produtos];
+        const itensPorPagina = 12;
+        let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
 
-        function renderizarPagina() {
+        function renderizarProdutos() {
             const grid = document.getElementById("product-grid");
-            const pagControls = document.getElementById("pagination-controls");
-            document.getElementById("product-count").innerText = `${produtosFiltrados.length} itens`;
-            
             grid.innerHTML = "";
-            if (produtosFiltrados.length === 0) {
-                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #a0aec0; padding: 40px;">Nenhum produto encontrado.</p>`;
-                pagControls.innerHTML = "";
-                return;
-            }
-
             const inicio = (paginaAtual - 1) * itensPorPagina;
             const fim = inicio + itensPorPagina;
-            const itensPagina = produtosFiltrados.slice(inicio, fim);
+            const itensPagina = produtos.slice(inicio, fim);
 
             itensPagina.forEach(prod => {
-                let conteudoImagem = prod.imagem 
-                    ? `<img src="${prod.imagem}" alt="${prod.nome}" onerror="this.parentElement.innerHTML='<span class=\'placeholder-text\'>Erro ao carregar</span>'">` 
-                    : `<span class="placeholder-text">Sem foto</span>`;
-
-                grid.innerHTML += `
-                    <div class="product-card">
-                        <div class="product-img-container">${conteudoImagem}</div>
-                        <div class="product-body">
-                            <h3 class="product-title">${prod.nome}</h3>
-                            <div class="product-footer">
-                                <p class="product-price">R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
-                                <button class="btn-add" onclick="adicionarAoCarrinho('${prod.id}')">Adicionar</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                const card = document.createElement("div");
+                card.className = "card";
+                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${prod.nome}">` : '';
+                card.innerHTML = `${imgTag}<h3>${prod.nome}</h3><p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p><button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">Adicionar</button>`;
+                grid.appendChild(card);
             });
-            renderizarBotoesPagina();
-            atualizarCarrinho();
+            renderizarPaginacao();
         }
 
-        function renderizarBotoesPagina() {
-            const pagControls = document.getElementById("pagination-controls");
-            const totalPaginas = Math.ceil(produtosFiltrados.length / itensPorPagina);
-            if (totalPaginas <= 1) { pagControls.innerHTML = ""; return; }
-
-            let html = `<button onclick="mudarPagina(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled' : ''}>Anterior</button>`;
+        function renderizarPaginacao() {
+            const paginacao = document.getElementById("pagination");
+            paginacao.innerHTML = "";
+            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
             for (let i = 1; i <= totalPaginas; i++) {
-                html += `<button onclick="mudarPagina(${i})" class="${paginaAtual === i ? 'active' : ''}">${i}</button>`;
+                const btn = document.createElement("button");
+                btn.innerText = i;
+                if (i === paginaAtual) btn.className = "active";
+                btn.onclick = () => { paginaAtual = i; renderizarProdutos(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+                paginacao.appendChild(btn);
             }
-            html += `<button onclick="mudarPagina(${paginaAtual + 1})" ${paginaAtual === totalPaginas ? 'disabled' : ''}>Próxima</button>`;
-            pagControls.innerHTML = html;
         }
 
-        function mudarPagina(novaPagina) {
-            const totalPaginas = Math.ceil(produtosFiltrados.length / itensPorPagina);
-            if (novaPagina >= 1 && novaPagina <= totalPaginas) { paginaAtual = novaPagina; renderizarPagina(); }
+        function alterarQuantidade(id, nome, preco, delta) {
+            if (!carrinho[id]) { if (delta > 0) carrinho[id] = { nome, preco, quantidade: delta }; }
+            else { carrinho[id].quantidade += delta; if (carrinho[id].quantidade <= 0) delete carrinho[id]; }
+            salvarESincronizar();
         }
 
-        function filtrarProdutos() {
-            const termo = document.getElementById("searchInput").value.toLowerCase();
-            produtosFiltrados = produtos.filter(b => b.nome.toLowerCase().includes(termo));
-            paginaAtual = 1;
-            renderizarPagina();
-        }
+        function limparCarrinho() { carrinho = {}; salvarESincronizar(); }
+        function salvarESincronizar() { localStorage.setItem('carrinho_distribuidora', JSON.stringify(carrinho)); atualizarCarrinhoUI(); }
 
-        function adicionarAoCarrinho(id) {
-            const produto = produtos.find(p => p.id === id);
-            if (!produto) return;
-            const itemExistente = carrinho.find(item => item.id === id);
-            if (itemExistente) { itemExistente.qtd++; } 
-            else { carrinho.push({ ...produto, qtd: 1 }); }
-            salvarEAtualizar();
-        }
-
-        function alterarQtd(id, delta) {
-            const item = carrinho.find(i => i.id === id);
-            if (item) {
-                item.qtd += delta;
-                if (item.qtd <= 0) { carrinho = carrinho.filter(i => i.id !== id); }
-            }
-            salvarEAtualizar();
-        }
-
-        function salvarEAtualizar() {
-            localStorage.setItem('carrinho_arfrazao', JSON.stringify(carrinho));
-            atualizarCarrinho();
-        }
-
-        function atualizarCarrinho() {
-            const container = document.getElementById("cart-items");
-            const totalEl = document.getElementById("cart-total");
-
-            if (carrinho.length === 0) {
-                container.innerHTML = `<p style="color: #a0aec0; font-style: italic; text-align: center; margin-top: 30px;">O carrinho está vazio.</p>`;
-                totalEl.innerText = "0,00";
-                return;
-            }
-
-            container.innerHTML = "";
-            let total = 0;
-            carrinho.forEach(item => {
-                let subtotal = item.preco * item.qtd;
-                total += subtotal;
-                container.innerHTML += `
-                    <div class="cart-item">
-                        <div>
-                            <strong>${item.nome}</strong><br>
-                            <small style="color: #718096;">R$ ${item.preco.toFixed(2).replace('.', ',')} un</small>
-                        </div>
-                        <div class="cart-item-controls">
-                            <button onclick="alterarQtd('${item.id}', -1)">-</button>
-                            <span>${item.qtd}</span>
-                            <button onclick="alterarQtd('${item.id}', 1)">+</button>
-                        </div>
-                    </div>
-                `;
-            });
-            totalEl.innerText = total.toFixed(2).replace('.', ',');
-        }
-
-        function enviarWhatsApp() {
-            if (carrinho.length === 0) { alert("Adicione pelo menos um produto ao carrinho!"); return; }
-            let mensagem = "Olá! Gostaria de solicitar a seguinte cotação:\n\n";
-            let total = 0;
-            carrinho.forEach(item => {
-                let subtotal = item.preco * item.qtd;
-                total += subtotal;
-                mensagem += `• ${item.qtd}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
-            });
-            mensagem += `\n*Total da Cotação: R$ ${total.toFixed(2).replace('.', ',')}*`;
+        function atualizarCarrinhoUI() {
+            const listaDiv = document.getElementById("lista-carrinho");
+            const totalDiv = document.getElementById("carrinho-total");
+            const btnLimpar = document.getElementById("btn-limpar-carrinho");
+            const footerTotal = document.getElementById("footer-total");
+            listaDiv.innerHTML = "";
+            let valorTotal = 0, temItens = false;
             const numeroWhatsApp = "5521968659086";
-            window.open(`https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`, '_blank');
+            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes produtos:\n\n", contador = 1;
+
+            for (let id in carrinho) {
+                temItens = true;
+                let item = carrinho[id], subtotal = item.preco * item.quantidade;
+                valorTotal += subtotal;
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "item-carrinho";
+                itemDiv.innerHTML = `<div class="detalhes"><strong>${item.nome}</strong><br><small>R$ ${item.preco.toFixed(2).replace('.', ',')} x ${item.quantidade}</small></div><div class="controles"><button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, -1)">-</button><span>${item.quantidade}</span><button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, 1)">+</button></div>`;
+                listaDiv.appendChild(itemDiv);
+                mensagem += `${contador}. ${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+                contador++;
+            }
+
+            if (!temItens) {
+                listaDiv.innerHTML = '<p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>';
+                totalDiv.style.display = "none"; btnLimpar.style.display = "none";
+            } else {
+                totalDiv.style.display = "block"; btnLimpar.style.display = "block";
+                totalDiv.innerText = `Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+            }
+            footerTotal.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+            mensagem += `\n*Valor Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}*`;
+            document.getElementById("btn-cotar").href = `https://wa.me/${numeroWhatsApp}?text=${encodeURI(mensagem)}`;
         }
 
-        window.onload = () => renderizarPagina();
+        renderizarProdutos();
+        atualizarCarrinhoUI();
     </script>
 </body>
-<footer style="text-align: center; padding: 25px 15px; font-size: 13px; color: #718096; margin-top: 50px; border-top: 1px solid #e2e8f0; background-color: #ffffff;">
-    © AR Frazão Ltda — <a href="politica-de-privacidade.html" style="color: #e67e22; text-decoration: none; font-weight: 600;">Política de Privacidade</a>
-</footer><!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Política de Troca e Devolução - AR Frazão Ltda</title>
-    <style>
-        :root {
-            --primary: #1a252f;
-            --secondary: #e67e22;
-            --bg-light: #f8f9fa;
-            --border: #e2e8f0;
-            --text-dark: #2d3748;
-        }
-        * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-light); margin: 0; padding: 0; color: var(--text-dark); line-height: 1.6; }
-        header { background: linear-gradient(135deg, var(--primary), #34495e); color: white; text-align: center; padding: 25px 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        header h1 { margin: 0; font-size: 24px; }
-        header a { color: #bdc3c7; font-size: 13px; text-decoration: underline; display: inline-block; margin-top: 8px; }
-        
-        .container { max-width: 900px; margin: 30px auto; padding: 30px; background: white; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        h2 { color: var(--primary); font-size: 20px; border-bottom: 2px solid var(--border); padding-bottom: 8px; margin-top: 25px; }
-        p, li { font-size: 14px; color: #4a5568; }
-        ul { padding-left: 20px; }
-        .highlight-box { background-color: #fffaf0; border-left: 4px solid var(--secondary); padding: 15px; margin: 20px 0; font-size: 14px; border-radius: 0 6px 6px 0; }
-        
-        footer { text-align: center; padding: 25px 15px; font-size: 13px; color: #718096; margin-top: 50px; border-top: 1px solid var(--border); background-color: #ffffff; }
-        footer a { color: var(--secondary); text-decoration: none; font-weight: 600; }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1>AR Frazão Ltda</h1>
-        <a href="index.html">← Voltar para a Loja</a>
-    </header>
-
-    <
+</html>

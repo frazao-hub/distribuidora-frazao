@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo - Chicletes e Drops | Distribuidora Frazão</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; padding-bottom: 80px; }
         h1 { text-align: center; color: #333; }
         .container { max-width: 1200px; margin: 0 auto; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px; }
@@ -17,12 +17,12 @@
         .btn-add:hover { background: #2980b9; }
         
         /* Paginação */
-        .pagination { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; }
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
         .pagination button { padding: 8px 12px; border: none; background: #ddd; cursor: pointer; border-radius: 4px; font-weight: bold; }
         .pagination button.active { background: #27ae60; color: white; }
 
         /* Barra de Cotação WhatsApp */
-        .whatsapp-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #25d366; color: white; text-align: center; padding: 15px; font-size: 18px; font-weight: bold; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 15px; }
+        .whatsapp-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #25d366; color: white; text-align: center; padding: 15px; font-size: 18px; font-weight: bold; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 15px; box-sizing: border-box; }
         .whatsapp-bar a { background: white; color: #25d366; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; }
         .whatsapp-bar a:hover { background: #f0f0f0; }
     </style>
@@ -41,12 +41,11 @@
 
     <!-- Barra Fixa para Cotar no WhatsApp -->
     <div class="whatsapp-bar">
-        <span>Itens selecionados para cotação: <span id="contador-itens">0</span></span>
+        <span>Itens selecionados: <span id="contador-itens">0</span></span>
         <a id="btn-cotar" href="#" target="_blank">Cotar pelo WhatsApp</a>
     </div>
 
     <script>
-        // Lista de produtos com espaço para o link da imagem da internet
         const produtos = [
             { id: "doc_001", nome: "Adams cx hortelã c/100", preco: 43.90, imagem: "" },
             { id: "doc_002", nome: "Adams cx Tutti c/100", preco: 43.90, imagem: "" },
@@ -138,7 +137,7 @@
         ];
 
         let paginaAtual = 1;
-        const itensPorPagina = 12; // Quantos produtos aparecem por página
+        const itensPorPagina = 12;
         let carrinho = [];
 
         function renderizarProdutos() {
@@ -201,7 +200,6 @@
             document.getElementById("btn-cotar").href = `https://wa.me/${numeroWhatsApp}?text=${linkEncoded}`;
         }
 
-        // Inicializar a página
         renderizarProdutos();
     </script>
 

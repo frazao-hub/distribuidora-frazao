@@ -6,11 +6,18 @@
     <title>Balas e Pirulitos - Distribuidora Frazão</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background-color: #f4f6f9; color: #333; padding-bottom: 100px; }
+        /* Removido o padding-bottom e adicionado padding-top para o conteúdo não ficar escondido pelo carrinho no topo */
+        body { background-color: #f4f6f9; color: #333; padding-top: 80px; }
         
         header { background: #1a365d; color: white; padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         header h1 { font-size: 1.8rem; margin-bottom: 5px; }
         header p { font-size: 0.9rem; opacity: 0.85; }
+
+        /* CARRINHO GLOBAL FIXO NO TOPO */
+        .carrinho-global { position: fixed; top: 0; left: 0; width: 100%; background: #2f855a; color: white; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 9999; }
+        .carrinho-info { font-size: 1.1rem; font-weight: bold; }
+        .btn-whatsapp { background: white; color: #2f855a; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn-whatsapp:hover { background: #f7fafc; }
 
         /* TOPO E NAVEGAÇÃO */
         .topo-navegacao { max-width: 1200px; margin: 15px auto 0 auto; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
@@ -52,15 +59,15 @@
         .modal-conteudo p, .modal-conteudo ul { font-size: 0.95rem; line-height: 1.6; margin-bottom: 12px; color: #4a5568; }
         .modal-conteudo ul { padding-left: 20px; }
         .btn-fechar-modal { background: #1a365d; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; display: block; margin: 20px auto 0 auto; }
-
-        /* CARRINHO GLOBAL FIXO */
-        .carrinho-global { position: fixed; bottom: 0; left: 0; width: 100%; background: #2f855a; color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -4px 10px rgba(0,0,0,0.15); z-index: 1000; }
-        .carrinho-info { font-size: 1.2rem; font-weight: bold; }
-        .btn-whatsapp { background: white; color: #2f855a; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .btn-whatsapp:hover { background: #f7fafc; }
     </style>
 </head>
 <body>
+
+    <!-- BARRA FIXA GLOBAL DO CARRINHO NO TOPO -->
+    <div class="carrinho-global" id="barraCarrinhoGlobal">
+        <div class="carrinho-info" id="totalGlobal">Total: R$ 0,00</div>
+        <button class="btn-whatsapp" onclick="enviarWhatsApp()">Enviar Pedido 📱</button>
+    </div>
 
     <header>
         <h1>Distribuidora Frazão</h1>
@@ -90,12 +97,6 @@
     <!-- MODAL DE POLÍTICAS -->
     <div class="modal" id="modalPoliticas">
         <div class="modal-conteudo" id="corpoModal"></div>
-    </div>
-
-    <!-- BARRA FIXA GLOBAL DO CARRINHO -->
-    <div class="carrinho-global">
-        <div class="carrinho-info" id="totalGlobal">Total: R$ 0,00</div>
-        <button class="btn-whatsapp" onclick="enviarWhatsApp()">Enviar Pedido 📱</button>
     </div>
 
     <script>
@@ -146,8 +147,12 @@
         ];
 
         let carrinho = {};
-        if(localStorage.getItem('carrinhoFrazao')) {
-            carrinho = JSON.parse(localStorage.getItem('carrinhoFrazao'));
+        try {
+            if(localStorage.getItem('carrinhoFrazao')) {
+                carrinho = JSON.parse(localStorage.getItem('carrinhoFrazao'));
+            }
+        } catch(e) {
+            carrinho = {};
         }
 
         const itensPorPagina = 12;
@@ -217,7 +222,10 @@
             let spanQtd = document.getElementById(`qtd-${idProd}`);
             if(spanQtd) spanQtd.innerText = carrinho[idProd];
 
-            localStorage.setItem('carrinhoFrazao', JSON.stringify(carrinho));
+            try {
+                localStorage.setItem('carrinhoFrazao', JSON.stringify(carrinho));
+            } catch(e) {}
+            
             atualizarTotalGlobal();
         }
 

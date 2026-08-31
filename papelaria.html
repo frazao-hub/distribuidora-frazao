@@ -1,726 +1,304 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Papelaria - Sistema de Pedidos</title>
+    <title>Catálogo - Papelaria | Distribuidora Frazão</title>
     <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary: #f8fafc;
-            --accent: #f59e0b;
-            --text: #1e293b;
-            --border: #e2e8f0;
-            --success: #10b981;
-        }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; padding-bottom: 120px; }
+        h1 { text-align: center; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; }
         
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        .loja-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+        .produtos-area { flex: 3; min-width: 300px; }
         
-        body {
-            background-color: #f1f5f9;
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+        /* Carrinho Lateral */
+        .carrinho-lateral { flex: 1; min-width: 280px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
+        .carrinho-lateral h2 { font-size: 18px; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333; }
+        .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
+        .item-carrinho .detalhes { flex: 1; margin-right: 10px; }
+        .item-carrinho .controles { display: flex; align-items: center; gap: 5px; }
+        .item-carrinho button { background: #e0e0e0; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .item-carrinho button:hover { background: #d0d0d0; }
+        .carrinho-total { font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; color: #27ae60; }
         
-        header {
-            background: white;
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        
-        header h1 {
-            font-size: 1.5rem;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .btn:hover {
-            background: var(--primary-dark);
-        }
-        
-        .btn-success {
-            background: var(--success);
-        }
-        .btn-success:hover {
-            background: #059669;
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-        }
-        .btn-outline:hover {
-            background: var(--border);
-        }
+        .btn-limpar { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; font-weight: bold; }
+        .btn-limpar:hover { background: #c0392b; }
 
-        .main-container {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 2rem;
-            width: 100%;
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .card { background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
+        .card img { width: 100%; height: 140px; object-fit: contain; border-radius: 4px; background: #fff; margin-bottom: 10px; }
+        .card h3 { font-size: 15px; margin: 0 0 8px 0; color: #444; }
+        .card p { font-size: 16px; font-weight: bold; color: #27ae60; margin: 0 0 12px 0; }
         
-        @media (max-width: 900px) {
-            .main-container {
-                grid-template-columns: 1fr;
-            }
-        }
+        /* Botões do Card */
+        .btn-add { background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.2s; }
+        .btn-add:hover { background: #2980b9; }
         
-        .catalog-section {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        
-        .toolbar {
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
-        .search-input {
-            padding: 0.6rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            width: 300px;
-            font-size: 0.95rem;
-        }
-        
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .product-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid var(--border);
-        }
-        
-        .product-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.08);
-        }
-        
-        .product-img-container {
-            width: 100%;
-            height: 160px;
-            background: #f8fafc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            border-bottom: 1px solid var(--border);
-            position: relative;
-        }
-        
-        .product-img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .product-img-placeholder {
-            color: #94a3b8;
-            font-size: 0.9rem;
-            text-align: center;
-            padding: 1rem;
-        }
-        
-        .product-info {
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-        
-        .product-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text);
-            line-height: 1.3;
-        }
-        
-        .product-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .product-price {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        
-        .qty-control {
-            display: flex;
-            align-items: center;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            overflow: hidden;
-            background: white;
-        }
-        
-        .qty-btn {
-            background: #f1f5f9;
-            border: none;
-            width: 32px;
-            height: 32px;
-            font-weight: bold;
-            cursor: pointer;
-            color: var(--text);
-            transition: background 0.1s;
-        }
-        
-        .qty-btn:hover {
-            background: #e2e8f0;
-        }
-        
-        .qty-value {
-            width: 40px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-        
-        /* Cart Sidebar */
-        .cart-sidebar {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            height: fit-content;
-            position: sticky;
-            top: 5rem;
-            border: 1px solid var(--border);
-        }
-        
-        .cart-header {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .cart-items {
-            max-height: 350px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-            padding-right: 0.25rem;
-        }
-        
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem;
-            background: #f8fafc;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            font-size: 0.9rem;
-        }
-        
-        .cart-item-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-            flex-grow: 1;
-            padding-right: 0.5rem;
-        }
-        
-        .cart-item-name {
-            font-weight: 600;
-            color: var(--text);
-        }
-        
-        .cart-item-price {
-            color: #64748b;
-            font-size: 0.85rem;
-        }
-        
-        .cart-summary {
-            border-top: 1px solid var(--border);
-            padding-top: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1rem;
-        }
-        
-        .summary-row.total {
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: var(--primary);
-        }
-        
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal.active {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        
-        .modal-header {
-            font-size: 1.25rem;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #64748b;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
-        
-        .form-group label {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        .form-group input {
-            padding: 0.6rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 0.95rem;
-        }
-        
-        .image-picker-tip {
-            font-size: 0.8rem;
-            color: #64748b;
+        .card-controles { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; border: 1px solid #ddd; border-radius: 5px; padding: 4px; }
+        .card-controles button { background: #3498db; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 14px; }
+        .card-controles button:hover { background: #2980b9; }
+        .card-controles span { font-weight: bold; font-size: 15px; color: #333; }
+
+        /* Paginação */
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .pagination button { padding: 8px 12px; border: none; background: #ddd; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .pagination button.active { background: #27ae60; color: white; }
+
+        /* Barra Fixa do WhatsApp */
+        .whatsapp-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #25d366; color: white; text-align: center; padding: 12px; font-size: 16px; font-weight: bold; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 20px; box-sizing: border-box; }
+        .whatsapp-bar a { background: white; color: #25d366; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+        .whatsapp-bar a:hover { background: #f0f0f0; }
+
+        @media (max-width: 768px) {
+            .loja-layout { flex-direction: column-reverse; }
+            .carrinho-lateral { position: static; width: 100%; margin-bottom: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>📚 Papelaria Central - Catálogo & Carrinho</h1>
-        <div class="header-actions">
-            <button class="btn btn-outline" onclick="openImageModal()">🖼️ Adicionar Imagem via URL</button>
-            <button class="btn" onclick="exportOrder()">📋 Exportar Pedido</button>
-        </div>
-    </header>
-
-    <div class="main-container">
-        <!-- Catálogo de Produtos -->
-        <div class="catalog-section">
-            <div class="toolbar">
-                <input type="text" id="searchInput" class="search-input" placeholder="Buscar produto..." oninput="filterProducts()">
-                <div style="font-size: 0.9rem; color: #64748b;">
-                    Total de produtos: <span id="productCount">0</span>
-                </div>
+    <div class="container">
+        <h1>Papelaria</h1>
+        
+        <div class="loja-layout">
+            <div class="produtos-area">
+                <div id="product-grid" class="grid"></div>
+                <div id="pagination" class="pagination"></div>
             </div>
 
-            <div class="products-grid" id="productsGrid">
-                <!-- Preenchido via JavaScript -->
-            </div>
-        </div>
-
-        <!-- Carrinho Global -->
-        <div class="cart-sidebar">
-            <div class="cart-header">
-                <span>Carrinho Global</span>
-                <span id="cartBadge" style="background: var(--primary); color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.8rem;">0</span>
-            </div>
-            
-            <div class="cart-items" id="cartItemsList">
-                <div style="color: #94a3b8; text-align: center; padding: 2rem 0; font-size: 0.9rem;">
-                    Seu carrinho está vazio
+            <div class="carrinho-lateral">
+                <h2>Seu Carrinho Global</h2>
+                <div id="lista-carrinho">
+                    <p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
                 </div>
-            </div>
-
-            <div class="cart-summary">
-                <div class="summary-row">
-                    <span>Itens totais:</span>
-                    <span id="cartTotalItems">0</span>
+                <div id="carrinho-total" class="carrinho-total" style="display: none;">
+                    Total: R$ 0,00
                 </div>
-                <div class="summary-row total">
-                    <span>Valor Total:</span>
-                    <span id="cartTotalPrice">R$ 0,00</span>
-                </div>
-                <button class="btn btn-success" style="width: 100%; justify-content: center; margin-top: 0.5rem;" onclick="checkoutWhatsApp()">
-                    💬 Enviar Pedido via WhatsApp
-                </button>
+                <button class="btn-limpar" onclick="limparCarrinho()" id="btn-limpar-carrinho" style="display: none;">Esvaziar Carrinho</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal para associar imagem da internet -->
-    <div class="modal" id="imageModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>Vincular Imagem da Internet</span>
-                <button class="close-btn" onclick="closeImageModal()">&times;</button>
-            </div>
-            <div class="form-group">
-                <label for="selectProductImage">Selecione o Produto:</label>
-                <select id="selectProductImage" style="padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem;">
-                    <!-- Preenchido dinamicamente -->
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="imageUrlInput">URL da Imagem (Link da Internet):</label>
-                <input type="url" id="imageUrlInput" placeholder="https://exemplo.com/imagem.jpg">
-                <span class="image-picker-tip">Dica: Clique com botão direito em qualquer imagem no Google Imagens e escolha "Copiar endereço da imagem".</span>
-            </div>
-            <button class="btn" onclick="saveProductImage()">Salvar Imagem</button>
-        </div>
+    <div class="whatsapp-bar">
+        <span>Total: <span id="footer-total">R$ 0,00</span></span>
+        <a id="btn-cotar" href="#" target="_blank">Enviar Cotação WhatsApp</a>
     </div>
 
     <script>
-        // Lista inicial de produtos fornecida
-        const initialProducts = [
-            { id: 1, name: "Apontador de lápis red. c/24", price: 8.90, image: "" },
-            { id: 2, name: "Borracha esc. 40 c/40", price: 13.45, image: "" },
-            { id: 3, name: "Borracha esc. 20 c/20", price: 13.45, image: "" },
-            { id: 4, name: "Caderneta esp. 48f c/20", price: 32.125, image: "" },
-            { id: 5, name: "Caderneta esp. 96f c/10", price: 26.90, image: "" },
-            { id: 6, name: "Caderno 1 matéria c/10", price: 86.40, image: "" },
-            { id: 7, name: "Caderno 1 matéria cd c/05", price: 51.80, image: "" },
-            { id: 8, name: "Caderno 1/4 esp. cd c/05", price: 30.50, image: "" },
-            { id: 9, name: "Caderno cd 10 mat. c/03", price: 0.00, image: "" },
-            { id: 10, name: "Caderno brochura cd 1/4 c/05", price: 30.50, image: "" },
-            { id: 11, name: "Caderno brochurão cd c/05", price: 49.85, image: "" },
-            { id: 12, name: "Caderno espiral 1/4 48f c/20", price: 48.25, image: "" },
-            { id: 13, name: "Caderno espiral 1/4 96f c/10", price: 44.15, image: "" },
-            { id: 14, name: "Caneta bic azul c/10", price: 9.90, image: "" },
-            { id: 15, name: "Caneta bic preta c/10", price: 9.90, image: "" },
-            { id: 16, name: "Caneta bic vermelha c/10", price: 9.90, image: "" },
-            { id: 17, name: "Cartolina branca c/10", price: 9.40, image: "" },
-            { id: 18, name: "Cola escolar frama 40g c/06", price: 6.50, image: "" },
-            { id: 19, name: "Cola escolar framal 90g c/06", price: 12.55, image: "" },
-            { id: 20, name: "Cola isopor 40g c/06", price: 19.50, image: "" },
-            { id: 21, name: "Cola quente fina c/10", price: 8.99, image: "" },
-            { id: 22, name: "Cola quente grossa c/05", price: 8.99, image: "" },
-            { id: 23, name: "Corretivo frama c/06", price: 13.20, image: "" },
-            { id: 24, name: "Durex médio 12x30m c/10", price: 11.50, image: "" },
-            { id: 25, name: "Durex peq. 12x10m c/10", price: 7.75, image: "" },
-            { id: 26, name: "Elástico dinheiro Mercur c/100", price: 7.90, image: "" },
-            { id: 27, name: "Envelope pardo A4 c/10", price: 6.40, image: "" },
-            { id: 28, name: "Envelope pardo oficio c/10", price: 6.60, image: "" },
-            { id: 29, name: "Estilete Futuro 9m c/12", price: 16.40, image: "" },
-            { id: 30, name: "Etiqueta de preço peq. c/10", price: 13.25, image: "" },
-            { id: 31, name: "Etiqueta de preço grande c/10", price: 13.25, image: "" },
-            { id: 32, name: "Fita crepe Euro 18x50 c/06", price: 28.60, image: "" },
-            { id: 33, name: "Fita crepe Euro 24x50 c/06", price: 37.50, image: "" },
-            { id: 34, name: "Fita larga SL 100m c/04", price: 23.80, image: "" },
-            { id: 35, name: "Fita larga marrom SL c/04", price: 14.25, image: "" },
-            { id: 36, name: "Fita larga transp. SL c/04", price: 14.25, image: "" },
-            { id: 37, name: "Grafite 0,5mm c/12", price: 7.90, image: "" },
-            { id: 38, name: "Grafite Futuro 2.0 c/12", price: 12.60, image: "" },
-            { id: 39, name: "Grafite 0,7mm c/12", price: 7.90, image: "" },
-            { id: 40, name: "Grampeador Futuro 13cm und.", price: 14.50, image: "" },
-            { id: 41, name: "Grampo p/ grampeador 5000 und.", price: 5.90, image: "" },
-            { id: 42, name: "Guache Make c/06", price: 5.35, image: "" },
-            { id: 43, name: "Kit escolar coração Futuro c/12", price: 17.30, image: "" },
-            { id: 44, name: "Kit escolar gamers Futuro c/12", price: 17.30, image: "" },
-            { id: 45, name: "Lápis c/ borracha Futuro c/12", price: 5.50, image: "" },
-            { id: 46, name: "Lápis preto Futuro c/12", price: 3.90, image: "" },
-            { id: 47, name: "Lapiseira 2.0 Futuro c/24", price: 45.00, image: "" },
-            { id: 48, name: "Marca texto amarelo c/12", price: 16.55, image: "" },
-            { id: 49, name: "Marca texto verde c/12", price: 16.55, image: "" },
-            { id: 50, name: "Massinha Make 90g c/06", price: 14.99, image: "" },
-            { id: 51, name: "Papel A4 Allmax c/500", price: 24.50, image: "" },
-            { id: 52, name: "Papel A4 Report c/500", price: 29.90, image: "" },
-            { id: 53, name: "Papel almaço c/ pauta c/100", price: 15.60, image: "" },
-            { id: 54, name: "Papel almaço s/pauta c/100", price: 15.60, image: "" },
-            { id: 55, name: "Papel pardo c/10", price: 18.70, image: "" },
-            { id: 56, name: "Piloto compactor azul c/06", price: 17.40, image: "" },
-            { id: 57, name: "Piloto compactor preto c/06", price: 17.40, image: "" },
-            { id: 58, name: "Piloto compactor vermelho c/06", price: 17.40, image: "" },
-            { id: 59, name: "Pistola cola quente pequena und.", price: 16.45, image: "" },
-            { id: 60, name: "Retro fix preto c/06", price: 12.48, image: "" },
-            { id: 61, name: "Retro fix azul c/06", price: 12.48, image: "" },
-            { id: 62, name: "Talão de pedido pequeno c/05", price: 13.25, image: "" },
-            { id: 63, name: "Tesoura escolar Futuro c/06", price: 26.20, image: "" }
+        const produtos = [
+            { id: "pap_001", nome: "Apontador de lápis red. c/24", preco: 8.90, imagem: "" },
+            { id: "pap_002", nome: "Borracha esc. 40 c/40", preco: 13.45, imagem: "" },
+            { id: "pap_003", nome: "Borracha esc. 20 c/20", preco: 13.45, imagem: "" },
+            { id: "pap_004", nome: "Caderneta esp. 48f c/20", preco: 32.12, imagem: "" },
+            { id: "pap_005", nome: "Caderneta esp. 96f c/10", preco: 26.90, imagem: "" },
+            { id: "pap_006", nome: "Caderno 1 matéria c/10", preco: 86.40, imagem: "" },
+            { id: "pap_007", nome: "Caderno 1 matéria cd c/05", preco: 51.80, imagem: "" },
+            { id: "pap_008", nome: "Caderno 1/4 esp. cd c/05", preco: 30.50, imagem: "" },
+            { id: "pap_009", nome: "Caderno cd 10 mat. c/03", preco: 45.00, imagem: "" },
+            { id: "pap_010", nome: "Caderno brochura cd 1/4 c/05", preco: 30.50, imagem: "" },
+            { id: "pap_011", nome: "Caderno brochurão cd c/05", preco: 49.85, imagem: "" },
+            { id: "pap_012", nome: "Caderno espiral 1/4 48f c/20", preco: 48.25, imagem: "" },
+            { id: "pap_013", nome: "Caderno espiral 1/4 96f c/10", preco: 44.15, imagem: "" },
+            { id: "pap_014", nome: "Caneta bic azul c/10", preco: 9.90, imagem: "" },
+            { id: "pap_015", nome: "Caneta bic preta c/10", preco: 9.90, imagem: "" },
+            { id: "pap_016", nome: "Caneta bic vermelha c/10", preco: 9.90, imagem: "" },
+            { id: "pap_017", nome: "Cartolina branca c/10", preco: 9.40, imagem: "" },
+            { id: "pap_018", nome: "Cola escolar frama 40g c/06", preco: 6.50, imagem: "" },
+            { id: "pap_019", nome: "Cola escolar framal 90g c/06", preco: 12.55, imagem: "" },
+            { id: "pap_020", nome: "Cola isopor 40g c/06", preco: 19.50, imagem: "" },
+            { id: "pap_021", nome: "Cola quente fina c/10", preco: 8.99, imagem: "" },
+            { id: "pap_022", nome: "Cola quente grossa c/05", preco: 8.99, imagem: "" },
+            { id: "pap_023", nome: "Corretivo frama c/06", preco: 13.20, imagem: "" },
+            { id: "pap_024", nome: "Durex médio 12x30m c/10", preco: 11.50, imagem: "" },
+            { id: "pap_025", nome: "Durex peq. 12x10m c/10", preco: 7.75, imagem: "" },
+            { id: "pap_026", nome: "Elástico dinheiro Mercur c/100", preco: 7.90, imagem: "" },
+            { id: "pap_027", nome: "Envelope pardo A4 c/10", preco: 6.40, imagem: "" },
+            { id: "pap_028", nome: "Envelope pardo oficio c/10", preco: 6.60, imagem: "" },
+            { id: "pap_029", nome: "Estilete Futuro 9m c/12", preco: 16.40, imagem: "" },
+            { id: "pap_030", nome: "Etiqueta de preço peq. c/10", preco: 13.25, imagem: "" },
+            { id: "pap_031", nome: "Etiqueta de preço grande c/10", preco: 13.25, imagem: "" },
+            { id: "pap_032", nome: "Fita crepe Euro 18x50 c/06", preco: 28.60, imagem: "" },
+            { id: "pap_033", nome: "Fita crepe Euro 24x50 c/06", preco: 37.50, imagem: "" },
+            { id: "pap_034", nome: "Fita larga SL 100m c/04", preco: 23.80, imagem: "" },
+            { id: "pap_035", nome: "Fita larga marrom SL c/04", preco: 14.25, imagem: "" },
+            { id: "pap_036", nome: "Fita larga transp. SL c/04", preco: 14.25, imagem: "" },
+            { id: "pap_037", nome: "Grafite 0,5mm c/12", preco: 7.90, imagem: "" },
+            { id: "pap_038", nome: "Grafite Futuro 2.0 c/12", preco: 12.60, imagem: "" },
+            { id: "pap_039", nome: "Grafite 0,7mm c/12", preco: 7.90, imagem: "" },
+            { id: "pap_040", nome: "Grampeador Futuro 13cm und.", preco: 14.50, imagem: "" },
+            { id: "pap_041", nome: "Grampo p/ grampeador 5000 und.", preco: 5.90, imagem: "" },
+            { id: "pap_042", nome: "Guache Make c/06", preco: 5.35, imagem: "" },
+            { id: "pap_043", nome: "Kit escolar coração Futuro c/12", preco: 17.30, imagem: "" },
+            { id: "pap_044", nome: "Kit escolar gamers Futuro c/12", preco: 17.30, imagem: "" },
+            { id: "pap_045", nome: "Lápis c/ borracha Futuro c/12", preco: 5.50, imagem: "" },
+            { id: "pap_046", nome: "Lápis preto Futuro c/12", preco: 3.90, imagem: "" },
+            { id: "pap_047", nome: "Lapiseira 2.0 Futuro c/24", preco: 45.00, imagem: "" },
+            { id: "pap_048", nome: "Marca texto amarelo c/12", preco: 16.55, imagem: "" },
+            { id: "pap_049", nome: "Marca texto verde c/12", preco: 16.55, imagem: "" },
+            { id: "pap_050", nome: "Massinha Make 90g c/06", preco: 14.99, imagem: "" },
+            { id: "pap_051", nome: "Papel A4 Allmax c/500", preco: 24.50, imagem: "" },
+            { id: "pap_052", nome: "Papel A4 Report c/500", preco: 29.90, imagem: "" },
+            { id: "pap_053", nome: "Papel almaço c/ pauta c/100", preco: 15.60, imagem: "" },
+            { id: "pap_054", nome: "Papel almaço s/pauta c/100", preco: 15.60, imagem: "" },
+            { id: "pap_055", nome: "Papel pardo c/10", preco: 18.70, imagem: "" },
+            { id: "pap_056", nome: "Piloto compactor azul c/06", preco: 17.40, imagem: "" },
+            { id: "pap_057", nome: "Piloto compactor preto c/06", preco: 17.40, imagem: "" },
+            { id: "pap_058", nome: "Piloto compactor vermelho c/06", preco: 17.40, imagem: "" },
+            { id: "pap_059", nome: "Pistola cola quente pequena und.", preco: 16.45, imagem: "" },
+            { id: "pap_060", nome: "Retro fix preto c/06", preco: 12.48, imagem: "" },
+            { id: "pap_061", nome: "Retro fix azul c/06", preco: 12.48, imagem: "" },
+            { id: "pap_062", nome: "Talão de pedido pequeno c/05", preco: 13.25, imagem: "" },
+            { id: "pap_063", nome: "Tesoura escolar Futuro c/06", preco: 26.20, imagem: "" }
         ];
 
-        // Estado Global da Aplicação
-        let products = JSON.parse(localStorage.getItem('papelaria_products')) || initialProducts;
-        let cart = JSON.parse(localStorage.getItem('papelaria_cart')) || {};
+        let paginaAtual = 1;
+        const itensPorPagina = 12;
+        let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
 
-        function saveState() {
-            localStorage.setItem('papelaria_products', JSON.stringify(products));
-            localStorage.setItem('papelaria_cart', JSON.stringify(cart));
+        function renderizarProdutos() {
+            const grid = document.getElementById("product-grid");
+            grid.innerHTML = "";
+
+            const inicio = (paginaAtual - 1) * itensPorPagina;
+            const fim = inicio + itensPorPagina;
+            const itensPagina = produtos.slice(inicio, fim);
+
+            itensPagina.forEach(prod => {
+                const card = document.createElement("div");
+                card.className = "card";
+                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${prod.nome}">` : '';
+                
+                const qtdNoCarrinho = carrinho[prod.id] ? carrinho[prod.id].quantidade : 0;
+                
+                let acaoHTML = "";
+                if (qtdNoCarrinho === 0) {
+                    acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">Adicionar</button>`;
+                } else {
+                    acaoHTML = `
+                        <div class="card-controles">
+                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, -1)">-</button>
+                            <span>${qtdNoCarrinho}</span>
+                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">+</button>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    ${imgTag}
+                    <h3>${prod.nome}</h3>
+                    <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
+                    ${acaoHTML}
+                `;
+                grid.appendChild(card);
+            });
+
+            renderizarPaginacao();
         }
 
-        function renderProducts(filteredList = products) {
-            const grid = document.getElementById('productsGrid');
-            document.getElementById('productCount').textContent = filteredList.length;
-            
-            if (filteredList.length === 0) {
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #64748b;">Nenhum produto encontrado.</div>';
-                return;
-            }
+        function renderizarPaginacao() {
+            const paginacao = document.getElementById("pagination");
+            paginacao.innerHTML = "";
 
-            grid.innerHTML = filteredList.map(p => {
-                const qty = cart[p.id] || 0;
-                return `
-                    <div class="product-card">
-                        <div class="product-img-container">
-                            ${p.image ? `<img src="${p.image}" alt="${p.name}" onerror="this.parentElement.innerHTML='<div class=\'product-img-placeholder\'>Erro ao carregar imagem</div>'">` : `<div class="product-img-placeholder">Sem imagem<br><small>Use o botão acima</small></div>`}
-                        </div>
-                        <div class="product-info">
-                            <div class="product-title">${p.name}</div>
-                            <div class="product-footer">
-                                <div class="product-price">R$ ${p.price.toFixed(2).replace('.', ',')}</div>
-                                <div class="qty-control">
-                                    <button class="qty-btn" onclick="updateQty(${p.id}, -1)">-</button>
-                                    <div class="qty-value">${qty}</div>
-                                    <button class="qty-btn" onclick="updateQty(${p.id}, 1)">+</button>
-                                </div>
-                            </div>
-                        </div>
+            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                const btn = document.createElement("button");
+                btn.innerText = i;
+                if (i === paginaAtual) btn.className = "active";
+                btn.onclick = () => {
+                    paginaAtual = i;
+                    renderizarProdutos();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                paginacao.appendChild(btn);
+            }
+        }
+
+        function alterarQuantidade(id, nome, preco, delta) {
+            if (!carrinho[id]) {
+                if (delta > 0) {
+                    carrinho[id] = { nome, preco, quantidade: delta };
+                }
+            } else {
+                carrinho[id].quantidade += delta;
+                if (carrinho[id].quantidade <= 0) {
+                    delete carrinho[id];
+                }
+            }
+            salvarESincronizar();
+        }
+
+        function limparCarrinho() {
+            carrinho = {};
+            salvarESincronizar();
+        }
+
+        function salvarESincronizar() {
+            localStorage.setItem('carrinho_distribuidora', JSON.stringify(carrinho));
+            renderizarProdutos();
+            atualizarCarrinhoUI();
+        }
+
+        function atualizarCarrinhoUI() {
+            const listaDiv = document.getElementById("lista-carrinho");
+            const totalDiv = document.getElementById("carrinho-total");
+            const btnLimpar = document.getElementById("btn-limpar-carrinho");
+            const footerTotal = document.getElementById("footer-total");
+            
+            listaDiv.innerHTML = "";
+            let valorTotal = 0;
+            let temItens = false;
+
+            const numeroWhatsApp = "5521968659086";
+            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes produtos:\n\n";
+            let contador = 1;
+
+            for (let id in carrinho) {
+                temItens = true;
+                let item = carrinho[id];
+                let subtotal = item.preco * item.quantidade;
+                valorTotal += subtotal;
+
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "item-carrinho";
+                itemDiv.innerHTML = `
+                    <div class="detalhes">
+                        <strong>${item.nome}</strong><br>
+                        <small>R$ ${item.preco.toFixed(2).replace('.', ',')} x ${item.quantidade}</small>
+                    </div>
+                    <div class="controles">
+                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, -1)">-</button>
+                        <span>${item.quantidade}</span>
+                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, 1)">+</button>
                     </div>
                 `;
-            }).join('');
-            
-            renderCart();
-        }
+                listaDiv.appendChild(itemDiv);
 
-        function updateQty(productId, change) {
-            if (!cart[productId]) {
-                cart[productId] = 0;
-            }
-            cart[productId] += change;
-            if (cart[productId] <= 0) {
-                delete cart[productId];
-            }
-            saveState();
-            renderProducts(getCurrentFilteredList());
-        }
-
-        function getCurrentFilteredList() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            return products.filter(p => p.name.toLowerCase().includes(query));
-        }
-
-        function filterProducts() {
-            renderProducts(getCurrentFilteredList());
-        }
-
-        function renderCart() {
-            const cartList = document.getElementById('cartItemsList');
-            const cartBadge = document.getElementById('cartBadge');
-            const cartTotalItems = document.getElementById('cartTotalItems');
-            const cartTotalPrice = document.getElementById('cartTotalPrice');
-
-            const cartIds = Object.keys(cart);
-            cartBadge.textContent = cartIds.reduce((sum, id) => sum + cart[id], 0);
-            cartTotalItems.textContent = cartIds.reduce((sum, id) => sum + cart[id], 0);
-
-            if (cartIds.length === 0) {
-                cartList.innerHTML = '<div style="color: #94a3b8; text-align: center; padding: 2rem 0; font-size: 0.9rem;">Seu carrinho está vazio</div>';
-                cartTotalPrice.textContent = 'R$ 0,00';
-                return;
+                mensagem += `${contador}. ${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+                contador++;
             }
 
-            let total = 0;
-            cartList.innerHTML = cartIds.map(id => {
-                const p = products.find(prod => prod.id == id);
-                const qty = cart[id];
-                const subtotal = p.price * qty;
-                total += subtotal;
-                return `
-                    <div class="cart-item">
-                        <div class="cart-item-info">
-                            <span class="cart-item-name">${p.name}</span>
-                            <span class="cart-item-price">${qty}x R$ ${p.price.toFixed(2).replace('.', ',')} = <strong>R$ ${subtotal.toFixed(2).replace('.', ',')}</strong></span>
-                        </div>
-                        <div class="qty-control" style="transform: scale(0.85);">
-                            <button class="qty-btn" onclick="updateQty(${p.id}, -1)">-</button>
-                            <div class="qty-value">${qty}</div>
-                            <button class="qty-btn" onclick="updateQty(${p.id}, 1)">+</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            cartTotalPrice.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-        }
-
-        function openImageModal() {
-            const select = document.getElementById('selectProductImage');
-            select.innerHTML = products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-            document.getElementById('imageModal').classList.add('active');
-        }
-
-        function closeImageModal() {
-            document.getElementById('imageModal').classList.remove('active');
-            document.getElementById('imageUrlInput').value = '';
-        }
-
-        function saveProductImage() {
-            const prodId = document.getElementById('selectProductImage').value;
-            const url = document.getElementById('imageUrlInput').value.trim();
-            
-            if (!url) {
-                alert('Por favor, insira uma URL válida.');
-                return;
+            if (!temItens) {
+                listaDiv.innerHTML = '<p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>';
+                totalDiv.style.display = "none";
+                btnLimpar.style.display = "none";
+            } else {
+                totalDiv.style.display = "block";
+                btnLimpar.style.display = "block";
+                totalDiv.innerText = `Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
             }
 
-            const p = products.find(prod => prod.id == prodId);
-            if (p) {
-                p.image = url;
-                saveState();
-                renderProducts(getCurrentFilteredList());
-                closeImageModal();
-                alert('Imagem atualizada com sucesso!');
-            }
+            footerTotal.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+            mensagem += `\n*Valor Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}*`;
+
+            const linkEncoded = encodeURI(mensagem);
+            document.getElementById("btn-cotar").href = `https://wa.me/${numeroWhatsApp}?text=${linkEncoded}`;
         }
 
-        function checkoutWhatsApp() {
-            const cartIds = Object.keys(cart);
-            if (cartIds.length === 0) {
-                alert('O carrinho está vazio!');
-                return;
-            }
-
-            let text = "🛒 *Novo Pedido - Papelaria*\n\n";
-            let total = 0;
-            cartIds.forEach(id => {
-                const p = products.find(prod => prod.id == id);
-                const qty = cart[id];
-                const subtotal = p.price * qty;
-                total += subtotal;
-                text += `• ${qty}x ${p.name} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
-            });
-            text += `\n*Valor Total: R$ ${total.toFixed(2).replace('.', ',')}*`;
-
-            const encoded = encodeURIComponent(text);
-            window.open(`https://wa.me/?text=${encoded}`, '_blank');
-        }
-
-        function exportOrder() {
-            const cartIds = Object.keys(cart);
-            if (cartIds.length === 0) {
-                alert('O carrinho está vazio para exportar!');
-                return;
-            }
-
-            let text = "RELATÓRIO DE PEDIDO - PAPELARIA\n===============================\n\n";
-            let total = 0;
-            cartIds.forEach(id => {
-                const p = products.find(prod => prod.id == id);
-                const qty = cart[id];
-                const subtotal = p.price * qty;
-                total += subtotal;
-                text += `${qty}un | ${p.name} | Unit: R$ ${p.price.toFixed(2)} | Subtotal: R$ ${subtotal.toFixed(2)}\n`;
-            });
-            text += `\nTOTAL GERAL: R$ ${total.toFixed(2)}`;
-
-            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'pedido-papelaria.txt';
-            a.click();
-        }
-
-        // Inicializar renderização
-        renderProducts();
+        renderizarProdutos();
+        atualizarCarrinhoUI();
     </script>
+
 </body>
 </html>
-papelaria.html
-Exibindo papelaria.html.

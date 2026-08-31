@@ -175,7 +175,6 @@
             carrinho = JSON.parse(localStorage.getItem('carrinhoFrazao'));
         }
 
-        // Recuperar imagens salvas anteriormente via upload no navegador
         let imagensSalvas = JSON.parse(localStorage.getItem('imagensFrazaoBalas')) || {};
         listaProdutos.forEach(p => {
             if(imagensSalvas[p.id]) {
@@ -210,8 +209,6 @@
                 const leitor = new FileReader();
                 leitor.onload = function(e) {
                     const base64Img = e.target.result;
-                    
-                    // Atualiza no array e salva no armazenamento local do navegador
                     let prod = listaProdutos.find(p => p.id === idProd);
                     if (prod) {
                         prod.img = base64Img;

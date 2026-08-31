@@ -3,282 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo - Balas e Pirulitos | Distribuidora Frazão</title>
+    <title>Distribuidora Frazão - Catálogo Geral e Políticas</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; padding-bottom: 140px; }
-        h1 { text-align: center; color: #333; }
-        .container { max-width: 1200px; margin: 0 auto; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; color: #333; }
+        header { background: #27ae60; color: white; text-align: center; padding: 30px 20px; }
+        header h1 { margin: 0 0 10px 0; font-size: 28px; }
+        header p { margin: 0; font-size: 16px; opacity: 0.9; }
         
-        .loja-layout { display: flex; gap: 20px; flex-wrap: wrap; }
-        .produtos-area { flex: 3; min-width: 300px; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
         
-        /* Carrinho Lateral */
-        .carrinho-lateral { flex: 1; min-width: 280px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
-        .carrinho-lateral h2 { font-size: 18px; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333; }
-        .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
-        .item-carrinho .detalhes { flex: 1; margin-right: 10px; }
-        .item-carrinho .controles { display: flex; align-items: center; gap: 5px; }
-        .item-carrinho button { background: #e0e0e0; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-weight: bold; }
-        .item-carrinho button:hover { background: #d0d0d0; }
-        .carrinho-total { font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; color: #27ae60; }
+        .card-secao { background: #fff; border-radius: 8px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .card-secao h2 { color: #27ae60; margin-top: 0; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; font-size: 20px; }
         
-        .btn-limpar { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; font-weight: bold; }
-        .btn-limpar:hover { background: #c0392b; }
+        /* Grade de Categorias / Pastas */
+        .grid-categorias { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .btn-categoria { background: #3498db; color: white; text-align: center; padding: 15px; border-radius: 6px; text-decoration: none; font-weight: bold; transition: background 0.2s; display: flex; align-items: center; justify-content: center; height: 50px; box-sizing: border-box; }
+        .btn-categoria:hover { background: #2980b9; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .card { background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
-        .card img { width: 100%; height: 140px; object-fit: contain; border-radius: 4px; background: #fff; margin-bottom: 10px; }
-        .card h3 { font-size: 15px; margin: 0 0 8px 0; color: #444; }
-        .card p { font-size: 16px; font-weight: bold; color: #27ae60; margin: 0 0 12px 0; }
-        
-        /* Botões do Card */
-        .btn-add { background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.2s; }
-        .btn-add:hover { background: #2980b9; }
-        
-        .card-controles { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; border: 1px solid #ddd; border-radius: 5px; padding: 4px; }
-        .card-controles button { background: #3498db; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 14px; }
-        .card-controles button:hover { background: #2980b9; }
-        .card-controles span { font-weight: bold; font-size: 15px; color: #333; }
+        p, li { line-height: 1.6; font-size: 14px; color: #555; }
+        ul { padding-left: 20px; }
 
-        /* Paginação */
-        .pagination { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
-        .pagination button { padding: 8px 12px; border: none; background: #ddd; cursor: pointer; border-radius: 4px; font-weight: bold; }
-        .pagination button.active { background: #27ae60; color: white; }
-
-        /* Barra Fixa do WhatsApp */
-        .whatsapp-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #25d366; color: white; text-align: center; padding: 12px; font-size: 16px; font-weight: bold; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 10; display: flex; justify-content: center; align-items: center; gap: 20px; box-sizing: border-box; }
-        .whatsapp-bar a { background: white; color: #25d366; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; }
-        .whatsapp-bar a:hover { background: #f0f0f0; }
-
-        @media (max-width: 768px) {
-            .loja-layout { flex-direction: column-reverse; }
-            .carrinho-lateral { position: static; width: 100%; margin-bottom: 20px; }
-        }
+        footer { text-align: center; padding: 20px; color: #777; font-size: 13px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Balas e Pirulitos</h1>
-        
-        <div class="loja-layout">
-            <div class="produtos-area">
-                <div id="product-grid" class="grid"></div>
-                <div id="pagination" class="pagination"></div>
-            </div>
+    <header>
+        <h1>Distribuidora Frazão</h1>
+        <p>Seu atacadista de confiança em mercearia, bebidas, doces, papelaria e muito mais.</p>
+    </header>
 
-            <div class="carrinho-lateral">
-                <h2>Seu Carrinho Global</h2>
-                <div id="lista-carrinho">
-                    <p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
-                </div>
-                <div id="carrinho-total" class="carrinho-total" style="display: none;">
-                    Total: R$ 0,00
-                </div>
-                <button class="btn-limpar" onclick="limparCarrinho()" id="btn-limpar-carrinho" style="display: none;">Esvaziar Carrinho</button>
+    <div class="container">
+
+        <!-- Categorias / Pastas -->
+        <div class="card-secao">
+            <h2>Nossos Catálogos e Categorias</h2>
+            <p>Selecione abaixo a categoria desejada para ver os produtos e montar sua cotação:</p>
+            <div class="grid-categorias">
+                <!-- Substitua os links 'pasta-exemplo/index.html' pelos nomes reais das suas pastas no GitHub -->
+                <a href="balas-e-pirulitos/index.html" class="btn-categoria">Balas e Pirulitos</a>
+                <a href="bebidas/index.html" class="btn-categoria">Bebidas</a>
+                <a href="mercearia/index.html" class="btn-categoria">Mercearia</a>
+                <a href="papelaria/index.html" class="btn-categoria">Papelaria</a>
+                <a href="limpeza/index.html" class="btn-categoria">Limpeza</a>
+                <a href="higiene/index.html" class="btn-categoria">Artigos de Higiene</a>
+                <a href="descartaveis/index.html" class="btn-categoria">Descartáveis</a>
+                <a href="doces/index.html" class="btn-categoria">Doces Gerais</a>
+                <a href="categoria9/index.html" class="btn-categoria">Categoria 09</a>
+                <a href="categoria10/index.html" class="btn-categoria">Categoria 10</a>
             </div>
         </div>
+
+        <!-- Regras de Uso -->
+        <div class="card-secao">
+            <h2>Regras de Uso</h2>
+            <ul>
+                <li>Este site é um catálogo eletrônico voltado para clientes e parceiros comerciais da Distribuidora Frazão.</li>
+                <li>Os preços e a disponibilidade dos produtos estão sujeitos a alterações sem aviso prévio.</li>
+                <li>As solicitações feitas pelo site são encaminhadas como cotações/pedidos diretamente via WhatsApp para alinhamento de estoque e entrega.</li>
+            </ul>
+        </div>
+
+        <!-- Política de Privacidade -->
+        <div class="card-secao">
+            <h2>Política de Privacidade</h2>
+            <p>A Distribuidora Frazão preza pela segurança e privacidade dos dados de seus clientes. As informações de contato e listas de pedidos enviadas são utilizadas estritamente para o atendimento comercial, faturamento e entrega das mercadorias, não sendo comercializadas ou repassadas a terceiros em nenhuma hipótese.</p>
+        </div>
+
+        <!-- Política de Devolução -->
+        <div class="card-secao">
+            <h2>Política de Devolução</h2>
+            <p>Para garantir a satisfação e a transparência em nossas parcerias:</p>
+            <ul>
+                <li>O conferimento dos produtos deve ser realizado no ato da entrega.</li>
+                <li>Em caso de avarias ou divergências nos itens, o aviso deve ser feito à nossa equipe comercial em até 24 horas após o recebimento.</li>
+                <li>Produtos com embalagens violadas ou fora dos padrões de fábrica não serão aceitos para troca.</li>
+            </ul>
+        </div>
+
     </div>
 
-    <div class="whatsapp-bar">
-        <span>Total: <span id="footer-total">R$ 0,00</span></span>
-        <a id="btn-cotar" href="#" target="_blank">Enviar Cotação WhatsApp</a>
-    </div>
-
-    <script>
-        const produtos = [
-            { id: "bal_001", nome: "Bala 7 Belo 500g", preco: 12.99, imagem: "https://superrissul.vtexassets.com/arquivos/ids/1084876-800-auto?v=639219855141970000&width=800&height=auto&aspect=true" },
-            { id: "bal_002", nome: "Bala Berbau Soft 500g", preco: 12.35, imagem: "" },
-            { id: "bal_003", nome: "Bala Dori Frutsy Mast 500g", preco: 8.99, imagem: "" },
-            { id: "bal_004", nome: "Bala Dori Bolete 500g", preco: 11.50, imagem: "" },
-            { id: "bal_005", nome: "Bala Dori Hortelã 500g", preco: 11.90, imagem: "" },
-            { id: "bal_006", nome: "Bala Dori Mel 500g", preco: 12.99, imagem: "" },
-            { id: "bal_007", nome: "Bala Dori Yogurt 500g", preco: 11.70, imagem: "" },
-            { id: "bal_008", nome: "Bala Azedinha Melancia", preco: 13.65, imagem: "" },
-            { id: "bal_009", nome: "Bala Azedinha Morango", preco: 13.65, imagem: "" },
-            { id: "bal_010", nome: "Bala Azedinha Uva", preco: 13.65, imagem: "" },
-            { id: "bal_011", nome: "Bala Toffee Chocolate 400g", preco: 19.50, imagem: "" },
-            { id: "bal_012", nome: "Bala Toffee Coco 400g", preco: 19.50, imagem: "" },
-            { id: "bal_013", nome: "Bala Toffee Leite", preco: 19.50, imagem: "" },
-            { id: "bal_014", nome: "Bala Toffee Maracujá", preco: 19.50, imagem: "" },
-            { id: "bal_015", nome: "Bala Banana Joice", preco: 12.95, imagem: "" },
-            { id: "bal_016", nome: "Bala de Café Soberana 500g", preco: 12.99, imagem: "" },
-            { id: "bal_017", nome: "Bala de Coco Marlon 500g", preco: 12.90, imagem: "" },
-            { id: "bal_018", nome: "Bala Erva Cidreira 500g", preco: 12.90, imagem: "" },
-            { id: "bal_019", nome: "Bala de Mel e Gengibre 500g", preco: 16.25, imagem: "" },
-            { id: "bal_020", nome: "Bala Juquinha Sortida 500g", preco: 12.99, imagem: "" },
-            { id: "bal_021", nome: "Bala Juquinha Tutti", preco: 12.99, imagem: "" },
-            { id: "bal_022", nome: "Bala Maçã Verde 500g", preco: 12.90, imagem: "" },
-            { id: "bal_023", nome: "Bala Milho Verde 500g", preco: 14.90, imagem: "" },
-            { id: "bal_024", nome: "Bala Moranguinho 600g", preco: 11.50, imagem: "" },
-            { id: "bal_025", nome: "Bala Paçoquita 500g", preco: 14.90, imagem: "" },
-            { id: "bal_026", nome: "Bala Sortida Erlan 500g", preco: 9.90, imagem: "" },
-            { id: "bal_027", nome: "Bala Tamarindo 500g", preco: 12.90, imagem: "" },
-            { id: "bal_028", nome: "Caramelo Embaré Meio", preco: 19.50, imagem: "" },
-            { id: "bal_029", nome: "Gamadinho 420g", preco: 16.89, imagem: "" },
-            { id: "pir_001", nome: "Pirulito Blong Azul c/24", preco: 16.20, imagem: "" },
-            { id: "pir_002", nome: "Pirulito Blong Preto c/24", preco: 16.20, imagem: "" },
-            { id: "pir_003", nome: "Pirulito Blong Energy c/24", preco: 16.20, imagem: "" },
-            { id: "pir_004", nome: "Pirulito Blong Melancia c/24", preco: 16.20, imagem: "" },
-            { id: "pir_005", nome: "Pirulito Blong Morango c/24", preco: 16.20, imagem: "" },
-            { id: "pir_006", nome: "Pirulito Blong Tutti Frutti c/24", preco: 16.20, imagem: "" },
-            { id: "pir_007", nome: "Pirulito Blong Uva c/24", preco: 16.20, imagem: "" },
-            { id: "pir_008", nome: "Pirulito Florestal Coração Color c/50", preco: 14.30, imagem: "" },
-            { id: "pir_009", nome: "Pirulito Florestal Coração Verm. c/50", preco: 14.30, imagem: "" },
-            { id: "pir_010", nome: "Pirulito Ch. Pop c/50", preco: 18.45, imagem: "" },
-            { id: "pir_011", nome: "Pirulito Ch. Pop Morango c/50", preco: 18.45, imagem: "" },
-            { id: "pir_012", nome: "Pirulito Maçã do Amor c/24", preco: 12.80, imagem: "" },
-            { id: "pir_013", nome: "Pirulito Uva do Amor c/24", preco: 12.80, imagem: "" },
-            { id: "pir_014", nome: "Pirulito Pop Kiss Morango c/50", preco: 13.75, imagem: "" }
-        ];
-
-        let paginaAtual = 1;
-        const itensPorPagina = 12;
-        let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
-
-        function renderizarProdutos() {
-            const grid = document.getElementById("product-grid");
-            grid.innerHTML = "";
-
-            const inicio = (paginaAtual - 1) * itensPorPagina;
-            const fim = inicio + itensPorPagina;
-            const itensPagina = produtos.slice(inicio, fim);
-
-            itensPagina.forEach(prod => {
-                const card = document.createElement("div");
-                card.className = "card";
-                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${prod.nome}">` : '';
-                
-                const qtdNoCarrinho = carrinho[prod.id] ? carrinho[prod.id].quantidade : 0;
-                
-                let acaoHTML = "";
-                if (qtdNoCarrinho === 0) {
-                    acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">Adicionar</button>`;
-                } else {
-                    acaoHTML = `
-                        <div class="card-controles">
-                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, -1)">-</button>
-                            <span>${qtdNoCarrinho}</span>
-                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">+</button>
-                        </div>
-                    `;
-                }
-
-                card.innerHTML = `
-                    ${imgTag}
-                    <h3>${prod.nome}</h3>
-                    <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
-                    ${acaoHTML}
-                `;
-                grid.appendChild(card);
-            });
-
-            renderizarPaginacao();
-        }
-
-        function renderizarPaginacao() {
-            const paginacao = document.getElementById("pagination");
-            paginacao.innerHTML = "";
-
-            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
-
-            for (let i = 1; i <= totalPaginas; i++) {
-                const btn = document.createElement("button");
-                btn.innerText = i;
-                if (i === paginaAtual) btn.className = "active";
-                btn.onclick = () => {
-                    paginaAtual = i;
-                    renderizarProdutos();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                };
-                paginacao.appendChild(btn);
-            }
-        }
-
-        function alterarQuantidade(id, nome, preco, delta) {
-            if (!carrinho[id]) {
-                if (delta > 0) {
-                    carrinho[id] = { nome, preco, quantidade: delta };
-                }
-            } else {
-                carrinho[id].quantidade += delta;
-                if (carrinho[id].quantidade <= 0) {
-                    delete carrinho[id];
-                }
-            }
-            salvarESincronizar();
-        }
-
-        function limparCarrinho() {
-            carrinho = {};
-            salvarESincronizar();
-        }
-
-        function salvarESincronizar() {
-            localStorage.setItem('carrinho_distribuidora', JSON.stringify(carrinho));
-            renderizarProdutos();
-            atualizarCarrinhoUI();
-        }
-
-        function atualizarCarrinhoUI() {
-            const listaDiv = document.getElementById("lista-carrinho");
-            const totalDiv = document.getElementById("carrinho-total");
-            const btnLimpar = document.getElementById("btn-limpar-carrinho");
-            const footerTotal = document.getElementById("footer-total");
-            
-            listaDiv.innerHTML = "";
-            let valorTotal = 0;
-            let temItens = false;
-
-            const numeroWhatsApp = "5521968659086";
-            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes produtos:\n\n";
-            let contador = 1;
-
-            for (let id in carrinho) {
-                temItens = true;
-                let item = carrinho[id];
-                let subtotal = item.preco * item.quantidade;
-                valorTotal += subtotal;
-
-                const itemDiv = document.createElement("div");
-                itemDiv.className = "item-carrinho";
-                itemDiv.innerHTML = `
-                    <div class="detalhes">
-                        <strong>${item.nome}</strong><br>
-                        <small>R$ ${item.preco.toFixed(2).replace('.', ',')} x ${item.quantidade}</small>
-                    </div>
-                    <div class="controles">
-                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, -1)">-</button>
-                        <span>${item.quantidade}</span>
-                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, 1)">+</button>
-                    </div>
-                `;
-                listaDiv.appendChild(itemDiv);
-
-                mensagem += `${contador}. ${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
-                contador++;
-            }
-
-            if (!temItens) {
-                listaDiv.innerHTML = '<p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>';
-                totalDiv.style.display = "none";
-                btnLimpar.style.display = "none";
-            } else {
-                totalDiv.style.display = "block";
-                btnLimpar.style.display = "block";
-                totalDiv.innerText = `Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
-            }
-
-            footerTotal.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
-            mensagem += `\n*Valor Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}*`;
-
-            const linkEncoded = encodeURI(mensagem);
-            document.getElementById("btn-cotar").href = `https://wa.me/${numeroWhatsApp}?text=${linkEncoded}`;
-        }
-
-        renderizarProdutos();
-        atualizarCarrinhoUI();
-    </script>
+    <footer>
+        &copy; 2026 Distribuidora Frazão - Todos os direitos reservados.
+    </footer>
 
 </body>
 </html>

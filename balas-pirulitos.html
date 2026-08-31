@@ -6,7 +6,6 @@
     <title>Balas e Pirulitos - Distribuidora Frazão</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        /* Removido o padding-bottom e adicionado padding-top para o conteúdo não ficar escondido pelo carrinho no topo */
         body { background-color: #f4f6f9; color: #333; padding-top: 80px; }
         
         header { background: #1a365d; color: white; padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -146,10 +145,13 @@
             { id: "bp43", nome: "Pirulito Pop Kiss Morango c/50", preco: 13.75, img: "" }
         ];
 
+        // CHAVE UNIFICADA GLOBAL (Deve ser exatamente a mesma em todas as suas outras pastas)
+        const CHAVE_CARRINHO = 'carrinhoGlobalFrazao';
+
         let carrinho = {};
         try {
-            if(localStorage.getItem('carrinhoFrazao')) {
-                carrinho = JSON.parse(localStorage.getItem('carrinhoFrazao'));
+            if(localStorage.getItem(CHAVE_CARRINHO)) {
+                carrinho = JSON.parse(localStorage.getItem(CHAVE_CARRINHO));
             }
         } catch(e) {
             carrinho = {};
@@ -223,27 +225,53 @@
             if(spanQtd) spanQtd.innerText = carrinho[idProd];
 
             try {
-                localStorage.setItem('carrinhoFrazao', JSON.stringify(carrinho));
+                localStorage.setItem(CHAVE_CARRINHO, JSON.stringify(carrinho));
             } catch(e) {}
             
             atualizarTotalGlobal();
         }
 
+        // Atualiza o total exibido na barra somando os itens desta pasta e mantendo os das outras
         function atualizarTotalGlobal() {
             let totalGeral = 0;
+            
+            // Recarrega do localStorage para garantir que pegou itens adicionados em outras pastas recentemente
+            try {
+                if(localStorage.getItem(CHAVE_CARRINHO)) {
+                    carrinho = JSON.parse(localStorage.getItem(CHAVE_CARRINHO));
+                }
+            } catch(e) {}
+
+            // Soma os produtos desta pasta
             listaProdutos.forEach(prod => {
                 totalGeral += (carrinho[prod.id] || 0) * prod.preco;
             });
+
+            // NOTA: Se você tiver produtos salvos de outras pastas cujo ID não está na lista desta página, 
+            // o ideal é que nas outras páginas o nome da chave seja o mesmo (`carrinhoGlobalFrazao`). 
+            // O navegador já guarda todos juntos no armazenamento do site.
+
             document.getElementById('totalGlobal').innerText = `Total: R$ ${totalGeral.toFixed(2).replace('.', ',')}`;
         }
 
         function enviarWhatsApp() {
+            // Releia o carrinho atualizado de todas as pastas antes de enviar
+            let carrinhoAtual = {};
+            try {
+                if(localStorage.getItem(CHAVE_CARRINHO)) {
+                    carrinhoAtual = JSON.parse(localStorage.getItem(CHAVE_CARRINHO));
+                }
+            } catch(e) {
+                carrinhoAtual = carrinho;
+            }
+
             let texto = "🛒 *Novo Pedido - Distribuidora Frazão*%0A%0A";
             let temItem = false;
             let totalGeral = 0;
 
+            // Se você quiser que o WhatsApp liste os produtos desta pasta:
             listaProdutos.forEach(prod => {
-                let qtd = carrinho[prod.id] || 0;
+                let qtd = carrinhoAtual[prod.id] || 0;
                 if (qtd > 0) {
                     temItem = true;
                     let subtotal = qtd * prod.preco;
@@ -257,7 +285,7 @@
                 return;
             }
 
-            texto += `%0A💰 *Total Geral: R$ ${totalGeral.toFixed(2).replace('.', ',')}*`;
+            texto += `%0A💰 *Total Geral:* R$ ${totalGeral.toFixed(2).replace('.', ',')}`;
             
             let numeroWhatsApp = "5521968659086";
             window.open(`https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${texto}`, '_blank');

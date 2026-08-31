@@ -66,8 +66,9 @@
 
         /* CARRINHO GLOBAL FIXO */
         .carrinho-global { position: fixed; bottom: 0; left: 0; width: 100%; background: #2f855a; color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -4px 10px rgba(0,0,0,0.15); z-index: 1000; }
-        .carrinho-info { font-size: 1.3rem; font-weight: bold; }
-        .btn-whatsapp { background: white; color: #2f855a; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.1rem; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .carrinho-info { font-size: 1.2rem; font-weight: bold; }
+        .btn-whatsapp { background: white; color: #2f855a; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn-whatsapp:hover { background: #f7fafc; }
     </style>
 </head>
 <body>
@@ -78,7 +79,7 @@
     </header>
 
     <div class="topo-navegacao">
-        <a href="../index.html" class="btn-voltar">← Voltar para o Início</a>
+        <a href="index.html" class="btn-voltar">← Voltar para o Início</a>
         <button class="btn-admin-toggle" onclick="alternarPainelAdmin()">⚙️ Gerenciar Imagens</button>
     </div>
 
@@ -117,7 +118,7 @@
         <div class="modal-conteudo" id="corpoModal"></div>
     </div>
 
-    <!-- BARRA FIXA GLOBAL -->
+    <!-- BARRA FIXA GLOBAL DO CARRINHO -->
     <div class="carrinho-global">
         <div class="carrinho-info" id="totalGlobal">Total: R$ 0,00</div>
         <button class="btn-whatsapp" onclick="enviarWhatsApp()">Enviar Pedido 📱</button>

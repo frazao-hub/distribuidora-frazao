@@ -16,17 +16,6 @@
         .topo-navegacao { max-width: 1200px; margin: 15px auto 0 auto; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .btn-voltar { background: #cbd5e0; color: #2d3748; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block; font-size: 0.9rem; }
         .btn-voltar:hover { background: #a0aec0; }
-        .btn-admin-toggle { background: #3182ce; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
-        .btn-admin-toggle:hover { background: #2b6cb0; }
-
-        /* PAINEL DE UPLOAD (ADMIN) */
-        .painel-admin { max-width: 1200px; margin: 15px auto; padding: 20px; background: white; border-radius: 8px; border: 2px dashed #3182ce; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .painel-admin h3 { color: #1a365d; margin-bottom: 12px; font-size: 1.2rem; }
-        .admin-form-grupo { display: flex; flex-direction: column; gap: 8px; max-width: 400px; }
-        .admin-form-grupo label { font-size: 0.9rem; font-weight: bold; color: #4a5568; }
-        .admin-form-grupo select, .admin-form-grupo input { padding: 8px; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 0.95rem; }
-        .btn-salvar-img { background: #2f855a; color: white; border: none; padding: 10px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .btn-salvar-img:hover { background: #276749; }
 
         .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
         .categoria-titulo { font-size: 1.6rem; color: #1a365d; margin-bottom: 20px; border-bottom: 2px solid #cbd5e0; padding-bottom: 8px; }
@@ -80,21 +69,6 @@
 
     <div class="topo-navegacao">
         <a href="../index.html" class="btn-voltar">← Voltar para o Início</a>
-        <button class="btn-admin-toggle" onclick="alternarPainelAdmin()">⚙️ Gerenciar Imagens</button>
-    </div>
-
-    <!-- PAINEL DE UPLOAD DE IMAGENS -->
-    <div class="painel-admin" id="painelAdmin">
-        <h3>Adicionar / Atualizar Imagem de Produto</h3>
-        <div class="admin-form-grupo">
-            <label for="selectProdutoAdmin">Selecione o Produto:</label>
-            <select id="selectProdutoAdmin"></select>
-            
-            <label for="inputImagemAdmin">Escolher Imagem do Computador:</label>
-            <input type="file" id="inputImagemAdmin" accept="image/*">
-            
-            <button class="btn-salvar-img" onclick="salvarImagemProduto()">Salvar Imagem</button>
-        </div>
     </div>
 
     <div class="container">
@@ -125,6 +99,9 @@
     </div>
 
     <script>
+        // COMO COLOCAR AS FOTOS:
+        // No campo "img", basta colocar o nome do arquivo da foto (ex: "imagens/bala-7belo.jpg") 
+        // ou o link direto da imagem. Se deixar aspas vazias (""), ele mostra uma imagem padrão.
         const listaProdutos = [
             { id: "bp1", nome: "Bala 7 Belo 500g", preco: 12.99, img: "" },
             { id: "bp2", nome: "Bala Berbau Soft 500g", preco: 12.35, img: "" },
@@ -176,55 +153,8 @@
             carrinho = JSON.parse(localStorage.getItem('carrinhoFrazao'));
         }
 
-        let imagensSalvas = JSON.parse(localStorage.getItem('imagensFrazaoBalas')) || {};
-        listaProdutos.forEach(p => {
-            if(imagensSalvas[p.id]) {
-                p.img = imagensSalvas[p.id];
-            }
-        });
-
         const itensPorPagina = 12;
         let paginaAtual = 1;
-
-        function inicializarAdmin() {
-            const select = document.getElementById('selectProdutoAdmin');
-            select.innerHTML = '';
-            listaProdutos.forEach(p => {
-                let opt = document.createElement('option');
-                opt.value = p.id;
-                opt.innerText = p.nome;
-                select.appendChild(opt);
-            });
-        }
-
-        function alternarPainelAdmin() {
-            const painel = document.getElementById('painelAdmin');
-            painel.style.display = painel.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function salvarImagemProduto() {
-            const idProd = document.getElementById('selectProdutoAdmin').value;
-            const inputArquivo = document.getElementById('inputImagemAdmin');
-
-            if (inputArquivo.files && inputArquivo.files[0]) {
-                const leitor = new FileReader();
-                leitor.onload = function(e) {
-                    const base64Img = e.target.result;
-                    let prod = listaProdutos.find(p => p.id === idProd);
-                    if (prod) {
-                        prod.img = base64Img;
-                        imagensSalvas[idProd] = base64Img;
-                        localStorage.setItem('imagensFrazaoBalas', JSON.stringify(imagensSalvas));
-                        
-                        alert("Imagem salva com sucesso para " + prod.nome + "!");
-                        renderizarPagina(paginaAtual);
-                    }
-                }
-                leitor.readAsDataURL(inputArquivo.files[0]);
-            } else {
-                alert("Por favor, selecione uma imagem do seu computador.");
-            }
-        }
 
         function renderizarPagina(pagina) {
             paginaAtual = pagina;
@@ -240,10 +170,13 @@
                     carrinho[prod.id] = 0;
                 }
 
+                // Se não houver imagem informada, usa uma imagem padrão limpa
+                let imagemSrc = prod.img && prod.img.trim() !== "" ? prod.img : 'https://via.placeholder.com/220?text=Distribuidora+Frazao';
+
                 let card = document.createElement('div');
                 card.className = 'produto-card';
                 card.innerHTML = `
-                    <img src="${prod.img || 'https://via.placeholder.com/220?text=Sem+Foto'}" class="produto-img">
+                    <img src="${imagemSrc}" class="produto-img">
                     <div class="produto-info">
                         <div>
                             <div class="produto-nome">${prod.nome}</div>
@@ -350,7 +283,7 @@
                 <p>Ao utilizar o catálogo digital da Distribuidora Frazão, o usuário concorda com as seguintes condições:</p>
                 <ul>
                     <li><strong>Finalidade:</strong> O catálogo destina-se ao atendimento e facilitação de pedidos comerciais no atacado e varejo.</li>
-                    <li><strong>Disponibilidade de Preços:</strong> Os valores e estoques dos produtos estão sujeitos a alterações sem aviso prévio.</li>
+                    <li><strong>Disponibilidade de Preços:</strong> O valor e o estoque dos produtos estão sujeitos a alterações.</li>
                 </ul>
                 <button class="btn-fechar-modal" onclick="fecharModal()">Fechar</button>
             `
@@ -366,7 +299,6 @@
         }
 
         window.onload = () => {
-            inicializarAdmin();
             renderizarPagina(1);
         };
     </script>

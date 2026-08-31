@@ -1,1 +1,333 @@
-limpeza.html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Limpeza</title>
+    <style>
+        :root {
+            --primary-color: #0b5ed7;
+            --success-color: #198754;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 90px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 150px;
+            object-fit: contain;
+            background-color: #fff;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+        }
+
+        .product-info h3 {
+            font-size: 1rem;
+            margin: 0 0 0.5rem 0;
+            color: var(--text-color);
+            min-height: 2.4em;
+        }
+
+        .product-presentation {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--success-color);
+            margin-bottom: 1rem;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f1f3f5;
+            border-radius: 6px;
+            padding: 0.25rem;
+        }
+
+        .btn-qty {
+            background: white;
+            border: 1px solid var(--border-color);
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .btn-qty:hover {
+            background: #e2e6ea;
+        }
+
+        .qty-display {
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 0 0.5rem;
+        }
+
+        /* Carrinho Global Flutuante */
+        .cart-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            border-top: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            z-index: 1000;
+        }
+
+        .cart-info {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .btn-checkout {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-checkout:hover {
+            background-color: #157347;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Catálogo de Produtos de Limpeza</h1>
+    </header>
+
+    <div class="container" id="product-list">
+        </div>
+
+    <div class="cart-bar">
+        <div class="cart-info" id="cart-summary">
+            Carrinho Vazio (Total: R$ 0,00)
+        </div>
+        <button class="btn-checkout" onclick="checkoutWhatsApp()">
+            Finalizar no WhatsApp
+        </button>
+    </div>
+
+    <script>
+        // Lista de produtos extraída dos dados informados
+        const products = [
+            { id: 1, name: "Água Sanitária Cloral", presentation: "1 L (c/ 12)", price: 30.90, img: "src/agua-sanitaria-cloral.jpg" },
+            { id: 2, name: "Álcool Flops 92,8%", presentation: "1 L (c/ 06)", price: 61.50, img: "src/alcool-flops-1l.jpg" },
+            { id: 3, name: "Álcool Flops 92,8%", presentation: "500 ml (c/ 06)", price: 33.95, img: "src/alcool-flops-500ml.jpg" },
+            { id: 4, name: "Amaciante Ypê Azul", presentation: "500 ml (c/ 06)", price: 22.10, img: "src/amaciante-ype.jpg" },
+            { id: 5, name: "Bacia", presentation: "11 L (c/ 06)", price: 46.69, img: "src/bacia-11l.jpg" },
+            { id: 6, name: "Bacia", presentation: "20 L (c/ 06)", price: 75.60, img: "src/bacia-20l.jpg" },
+            { id: 7, name: "Balde Azul", presentation: "15 L (c/ 06)", price: 66.25, img: "src/balde-azul-15l.jpg" },
+            { id: 8, name: "Balde Preto (c/ alça de ferro)", presentation: "8 L (c/ 06)", price: 35.00, img: "src/balde-preto-8l.jpg" },
+            { id: 9, name: "Balde Verde (c/ alça de ferro)", presentation: "8 L (c/ 06)", price: 35.00, img: "src/balde-verde-8l.jpg" },
+            { id: 10, name: "Bombril", presentation: "c/ 20", price: 39.90, img: "src/bombril.jpg" },
+            { id: 11, name: "Corante Tecidos Tingecor Marinho", presentation: "c/ 06", price: 21.70, img: "src/corante-marinho.jpg" },
+            { id: 12, name: "Corante Tecidos Tingecor Preto", presentation: "c/ 06", price: 21.70, img: "src/corante-preto.jpg" },
+            { id: 13, name: "Detergente Odd Bicarbonato", presentation: "c/ 06", price: 15.60, img: "src/det-odd-bicarbonato.jpg" },
+            { id: 14, name: "Detergente Odd Neutro", presentation: "c/ 06", price: 15.60, img: "src/det-odd-neutro.jpg" },
+            { id: 15, name: "Detergente Odd Original", presentation: "c/ 06", price: 15.60, img: "src/det-odd-original.jpg" },
+            { id: 16, name: "Detergente Odd Coco", presentation: "c/ 06", price: 15.60, img: "src/det-odd-coco.jpg" },
+            { id: 17, name: "Escova de Roupa Condor", presentation: "c/ 12", price: 30.70, img: "src/escova-condor.jpg" },
+            { id: 18, name: "Espiral Detefon", presentation: "c/ 05", price: 22.69, img: "src/espiral-detefon.jpg" },
+            { id: 19, name: "Espiral Pirisa", presentation: "c/ 05", price: 19.50, img: "src/espiral-pirisa.jpg" },
+            { id: 20, name: "Esponja Wish Limpanno", presentation: "c/ 10", price: 9.00, img: "src/esponja-wish.jpg" },
+            { id: 21, name: "Flanela 28x38", presentation: "c/ 12", price: 23.60, img: "src/flanela.jpg" },
+            { id: 22, name: "Inseticida Proinset Aero", presentation: "250 ml (Und)", price: 5.90, img: "src/inseticida-proinset.jpg" },
+            { id: 23, name: "Lustra Móveis King", presentation: "200 ml (c/ 06)", price: 40.20, img: "src/lustra-moveis-king.jpg" },
+            { id: 24, name: "Naftalina", presentation: "c/ 10", price: 12.99, img: "src/naftalina.jpg" },
+            { id: 25, name: "Óleo de Máquina King", presentation: "c/ 06", price: 34.30, img: "src/oleo-maquina.jpg" },
+            { id: 26, name: "Pano de Chão Grande", presentation: "c/ 10", price: 39.90, img: "src/pano-chao-grande.jpg" },
+            { id: 27, name: "Pano de Chão Pequeno", presentation: "c/ 10", price: 24.90, img: "src/pano-chao-pequeno.jpg" },
+            { id: 28, name: "Pano Multiuso", presentation: "25 m", price: 22.31, img: "src/pano-multiuso.jpg" },
+            { id: 29, name: "Papel Toalha Beli Chef", presentation: "c/ 06", price: 21.90, img: "src/papel-toalha.jpg" },
+            { id: 30, name: "Pedra Sanitária Qodor Mista", presentation: "c/ 12", price: 28.99, img: "src/pedra-sanitaria.jpg" },
+            { id: 31, name: "Sabão Barra Amarelo", presentation: "c/ 05", price: 10.50, img: "src/sabao-barra-amarelo.jpg" },
+            { id: 32, name: "Sabão Barra Azul", presentation: "c/ 05", price: 10.75, img: "src/sabao-barra-azul.jpg" },
+            { id: 33, name: "Sabão Tixan Primavera 400g", presentation: "c/ 06", price: 38.95, img: "src/sabao-tixan.jpg" },
+            { id: 34, name: "Sabão de Coco Ruth 90g", presentation: "c/ 05", price: 12.79, img: "src/sabao-coco-ruth.jpg" },
+            { id: 35, name: "Sabão Bulnez", presentation: "800 g", price: 5.20, img: "src/sabao-bulnez.jpg" },
+            { id: 36, name: "Sabão Minuano Glicerinado", presentation: "c/ 05", price: 15.50, img: "src/sabao-minuano.jpg" }
+        ];
+
+        // Objeto para controlar as quantidades de cada produto por ID
+        let cart = {};
+
+        function renderProducts() {
+            const container = document.getElementById('product-list');
+            container.innerHTML = '';
+
+            products.forEach(product => {
+                const qty = cart[product.id] || 0;
+                
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div>
+                        <img src="${product.img}" alt="${product.name}" class="product-image" onerror="this.src='https://via.placeholder.com/150?text=Sem+Foto'">
+                        <div class="product-info">
+                            <h3>${product.name}</h3>
+                            <div class="product-presentation">${product.presentation}</div>
+                            <div class="product-price">R$ ${product.price.toFixed(2).replace('.', ',')}</div>
+                        </div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn-qty" onclick="updateQty(${product.id}, -1)">-</button>
+                        <span class="qty-display" id="qty-${product.id}">${qty}</span>
+                        <button class="btn-qty" onclick="updateQty(${product.id}, 1)">+</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function updateQty(productId, change) {
+            if (!cart[productId]) {
+                cart[productId] = 0;
+            }
+            cart[productId] += change;
+
+            if (cart[productId] < 0) {
+                cart[productId] = 0;
+            }
+
+            // Atualiza o display da quantidade no card específico
+            document.getElementById(`qty-${productId}`).innerText = cart[productId];
+
+            updateCartSummary();
+        }
+
+        function updateCartSummary() {
+            let totalItems = 0;
+            let totalPrice = 0;
+
+            for (let id in cart) {
+                if (cart[id] > 0) {
+                    const prod = products.find(p => p.id == id);
+                    totalItems += cart[id];
+                    totalPrice += prod.price * cart[id];
+                }
+            }
+
+            const summaryElement = document.getElementById('cart-summary');
+            if (totalItems === 0) {
+                summaryElement.innerText = "Carrinho Vazio (Total: R$ 0,00)";
+            } else {
+                summaryElement.innerText = `${totalItems} itens | Total: R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
+            }
+        }
+
+        function checkoutWhatsApp() {
+            let totalItems = 0;
+            for (let id in cart) {
+                if (cart[id] > 0) totalItems += cart[id];
+            }
+
+            if (totalItems === 0) {
+                alert("Seu carrinho está vazio. Adicione pelo menos um produto antes de finalizar.");
+                return;
+            }
+
+            let message = "Olá! Gostaria de fazer o pedido dos seguintes produtos de limpeza:\n\n";
+            let totalPrice = 0;
+
+            for (let id in cart) {
+                if (cart[id] > 0) {
+                    const prod = products.find(p => p.id == id);
+                    const subtotal = prod.price * cart[id];
+                    totalPrice += subtotal;
+                    message += `* ${cart[id]}x ${prod.name} (${prod.presentation}) - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+                }
+            }
+
+            message += `\n*Total do Pedido: R$ ${totalPrice.toFixed(2).replace('.', ',')}*`;
+
+            const phoneNumber = "5521968659086";
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Inicializa a renderização da página
+        renderProducts();
+    </script>
+</body>
+</html>

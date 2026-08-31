@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chicletes e Drops - Distribuidora Frazão</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; color: #333; display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 70px; }
         header { background: #27ae60; color: white; text-align: center; padding: 25px 20px; }
         header h1 { margin: 0 0 5px 0; font-size: 26px; }
         .voltar { display: inline-block; margin-top: 10px; color: #fff; background: #2c3e50; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 14px; }
@@ -28,9 +28,11 @@
         .btn-add { background: #3498db; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
         .btn-add:hover { background: #2980b9; }
 
-        .topo-pedido { background: #fff; padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .btn-whatsapp { background: #25d366; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 10px; }
-        .btn-whatsapp:hover { background: #20ba5a; }
+        /* Barra Flutuante Global do Carrinho */
+        .barra-carrinho { position: fixed; bottom: 0; left: 0; width: 100%; background: #2c3e50; color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -2px 10px rgba(0,0,0,0.2); z-index: 1000; box-sizing: border-box; }
+        .barra-carrinho span { font-size: 16px; font-weight: bold; }
+        .btn-whatsapp-global { background: #25d366; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-whatsapp-global:hover { background: #20ba5a; }
 
         footer { background: #2c3e50; color: #ecf0f1; text-align: center; padding: 15px; margin-top: auto; font-size: 12px; }
     </style>
@@ -44,16 +46,15 @@
     </header>
 
     <div class="container">
-
-        <div class="topo-pedido">
-            <p>Monte seu pedido selecionando as quantidades e clique abaixo para enviar a cotação:</p>
-            <a id="btnWhats" href="#" class="btn-whatsapp" target="_blank">Enviar Pedido via WhatsApp</a>
-        </div>
-
         <div class="grid-produtos" id="listaProdutos">
             <!-- Os produtos serão gerados aqui automaticamente -->
         </div>
+    </div>
 
+    <!-- Barra Fixa do Carrinho Global -->
+    <div class="barra-carrinho">
+        <span id="totalCarrinhoTxt">Total Carrinho: R$ 0,00</span>
+        <a id="btnWhatsGlobal" href="#" class="btn-whatsapp-global" target="_blank">Finalizar no WhatsApp</a>
     </div>
 
     <footer>
@@ -154,12 +155,25 @@
         const listaDiv = document.getElementById('listaProdutos');
         let carrinho = JSON.parse(localStorage.getItem('carrinho_frazao')) || {};
 
+        function atualizarBarraCarrinho() {
+            let totalGeral = 0;
+            for (let nomeProduto in carrinho) {
+                let qtd = carrinho[nomeProduto];
+                // Procura o preço deste produto em toda a lista atual
+                let pObj = produtos.find(item => item.nome === nomeProduto);
+                if (pObj) {
+                    totalGeral += qtd * pObj.preco;
+                }
+            }
+            document.getElementById('totalCarrinhoTxt').innerText = "Total Carrinho: R " + totalGeral.toFixed(2).replace('.', ',');
+        }
+
         produtos.forEach((p, index) => {
             const card = document.createElement('div');
             card.className = 'card-produto';
             
             let imgTag = p.img ? `<img src="${p.img}" alt="${p.nome}">` : '';
-            let qtdSalta = carrinho[p.nome] || 0;
+            let qtdSalva = carrinho[p.nome] || 0;
 
             card.innerHTML = `
                 ${imgTag}
@@ -167,7 +181,7 @@
                 <div class="preco">R$ ${p.preco.toFixed(2).replace('.', ',')}</div>
                 <div class="controle-qtd">
                     <button onclick="alterarQtd(${index}, -1)">-</button>
-                    <input type="number" id="qtd_${index}" value="${qtdSalta}" min="0">
+                    <input type="number" id="qtd_${index}" value="${qtdSalva}" min="0" onchange="atualizarItemDireto(${index})">
                     <button onclick="alterarQtd(${index}, 1)">+</button>
                 </div>
                 <button class="btn-add" onclick="salvarItem(${index})">Salvar no Carrinho</button>
@@ -175,12 +189,19 @@
             listaDiv.appendChild(card);
         });
 
+        atualizarBarraCarrinho();
+
         function alterarQtd(index, valor) {
             const input = document.getElementById(`qtd_${index}`);
             let atual = parseInt(input.value) || 0;
             atual += valor;
             if (atual < 0) atual = 0;
             input.value = atual;
+            salvarItem(index);
+        }
+
+        function atualizarItemDireto(index) {
+            salvarItem(index);
         }
 
         function salvarItem(index) {
@@ -194,13 +215,13 @@
             }
             
             localStorage.setItem('carrinho_frazao', JSON.stringify(carrinho));
-            alert(p.nome + " atualizado no carrinho global!");
+            atualizarBarraCarrinho();
         }
 
-        document.getElementById('btnWhats').addEventListener('click', function(e) {
+        document.getElementById('btnWhatsGlobal').addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Atualiza o carrinho com os valores atuais da tela antes de enviar
+            // Garante salvamento de tudo antes de montar a mensagem
             produtos.forEach((p, index) => {
                 let qtd = parseInt(document.getElementById(`qtd_${index}`).value) || 0;
                 if (qtd > 0) {
@@ -217,7 +238,6 @@
 
             for (let nomeProduto in carrinho) {
                 let qtd = carrinho[nomeProduto];
-                // Busca o preço atual do produto na lista
                 let prodObj = produtos.find(item => item.nome === nomeProduto);
                 let preco = prodObj ? prodObj.preco : 0;
                 let subtotal = qtd * preco;

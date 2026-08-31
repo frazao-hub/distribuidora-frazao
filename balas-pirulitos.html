@@ -99,9 +99,6 @@
     </div>
 
     <script>
-        // COMO COLOCAR AS FOTOS:
-        // No campo "img", basta colocar o nome do arquivo da foto (ex: "imagens/bala-7belo.jpg") 
-        // ou o link direto da imagem. Se deixar aspas vazias (""), ele mostra uma imagem padrão.
         const listaProdutos = [
             { id: "bp1", nome: "Bala 7 Belo 500g", preco: 12.99, img: "" },
             { id: "bp2", nome: "Bala Berbau Soft 500g", preco: 12.35, img: "" },
@@ -170,7 +167,6 @@
                     carrinho[prod.id] = 0;
                 }
 
-                // Se não houver imagem informada, usa uma imagem padrão limpa
                 let imagemSrc = prod.img && prod.img.trim() !== "" ? prod.img : 'https://via.placeholder.com/220?text=Distribuidora+Frazao';
 
                 let card = document.createElement('div');

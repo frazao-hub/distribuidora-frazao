@@ -8,19 +8,47 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
         body { background-color: #f4f6f9; color: #333; padding-bottom: 90px; }
         
-        header { background: #1a365d; color: white; padding: 25px 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        header h1 { font-size: 2rem; margin-bottom: 5px; }
-        header p { font-size: 0.95rem; opacity: 0.85; }
+        header { background: #1a365d; color: white; padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        header p { font-size: 0.9rem; opacity: 0.85; }
 
-        .navegacao-categorias { display: flex; align-items: center; justify-content: center; background: white; padding: 15px 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; gap: 10px; }
-        .nav-seta { background: #1a365d; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .nav-seta:active { background: #2b6cb0; }
+        /* MENU EM DUAS LINHAS */
+        .categorias-menu { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 8px; 
+            background: white; 
+            padding: 12px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+        }
+
+        @media (max-width: 768px) {
+            .categorias-menu { 
+                grid-template-columns: repeat(2, 1fr); 
+            }
+        }
         
-        .categorias-menu { display: flex; overflow-x: auto; gap: 12px; scroll-behavior: smooth; scrollbar-width: none; padding: 5px; }
-        .categorias-menu::-webkit-scrollbar { display: none; }
-        
-        .cat-btn { background: #edf2f7; border: 2px solid #cbd5e0; padding: 12px 20px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-weight: bold; color: #4a5568; font-size: 1rem; transition: all 0.2s; min-width: 160px; text-align: center; }
-        .cat-btn.ativo { background: #1a365d; color: white; border-color: #1a365d; box-shadow: 0 4px 6px rgba(26, 54, 93, 0.2); }
+        .cat-btn { 
+            background: #edf2f7; 
+            border: 2px solid #cbd5e0; 
+            padding: 10px 8px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            color: #4a5568; 
+            font-size: 0.9rem; 
+            transition: all 0.2s; 
+            text-align: center; 
+        }
+        .cat-btn.ativo { 
+            background: #1a365d; 
+            color: white; 
+            border-color: #1a365d; 
+            box-shadow: 0 4px 6px rgba(26, 54, 93, 0.2); 
+        }
 
         .container { max-width: 1200px; margin: 25px auto; padding: 0 15px; }
         .categoria-secao { display: none; margin-bottom: 40px; }
@@ -51,12 +79,8 @@
         <p>Selecione os produtos nas categorias e finalize seu pedido pelo WhatsApp</p>
     </header>
 
-    <div class="navegacao-categorias">
-        <button class="nav-seta" onclick="rolarMenu(-1)">&#10094;</button>
-        <div class="categorias-menu" id="menuCategorias">
-            <!-- Gerado via JavaScript em ordem alfabética -->
-        </div>
-        <button class="nav-seta" onclick="rolarMenu(1)">&#10095;</button>
+    <div class="categorias-menu" id="menuCategorias">
+        <!-- Gerado via JavaScript em 2 linhas (organizado em ordem alfabética) -->
     </div>
 
     <div class="container" id="catalogoContainer">
@@ -167,11 +191,6 @@
             let idLimpo = catSelecionada.replace(/\s+/g, '');
             document.getElementById(`btn-${idLimpo}`).classList.add('ativo');
             document.getElementById(`cat-${idLimpo}`).classList.add('ativa');
-        }
-
-        function rolarMenu(direcao) {
-            const menu = document.getElementById('menuCategorias');
-            menu.scrollBy({ left: direcao * 250, behavior: 'smooth' });
         }
 
         function alterarQtd(idProd, mudanca) {

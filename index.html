@@ -5,79 +5,223 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo - Distribuidora Frazão</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        body {
-            background-color: #f4f6f9;
-            color: #333;
-            padding: 20px;
-        }
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        header h1 {
-            color: #1a365d;
-            font-size: 2rem;
-            margin-bottom: 5px;
-        }
-        header p {
-            color: #666;
-            font-size: 1rem;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        .card {
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        .card-title {
-            padding: 20px;
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #2d3748;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background-color: #f4f6f9; color: #333; padding-bottom: 90px; }
+        
+        header { background: #1a365d; color: white; padding: 25px 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        header h1 { font-size: 2rem; margin-bottom: 5px; }
+        header p { font-size: 0.95rem; opacity: 0.85; }
+
+        .navegacao-categorias { display: flex; align-items: center; justify-content: center; background: white; padding: 15px 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; gap: 10px; }
+        .nav-seta { background: #1a365d; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .nav-seta:active { background: #2b6cb0; }
+        
+        .categorias-menu { display: flex; overflow-x: auto; gap: 12px; scroll-behavior: smooth; scrollbar-width: none; padding: 5px; }
+        .categorias-menu::-webkit-scrollbar { display: none; }
+        
+        .cat-btn { background: #edf2f7; border: 2px solid #cbd5e0; padding: 12px 20px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-weight: bold; color: #4a5568; font-size: 1rem; transition: all 0.2s; min-width: 160px; text-align: center; }
+        .cat-btn.ativo { background: #1a365d; color: white; border-color: #1a365d; box-shadow: 0 4px 6px rgba(26, 54, 93, 0.2); }
+
+        .container { max-width: 1200px; margin: 25px auto; padding: 0 15px; }
+        .categoria-secao { display: none; margin-bottom: 40px; }
+        .categoria-secao.ativa { display: block; }
+        .categoria-titulo { font-size: 1.6rem; color: #1a365d; margin-bottom: 20px; border-bottom: 2px solid #cbd5e0; padding-bottom: 8px; }
+        
+        .grid-produtos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+        .produto-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.08); display: flex; flex-direction: column; border: 1px solid #e2e8f0; }
+        .produto-img { width: 100%; height: 160px; object-fit: cover; background: #edf2f7; }
+        .produto-info { padding: 12px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
+        .produto-nome { font-size: 1rem; font-weight: bold; margin-bottom: 5px; color: #2d3748; }
+        .produto-preco { color: #2b6cb0; font-weight: bold; font-size: 1.1rem; margin-bottom: 12px; }
+        
+        .controles { display: flex; align-items: center; justify-content: space-between; background: #f7fafc; border-radius: 6px; padding: 6px; border: 1px solid #e2e8f0; }
+        .btn-qtd { background: #1a365d; color: white; border: none; width: 34px; height: 34px; border-radius: 4px; font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-qtd:active { background: #2b6cb0; }
+        .qtd-texto { font-weight: bold; font-size: 1.1rem; color: #2d3748; }
+
+        .carrinho-global { position: fixed; bottom: 0; left: 0; width: 100%; background: #2f855a; color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -4px 10px rgba(0,0,0,0.15); z-index: 1000; }
+        .carrinho-info { font-size: 1.3rem; font-weight: bold; }
+        .btn-whatsapp { background: white; color: #2f855a; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.1rem; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
 
     <header>
         <h1>Distribuidora Frazão</h1>
-        <p>Selecione uma categoria abaixo para ver os produtos</p>
+        <p>Selecione os produtos nas categorias e finalize seu pedido pelo WhatsApp</p>
     </header>
 
-    <div class="container">
-        <a href="imagem/balas-e-pirulitos/" class="card"><div class="card-title">Balas e Pirulitos</div></a>
-        <a href="imagem/bebidas/" class="card"><div class="card-title">Bebidas</div></a>
-        <a href="imagem/biscoitos/" class="card"><div class="card-title">Biscoitos</div></a>
-        <a href="imagem/chicletes-e-drops/" class="card"><div class="card-title">Chicletes e Drops</div></a>
-        <a href="imagem/descartaveis/" class="card"><div class="card-title">Descartáveis</div></a>
-        <a href="imagem/doces/" class="card"><div class="card-title">Doces</div></a>
-        <a href="imagem/higiene/" class="card"><div class="card-title">Higiene</div></a>
-        <a href="imagem/limpeza/" class="card"><div class="card-title">Limpeza</div></a>
-        <a href="imagem/mercearia/" class="card"><div class="card-title">Mercearia</div></a>
-        <a href="imagem/papelaria/" class="card"><div class="card-title">Papelaria</div></a>
+    <div class="navegacao-categorias">
+        <button class="nav-seta" onclick="rolarMenu(-1)">&#10094;</button>
+        <div class="categorias-menu" id="menuCategorias">
+            <!-- Gerado via JavaScript em ordem alfabética -->
+        </div>
+        <button class="nav-seta" onclick="rolarMenu(1)">&#10095;</button>
     </div>
 
+    <div class="container" id="catalogoContainer">
+        <!-- Produtos organizados por categoria -->
+    </div>
+
+    <div class="carrinho-global">
+        <div class="carrinho-info" id="totalGlobal">Total: R$ 0,00</div>
+        <button class="btn-whatsapp" onclick="enviarWhatsApp()">Enviar Pedido 📱</button>
+    </div>
+
+    <script>
+        // LISTA ORGANIZADA EM ORDEM ALFABÉTICA
+        const dadosCatalogo = {
+            "Balas e Pirulitos": [
+                { id: "bp1", nome: "Bala Mastigável Sortida", preco: 5.50, img: "imagem/balas-e-pirulitos/bala.jpg" }
+            ],
+            "Bebidas": [
+                { id: "beb1", nome: "Refrigerante Cola 2L", preco: 9.00, img: "imagem/bebidas/cola2l.jpg" }
+            ],
+            "Biscoitos": [
+                { id: "bisc1", nome: "Biscoito Recheado", preco: 3.50, img: "imagem/biscoitos/recheado.jpg" }
+            ],
+            "Chicletes e Drops": [
+                { id: "cd1", nome: "Chiclete de Hortelã", preco: 4.00, img: "imagem/chicletes-e-drops/chiclete.jpg" }
+            ],
+            "Descartáveis": [
+                { id: "desc1", nome: "Copos Plásticos 200ml", preco: 6.00, img: "imagem/descartaveis/copo.jpg" }
+            ],
+            "Doces": [
+                { id: "doc1", nome: "Caixa de Bombom", preco: 12.00, img: "imagem/doces/bombom.jpg" }
+            ],
+            "Higiene": [
+                { id: "hig1", nome: "Papel Higiênico Fita Dupla", preco: 14.50, img: "imagem/higiene/papel.jpg" }
+            ],
+            "Limpeza": [
+                { id: "lim1", nome: "Desinfetante 2L", preco: 7.00, img: "imagem/limpeza/desinfetante.jpg" }
+            ],
+            "Mercearia": [
+                { id: "merc1", nome: "Arroz 5kg", preco: 24.90, img: "imagem/mercearia/arroz.jpg" }
+            ],
+            "Papelaria": [
+                { id: "pap1", nome: "Caderno Universitário", preco: 15.00, img: "imagem/papelaria/caderno.jpg" }
+            ]
+        };
+
+        let carrinho = {};
+
+        function montarLoja() {
+            const menu = document.getElementById('menuCategorias');
+            const container = document.getElementById('catalogoContainer');
+            
+            let primeira = true;
+
+            for (let categoria in dadosCatalogo) {
+                // Criar botão retangular da categoria
+                let btn = document.createElement('button');
+                btn.className = `cat-btn ${primeira ? 'ativo' : ''}`;
+                btn.innerText = categoria;
+                btn.id = `btn-${categoria.replace(/\s+/g, '')}`;
+                btn.onclick = () => mudarCategoria(categoria);
+                menu.appendChild(btn);
+
+                // Criar seção de produtos da categoria
+                let secao = document.createElement('div');
+                secao.className = `categoria-secao ${primeira ? 'ativa' : ''}`;
+                secao.id = `cat-${categoria.replace(/\s+/g, '')}`;
+                
+                let titulo = document.createElement('h2');
+                titulo.className = 'categoria-titulo';
+                titulo.innerText = categoria;
+                secao.appendChild(titulo);
+
+                let grid = document.createElement('div');
+                grid.className = 'grid-produtos';
+
+                dadosCatalogo[categoria].forEach(prod => {
+                    carrinho[prod.id] = 0;
+                    let card = document.createElement('div');
+                    card.className = 'produto-card';
+                    card.innerHTML = `
+                        <img src="${prod.img}" class="produto-img" onerror="this.src='https://via.placeholder.com/220?text=Sem+Foto'">
+                        <div class="produto-info">
+                            <div>
+                                <div class="produto-nome">${prod.nome}</div>
+                                <div class="produto-preco">R$ ${prod.preco.toFixed(2).replace('.', ',')}</div>
+                            </div>
+                            <div class="controles">
+                                <button class="btn-qtd" onclick="alterarQtd('${prod.id}', -1)">-</button>
+                                <span class="qtd-texto" id="qtd-${prod.id}">0</span>
+                                <button class="btn-qtd" onclick="alterarQtd('${prod.id}', 1)">+</button>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                secao.appendChild(grid);
+                container.appendChild(secao);
+                primeira = false;
+            }
+        }
+
+        function mudarCategoria(catSelecionada) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('ativo'));
+            document.querySelectorAll('.categoria-secao').forEach(s => s.classList.remove('ativa'));
+            
+            let idLimpo = catSelecionada.replace(/\s+/g, '');
+            document.getElementById(`btn-${idLimpo}`).classList.add('ativo');
+            document.getElementById(`cat-${idLimpo}`).classList.add('ativa');
+        }
+
+        function rolarMenu(direcao) {
+            const menu = document.getElementById('menuCategorias');
+            menu.scrollBy({ left: direcao * 250, behavior: 'smooth' });
+        }
+
+        function alterarQtd(idProd, mudanca) {
+            if (!carrinho[idProd]) carrinho[idProd] = 0;
+            carrinho[idProd] += mudanca;
+            if (carrinho[idProd] < 0) carrinho[idProd] = 0;
+
+            document.getElementById(`qtd-${idProd}`).innerText = carrinho[idProd];
+            atualizarTotalGlobal();
+        }
+
+        function atualizarTotalGlobal() {
+            let totalGeral = 0;
+            for (let cat in dadosCatalogo) {
+                dadosCatalogo[cat].forEach(prod => {
+                    totalGeral += (carrinho[prod.id] || 0) * prod.preco;
+                });
+            }
+            document.getElementById('totalGlobal').innerText = `Total: R$ ${totalGeral.toFixed(2).replace('.', ',')}`;
+        }
+
+        function enviarWhatsApp() {
+            let texto = "🛒 *Novo Pedido - Distribuidora Frazão*%0A%0A";
+            let temItem = false;
+            let totalGeral = 0;
+
+            for (let cat in dadosCatalogo) {
+                dadosCatalogo[cat].forEach(prod => {
+                    let qtd = carrinho[prod.id] || 0;
+                    if (qtd > 0) {
+                        temItem = true;
+                        let subtotal = qtd * prod.preco;
+                        totalGeral += subtotal;
+                        texto += `• ${prod.nome} (x${qtd}) - R$ ${subtotal.toFixed(2).replace('.', ',')}%0A`;
+                    }
+                });
+            }
+
+            if (!temItem) {
+                alert("Por favor, selecione pelo menos um produto antes de enviar o pedido!");
+                return;
+            }
+
+            texto += `%0A💰 *Total Geral: R$ ${totalGeral.toFixed(2).replace('.', ',')}*`;
+            
+            let numeroWhatsApp = "5521968659086";
+            window.open(`https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${texto}`, '_blank');
+        }
+
+        window.onload = montarLoja;
+    </script>
 </body>
 </html>

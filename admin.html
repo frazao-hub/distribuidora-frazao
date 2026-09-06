@@ -103,16 +103,16 @@
             </form>
         </div>
 
-        <!-- 3. SEÇÃO CADASTRO DE PRODUTOS (Com as 10 Categorias) -->
+        <!-- 3. SEÇÃO CADASTRO DE PRODUTOS -->
         <div id="secao-produto" class="secao-conteudo hidden">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Cadastrar Produto</h2>
             <form id="formProduto" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Produto</label>
-                    <input type="text" id="nomeProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="Ex: Caixa de Bombom / Fardo de Refrigerante">
+                    <input type="text" id="nomeProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="Ex: Caixa de Bombom">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Categoria (Índice)</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
                     <select id="categoriaProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
                         <option value="">Selecione uma categoria...</option>
                         <option value="Doces">Doces</option>
@@ -134,7 +134,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Estoque / Quantidade</label>
-                        <input type="text" id="estoqueProduto" class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="Ex: 10 fardos / 50 cx">
+                        <input type="text" id="estoqueProduto" class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="Ex: 50 cx">
                     </div>
                 </div>
                 <button type="submit" class="btn-submit w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
@@ -143,28 +143,60 @@
             </form>
         </div>
 
-        <!-- 4. SEÇÃO VENDER (NOVA VENDA) -->
+        <!-- 4. SEÇÃO VENDER (Com Seleção de Categoria e Produtos do Banco) -->
         <div id="secao-vender" class="secao-conteudo hidden">
             <h2 class="text-xl font-bold text-emerald-800 mb-4">Registrar Nova Venda</h2>
             <form id="formVenda" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
-                    <input type="text" id="vendaCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Nome do cliente">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Vendedor</label>
-                    <input type="text" id="vendaVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Nome do vendedor">
-                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
+                        <input type="text" id="vendaCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Nome do cliente">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Vendedor</label>
+                        <input type="text" id="vendaVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Nome do vendedor">
+                    </div>
+                </div>
+
+                <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200 space-y-3">
+                    <h3 class="font-bold text-emerald-900 text-sm">Adicionar Produto ao Pedido</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Filtrar por Categoria</label>
+                            <select id="filtroCategoria" onchange="filtrarProdutosPorCategoria()" class="w-full rounded-lg border border-gray-300 p-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                                <option value="">Todas as categorias</option>
+                                <option value="Doces">Doces</option>
+                                <option value="Bebidas">Bebidas</option>
+                                <option value="Mercearia">Mercearia</option>
+                                <option value="Papelaria">Papelaria</option>
+                                <option value="Artigos de Limpeza">Artigos de Limpeza</option>
+                                <option value="Descartáveis">Descartáveis</option>
+                                <option value="Perfumaria">Perfumaria</option>
+                                <option value="Bomboniere">Bomboniere</option>
+                                <option value="Utilidades">Utilidades</option>
+                                <option value="Perecíveis">Perecíveis</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Selecionar Produto Cadastrado</label>
+                            <select id="selectProdutoCatalogo" onchange="selecionarProdutoDoCatalogo()" class="w-full rounded-lg border border-gray-300 p-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                                <option value="">Carregando produtos do estoque...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Produtos / Itens no Pedido</label>
+                        <input type="text" id="vendaProdutos" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Ex: 5 caixas de doces">
+                    </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Valor Total (R$)</label>
                         <input type="number" step="0.01" id="vendaValor" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="0,00">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Produtos Vendidos</label>
-                        <input type="text" id="vendaProdutos" class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Ex: 5 caixas de doces, 2 fardos de bebidas">
-                    </div>
                 </div>
+
                 <button type="submit" class="btn-submit w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
                     Confirmar e Registrar Venda
                 </button>
@@ -195,7 +227,7 @@
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO FIREBASE (Insira suas chaves caso necessário)
+        // CONFIGURAÇÃO DO FIREBASE
         const firebaseConfig = {
             apiKey: "SUA_API_KEY",
             authDomain: "distribuidora-frazao.firebaseapp.com",
@@ -210,6 +242,8 @@
         }
         const db = firebase.firestore();
 
+        let listaProdutosCache = [];
+
         // NAVEGAÇÃO ENTRE AS ABAS
         function mudarAba(aba) {
             document.querySelectorAll('.secao-conteudo').forEach(el => el.classList.add('hidden'));
@@ -223,6 +257,7 @@
             const cardAtivo = document.getElementById('card-' + aba);
             if (aba === 'vender') {
                 cardAtivo.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-100');
+                carregarProdutosParaVenda(); // Atualiza a lista de produtos ao abrir a aba Vender
             } else if (aba === 'produto') {
                 cardAtivo.classList.add('ring-2', 'ring-purple-500', 'bg-purple-50');
             } else {
@@ -298,7 +333,7 @@
             }
         });
 
-        // CADASTRO DE PRODUTO (Associado às Categorias)
+        // CADASTRO DE PRODUTO
         document.getElementById('formProduto').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = e.target.querySelector('.btn-submit');
@@ -323,6 +358,71 @@
             }
         });
 
+        // CARREGAR PRODUTOS DO FIREBASE PARA A TELA DE VENDA
+        async function carregarProdutosParaVenda() {
+            const select = document.getElementById('selectProdutoCatalogo');
+            select.innerHTML = `<option value="">Carregando produtos...</option>`;
+
+            try {
+                const snapshot = await db.collection('produtos').orderBy('nome').get();
+                listaProdutosCache = [];
+
+                snapshot.forEach(doc => {
+                    listaProdutosCache.push({ id: doc.id, ...doc.data() });
+                });
+
+                preencherSelectProdutos(listaProdutosCache);
+            } catch (err) {
+                console.error("Erro ao carregar produtos:", err);
+                select.innerHTML = `<option value="">Erro ao carregar produtos do estoque</option>`;
+            }
+        }
+
+        function preencherSelectProdutos(produtos) {
+            const select = document.getElementById('selectProdutoCatalogo');
+            select.innerHTML = `<option value="">Selecione um produto do estoque...</option>`;
+
+            if (produtos.length === 0) {
+                select.innerHTML = `<option value="">Nenhum produto cadastrado nesta categoria</option>`;
+                return;
+            }
+
+            produtos.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = `${p.nome} [${p.categoria}] - R$ ${(p.preco || 0).toFixed(2)}`;
+                opt.dataset.nome = p.nome;
+                opt.dataset.preco = p.preco || 0;
+                select.appendChild(opt);
+            });
+        }
+
+        // FILTRAR POR CATEGORIA NA HORA DE VENDER
+        function filtrarProdutosPorCategoria() {
+            const catSelecionada = document.getElementById('filtroCategoria').value;
+            if (!catSelecionada) {
+                preencherSelectProdutos(listaProdutosCache);
+                return;
+            }
+
+            const filtrados = listaProdutosCache.filter(p => p.categoria === catSelecionada);
+            preencherSelectProdutos(filtrados);
+        }
+
+        // SELECIONAR PRODUTO E PREENCHER AUTOMATICAMENTE NO PEDIDO
+        function selecionarProdutoDoCatalogo() {
+            const select = document.getElementById('selectProdutoCatalogo');
+            const optSelecionada = select.options[select.selectedIndex];
+
+            if (!optSelecionada.value) return;
+
+            const nomeProd = optSelecionada.dataset.nome;
+            const precoProd = parseFloat(optSelecionada.dataset.preco);
+
+            document.getElementById('vendaProdutos').value = nomeProd;
+            document.getElementById('vendaValor').value = precoProd.toFixed(2);
+        }
+
         // REGISTRO DE VENDA
         document.getElementById('formVenda').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -340,6 +440,7 @@
                 });
                 exibirMensagem("Venda registrada com sucesso!");
                 e.target.reset();
+                carregarProdutosParaVenda();
             } catch (err) {
                 exibirMensagem("Erro ao registrar venda: " + err.message, 'erro');
             } finally {

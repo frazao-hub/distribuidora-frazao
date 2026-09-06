@@ -1,33 +1,28 @@
-async function salvarVendedor() {
-            let nomeElem = document.getElementById('vendNome');
-            let senhaElem = document.getElementById('vendSenha');
-            
-            if(!nomeElem || !senhaElem) return alert('Erro nos campos.');
+async function salvarCliente() {
+            let nome = document.getElementById('cliNome').value.trim();
+            let tel = document.getElementById('cliTel').value.trim();
+            let doc = document.getElementById('cliDoc').value.trim();
+            let end = document.getElementById('cliEnd').value.trim();
+            let vendedorResp = document.getElementById('cliVendedorSelect').value;
 
-            let nome = nomeElem.value.trim();
-            let senha = senhaElem.value.trim();
+            if(!nome || !tel) return alert('Preencha Nome e Telefone!');
 
-            if(!nome || !senha) return alert('Digite o nome e a senha do vendedor!');
-            
-            let jaExiste = cacheVendedores.some(v => v.nome.toLowerCase() === nome.toLowerCase());
-            if(jaExiste) {
-                return alert('Este vendedor já está cadastrado!');
-            }
-            
             try {
                 // Adiciona e TRAVA a execução até o Firebase confirmar que salvou
-                await addDoc(collection(window.db, "vendedores"), { nome, senha });
+                await addDoc(collection(window.db, "clientes"), { nome, tel, doc, end, vendedor: vendedorResp });
                 
-                nomeElem.value = '';
-                senhaElem.value = '';
+                document.getElementById('cliNome').value = '';
+                document.getElementById('cliTel').value = '';
+                document.getElementById('cliDoc').value = '';
+                document.getElementById('cliEnd').value = '';
                 
                 // Recarrega todos os dados do banco antes de atualizar a tela
                 await carregarTudoDoFirebase();
                 
                 // Só depois desenha a lista nova
-                carregarVendedores();
-                alert('Vendedor cadastrado com sucesso!');
-            } catch(e) {
-                alert('Erro ao salvar: ' + e.message);
+                carregarClientes();
+                alert('Cliente salvo!');
+            } catch(e) { 
+                alert('Erro: ' + e.message); 
             }
         }

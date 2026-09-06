@@ -54,11 +54,19 @@
         
         .btn-voltar { display: inline-block; margin-top: 25px; text-decoration: none; color: #3498db; font-weight: bold; font-size: 14px; }
 
-        /* Estilos específicos para Impressão */
+        /* Estilos específicos para Impressão em Bobina Térmica 80mm */
         @media print {
             body * { visibility: hidden; }
             #areaImpressao, #areaImpressao * { visibility: visible; }
-            #areaImpressao { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 20px; }
+            #areaImpressao { 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 78mm; 
+                margin: 0; 
+                padding: 2mm;
+                font-size: 12px !important;
+            }
         }
     </style>
 </head>
@@ -203,7 +211,7 @@
         </div>
     </div>
 
-    <!-- ÁREA OCULTA PARA IMPRESSÃO DE PEDIDO -->
+    <!-- ÁREA OCULTA PARA IMPRESSÃO TÉRMICA 80mm -->
     <div id="areaImpressao" style="display:none;"></div>
 
     <script>
@@ -473,7 +481,6 @@
             prod.qtd -= qtdVendida;
             localStorage.setItem('estoque_frazao_v2', JSON.stringify(estoque));
 
-            // Descobre qual o vendedor responsável por esse cliente
             let clientes = JSON.parse(localStorage.getItem('admin_clientes')) || [];
             let cliObj = clientes.find(c => c.nome === clienteNome);
             let vendedorResponsavel = cliObj ? cliObj.vendedor : usuarioLogado;
@@ -497,7 +504,7 @@
             carregarSelectsVenda();
         }
 
-        // --- HISTÓRICO E IMPRESSÃO ---
+        // --- HISTÓRICO E IMPRESSÃO TÉRMICA 80mm ---
         function carregarHistorico() {
             let historico = JSON.parse(localStorage.getItem('admin_vendas')) || [];
             let lista = document.getElementById('listaHistorico');
@@ -537,38 +544,37 @@
             let area = document.getElementById('areaImpressao');
             area.style.display = 'block';
             area.innerHTML = `
-                <div style="font-family: Arial, sans-serif; font-size: 14px; color: #000; padding: 20px; border: 1px dashed #999;">
-                    <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
-                        <h2 style="margin: 0; color: #000;">DISTRIBUIDORA FRAZÃO</h2>
-                        <p style="margin: 5px 0 0 0; font-size: 12px;">Comprovante de Pedido #${v.id || '000'}</p>
+                <div style="font-family: 'Courier New', Courier, monospace; font-size: 12px; color: #000; width: 78mm; padding: 5px; line-height: 1.2;">
+                    <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 8px; margin-bottom: 8px;">
+                        <h3 style="margin: 0; font-size: 14px;">DISTRIBUIDORA FRAZÃO</h3>
+                        <p style="margin: 3px 0 0 0; font-size: 10px;">Atacado - São Gonçalo/RJ</p>
+                        <p style="margin: 3px 0 0 0; font-size: 11px; font-weight: bold;">PEDIDO #${v.id || '000'}</p>
                     </div>
-                    <div style="margin-bottom: 15px; font-size: 13px;">
-                        <p style="margin: 3px 0;"><strong>Data/Hora:</strong> ${v.data}</p>
-                        <p style="margin: 3px 0;"><strong>Cliente:</strong> ${v.cliente}</p>
-                        <p style="margin: 3px 0;"><strong>Vendedor Responsável:</strong> ${v.vendedor}</p>
+                    
+                    <div style="margin-bottom: 8px; font-size: 11px; border-bottom: 1px dashed #000; padding-bottom: 6px;">
+                        <div><strong>Data:</strong> ${v.data}</div>
+                        <div><strong>Cliente:</strong> ${v.cliente}</div>
+                        <div><strong>Vendedor:</strong> ${v.vendedor}</div>
                     </div>
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px;">
-                        <thead>
-                            <tr style="background: #f2f2f2;">
-                                <th style="border-bottom: 2px solid #000; padding: 6px; text-align: left;">Produto</th>
-                                <th style="border-bottom: 2px solid #000; padding: 6px; text-align: center;">Qtd</th>
-                                <th style="border-bottom: 2px solid #000; padding: 6px; text-align: right;">Total (R$)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="border-bottom: 1px solid #ddd; padding: 6px;">${v.produto}</td>
-                                <td style="border-bottom: 1px solid #ddd; padding: 6px; text-align: center;">${v.qtd}</td>
-                                <td style="border-bottom: 1px solid #ddd; padding: 6px; text-align: right;">R$ ${v.total}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div style="text-align: right; font-size: 1.1rem; font-weight: bold; margin-top: 15px;">
-                        Valor Total: R$ ${v.total}
+
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-weight: bold; border-bottom: 1px solid #000; margin-bottom: 4px; padding-bottom: 2px; display: flex; justify-content: space-between;">
+                            <span>ITEM / QTD</span>
+                            <span>TOTAL</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span>${v.produto} (x${v.qtd})</span>
+                            <span>R$ ${v.total}</span>
+                        </div>
                     </div>
-                    <div style="margin-top: 40px; display: flex; justify-content: space-between; font-size: 12px;">
-                        <div style="width: 45%; border-top: 1px solid #000; text-align: center; padding-top: 5px;">Assinatura do Cliente</div>
-                        <div style="width: 45%; border-top: 1px solid #000; text-align: center; padding-top: 5px;">Conferência de Estoque</div>
+
+                    <div style="border-top: 1px dashed #000; border-bottom: 1px dashed #000; padding: 6px 0; margin-top: 8px; text-align: right; font-size: 13px; font-weight: bold;">
+                        TOTAL: R$ ${v.total}
+                    </div>
+
+                    <div style="margin-top: 30px; text-align: center; font-size: 10px;">
+                        <div style="border-top: 1px solid #000; width: 80%; margin: 0 auto 5px auto; padding-top: 2px;">Assinatura do Cliente</div>
+                        <div style="border-top: 1px solid #000; width: 80%; margin: 25px auto 5px auto; padding-top: 2px;">Conferência de Estoque</div>
                     </div>
                 </div>
             `;

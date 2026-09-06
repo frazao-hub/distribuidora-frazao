@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - Distribuidora Frazão</title>
     
-    <link rel="manifest" href="manifest.json?v=2026.5">
+    <link rel="manifest" href="manifest.json?v=2026.6">
     <meta name="theme-color" content="#27ae60">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -35,6 +35,7 @@
         
         button.btn-salvar { background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; padding: 14px; font-size: 16px; border-radius: 4px; display: block; }
         button.btn-salvar:active { background: #1e8449; transform: scale(0.98); }
+        button.btn-salvar:disabled { background: #95a5a6; cursor: not-allowed; }
         
         ul { list-style: none; padding: 0; margin-top: 10px; text-align: left; }
         li { background: #f9f9f9; padding: 12px; margin-top: 8px; border-left: 4px solid #27ae60; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; font-size: 14px; }
@@ -114,7 +115,7 @@
                 <button class="btn-sair" onclick="fazerLogout()">Sair</button>
             </div>
 
-            <!-- Botão de Limpeza Automática de Duplicados -->
+            <!-- Botão de Limpeza de Duplicados -->
             <button type="button" class="btn-limpar" onclick="limparDuplicadosAutomaticamente()">🧹 Limpar Clones / Duplicados do Banco</button>
 
             <!-- Menu de Abas -->
@@ -126,7 +127,7 @@
                 <button type="button" class="tab-btn" onclick="mudarAba('historico', event)">📊 Histórico</button>
             </div>
 
-            <!-- ABA 1: ESTOQUE / PRODUTOS -->
+            <!-- ABA 1: ESTOQUE -->
             <div id="estoque" class="card active">
                 <h2>Gerenciamento de Produtos</h2>
                 <div class="form-group">
@@ -156,7 +157,7 @@
                     <label>Preço Unitário (R$):</label>
                     <input type="number" step="0.01" id="prodPreco" placeholder="Ex: 8.50">
                 </div>
-                <button type="button" class="btn-salvar" onclick="salvarEstoque()">Salvar na Nuvem</button>
+                <button type="button" class="btn-salvar" id="btnSalvarEstoque" onclick="salvarEstoque()">Salvar na Nuvem</button>
                 
                 <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
                     <input type="text" id="filtroEstoque" placeholder="🔍 Buscar produto..." onkeyup="carregarEstoque()" style="flex: 1; min-width: 200px;">
@@ -188,7 +189,7 @@
                     <label>Senha de Acesso:</label>
                     <input type="password" id="vendSenha" placeholder="Digite uma senha">
                 </div>
-                <button type="button" class="btn-salvar" onclick="salvarVendedor()">Cadastrar Vendedor</button>
+                <button type="button" class="btn-salvar" id="btnSalvarVendedor" onclick="salvarVendedor()">Cadastrar Vendedor</button>
                 <ul id="listaVendedores" style="margin-top:20px;"></ul>
             </div>
 
@@ -217,11 +218,11 @@
                         <option value="admin">Administrador (Geral)</option>
                     </select>
                 </div>
-                <button type="button" class="btn-salvar" onclick="salvarCliente()">Cadastrar Cliente</button>
+                <button type="button" class="btn-salvar" id="btnSalvarCliente" onclick="salvarCliente()">Cadastrar Cliente</button>
                 <ul id="listaClientes" style="margin-top:20px;"></ul>
             </div>
 
-            <!-- ABA 4: REGISTRAR VENDA -->
+            <!-- ABA 4: VENDAS -->
             <div id="vendas" class="card">
                 <h2>Registrar Nova Venda</h2>
                 <div class="form-group">
@@ -256,7 +257,7 @@
                     <label>Valor Total (R$):</label>
                     <input type="text" id="vendaTotal" readonly style="background: #e9ecef;">
                 </div>
-                <button type="button" class="btn-salvar" onclick="registrarVenda()">Concluir Venda e Dar Baixa</button>
+                <button type="button" class="btn-salvar" id="btnSalvarVenda" onclick="registrarVenda()">Concluir Venda e Dar Baixa</button>
             </div>
 
             <!-- ABA 5: HISTÓRICO -->
@@ -369,7 +370,10 @@
                 snapVendas.forEach(d => cacheVendas.push({ id: d.id, ...d.data() }));
                 cacheVendas.sort((a, b) => b.criadoEm - a.criadoEm);
 
+                // Atualiza a tela que estiver aberta no momento
                 carregarEstoque();
+                carregarVendedores();
+                carregarClientes();
             } catch(e) {
                 console.error("Erro ao carregar dados:", e);
             }
@@ -388,15 +392,13 @@
             if(abaId === 'estoque') carregarEstoque();
         }
 
-        // --- VENDEDORES (Com Proteção e Alerta contra travamentos) ---
+        // --- VENDEDORES (Com Bloqueio Anti-Duplo Clique) ---
         async function salvarVendedor() {
             let nomeElem = document.getElementById('vendNome');
             let senhaElem = document.getElementById('vendSenha');
+            let btn = document.getElementById('btnSalvarVendedor');
             
-            if(!nomeElem || !senhaElem) {
-                alert('Erro: Campos do formulário não encontrados.');
-                return;
-            }
+            if(!nomeElem || !senhaElem) return;
 
             let nome = nomeElem.value.trim();
             let senha = senhaElem.value.trim();
@@ -406,6 +408,7 @@
                 return;
             }
             
+            // Verifica duplicidade local primeiro
             let jaExiste = cacheVendedores.some(v => v.nome.toLowerCase() === nome.toLowerCase());
             if(jaExiste) {
                 alert('Este vendedor já está cadastrado!');
@@ -413,16 +416,23 @@
             }
             
             try {
+                // Trava o botão para evitar múltiplos cliques no celular
+                btn.disabled = true;
+                btn.innerText = 'Salvando...';
+
                 await addDoc(collection(window.db, "vendedores"), { nome, senha });
+                
                 nomeElem.value = '';
                 senhaElem.value = '';
                 
                 await carregarTudoDoFirebase();
-                carregarVendedores();
                 alert('Vendedor cadastrado com sucesso!');
             } catch(e) {
                 console.error("Erro ao salvar vendedor:", e);
                 alert('Erro ao salvar no Firebase: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Cadastrar Vendedor';
             }
         }
 
@@ -447,14 +457,13 @@
             try {
                 await deleteDoc(doc(window.db, "vendedores", id));
                 await carregarTudoDoFirebase();
-                carregarVendedores();
                 alert('Vendedor excluído com sucesso!');
             } catch(e) { 
                 alert('Erro ao excluir: ' + e.message); 
             }
         }
 
-        // --- CLIENTES (Com Proteção e Alerta) ---
+        // --- CLIENTES (Com Bloqueio Anti-Duplo Clique) ---
         function carregarSelectVendedoresCliente() {
             let sel = document.getElementById('cliVendedorSelect');
             if(!sel) return;
@@ -468,11 +477,9 @@
             let docElem = document.getElementById('cliDoc');
             let endElem = document.getElementById('cliEnd');
             let selVend = document.getElementById('cliVendedorSelect');
+            let btn = document.getElementById('btnSalvarCliente');
 
-            if(!nomeElem || !telElem) {
-                alert('Erro: Campos do cliente não encontrados.');
-                return;
-            }
+            if(!nomeElem || !telElem) return;
 
             let nome = nomeElem.value.trim();
             let tel = telElem.value.trim();
@@ -486,6 +493,9 @@
             }
 
             try {
+                btn.disabled = true;
+                btn.innerText = 'Salvando...';
+
                 await addDoc(collection(window.db, "clientes"), { nome, tel, doc, end, vendedor: vendedorResp });
                 
                 nomeElem.value = '';
@@ -494,11 +504,13 @@
                 if(endElem) endElem.value = '';
                 
                 await carregarTudoDoFirebase();
-                carregarClientes();
                 alert('Cliente salvo com sucesso!');
             } catch(e) { 
                 console.error("Erro ao salvar cliente:", e);
                 alert('Erro ao salvar cliente: ' + e.message); 
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Cadastrar Cliente';
             }
         }
 
@@ -528,14 +540,13 @@
             try {
                 await deleteDoc(doc(window.db, "clientes", id));
                 await carregarTudoDoFirebase();
-                carregarClientes();
                 alert('Cliente excluído com sucesso!');
             } catch(e) { 
                 alert('Erro ao excluir: ' + e.message); 
             }
         }
 
-        // --- LIMPEZA AUTOMÁTICA DE DUPLICADOS ---
+        // --- LIMPEZA DE DUPLICADOS EXISTENTES NO BANCO ---
         async function limparDuplicadosAutomaticamente() {
             if(!confirm('Deseja limpar todos os vendedores e clientes duplicados do banco de dados?')) return;
             
@@ -569,9 +580,6 @@
                 }
 
                 await carregarTudoDoFirebase();
-                carregarVendedores();
-                carregarClientes();
-
                 alert(`Limpeza concluída!\n- Vendedores duplicados removidos: ${apagadosV}\n- Clientes duplicados removidos: ${apagadosC}`);
             } catch(e) {
                 alert('Erro ao limpar duplicados: ' + e.message);
@@ -584,10 +592,14 @@
             let categoria = document.getElementById('prodCat').value;
             let qtd = parseInt(document.getElementById('prodQtd').value);
             let preco = parseFloat(document.getElementById('prodPreco').value);
+            let btn = document.getElementById('btnSalvarEstoque');
 
             if(!produto || isNaN(qtd) || isNaN(preco)) return alert('Preencha todos os campos!');
 
             try {
+                btn.disabled = true;
+                btn.innerText = 'Salvando...';
+
                 let existente = cacheEstoque.find(p => p.produto.toLowerCase() === produto.toLowerCase());
                 if(existente) {
                     await updateDoc(doc(window.db, "estoque", existente.id), { categoria, qtd, preco });
@@ -598,9 +610,12 @@
                 document.getElementById('prodQtd').value = '';
                 document.getElementById('prodPreco').value = '';
                 await carregarTudoDoFirebase();
-                carregarEstoque();
                 alert('Produto salvo!');
             } catch(e) { alert('Erro: ' + e.message); }
+            finally {
+                btn.disabled = false;
+                btn.innerText = 'Salvar na Nuvem';
+            }
         }
 
         function carregarEstoque() {
@@ -637,7 +652,6 @@
             try {
                 await deleteDoc(doc(window.db, "estoque", id));
                 await carregarTudoDoFirebase();
-                carregarEstoque();
             } catch(e) { alert('Erro: ' + e.message); }
         }
 
@@ -700,6 +714,7 @@
             let clienteNome = document.getElementById('vendaCliente').value;
             let selProd = document.getElementById('vendaProduto');
             let optProd = selProd.options[selProd.selectedIndex];
+            let btn = document.getElementById('btnSalvarVenda');
             
             if(!clienteNome || !optProd || !optProd.getAttribute('data-id')) return alert('Selecione cliente e produto!');
 
@@ -712,6 +727,9 @@
             if(!prodDoc || prodDoc.qtd < qtdVendida) return alert('Estoque insuficiente!');
 
             try {
+                btn.disabled = true;
+                btn.innerText = 'Processando...';
+
                 await updateDoc(doc(window.db, "estoque", produtoId), { qtd: prodDoc.qtd - qtdVendida });
                 let cliObj = cacheClientes.find(c => c.nome === clienteNome);
                 let dataHora = new Date().toLocaleString('pt-BR');
@@ -726,6 +744,10 @@
                 await carregarTudoDoFirebase();
                 carregarSelectsVenda();
             } catch(e) { alert('Erro: ' + e.message); }
+            finally {
+                btn.disabled = false;
+                btn.innerText = 'Concluir Venda e Dar Baixa';
+            }
         }
 
         // --- HISTÓRICO E IMPRESSÃO ---

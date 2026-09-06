@@ -10,31 +10,59 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body class="bg-gray-100 font-sans min-h-screen p-3 md:p-6">
-    <div class="max-w-5xl mx-auto bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-gray-100">
+
+    <!-- TELA DE LOGIN DO VENDEDOR -->
+    <div id="telaLogin" class="max-w-md mx-auto mt-12 bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-extrabold text-gray-800 tracking-tight">Distribuidora Frazão</h1>
+            <p class="text-sm text-gray-500 mt-1">Acesse com sua conta de vendedor</p>
+        </div>
+        <form id="formLogin" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Selecione o Vendedor</label>
+                <select id="loginVendedorSelect" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <option value="">Carregando vendedores...</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                <input type="password" id="loginSenha" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Digite sua senha">
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm">
+                Entrar no Sistema
+            </button>
+        </form>
+        <div class="mt-6 border-t border-gray-200 pt-4">
+            <button onclick="mostrarCadastroVendedorModal()" class="w-full text-center text-sm text-blue-600 hover:underline font-medium">
+                Primeiro acesso? Cadastrar Novo Vendedor
+            </button>
+        </div>
+    </div>
+
+    <!-- PAINEL PRINCIPAL (OCULTO ATÉ O LOGIN) -->
+    <div id="painelPrincipal" class="max-w-5xl mx-auto bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-gray-100 hidden">
         
         <!-- Cabeçalho -->
-        <header class="text-center mb-6">
-            <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight">Distribuidora Frazão</h1>
-            <p class="text-sm text-gray-500">Painel de Gestão, Estoque e Vendas</p>
+        <header class="flex flex-col md:flex-row justify-between items-center mb-6 border-b border-gray-200 pb-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight">Distribuidora Frazão</h1>
+                <p class="text-sm text-gray-500">Logado como: <strong id="usuarioLogadoNome" class="text-blue-600"></strong></p>
+            </div>
+            <button onclick="fazerLogout()" class="mt-3 md:mt-0 text-sm bg-red-50 text-red-600 hover:bg-red-100 font-semibold px-4 py-2 rounded-lg transition">
+                Sair / Trocar Vendedor
+            </button>
         </header>
 
         <!-- Menu de Cartões Clicáveis -->
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
-            <button onclick="mudarAba('vendedor')" id="card-vendedor" class="card-btn flex flex-col items-center justify-center p-3 bg-gray-50 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-500 rounded-xl transition duration-200 cursor-pointer group">
-                <div class="p-2.5 bg-blue-100 text-blue-600 rounded-full mb-1 group-hover:scale-110 transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                </div>
-                <span class="font-bold text-gray-700 text-xs md:text-sm group-hover:text-blue-600">Vendedor</span>
-            </button>
-
-            <button onclick="mudarAba('cliente')" id="card-cliente" class="card-btn flex flex-col items-center justify-center p-3 bg-gray-50 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-500 rounded-xl transition duration-200 cursor-pointer group">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            <button onclick="mudarAba('cliente')" id="card-cliente" class="card-btn flex flex-col items-center justify-center p-3 bg-gray-50 hover:bg-indigo-50 border-2 border-gray-200 hover:border-indigo-500 rounded-xl transition duration-200 cursor-pointer group">
                 <div class="p-2.5 bg-indigo-100 text-indigo-600 rounded-full mb-1 group-hover:scale-110 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 </div>
-                <span class="font-bold text-gray-700 text-xs md:text-sm group-hover:text-indigo-600">Clientes</span>
+                <span class="font-bold text-gray-700 text-xs md:text-sm group-hover:text-indigo-600">Meus Clientes</span>
             </button>
 
-            <button onclick="mudarAba('produto')" id="card-produto" class="card-btn flex flex-col items-center justify-center p-3 bg-gray-50 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-500 rounded-xl transition duration-200 cursor-pointer group">
+            <button onclick="mudarAba('produto')" id="card-produto" class="card-btn flex flex-col items-center justify-center p-3 bg-gray-50 hover:bg-purple-50 border-2 border-gray-200 hover:border-purple-500 rounded-xl transition duration-200 cursor-pointer group">
                 <div class="p-2.5 bg-purple-100 text-purple-600 rounded-full mb-1 group-hover:scale-110 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                 </div>
@@ -48,7 +76,7 @@
                 <span class="font-bold text-emerald-800 text-xs md:text-sm">Vender</span>
             </button>
 
-            <button onclick="mudarAba('historico')" id="card-historico" class="card-btn col-span-2 md:col-span-1 flex flex-col items-center justify-center p-3 bg-gray-50 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-500 rounded-xl transition duration-200 cursor-pointer group">
+            <button onclick="mudarAba('historico')" id="card-historico" class="card-btn col-span-2 md:col-span-1 flex flex-col items-center justify-center p-3 bg-gray-50 hover:bg-amber-50 border-2 border-gray-200 hover:border-amber-500 rounded-xl transition duration-200 cursor-pointer group">
                 <div class="p-2.5 bg-amber-100 text-amber-600 rounded-full mb-1 group-hover:scale-110 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                 </div>
@@ -56,33 +84,14 @@
             </button>
         </div>
 
-        <hr class="border-gray-200 mb-6">
-
         <!-- MENSAGEM DE STATUS -->
         <div id="mensagemStatus" class="mb-4 text-center text-sm font-semibold hidden p-3 rounded-lg"></div>
 
-        <!-- 1. SEÇÃO CADASTRO DE VENDEDOR -->
-        <div id="secao-vendedor" class="secao-conteudo">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Cadastrar Vendedor</h2>
-            <form id="formVendedor" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Vendedor</label>
-                    <input type="text" id="nomeVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Ex: João Silva">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Telefone / Observação</label>
-                    <input type="text" id="obsVendedor" class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Ex: (21) 99999-9999">
-                </div>
-                <button type="submit" class="btn-submit w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
-                    Salvar Vendedor
-                </button>
-            </form>
-        </div>
-
-        <!-- 2. SEÇÃO CADASTRO DE CLIENTES -->
-        <div id="secao-cliente" class="secao-conteudo hidden">
+        <!-- 1. SEÇÃO CADASTRO DE CLIENTES -->
+        <div id="secao-cliente" class="secao-conteudo">
             <div class="bg-indigo-50 p-4 md:p-6 rounded-2xl border border-indigo-200 mb-6">
-                <h2 class="text-xl font-bold text-indigo-900 mb-4">Cadastrar Cliente</h2>
+                <h2 class="text-xl font-bold text-indigo-900 mb-1">Cadastrar Cliente</h2>
+                <p class="text-xs text-indigo-700 mb-4">Este cliente ficará vinculado exclusivamente à sua conta de vendedor.</p>
                 <form id="formCliente" class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Nome / Razão Social</label>
@@ -108,9 +117,9 @@
                 </form>
             </div>
 
-            <!-- Listagem de Clientes Cadastrados -->
+            <!-- Listagem de Clientes do Vendedor -->
             <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-3">Clientes Cadastrados</h3>
+                <h3 class="text-lg font-bold text-gray-800 mb-3">Meus Clientes Cadastrados</h3>
                 <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
                     <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <thead class="bg-gray-50">
@@ -129,7 +138,7 @@
             </div>
         </div>
 
-        <!-- 3. SEÇÃO CADASTRO E CONTROLE DE ESTOQUE (PRODUTOS POR CATEGORIA) -->
+        <!-- 2. SEÇÃO CADASTRO E CONTROLE DE ESTOQUE (PRODUTOS) -->
         <div id="secao-produto" class="secao-conteudo hidden space-y-8">
             <div class="bg-purple-50 p-4 md:p-6 rounded-2xl border border-purple-200">
                 <h2 class="text-xl font-bold text-purple-900 mb-4">Cadastrar Novo Produto</h2>
@@ -179,20 +188,20 @@
             </div>
         </div>
 
-        <!-- 4. SEÇÃO VENDER -->
+        <!-- 3. SEÇÃO VENDER -->
         <div id="secao-vender" class="secao-conteudo hidden">
             <h2 class="text-xl font-bold text-emerald-800 mb-4">Registrar Nova Venda</h2>
             <form id="formVenda" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Cliente (Cadastrado)</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Meus Clientes Cadastrados</label>
                         <select id="vendaCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                             <option value="">Carregando clientes...</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Vendedor</label>
-                        <input type="text" id="vendaVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Nome do vendedor">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Vendedor Responsável</label>
+                        <input type="text" id="vendaVendedor" readonly class="w-full rounded-lg border border-gray-300 p-2.5 bg-gray-100 text-gray-700 font-medium focus:outline-none">
                     </div>
                 </div>
 
@@ -246,16 +255,15 @@
             </form>
         </div>
 
-        <!-- 5. SEÇÃO HISTÓRICO DE VENDAS -->
+        <!-- 4. SEÇÃO HISTÓRICO DE VENDAS -->
         <div id="secao-historico" class="secao-conteudo hidden">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Histórico de Vendas</h2>
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Minhas Vendas Realizadas</h2>
             <div class="overflow-x-auto rounded-lg border border-gray-200">
                 <table class="min-w-full divide-y divide-gray-200 text-sm">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-4 py-3 text-left font-bold text-gray-600">Data</th>
                             <th class="px-4 py-3 text-left font-bold text-gray-600">Cliente</th>
-                            <th class="px-4 py-3 text-left font-bold text-gray-600">Vendedor</th>
                             <th class="px-4 py-3 text-left font-bold text-gray-600">Produtos</th>
                             <th class="px-4 py-3 text-right font-bold text-gray-600">Valor (R$)</th>
                         </tr>
@@ -267,6 +275,27 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- MODAL DE CADASTRO DE VENDEDOR -->
+    <div id="modalCadastroVendedor" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white max-w-md w-full p-6 rounded-2xl shadow-xl">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Cadastrar Novo Vendedor</h2>
+            <form id="formCadastrarVendedor" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Vendedor</label>
+                    <input type="text" id="novoNomeVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Ex: Carlos Silva">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Senha de Acesso</label>
+                    <input type="password" id="novaSenhaVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Digite uma senha segura">
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="fecharCadastroVendedorModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-lg transition">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition">Salvar</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -285,20 +314,124 @@
         }
         const db = firebase.firestore();
 
+        let vendedorLogado = localStorage.getItem('vendedorLogado') || null;
         let listaProdutosCache = [];
         let produtoSelecionadoPrecoUnitario = 0;
 
-        // NAVEGAÇÃO ENTRE AS ABAS
+        // INICIALIZAÇÃO DO SISTEMA
+        window.addEventListener('DOMContentLoaded', () => {
+            carregarSelectLoginVendedores();
+            if (vendedorLogado) {
+                entrarNoPainel(vendedorLogado);
+            }
+        });
+
+        async function carregarSelectLoginVendedores() {
+            const select = document.getElementById('loginVendedorSelect');
+            select.innerHTML = `<option value="">Selecione seu nome...</option>`;
+            try {
+                const snapshot = await db.collection('vendedores').orderBy('nome').get();
+                snapshot.forEach(doc => {
+                    const v = doc.data();
+                    const opt = document.createElement('option');
+                    opt.value = v.nome;
+                    opt.textContent = v.nome;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error("Erro ao carregar vendedores para login:", err);
+            }
+        }
+
+        // LOGIN DE VENDEDOR
+        document.getElementById('formLogin').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const nomeSelecionado = document.getElementById('loginVendedorSelect').value;
+            const senhaDigitada = document.getElementById('loginSenha').value;
+
+            try {
+                const snapshot = await db.collection('vendedores').where('nome', '==', nomeSelecionado).get();
+                if (snapshot.empty) {
+                    alert("Vendedor não encontrado.");
+                    return;
+                }
+
+                const vendedorDoc = snapshot.docs[0].data();
+                if (vendedorDoc.senha === senhaDigitada) {
+                    vendedorLogado = nomeSelecionado;
+                    localStorage.setItem('vendedorLogado', vendedorLogado);
+                    entrarNoPainel(vendedorLogado);
+                } else {
+                    alert("Senha incorreta!");
+                }
+            } catch (err) {
+                alert("Erro ao realizar login: " + err.message);
+            }
+        });
+
+        function entrarNoPainel(nome) {
+            document.getElementById('telaLogin').classList.add('hidden');
+            document.getElementById('painelPrincipal').classList.remove('hidden');
+            document.getElementById('usuarioLogadoNome').textContent = nome;
+            document.getElementById('vendaVendedor').value = nome;
+            mudarAba('cliente');
+        }
+
+        function fazerLogout() {
+            localStorage.removeItem('vendedorLogado');
+            vendedorLogado = null;
+            document.getElementById('painelPrincipal').classList.add('hidden');
+            document.getElementById('telaLogin').classList.remove('hidden');
+            document.getElementById('formLogin').reset();
+            carregarSelectLoginVendedores();
+        }
+
+        // MODAL CADASTRO VENDEDOR
+        function mostrarCadastroVendedorModal() {
+            document.getElementById('modalCadastroVendedor').classList.remove('hidden');
+        }
+        function fecharCadastroVendedorModal() {
+            document.getElementById('modalCadastroVendedor').classList.add('hidden');
+            document.getElementById('formCadastrarVendedor').reset();
+        }
+
+        document.getElementById('formCadastrarVendedor').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const nome = document.getElementById('novoNomeVendedor').value.trim();
+            const senha = document.getElementById('novaSenhaVendedor').value;
+
+            try {
+                // Verifica se já existe
+                const check = await db.collection('vendedores').where('nome', '==', nome).get();
+                if (!check.empty) {
+                    alert("Já existe um vendedor cadastrado com este nome.");
+                    return;
+                }
+
+                await db.collection('vendedores').add({
+                    nome: nome,
+                    senha: senha,
+                    criadoEm: new Date().toISOString()
+                });
+
+                alert("Vendedor cadastrado com sucesso! Faça o login.");
+                fecharCadastroVendedorModal();
+                carregarSelectLoginVendedores();
+            } catch (err) {
+                alert("Erro ao cadastrar vendedor: " + err.message);
+            }
+        });
+
+        // NAVEGAÇÃO ENTRE ABAS
         function mudarAba(aba) {
             document.querySelectorAll('.secao-conteudo').forEach(el => el.classList.add('hidden'));
-            
             document.querySelectorAll('.card-btn').forEach(btn => {
-                btn.classList.remove('ring-2', 'ring-blue-500', 'ring-purple-500', 'ring-emerald-500', 'ring-indigo-500', 'bg-blue-50', 'bg-purple-50', 'bg-indigo-50', 'bg-emerald-100');
+                btn.classList.remove('ring-2', 'ring-purple-500', 'ring-emerald-500', 'ring-indigo-500', 'ring-amber-500', 'bg-purple-50', 'bg-indigo-50', 'bg-emerald-100', 'bg-amber-50');
             });
 
             document.getElementById('secao-' + aba).classList.remove('hidden');
-
             const cardAtivo = document.getElementById('card-' + aba);
+
             if (aba === 'vender') {
                 cardAtivo.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-100');
                 carregarProdutosParaVenda();
@@ -309,22 +442,18 @@
             } else if (aba === 'cliente') {
                 cardAtivo.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-50');
                 carregarTabelaClientes();
-            } else {
-                cardAtivo.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+            } else if (aba === 'historico') {
+                cardAtivo.classList.add('ring-2', 'ring-amber-500', 'bg-amber-50');
+                carregarHistoricoVendas();
             }
 
             ocultarMensagem();
-
-            if (aba === 'historico') {
-                carregarHistoricoVendas();
-            }
         }
 
         function exibirMensagem(texto, tipo = 'sucesso') {
             const msgBox = document.getElementById('mensagemStatus');
             msgBox.textContent = texto;
             msgBox.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
-            
             if (tipo === 'sucesso') {
                 msgBox.classList.add('bg-green-100', 'text-green-800');
             } else {
@@ -336,30 +465,7 @@
             document.getElementById('mensagemStatus').classList.add('hidden');
         }
 
-        // CADASTRO DE VENDEDOR
-        document.getElementById('formVendedor').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const btn = e.target.querySelector('.btn-submit');
-            btn.disabled = true;
-            btn.textContent = "Salvando...";
-
-            try {
-                await db.collection('vendedores').add({
-                    nome: document.getElementById('nomeVendedor').value,
-                    observacao: document.getElementById('obsVendedor').value,
-                    criadoEm: new Date().toISOString()
-                });
-                exibirMensagem("Vendedor cadastrado com sucesso!");
-                e.target.reset();
-            } catch (err) {
-                exibirMensagem("Erro ao salvar vendedor: " + err.message, 'erro');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = "Salvar Vendedor";
-            }
-        });
-
-        // CADASTRO DE CLIENTE COM CPF/CNPJ, TELEFONE E ENDEREÇO
+        // CADASTRO DE CLIENTE (VINCULADO AO VENDEDOR LOGADO)
         document.getElementById('formCliente').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = e.target.querySelector('.btn-submit');
@@ -372,6 +478,7 @@
                     documento: document.getElementById('docCliente').value,
                     telefone: document.getElementById('telCliente').value,
                     endereco: document.getElementById('enderecoCliente').value,
+                    vendedorResponsavel: vendedorLogado, // Vincula ao vendedor atual
                     criadoEm: new Date().toISOString()
                 });
                 exibirMensagem("Cliente cadastrado com sucesso!");
@@ -385,22 +492,29 @@
             }
         });
 
-        // CARREGAR TABELA DE CLIENTES CADASTRADOS
+        // CARREGAR TABELA DE CLIENTES (APENAS DO VENDEDOR LOGADO)
         async function carregarTabelaClientes() {
             const tbody = document.getElementById('tabelaClientes');
             tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">Carregando clientes...</td></tr>`;
 
             try {
-                const snapshot = await db.collection('clientes').orderBy('nome').get();
+                const snapshot = await db.collection('clientes')
+                    .where('vendedorResponsavel', '==', vendedorLogado)
+                    .get();
+                
                 tbody.innerHTML = "";
 
                 if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">Nenhum cliente cadastrado ainda.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">Nenhum cliente cadastrado por você ainda.</td></tr>`;
                     return;
                 }
 
-                snapshot.forEach(doc => {
-                    const c = doc.data();
+                // Ordenação local por nome
+                let clientes = [];
+                snapshot.forEach(doc => clientes.push({ id: doc.id, ...doc.data() }));
+                clientes.sort((a, b) => a.nome.localeCompare(b.nome));
+
+                clientes.forEach(c => {
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-gray-50";
                     tr.innerHTML = `
@@ -417,22 +531,28 @@
             }
         }
 
-        // CARREGAR CLIENTES PARA O SELECT DA ABA VENDER
+        // CARREGAR CLIENTES PARA O SELECT DA ABA VENDER (APENAS DO VENDEDOR)
         async function carregarClientesParaSelect() {
             const select = document.getElementById('vendaCliente');
             select.innerHTML = `<option value="">Selecione um cliente...</option>`;
 
             try {
-                const snapshot = await db.collection('clientes').orderBy('nome').get();
+                const snapshot = await db.collection('clientes')
+                    .where('vendedorResponsavel', '==', vendedorLogado)
+                    .get();
+
                 if (snapshot.empty) {
                     select.innerHTML = `<option value="">Nenhum cliente cadastrado</option>`;
                     return;
                 }
 
-                snapshot.forEach(doc => {
-                    const c = doc.data();
+                let clientes = [];
+                snapshot.forEach(doc => clientes.push({ id: doc.id, ...doc.data() }));
+                clientes.sort((a, b) => a.nome.localeCompare(b.nome));
+
+                clientes.forEach(c => {
                     const opt = document.createElement('option');
-                    opt.value = c.nome; // Salvando o nome no histórico de vendas
+                    opt.value = c.nome;
                     opt.textContent = `${c.nome} (${c.documento || 'Sem doc'})`;
                     select.appendChild(opt);
                 });
@@ -468,21 +588,22 @@
             }
         });
 
-        // EXIBIR ESTOQUE SEPARADO POR CATEGORIA NA ABA DE PRODUTOS
+        // CORREÇÃO: EXIBIR ESTOQUE SEPARADO POR CATEGORIA NA ABA DE PRODUTOS
         async function carregarEstoquePorCategoria() {
             const container = document.getElementById('listaEstoqueCategorias');
             container.innerHTML = `<p class="text-sm text-gray-500">Carregando estoque...</p>`;
 
             try {
-                const snapshot = await db.collection('produtos').orderBy('categoria').get();
+                const snapshot = await db.collection('produtos').get();
                 const categoriasMap = {};
 
                 snapshot.forEach(doc => {
                     const p = { id: doc.id, ...doc.data() };
-                    if (!categoriasMap[p.categoria]) {
-                        categoriasMap[p.categoria] = [];
+                    const cat = p.categoria || 'Sem Categoria';
+                    if (!categoriasMap[cat]) {
+                        categoriasMap[cat] = [];
                     }
-                    categoriasMap[p.categoria].push(p);
+                    categoriasMap[cat].push(p);
                 });
 
                 if (snapshot.empty) {
@@ -491,7 +612,13 @@
                 }
 
                 container.innerHTML = "";
-                for (const [cat, produtos] of Object.entries(categoriasMap)) {
+                // Ordena as categorias alfabeticamente
+                const categoriasOrdenadas = Object.keys(categoriasMap).sort();
+
+                categoriasOrdenadas.forEach(cat => {
+                    const produtos = categoriasMap[cat];
+                    produtos.sort((a, b) => a.nome.localeCompare(b.nome));
+
                     let htmlProdutos = produtos.map(p => `
                         <div class="flex justify-between items-center py-2 px-3 bg-white border-b border-gray-100 last:border-none text-sm">
                             <span class="font-medium text-gray-800">${p.nome}</span>
@@ -514,7 +641,7 @@
                         </div>
                     `;
                     container.appendChild(divCat);
-                }
+                });
             } catch (err) {
                 console.error("Erro ao carregar estoque:", err);
                 container.innerHTML = `<p class="text-sm text-red-500">Erro ao carregar produtos do estoque.</p>`;
@@ -527,12 +654,13 @@
             select.innerHTML = `<option value="">Carregando produtos...</option>`;
 
             try {
-                const snapshot = await db.collection('produtos').orderBy('nome').get();
+                const snapshot = await db.collection('produtos').get();
                 listaProdutosCache = [];
 
                 snapshot.forEach(doc => {
                     listaProdutosCache.push({ id: doc.id, ...doc.data() });
                 });
+                listaProdutosCache.sort((a, b) => a.nome.localeCompare(b.nome));
 
                 preencherSelectProdutos(listaProdutosCache);
             } catch (err) {
@@ -592,7 +720,7 @@
             document.getElementById('vendaValor').value = total.toFixed(2);
         }
 
-        // REGISTRO DE VENDA E BAIXA AUTOMÁTICA NO ESTOQUE
+        // REGISTRO DE VENDA E BAIXA NO ESTOQUE
         document.getElementById('formVenda').addEventListener('submit', async function(e) {
             e.preventDefault();
             const produtoId = document.getElementById('selectProdutoCatalogo').value;
@@ -620,15 +748,13 @@
                     throw new Error(`Estoque insuficiente! Disponível no momento: ${estoqueAtual} unidade(s).`);
                 }
 
-                // Executa a baixa no estoque
                 await produtoRef.update({
                     estoque: estoqueAtual - qtdVendida
                 });
 
-                // Registra a venda
                 await db.collection('vendas').add({
                     cliente: document.getElementById('vendaCliente').value,
-                    vendedor: document.getElementById('vendaVendedor').value,
+                    vendedor: vendedorLogado, // Garante que a venda pertence ao vendedor logado
                     valorTotal: parseFloat(document.getElementById('vendaValor').value) || 0,
                     produtos: `${qtdVendida}x ${document.getElementById('vendaProdutos').value}`,
                     criadoEm: new Date().toISOString()
@@ -636,6 +762,7 @@
 
                 exibirMensagem("Venda registrada com sucesso e estoque atualizado!");
                 e.target.reset();
+                document.getElementById('vendaVendedor').value = vendedorLogado;
                 produtoSelecionadoPrecoUnitario = 0;
                 carregarProdutosParaVenda();
             } catch (err) {
@@ -646,22 +773,29 @@
             }
         });
 
-        // HISTÓRICO DE VENDAS
+        // HISTÓRICO DE VENDAS (APENAS DO VENDEDOR LOGADO)
         async function carregarHistoricoVendas() {
             const tbody = document.getElementById('tabelaHistorico');
-            tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500">Carregando histórico...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">Carregando histórico...</td></tr>`;
 
             try {
-                const snapshot = await db.collection('vendas').orderBy('criadoEm', 'desc').get();
+                const snapshot = await db.collection('vendas')
+                    .where('vendedor', '==', vendedorLogado)
+                    .get();
+
                 tbody.innerHTML = "";
 
                 if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500">Nenhuma venda registrada ainda.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">Nenhuma venda registrada por você ainda.</td></tr>`;
                     return;
                 }
 
-                snapshot.forEach(doc => {
-                    const v = doc.data();
+                let vendas = [];
+                snapshot.forEach(doc => vendas.push({ id: doc.id, ...doc.data() }));
+                // Ordenação por data decrescente
+                vendas.sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
+
+                vendas.forEach(v => {
                     const dataFormatada = v.criadoEm ? new Date(v.criadoEm).toLocaleString('pt-BR') : '-';
                     const valorFormatado = (v.valorTotal || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 
@@ -670,7 +804,6 @@
                     tr.innerHTML = `
                         <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">${dataFormatada}</td>
                         <td class="px-4 py-3 font-medium text-gray-800">${v.cliente || '-'}</td>
-                        <td class="px-4 py-3 text-gray-600">${v.vendedor || '-'}</td>
                         <td class="px-4 py-3 text-gray-600">${v.produtos || '-'}</td>
                         <td class="px-4 py-3 text-right font-bold text-emerald-600">R$ ${valorFormatado}</td>
                     `;
@@ -678,12 +811,9 @@
                 });
             } catch (err) {
                 console.error("Erro ao carregar histórico:", err);
-                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-red-500">Erro ao carregar histórico de vendas.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-red-500">Erro ao carregar histórico de vendas.</td></tr>`;
             }
         }
-
-        // Iniciar na aba Vendedor por padrão
-        mudarAba('vendedor');
     </script>
 </body>
 </html>

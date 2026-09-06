@@ -16,7 +16,6 @@
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 15px; color: #333; }
         .container { max-width: 800px; margin: auto; }
         
-        /* Tela de Login */
         #telaLogin { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 400px; margin: 50px auto; text-align: center; }
         #telaLogin h2 { color: #27ae60; margin-bottom: 20px; }
         
@@ -68,6 +67,37 @@
             }
         }
     </style>
+
+    <!-- SDKs do Firebase v10 (Modular) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, setDoc, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD8SnMWXagUVz4uVM87bc2dAakZyGGW3nM",
+            authDomain: "distribuidora-frazao.firebaseapp.com",
+            projectId: "distribuidora-frazao",
+            storageBucket: "distribuidora-frazao.firebasestorage.app",
+            messagingSenderId: "642540059204",
+            appId: "1:642540059204:web:c113fa6966fd97fc20da11"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Disponibilizar funções globalmente para o script do sistema
+        window.db = db;
+        window.collection = collection;
+        window.getDocs = getDocs;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.addDoc = addDoc;
+        window.deleteDoc = deleteDoc;
+        window.updateDoc = updateDoc;
+
+        // Iniciar após carregar o Firebase
+        window.dispatchEvent(new Event('firebase-pronto'));
+    </script>
 </head>
 <body>
     <div class="container">
@@ -75,7 +105,7 @@
         <!-- TELA DE LOGIN -->
         <div id="telaLogin">
             <h2>Distribuidora Frazão</h2>
-            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Entre com sua conta de vendedor ou admin</p>
+            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Conectado à Nuvem - Entre com sua conta</p>
             <div class="form-group">
                 <label>Selecione o Usuário:</label>
                 <select id="loginUsuario">
@@ -103,7 +133,7 @@
 
             <!-- ABA 1: ESTOQUE / PRODUTOS -->
             <div id="estoque" class="card active">
-                <h2>Gerenciamento de Produtos e Estoque</h2>
+                <h2>Gerenciamento de Produtos e Estoque (Nuvem)</h2>
                 <div class="form-group">
                     <label>Nome do Produto:</label>
                     <input type="text" id="prodNome" placeholder="Ex: Chocolate KitKat, Coca-Cola 2L...">
@@ -131,7 +161,7 @@
                     <label>Preço Unitário (R$):</label>
                     <input type="number" step="0.01" id="prodPreco" placeholder="Ex: 8.50">
                 </div>
-                <button class="btn-salvar" onclick="salvarEstoque()">Adicionar / Atualizar Produto</button>
+                <button class="btn-salvar" onclick="salvarEstoque()">Salvar na Nuvem</button>
                 
                 <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
                     <input type="text" id="filtroEstoque" placeholder="🔍 Buscar produto..." onkeyup="carregarEstoque()" style="flex: 1; min-width: 200px;">
@@ -245,6 +275,14 @@
 
     <script>
         let usuarioLogado = localStorage.getItem('usuario_logado') || null;
+        let cacheEstoque = [];
+        let cacheClientes = [];
+        let cacheVendedores = [];
+        let cacheVendas = [];
+
+        window.addEventListener('firebase-pronto', async () => {
+            verificarSessao();
+        });
 
         function verificarSessao() {
             if (usuarioLogado) {
@@ -255,21 +293,24 @@
                 if (usuarioLogado !== 'admin') {
                     document.getElementById('abaBtnVendedores').style.display = 'none';
                 }
-                carregarEstoque();
+                carregarTudoDoFirebase();
             } else {
                 document.getElementById('telaLogin').style.display = 'block';
                 document.getElementById('painelPrincipal').style.display = 'none';
-                popularSelectLogin();
+                carregarVendedoresLogin();
             }
         }
 
-        function popularSelectLogin() {
-            let sel = document.getElementById('loginUsuario');
-            sel.innerHTML = '<option value="admin">Administrador (Acesso Total)</option>';
-            let vendedores = JSON.parse(localStorage.getItem('admin_vendedores')) || [];
-            vendedores.forEach(v => {
-                sel.innerHTML += `<option value="${v}">${v}</option>`;
-            });
+        async function carregarVendedoresLogin() {
+            try {
+                let snap = await getDocs(collection(window.db, "vendedores"));
+                let sel = document.getElementById('loginUsuario');
+                sel.innerHTML = '<option value="admin">Administrador (Acesso Total)</option>';
+                snap.forEach(d => {
+                    let v = d.data().nome;
+                    sel.innerHTML += `<option value="${v}">${v}</option>`;
+                });
+            } catch(e) { console.error(e); }
         }
 
         function fazerLogin() {
@@ -283,6 +324,36 @@
             localStorage.removeItem('usuario_logado');
             usuarioLogado = null;
             verificarSessao();
+        }
+
+        async function carregarTudoDoFirebase() {
+            try {
+                // Carregar Vendedores
+                let snapV = await getDocs(collection(window.db, "vendedores"));
+                cacheVendedores = [];
+                snapV.forEach(d => cacheVendedores.push({ id: d.id, ...d.data() }));
+
+                // Carregar Estoque
+                let snapE = await getDocs(collection(window.db, "estoque"));
+                cacheEstoque = [];
+                snapE.forEach(d => cacheEstoque.push({ id: d.id, ...d.data() }));
+
+                // Carregar Clientes
+                let snapC = await getDocs(collection(window.db, "clientes"));
+                cacheClientes = [];
+                snapC.forEach(d => cacheClientes.push({ id: d.id, ...d.data() }));
+
+                // Carregar Vendas
+                let snapVendas = await getDocs(collection(window.db, "vendas"));
+                cacheVendas = [];
+                snapVendas.forEach(d => cacheVendas.push({ id: d.id, ...d.data() }));
+                // Ordenar por data mais recente se tiver timestamp
+                cacheVendas.sort((a, b) => b.criadoEm - a.criadoEm);
+
+                carregarEstoque();
+            } catch(e) {
+                console.error("Erro ao carregar dados do Firebase:", e);
+            }
         }
 
         function mudarAba(abaId, evt) {
@@ -299,42 +370,49 @@
         }
 
         // --- VENDEDORES ---
-        function salvarVendedor() {
+        async function salvarVendedor() {
             let nome = document.getElementById('vendNome').value.trim();
             if(!nome) return alert('Digite o nome do vendedor!');
             
-            let vendedores = JSON.parse(localStorage.getItem('admin_vendedores')) || [];
-            if(vendedores.includes(nome)) return alert('Este vendedor já está cadastrado!');
+            if(cacheVendedores.some(v => v.nome.toLowerCase() === nome.toLowerCase())) {
+                return alert('Este vendedor já está cadastrado!');
+            }
             
-            vendedores.push(nome);
-            localStorage.setItem('admin_vendedores', JSON.stringify(vendedores));
-            document.getElementById('vendNome').value = '';
-            carregarVendedores();
-            alert('Vendedor cadastrado com sucesso!');
+            try {
+                await addDoc(collection(window.db, "vendedores"), { nome });
+                document.getElementById('vendNome').value = '';
+                await carregarTudoDoFirebase();
+                carregarVendedores();
+                alert('Vendedor cadastrado na nuvem com sucesso!');
+            } catch(e) {
+                alert('Erro ao salvar vendedor: ' + e.message);
+            }
         }
 
         function carregarVendedores() {
-            let vendedores = JSON.parse(localStorage.getItem('admin_vendedores')) || [];
             let lista = document.getElementById('listaVendedores');
             lista.innerHTML = '';
-            if(vendedores.length === 0) {
+            if(cacheVendedores.length === 0) {
                 lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum vendedor cadastrado.</li>';
                 return;
             }
-            vendedores.forEach((v, idx) => {
-                lista.innerHTML += `<li><div><strong>${v}</strong></div> <button class="btn-excluir" onclick="removerVendedor(${idx})">Excluir</button></li>`;
+            cacheVendedores.forEach((v) => {
+                let btnExc = usuarioLogado === 'admin' ? `<button class="btn-excluir" onclick="removerVendedor('${v.id}')">Excluir</button>` : '';
+                lista.innerHTML += `<li><div><strong>${v.nome}</strong></div> ${btnExc}</li>`;
             });
         }
 
-        function removerVendedor(idx) {
-            let vendedores = JSON.parse(localStorage.getItem('admin_vendedores')) || [];
-            vendedores.splice(idx, 1);
-            localStorage.setItem('admin_vendedores', JSON.stringify(vendedores));
-            carregarVendedores();
+        async function removerVendedor(id) {
+            if(!confirm('Deseja excluir este vendedor?')) return;
+            try {
+                await deleteDoc(doc(window.db, "vendedores", id));
+                await carregarTudoDoFirebase();
+                carregarVendedores();
+            } catch(e) { alert('Erro ao excluir: ' + e.message); }
         }
 
         // --- ESTOQUE E PRODUTOS ---
-        function salvarEstoque() {
+        async function salvarEstoque() {
             let produto = document.getElementById('prodNome').value.trim();
             let categoria = document.getElementById('prodCat').value;
             let qtd = parseInt(document.getElementById('prodQtd').value);
@@ -342,33 +420,34 @@
 
             if(!produto || isNaN(qtd) || isNaN(preco)) return alert('Preencha todos os campos do produto!');
 
-            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
-            let existente = estoque.find(p => p.produto.toLowerCase() === produto.toLowerCase());
-            
-            if(existente) {
-                existente.qtd = qtd;
-                existente.preco = preco;
-                existente.categoria = categoria;
-            } else {
-                estoque.push({produto, categoria, qtd, preco});
-            }
+            try {
+                let existente = cacheEstoque.find(p => p.produto.toLowerCase() === produto.toLowerCase());
+                
+                if(existente) {
+                    await updateDoc(doc(window.db, "estoque", existente.id), { categoria, qtd, preco });
+                } else {
+                    await addDoc(collection(window.db, "estoque"), { produto, categoria, qtd, preco });
+                }
 
-            localStorage.setItem('estoque_frazao_v2', JSON.stringify(estoque));
-            document.getElementById('prodNome').value = '';
-            document.getElementById('prodQtd').value = '';
-            document.getElementById('prodPreco').value = '';
-            carregarEstoque();
-            alert('Produto salvo e vinculado com sucesso!');
+                document.getElementById('prodNome').value = '';
+                document.getElementById('prodQtd').value = '';
+                document.getElementById('prodPreco').value = '';
+                
+                await carregarTudoDoFirebase();
+                carregarEstoque();
+                alert('Produto salvo na nuvem com sucesso!');
+            } catch(e) {
+                alert('Erro ao salvar produto: ' + e.message);
+            }
         }
 
         function carregarEstoque() {
-            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
             let filtroTexto = document.getElementById('filtroEstoque').value.toLowerCase();
             let filtroCat = document.getElementById('filtroCategoria').value;
             let lista = document.getElementById('listaEstoque');
             lista.innerHTML = '';
 
-            let filtrados = estoque.filter(i => {
+            let filtrados = cacheEstoque.filter(i => {
                 let matchTexto = i.produto.toLowerCase().includes(filtroTexto);
                 let matchCat = true;
                 if(filtroCat) {
@@ -380,13 +459,12 @@
             });
 
             if(filtrados.length === 0) {
-                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum produto encontrado nesta categoria/busca.</li>';
+                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum produto encontrado.</li>';
                 return;
             }
 
             filtrados.forEach((item) => {
-                let idx = estoque.findIndex(p => p.produto.toLowerCase() === item.produto.toLowerCase());
-                let botaoExcluir = usuarioLogado === 'admin' ? `<button class="btn-excluir" onclick="removerEstoque(${idx})">Excluir</button>` : '';
+                let botaoExcluir = usuarioLogado === 'admin' ? `<button class="btn-excluir" onclick="removerEstoque('${item.id}')">Excluir</button>` : '';
                 let catNome = item.categoria || 'Sem Categoria';
                 lista.innerHTML += `
                     <li>
@@ -397,24 +475,25 @@
             });
         }
 
-        function removerEstoque(idx) {
-            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
-            estoque.splice(idx, 1);
-            localStorage.setItem('estoque_frazao_v2', JSON.stringify(estoque));
-            carregarEstoque();
+        async function removerEstoque(id) {
+            if(!confirm('Deseja excluir este produto?')) return;
+            try {
+                await deleteDoc(doc(window.db, "estoque", id));
+                await carregarTudoDoFirebase();
+                carregarEstoque();
+            } catch(e) { alert('Erro ao excluir: ' + e.message); }
         }
 
         // --- CLIENTES ---
         function carregarSelectVendedoresCliente() {
             let sel = document.getElementById('cliVendedorSelect');
             sel.innerHTML = '<option value="admin">Administrador (Geral)</option>';
-            let vendedores = JSON.parse(localStorage.getItem('admin_vendedores')) || [];
-            vendedores.forEach(v => {
-                sel.innerHTML += `<option value="${v}">${v}</option>`;
+            cacheVendedores.forEach(v => {
+                sel.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
             });
         }
 
-        function salvarCliente() {
+        async function salvarCliente() {
             let nome = document.getElementById('cliNome').value.trim();
             let tel = document.getElementById('cliTel').value.trim();
             let doc = document.getElementById('cliDoc').value.trim();
@@ -423,25 +502,25 @@
 
             if(!nome || !tel) return alert('Preencha pelo menos o Nome e o Telefone!');
 
-            let clientes = JSON.parse(localStorage.getItem('admin_clientes')) || [];
-            clientes.push({nome, tel, doc, end, vendedor: vendedorResp});
-            localStorage.setItem('admin_clientes', JSON.stringify(clientes));
-
-            document.getElementById('cliNome').value = '';
-            document.getElementById('cliTel').value = '';
-            document.getElementById('cliDoc').value = '';
-            document.getElementById('cliEnd').value = '';
-            
-            carregarClientes();
-            alert('Cliente cadastrado com sucesso!');
+            try {
+                await addDoc(collection(window.db, "clientes"), { nome, tel, doc, end, vendedor: vendedorResp });
+                
+                document.getElementById('cliNome').value = '';
+                document.getElementById('cliTel').value = '';
+                document.getElementById('cliDoc').value = '';
+                document.getElementById('cliEnd').value = '';
+                
+                await carregarTudoDoFirebase();
+                carregarClientes();
+                alert('Cliente cadastrado na nuvem!');
+            } catch(e) { alert('Erro ao salvar cliente: ' + e.message); }
         }
 
         function carregarClientes() {
-            let clientes = JSON.parse(localStorage.getItem('admin_clientes')) || [];
             let lista = document.getElementById('listaClientes');
             lista.innerHTML = '';
 
-            let meusClientes = clientes.map((c, originalIdx) => ({...c, originalIdx})).filter(c => {
+            let meusClientes = cacheClientes.filter(c => {
                 if(usuarioLogado === 'admin') return true;
                 return c.vendedor === usuarioLogado;
             });
@@ -461,22 +540,23 @@
                             <strong>${c.nome}</strong><br>
                             <small>Tel: ${c.tel} ${docInfo} ${endInfo} ${vendInfo}</small>
                         </div> 
-                        <button class="btn-excluir" onclick="removerCliente(${c.originalIdx})">Excluir</button>
+                        <button class="btn-excluir" onclick="removerCliente('${c.id}')">Excluir</button>
                     </li>`;
             });
         }
 
-        function removerCliente(idx) {
-            let clientes = JSON.parse(localStorage.getItem('admin_clientes')) || [];
-            clientes.splice(idx, 1);
-            localStorage.setItem('admin_clientes', JSON.stringify(clientes));
-            carregarClientes();
+        async function removerCliente(id) {
+            if(!confirm('Deseja excluir este cliente?')) return;
+            try {
+                await deleteDoc(doc(window.db, "clientes", id));
+                await carregarTudoDoFirebase();
+                carregarClientes();
+            } catch(e) { alert('Erro ao excluir: ' + e.message); }
         }
 
         // --- VENDAS ---
         function carregarSelectsVenda() {
-            let clientes = JSON.parse(localStorage.getItem('admin_clientes')) || [];
-            let clientesPermitidos = clientes.filter(c => usuarioLogado === 'admin' || c.vendedor === usuarioLogado);
+            let clientesPermitidos = cacheClientes.filter(c => usuarioLogado === 'admin' || c.vendedor === usuarioLogado);
 
             let selCli = document.getElementById('vendaCliente');
             selCli.innerHTML = '';
@@ -490,13 +570,12 @@
         }
 
         function filtrarProdutosVenda() {
-            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
             let catFiltro = document.getElementById('vendaFiltroCat').value.trim().toLowerCase();
             let selProd = document.getElementById('vendaProduto');
             selProd.innerHTML = '';
 
-            let produtosFiltrados = estoque.filter(p => {
-                if (!catFiltro) return true; // Se vazio ("Todas as Categorias"), traz tudo
+            let produtosFiltrados = cacheEstoque.filter(p => {
+                if (!catFiltro) return true;
                 let catItem = (p.categoria || '').trim().toLowerCase();
                 return catItem === catFiltro;
             });
@@ -510,7 +589,7 @@
             produtosFiltrados.forEach(p => { 
                 let precoVal = p.preco || 0;
                 let catNome = p.categoria || 'Geral';
-                selProd.innerHTML += `<option value="${p.produto}" data-preco="${precoVal}" data-qtd="${p.qtd}">${p.produto} [${catNome}] (Estq: ${p.qtd} | R$ ${precoVal.toFixed(2)})</option>`; 
+                selProd.innerHTML += `<option value="${p.produto}" data-id="${p.id}" data-preco="${precoVal}" data-qtd="${p.qtd}">${p.produto} [${catNome}] (Estq: ${p.qtd} | R$ ${precoVal.toFixed(2)})</option>`; 
             });
             atualizarPrecoVenda();
         }
@@ -532,53 +611,61 @@
             campoQtdVenda.addEventListener('input', atualizarPrecoVenda);
         }
 
-        function registrarVenda() {
+        async function registrarVenda() {
             let clienteNome = document.getElementById('vendaCliente').value;
-            let produtoNome = document.getElementById('vendaProduto').value;
+            let selProd = document.getElementById('vendaProduto');
+            let optProd = selProd.options[selProd.selectedIndex];
+            
+            if(!clienteNome || !optProd || !optProd.getAttribute('data-id')) {
+                return alert('Selecione um cliente e um produto válido!');
+            }
+
+            let produtoId = optProd.getAttribute('data-id');
+            let produtoNome = selProd.value;
             let qtdVendida = parseInt(document.getElementById('vendaQtd').value);
             let total = document.getElementById('vendaTotal').value;
 
-            if(!clienteNome || !produtoNome || isNaN(qtdVendida)) return alert('Preencha todos os dados da venda!');
+            let prodDoc = cacheEstoque.find(p => p.id === produtoId);
+            if(!prodDoc || prodDoc.qtd < qtdVendida) {
+                return alert('Estoque insuficiente para este produto!');
+            }
 
-            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
-            let prod = estoque.find(p => p.produto.toLowerCase() === produtoNome.toLowerCase());
+            try {
+                // Atualizar estoque na nuvem
+                let novaQtd = prodDoc.qtd - qtdVendida;
+                await updateDoc(doc(window.db, "estoque", produtoId), { qtd: novaQtd });
 
-            if(!prod || prod.qtd < qtdVendida) return alert('Estoque insuficiente para este produto!');
+                let cliObj = cacheClientes.find(c => c.nome === clienteNome);
+                let vendedorResponsavel = cliObj ? cliObj.vendedor : usuarioLogado;
+                let dataHora = new Date().toLocaleString('pt-BR');
+                let idPedido = Date.now().toString().slice(-6);
 
-            prod.qtd -= qtdVendida;
-            localStorage.setItem('estoque_frazao_v2', JSON.stringify(estoque));
+                // Salvar venda na nuvem
+                await addDoc(collection(window.db, "vendas"), {
+                    id: idPedido,
+                    data: dataHora,
+                    cliente: clienteNome,
+                    produto: produtoNome,
+                    qtd: qtdVendida,
+                    total,
+                    vendedor: vendedorResponsavel,
+                    criadoEm: Date.now()
+                });
 
-            let clientes = JSON.parse(localStorage.getItem('admin_clientes')) || [];
-            let cliObj = clientes.find(c => c.nome === clienteNome);
-            let vendedorResponsavel = cliObj ? cliObj.vendedor : usuarioLogado;
-
-            let historico = JSON.parse(localStorage.getItem('admin_vendas')) || [];
-            let dataHora = new Date().toLocaleString('pt-BR');
-            
-            historico.unshift({ 
-                id: Date.now().toString().slice(-6),
-                data: dataHora, 
-                cliente: clienteNome, 
-                produto: produtoNome, 
-                qtd: qtdVendida, 
-                total, 
-                vendedor: vendedorResponsavel 
-            });
-            
-            localStorage.setItem('admin_vendas', JSON.stringify(historico));
-
-            alert('Venda registrada e estoque atualizado com sucesso!');
-            carregarSelectsVenda();
-            carregarEstoque();
+                alert('Venda registrada e estoque atualizado na nuvem!');
+                await carregarTudoDoFirebase();
+                carregarSelectsVenda();
+            } catch(e) {
+                alert('Erro ao registrar venda: ' + e.message);
+            }
         }
 
         // --- HISTÓRICO E IMPRESSÃO TÉRMICA 80mm ---
         function carregarHistorico() {
-            let historico = JSON.parse(localStorage.getItem('admin_vendas')) || [];
             let lista = document.getElementById('listaHistorico');
             lista.innerHTML = '';
 
-            let historicoPermitido = historico.map((v, originalIdx) => ({...v, originalIdx})).filter(v => usuarioLogado === 'admin' || v.vendedor === usuarioLogado);
+            let historicoPermitido = cacheVendas.filter(v => usuarioLogado === 'admin' || v.vendedor === usuarioLogado);
 
             if(historicoPermitido.length === 0) {
                 lista.innerHTML = '<li style="color:#7f8c8d;">Nenhuma venda registrada.</li>';
@@ -597,16 +684,15 @@
                             Produto: <strong>${v.produto}</strong> (Qtd: ${v.qtd})${vendInfo}<br>
                             <small style="color: #888;">Data: ${v.data}</small>
                             <div style="margin-top: 8px; text-align: right;">
-                                <button class="btn-imprimir" onclick="imprimirPedido(${v.originalIdx})">🖨️ Imprimir Pedido</button>
+                                <button class="btn-imprimir" onclick="imprimirPedidoPorId('${v.id}')">🖨️ Imprimir Pedido</button>
                             </div>
                         </div>
                     </li>`;
             });
         }
 
-        function imprimirPedido(idx) {
-            let historico = JSON.parse(localStorage.getItem('admin_vendas')) || [];
-            let v = historico[idx];
+        function imprimirPedidoPorId(idPedido) {
+            let v = cacheVendas.find(item => item.id === idPedido);
             if(!v) return alert('Pedido não encontrado.');
 
             let area = document.getElementById('areaImpressao');
@@ -650,8 +736,6 @@
             window.print();
             area.style.display = 'none';
         }
-
-        window.onload = verificarSessao;
     </script>
 </body>
 </html>

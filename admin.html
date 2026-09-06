@@ -5,67 +5,149 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - Distribuidora Frazão</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Firebase App (v10 Modular SDK via CDN para Firestore) -->
+    <!-- Firebase App & Firestore SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="bg-gray-100 font-sans min-h-screen p-4">
-    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md">
-        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Distribuidora Frazão - Painel Administrativo</h1>
+<body class="bg-gray-100 font-sans min-h-screen p-3 md:p-6">
+    <div class="max-w-4xl mx-auto bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-gray-100">
         
-        <!-- Abas de Navegação -->
-        <div class="flex border-b border-gray-200 mb-6 overflow-x-auto">
-            <button onclick="mudarAba('vendedor')" id="tab-vendedor" class="py-2 px-4 font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none whitespace-nowrap">Vendedor</button>
-            <button onclick="mudarAba('cliente')" id="tab-cliente" class="py-2 px-4 font-semibold text-gray-500 hover:text-blue-600 focus:outline-none whitespace-nowrap">Cliente</button>
-            <button onclick="mudarAba('produto')" id="tab-produto" class="py-2 px-4 font-semibold text-gray-500 hover:text-blue-600 focus:outline-none whitespace-nowrap">Produto</button>
-            <button onclick="mudarAba('historico')" id="tab-historico" class="py-2 px-4 font-semibold text-gray-500 hover:text-blue-600 focus:outline-none whitespace-nowrap">Histórico</button>
+        <!-- Cabeçalho -->
+        <header class="text-center mb-6">
+            <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight">Distribuidora Frazão</h1>
+            <p class="text-sm text-gray-500">Painel de Gestão e Vendas</p>
+        </header>
+
+        <!-- Menu de Cartões Clicáveis (Grid de Retângulos) -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
+            
+            <!-- Cartão Vendedor -->
+            <button onclick="mudarAba('vendedor')" id="card-vendedor" class="card-btn flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-500 rounded-xl transition duration-200 cursor-pointer group">
+                <div class="p-3 bg-blue-100 text-blue-600 rounded-full mb-2 group-hover:scale-110 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                </div>
+                <span class="font-bold text-gray-700 text-sm md:text-base group-hover:text-blue-600">Vendedor</span>
+            </button>
+
+            <!-- Cartão Clientes -->
+            <button onclick="mudarAba('cliente')" id="card-cliente" class="card-btn flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-500 rounded-xl transition duration-200 cursor-pointer group">
+                <div class="p-3 bg-indigo-100 text-indigo-600 rounded-full mb-2 group-hover:scale-110 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                </div>
+                <span class="font-bold text-gray-700 text-sm md:text-base group-hover:text-indigo-600">Clientes</span>
+            </button>
+
+            <!-- Cartão Vender (Destaque Verde) -->
+            <button onclick="mudarAba('vender')" id="card-vender" class="card-btn flex flex-col items-center justify-center p-4 bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-300 hover:border-emerald-600 rounded-xl transition duration-200 cursor-pointer group">
+                <div class="p-3 bg-emerald-500 text-white rounded-full mb-2 group-hover:scale-110 transition shadow-md">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"></path></svg>
+                </div>
+                <span class="font-bold text-emerald-800 text-sm md:text-base">Botão Vender</span>
+            </button>
+
+            <!-- Cartão Histórico de Vendas -->
+            <button onclick="mudarAba('historico')" id="card-historico" class="card-btn flex flex-col items-center justify-center p-4 bg-gray-50 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-500 rounded-xl transition duration-200 cursor-pointer group">
+                <div class="p-3 bg-amber-100 text-amber-600 rounded-full mb-2 group-hover:scale-110 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                </div>
+                <span class="font-bold text-gray-700 text-sm md:text-base group-hover:text-amber-600">Histórico</span>
+            </button>
         </div>
 
-        <!-- Formulário de Cadastro (Usado para Vendedor, Cliente e Produto) -->
-        <div id="secao-formulario">
-            <form id="cadastroForm" class="space-y-4">
-                <input type="hidden" id="tipoRegistro" value="vendedor">
+        <hr class="border-gray-200 mb-6">
 
+        <!-- MENSAGEM DE STATUS -->
+        <div id="mensagemStatus" class="mb-4 text-center text-sm font-semibold hidden p-3 rounded-lg"></div>
+
+        <!-- 1. SEÇÃO CADASTRO DE VENDEDOR -->
+        <div id="secao-vendedor" class="secao-conteudo">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">Cadastrar Vendedor</h2>
+            <form id="formVendedor" class="space-y-4">
                 <div>
-                    <label id="labelNome" class="block text-sm font-medium text-gray-700">Nome do Vendedor</label>
-                    <input type="text" id="campoNome" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" placeholder="Digite o nome...">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Vendedor</label>
+                    <input type="text" id="nomeVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Ex: João Silva">
                 </div>
-
                 <div>
-                    <label id="labelDetalhes" class="block text-sm font-medium text-gray-700">Observações / Detalhes</label>
-                    <input type="text" id="campoDetalhes" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" placeholder="Informações adicionais...">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Telefone / Observação</label>
+                    <input type="text" id="obsVendedor" class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Ex: (21) 99999-9999">
                 </div>
-
-                <button type="submit" id="btnSalvar" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200">
-                    Salvar Registro
+                <button type="submit" class="btn-submit w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+                    Salvar Vendedor
                 </button>
             </form>
-            <div id="mensagemStatus" class="mt-4 text-center text-sm font-medium"></div>
         </div>
 
-        <!-- Seção de Histórico / Listagem -->
-        <div id="secao-historico" class="hidden">
-            <h2 class="text-lg font-bold text-gray-700 mb-4">Histórico de Cadastros</h2>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 border">
+        <!-- 2. SEÇÃO CADASTRO DE CLIENTES -->
+        <div id="secao-cliente" class="secao-conteudo hidden">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">Cadastrar Cliente</h2>
+            <form id="formCliente" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome / Razão Social</label>
+                    <input type="text" id="nomeCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Ex: Mercearia do Bairro">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Endereço / Contato</label>
+                    <input type="text" id="obsCliente" class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Ex: R. Rocha, São Gonçalo">
+                </div>
+                <button type="submit" class="btn-submit w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+                    Salvar Cliente
+                </button>
+            </form>
+        </div>
+
+        <!-- 3. SEÇÃO VENDER (NOVA VENDA) -->
+        <div id="secao-vender" class="secao-conteudo hidden">
+            <h2 class="text-xl font-bold text-emerald-800 mb-4 flex items-center gap-2">Registrar Nova Venda</h2>
+            <form id="formVenda" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
+                    <input type="text" id="vendaCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Nome do cliente">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Vendedor</label>
+                    <input type="text" id="vendaVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Nome do vendedor">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Valor Total (R$)</label>
+                        <input type="number" step="0.01" id="vendaValor" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="0,00">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Descrição dos Produtos</label>
+                        <input type="text" id="vendaProdutos" class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Ex: 5 cx de doces, 2 fardos de bebidas">
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
+                    Confirmar e Registrar Venda
+                </button>
+            </form>
+        </div>
+
+        <!-- 4. SEÇÃO HISTÓRICO DE VENDAS -->
+        <div id="secao-historico" class="secao-conteudo hidden">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Histórico de Vendas</h2>
+            <div class="overflow-x-auto rounded-lg border border-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nome</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Detalhes</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Data</th>
+                            <th class="px-4 py-3 text-left font-bold text-gray-600">Data</th>
+                            <th class="px-4 py-3 text-left font-bold text-gray-600">Cliente</th>
+                            <th class="px-4 py-3 text-left font-bold text-gray-600">Vendedor</th>
+                            <th class="px-4 py-3 text-left font-bold text-gray-600">Produtos</th>
+                            <th class="px-4 py-3 text-right font-bold text-gray-600">Valor (R$)</th>
                         </tr>
                     </thead>
-                    <tbody id="tabelaHistorico" class="bg-white divide-y divide-gray-200 text-sm text-gray-700">
-                        <!-- Preenchido via JavaScript -->
+                    <tbody id="tabelaHistorico" class="bg-white divide-y divide-gray-100">
+                        <!-- Vendas inseridas via JS -->
                     </tbody>
                 </table>
             </div>
         </div>
+
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO FIREBASE (Certifique-se de manter suas chaves corretas)
+        // CONFIGURAÇÃO DO FIREBASE (Configure com suas credenciais caso não estejam salvas)
         const firebaseConfig = {
             apiKey: "SUA_API_KEY",
             authDomain: "distribuidora-frazao.firebaseapp.com",
@@ -80,106 +162,162 @@
         }
         const db = firebase.firestore();
 
-        // Função para alternar entre as abas
+        // NAVEGAÇÃO ENTRE AS ABAS
         function mudarAba(aba) {
-            const tabs = ['vendedor', 'cliente', 'produto', 'historico'];
-            tabs.forEach(t => {
-                const btn = document.getElementById('tab-' + t);
-                if (t === aba) {
-                    btn.className = "py-2 px-4 font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none whitespace-nowrap";
-                } else {
-                    btn.className = "py-2 px-4 font-semibold text-gray-500 hover:text-blue-600 focus:outline-none whitespace-nowrap";
-                }
+            // Ocultar todas as seções
+            document.querySelectorAll('.secao-conteudo').forEach(el => el.classList.add('hidden'));
+            
+            // Resetar estilo dos cartões
+            document.querySelectorAll('.card-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-blue-500', 'ring-emerald-500', 'bg-blue-50', 'bg-emerald-100');
             });
 
-            const secaoForm = document.getElementById('secao-formulario');
-            const secaoHist = document.getElementById('secao-historico');
-            const tipoInput = document.getElementById('tipoRegistro');
-            const labelNome = document.getElementById('labelNome');
+            // Exibir a seção selecionada
+            document.getElementById('secao-' + aba).classList.remove('hidden');
 
-            if (aba === 'historico') {
-                secaoForm.classList.add('hidden');
-                secaoHist.classList.remove('hidden');
-                carregarHistorico();
+            // Destacar o cartão ativo
+            const cardAtivo = document.getElementById('card-' + aba);
+            if (aba === 'vender') {
+                cardAtivo.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-100');
             } else {
-                secaoForm.classList.remove('hidden');
-                secaoHist.classList.add('hidden');
-                tipoInput.value = aba;
-                labelNome.textContent = `Nome do ${aba.charAt(0).toUpperCase() + aba.slice(1)}`;
-                document.getElementById('campoNome').placeholder = `Digite o nome do ${aba}...`;
+                cardAtivo.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+            }
+
+            // Ocultar mensagens anteriores
+            ocultarMensagem();
+
+            // Carregar dados no histórico se for a aba ativada
+            if (aba === 'historico') {
+                carregarHistoricoVendas();
             }
         }
 
-        // Envio do formulário com proteção anti-double click
-        const form = document.getElementById('cadastroForm');
-        const btnSalvar = document.getElementById('btnSalvar');
-        const mensagemStatus = document.getElementById('mensagemStatus');
-
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
+        // EXIBIR E OCULTAR MENSAGENS
+        function exibirMensagem(texto, tipo = 'sucesso') {
+            const msgBox = document.getElementById('mensagemStatus');
+            msgBox.textContent = texto;
+            msgBox.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
             
-            btnSalvar.disabled = true;
-            btnSalvar.textContent = "Salvando...";
-            mensagemStatus.textContent = "";
+            if (tipo === 'sucesso') {
+                msgBox.classList.add('bg-green-100', 'text-green-800');
+            } else {
+                msgBox.classList.add('bg-red-100', 'text-red-800');
+            }
+        }
 
-            const tipo = document.getElementById('tipoRegistro').value;
-            const nome = document.getElementById('campoNome').value;
-            const detalhes = document.getElementById('campoDetalhes').value;
+        function ocultarMensagem() {
+            document.getElementById('mensagemStatus').classList.add('hidden');
+        }
+
+        // CADASTRO DE VENDEDOR
+        document.getElementById('formVendedor').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('.btn-submit');
+            btn.disabled = true;
+            btn.textContent = "Salvando...";
 
             try {
-                await db.collection('registros').add({
-                    tipo: tipo,
-                    nome: nome,
-                    detalhes: detalhes,
+                await db.collection('vendedores').add({
+                    nome: document.getElementById('nomeVendedor').value,
+                    observacao: document.getElementById('obsVendedor').value,
                     criadoEm: new Date().toISOString()
                 });
-
-                mensagemStatus.textContent = "Salvo com sucesso!";
-                mensagemStatus.className = "mt-4 text-center text-sm font-medium text-green-600";
-                form.reset();
-                document.getElementById('tipoRegistro').value = tipo; // Mantém a seleção atual
-            } catch (error) {
-                console.error("Erro ao salvar:", error);
-                mensagemStatus.textContent = "Erro ao salvar: " + error.message;
-                mensagemStatus.className = "mt-4 text-center text-sm font-medium text-red-600";
+                exibirMensagem("Vendedor cadastrado com sucesso!");
+                e.target.reset();
+            } catch (err) {
+                exibirMensagem("Erro ao salvar vendedor: " + err.message, 'erro');
             } finally {
-                btnSalvar.disabled = false;
-                btnSalvar.textContent = "Salvar Registro";
+                btn.disabled = false;
+                btn.textContent = "Salvar Vendedor";
             }
         });
 
-        // Carregar dados para o Histórico
-        async function carregarHistorico() {
-            const tbody = document.getElementById('tabelaHistorico');
-            tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">Carregando histórico...</td></tr>`;
+        // CADASTRO DE CLIENTE
+        document.getElementById('formCliente').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('.btn-submit');
+            btn.disabled = true;
+            btn.textContent = "Salvando...";
 
             try {
-                const snapshot = await db.collection('registros').orderBy('criadoEm', 'desc').get();
+                await db.collection('clientes').add({
+                    nome: document.getElementById('nomeCliente').value,
+                    observacao: document.getElementById('obsCliente').value,
+                    criadoEm: new Date().toISOString()
+                });
+                exibirMensagem("Cliente cadastrado com sucesso!");
+                e.target.reset();
+            } catch (err) {
+                exibirMensagem("Erro ao salvar cliente: " + err.message, 'erro');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Salvar Cliente";
+            }
+        });
+
+        // REGISTRO DE VENDA
+        document.getElementById('formVenda').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('.btn-submit');
+            btn.disabled = true;
+            btn.textContent = "Registrando Venda...";
+
+            try {
+                await db.collection('vendas').add({
+                    cliente: document.getElementById('vendaCliente').value,
+                    vendedor: document.getElementById('vendaVendedor').value,
+                    valorTotal: parseFloat(document.getElementById('vendaValor').value) || 0,
+                    produtos: document.getElementById('vendaProdutos').value,
+                    criadoEm: new Date().toISOString()
+                });
+                exibirMensagem("Venda registrada com sucesso!");
+                e.target.reset();
+            } catch (err) {
+                exibirMensagem("Erro ao registrar venda: " + err.message, 'erro');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Confirmar e Registrar Venda";
+            }
+        });
+
+        // BUSCAR E EXIBIR HISTÓRICO DE VENDAS
+        async function carregarHistoricoVendas() {
+            const tbody = document.getElementById('tabelaHistorico');
+            tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500">Carregando histórico...</td></tr>`;
+
+            try {
+                const snapshot = await db.collection('vendas').orderBy('criadoEm', 'desc').get();
                 tbody.innerHTML = "";
 
                 if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">Nenhum registro encontrado.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500">Nenhuma venda registrada ainda.</td></tr>`;
                     return;
                 }
 
                 snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const dataFormatada = data.criadoEm ? new Date(data.criadoEm).toLocaleString('pt-BR') : '-';
-                    
+                    const v = doc.data();
+                    const dataFormatada = v.criadoEm ? new Date(v.criadoEm).toLocaleString('pt-BR') : '-';
+                    const valorFormatado = (v.valorTotal || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
                     const tr = document.createElement('tr');
+                    tr.className = "hover:bg-gray-50";
                     tr.innerHTML = `
-                        <td class="px-4 py-2 uppercase font-semibold text-xs text-blue-600">${data.tipo || '-'}</td>
-                        <td class="px-4 py-2">${data.nome || '-'}</td>
-                        <td class="px-4 py-2">${data.detalhes || '-'}</td>
-                        <td class="px-4 py-2 text-xs text-gray-500">${dataFormatada}</td>
+                        <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">${dataFormatada}</td>
+                        <td class="px-4 py-3 font-medium text-gray-800">${v.cliente || '-'}</td>
+                        <td class="px-4 py-3 text-gray-600">${v.vendedor || '-'}</td>
+                        <td class="px-4 py-3 text-gray-600">${v.produtos || '-'}</td>
+                        <td class="px-4 py-3 text-right font-bold text-emerald-600">R$ ${valorFormatado}</td>
                     `;
                     tbody.appendChild(tr);
                 });
-            } catch (error) {
-                console.error("Erro ao carregar histórico:", error);
-                tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-red-500">Erro ao carregar dados.</td></tr>`;
+            } catch (err) {
+                console.error("Erro ao carregar histórico:", err);
+                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-red-500">Erro ao carregar histórico de vendas.</td></tr>`;
             }
         }
+
+        // Inicializar na aba Vendedor por padrão
+        mudarAba('vendedor');
     </script>
 </body>
 </html>

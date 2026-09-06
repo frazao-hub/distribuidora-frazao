@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - Distribuidora Frazão</title>
     
-    <link rel="manifest" href="manifest.json?v=2026.3">
+    <link rel="manifest" href="manifest.json?v=2026.4">
     <meta name="theme-color" content="#27ae60">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -184,7 +184,7 @@
                     <label>Senha de Acesso (6 números ou texto):</label>
                     <input type="password" id="vendSenha" placeholder="Digite uma senha">
                 </div>
-                <button type="button" class="btn-salvar" id="btnCadastrarVendedor">Cadastrar Vendedor</button>
+                <button type="button" class="btn-salvar" onclick="salvarVendedor()">Cadastrar Vendedor</button>
                 <ul id="listaVendedores" style="margin-top:20px;"></ul>
             </div>
 
@@ -277,18 +277,6 @@
 
         window.addEventListener('firebase-pronto', async () => {
             verificarSessao();
-            
-            let btnCadV = document.getElementById('btnCadastrarVendedor');
-            if(btnCadV) {
-                let executarCadastro = function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    salvarVendedor();
-                };
-                btnCadV.removeEventListener('click', executarCadastro);
-                btnCadV.addEventListener('click', executarCadastro);
-                btnCadV.addEventListener('touchend', executarCadastro);
-            }
         });
 
         function verificarSessao() {
@@ -408,7 +396,6 @@
 
             if(!nome || !senha) return alert('Digite o nome e a senha do vendedor!');
             
-            // Trava rigorosa para evitar duplicatas de nomes
             let jaExiste = cacheVendedores.some(v => v.nome.toLowerCase() === nome.toLowerCase());
             if(jaExiste) {
                 return alert('Este vendedor já está cadastrado!');

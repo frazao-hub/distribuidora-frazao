@@ -370,7 +370,6 @@
                 snapVendas.forEach(d => cacheVendas.push({ id: d.id, ...d.data() }));
                 cacheVendas.sort((a, b) => b.criadoEm - a.criadoEm);
 
-                // Atualiza a tela que estiver aberta no momento
                 carregarEstoque();
                 carregarVendedores();
                 carregarClientes();
@@ -392,7 +391,7 @@
             if(abaId === 'estoque') carregarEstoque();
         }
 
-        // --- VENDEDORES (Com Bloqueio Anti-Duplo Clique) ---
+        // --- VENDEDORES (Com Proteção contra Travamento) ---
         async function salvarVendedor() {
             let nomeElem = document.getElementById('vendNome');
             let senhaElem = document.getElementById('vendSenha');
@@ -408,7 +407,6 @@
                 return;
             }
             
-            // Verifica duplicidade local primeiro
             let jaExiste = cacheVendedores.some(v => v.nome.toLowerCase() === nome.toLowerCase());
             if(jaExiste) {
                 alert('Este vendedor já está cadastrado!');
@@ -416,7 +414,6 @@
             }
             
             try {
-                // Trava o botão para evitar múltiplos cliques no celular
                 btn.disabled = true;
                 btn.innerText = 'Salvando...';
 
@@ -429,7 +426,7 @@
                 alert('Vendedor cadastrado com sucesso!');
             } catch(e) {
                 console.error("Erro ao salvar vendedor:", e);
-                alert('Erro ao salvar no Firebase: ' + e.message);
+                alert('FALHA AO SALVAR: ' + e.message); // Exibe o erro exato na tela do celular
             } finally {
                 btn.disabled = false;
                 btn.innerText = 'Cadastrar Vendedor';
@@ -463,7 +460,7 @@
             }
         }
 
-        // --- CLIENTES (Com Bloqueio Anti-Duplo Clique) ---
+        // --- CLIENTES (Com Proteção contra Travamento) ---
         function carregarSelectVendedoresCliente() {
             let sel = document.getElementById('cliVendedorSelect');
             if(!sel) return;
@@ -507,7 +504,7 @@
                 alert('Cliente salvo com sucesso!');
             } catch(e) { 
                 console.error("Erro ao salvar cliente:", e);
-                alert('Erro ao salvar cliente: ' + e.message); 
+                alert('FALHA AO SALVAR CLIENTE: ' + e.message); 
             } finally {
                 btn.disabled = false;
                 btn.innerText = 'Cadastrar Cliente';
@@ -611,8 +608,9 @@
                 document.getElementById('prodPreco').value = '';
                 await carregarTudoDoFirebase();
                 alert('Produto salvo!');
-            } catch(e) { alert('Erro: ' + e.message); }
-            finally {
+            } catch(e) { 
+                alert('FALHA AO SALVAR ESTOQUE: ' + e.message); 
+            } finally {
                 btn.disabled = false;
                 btn.innerText = 'Salvar na Nuvem';
             }
@@ -743,8 +741,9 @@
                 alert('Venda registrada com sucesso!');
                 await carregarTudoDoFirebase();
                 carregarSelectsVenda();
-            } catch(e) { alert('Erro: ' + e.message); }
-            finally {
+            } catch(e) { 
+                alert('FALHA AO REGISTRAR VENDA: ' + e.message); 
+            } finally {
                 btn.disabled = false;
                 btn.innerText = 'Concluir Venda e Dar Baixa';
             }

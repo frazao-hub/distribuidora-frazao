@@ -195,7 +195,6 @@
                     <label>Senha de Acesso:</label>
                     <input type="password" id="vendSenha" placeholder="Digite uma senha para o vendedor">
                 </div>
-                <!-- BOTÃO CORRIGIDO COM A CLASSE BTN-SALVAR -->
                 <button class="btn-salvar" onclick="salvarVendedor()">Cadastrar Vendedor</button>
                 <ul id="listaVendedores" style="margin-top:20px;"></ul>
             </div>
@@ -403,10 +402,19 @@
 
         // --- VENDEDORES ---
         async function salvarVendedor() {
-            let nome = document.getElementById('vendNome').value.trim();
-            let senha = document.getElementById('vendSenha').value.trim();
+            let nomeElem = document.getElementById('vendNome');
+            let senhaElem = document.getElementById('vendSenha');
+            
+            if(!nomeElem || !senhaElem) {
+                return alert('Erro crítico: Elementos do formulário não encontrados.');
+            }
 
-            if(!nome || !senha) return alert('Digite o nome e a senha do vendedor!');
+            let nome = nomeElem.value.trim();
+            let senha = senhaElem.value.trim();
+
+            if(!nome || !senha) {
+                return alert('Por favor, digite o nome e a senha do vendedor!');
+            }
             
             if(cacheVendedores.some(v => v.nome.toLowerCase() === nome.toLowerCase())) {
                 return alert('Este vendedor já está cadastrado!');
@@ -414,13 +422,15 @@
             
             try {
                 await addDoc(collection(window.db, "vendedores"), { nome, senha });
-                document.getElementById('vendNome').value = '';
-                document.getElementById('vendSenha').value = '';
+                
+                nomeElem.value = '';
+                senhaElem.value = '';
+                
                 await carregarTudoDoFirebase();
                 carregarVendedores();
-                alert('Vendedor cadastrado na nuvem com senha!');
+                alert('Vendedor cadastrado na nuvem com sucesso!');
             } catch(e) {
-                alert('Erro ao salvar vendedor: ' + e.message);
+                alert('Erro ao salvar vendedor no Firebase: ' + e.message);
             }
         }
 

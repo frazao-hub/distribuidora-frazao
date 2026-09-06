@@ -1,1 +1,66 @@
-clientes.html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Clientes - Distribuidora Frazão</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; color: #333; }
+        .card { background: #fff; border-radius: 8px; padding: 25px; max-width: 600px; margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h2 { color: #27ae60; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-top: 0; }
+        input, button { padding: 12px; margin: 8px 0; width: 100%; box-sizing: border-box; font-size: 14px; }
+        button { background: #3498db; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #2980b9; }
+        ul { list-style: none; padding: 0; }
+        li { background: #f9f9f9; padding: 12px; margin-top: 8px; border-left: 4px solid #3498db; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; }
+        .btn-voltar { display: inline-block; margin-top: 20px; text-decoration: none; color: #3498db; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Cadastro de Clientes</h2>
+        <input type="text" id="nomeCliente" placeholder="Nome do Cliente / Estabelecimento">
+        <input type="text" id="telCliente" placeholder="Telefone / WhatsApp">
+        <button onclick="adicionarCliente()">Cadastrar Cliente</button>
+        
+        <h3>Clientes Registrados</h3>
+        <ul id="listaClientes"></ul>
+        
+        <a href="index.html" class="btn-voltar">← Voltar para o Catálogo Geral</a>
+    </div>
+
+    <script>
+        function carregarClientes() {
+            let clientes = JSON.parse(localStorage.getItem('clientes_frazao')) || [];
+            let lista = document.getElementById('listaClientes');
+            lista.innerHTML = '';
+            clientes.forEach((item, index) => {
+                lista.innerHTML += `<li><div><strong>${item.nome}</strong><br><small>${item.tel}</small></div> <button onclick="remover(${index})" style="width:auto; padding:5px 10px; background:#e74c3c; margin:0;">Excluir</button></li>`;
+            });
+        }
+
+        function adicionarCliente() {
+            let nome = document.getElementById('nomeCliente').value.trim();
+            let tel = document.getElementById('telCliente').value.trim();
+            if(!nome || !tel) return alert('Preencha todos os campos!');
+
+            let clientes = JSON.parse(localStorage.getItem('clientes_frazao')) || [];
+            clientes.push({nome, tel});
+            localStorage.setItem('clientes_frazao', JSON.stringify(clientes));
+            
+            document.getElementById('nomeCliente').value = '';
+            document.getElementById('telCliente').value = '';
+            carregarClientes();
+        }
+
+        function remover(index) {
+            let clientes = JSON.parse(localStorage.getItem('clientes_frazao')) || [];
+            clientes.splice(index, 1);
+            localStorage.setItem('clientes_frazao', JSON.stringify(clientes));
+            carregarClientes();
+        }
+
+        window.onload = carregarClientes;
+    </script>
+</body>
+</html>

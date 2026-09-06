@@ -4,809 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - Distribuidora Frazão</title>
-    
-    <link rel="manifest" href="manifest.json?v=2026.6">
-    <meta name="theme-color" content="#27ae60">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Frazão Admin">
-
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 15px; color: #333; -webkit-tap-highlight-color: transparent; }
-        .container { max-width: 800px; margin: auto; }
-        
-        #telaLogin { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 400px; margin: 50px auto; text-align: center; }
-        #telaLogin h2 { color: #27ae60; margin-bottom: 20px; }
-        
-        #painelPrincipal { display: none; }
-        
-        .tabs { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab-btn { flex: 1; padding: 12px; background: #2c3e50; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 13px; text-align: center; min-width: 100px; }
-        .tab-btn.active { background: #27ae60; }
-        
-        .card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: none; }
-        .card.active { display: block; }
-        
-        h2 { color: #27ae60; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-top: 0; font-size: 20px; }
-        .form-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #444; }
-        input, select, textarea { padding: 12px; width: 100%; box-sizing: border-box; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
-        
-        button.btn-salvar { background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; padding: 14px; font-size: 16px; border-radius: 4px; display: block; }
-        button.btn-salvar:active { background: #1e8449; transform: scale(0.98); }
-        button.btn-salvar:disabled { background: #95a5a6; cursor: not-allowed; }
-        
-        ul { list-style: none; padding: 0; margin-top: 10px; text-align: left; }
-        li { background: #f9f9f9; padding: 12px; margin-top: 8px; border-left: 4px solid #27ae60; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; font-size: 14px; }
-        
-        .btn-excluir { background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-        .btn-imprimir { background: #3498db; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 5px; }
-        .btn-limpar { background: #e67e22; color: white; border: none; padding: 10px; border-radius: 4px; width: 100%; margin-bottom: 20px; font-weight: bold; cursor: pointer; font-size: 14px; }
-        
-        .venda-item { border-left-color: #3498db; flex-direction: column; align-items: flex-start; gap: 5px; }
-        .venda-header { display: flex; justify-content: space-between; width: 100%; font-weight: bold; color: #2c3e50; }
-        
-        .user-info { display: flex; justify-content: space-between; align-items: center; background: #2c3e50; color: white; padding: 10px 15px; border-radius: 6px; margin-bottom: 12px; font-size: 14px; }
-        .btn-sair { background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-        
-        .btn-voltar { display: inline-block; margin-top: 25px; text-decoration: none; color: #3498db; font-weight: bold; font-size: 14px; }
-
-        @media print {
-            body * { visibility: hidden; }
-            #areaImpressao, #areaImpressao * { visibility: visible; }
-            #areaImpressao { position: absolute; left: 0; top: 0; width: 78mm; margin: 0; padding: 2mm; font-size: 12px !important; }
-        }
-    </style>
-
-    <!-- SDKs do Firebase v10 (Modular) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, setDoc, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyD8SnMWXagUVz4uVM87bc2dAakZyGGW3nM",
-            authDomain: "distribuidora-frazao.firebaseapp.com",
-            projectId: "distribuidora-frazao",
-            storageBucket: "distribuidora-frazao.firebasestorage.app",
-            messagingSenderId: "642540059204",
-            appId: "1:642540059204:web:c113fa6966fd97fc20da11"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        window.db = db;
-        window.collection = collection;
-        window.getDocs = getDocs;
-        window.doc = doc;
-        window.setDoc = setDoc;
-        window.addDoc = addDoc;
-        window.deleteDoc = deleteDoc;
-        window.updateDoc = updateDoc;
-
-        window.dispatchEvent(new Event('firebase-pronto'));
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Firebase App (v10 Modular SDK via CDN compatível para Realtime Database) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
-<body>
-    <div class="container">
+<body class="bg-gray-100 font-sans min-h-screen p-4">
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-md">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Distribuidora Frazão - Cadastro</h1>
         
-        <!-- TELA DE LOGIN -->
-        <div id="telaLogin">
-            <h2>Distribuidora Frazão</h2>
-            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Painel Administrativo</p>
-            <div class="form-group">
-                <label>Selecione o Usuário:</label>
-                <select id="loginUsuario" onchange="verificarSeAdminLogin()">
-                    <option value="admin">Administrador (Acesso Total)</option>
+        <form id="cadastroForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Tipo de Registro</label>
+                <select id="tipoRegistro" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                    <option value="vendedor">Vendedor</option>
+                    <option value="cliente">Cliente</option>
+                    <option value="produto">Produto</option>
                 </select>
             </div>
-            <div class="form-group" id="grupoSenhaLogin">
-                <label>Senha:</label>
-                <input type="password" id="loginSenha" placeholder="Digite sua senha">
-            </div>
-            <button type="button" class="btn-salvar" onclick="fazerLogin()">Entrar no Sistema</button>
-        </div>
 
-        <!-- PAINEL PRINCIPAL -->
-        <div id="painelPrincipal">
-            <div class="user-info">
-                <span>👤 Logado como: <strong id="lblUsuarioLogado">Admin</strong></span>
-                <button class="btn-sair" onclick="fazerLogout()">Sair</button>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Nome / Descrição</label>
+                <input type="text" id="nomeRegistro" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" placeholder="Digite o nome...">
             </div>
 
-            <!-- Botão de Limpeza de Duplicados -->
-            <button type="button" class="btn-limpar" onclick="limparDuplicadosAutomaticamente()">🧹 Limpar Clones / Duplicados do Banco</button>
-
-            <!-- Menu de Abas -->
-            <div class="tabs">
-                <button type="button" class="tab-btn active" onclick="mudarAba('estoque', event)">📦 Estoque</button>
-                <button type="button" class="tab-btn" onclick="mudarAba('vendedores', event)" id="abaBtnVendedores">👔 Vendedores</button>
-                <button type="button" class="tab-btn" onclick="mudarAba('clientes', event)">👥 Clientes</button>
-                <button type="button" class="tab-btn" onclick="mudarAba('vendas', event)">🛒 Venda</button>
-                <button type="button" class="tab-btn" onclick="mudarAba('historico', event)">📊 Histórico</button>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Detalhes / Observação</label>
+                <input type="text" id="detalhesRegistro" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" placeholder="Informações adicionais...">
             </div>
 
-            <!-- ABA 1: ESTOQUE -->
-            <div id="estoque" class="card active">
-                <h2>Gerenciamento de Produtos</h2>
-                <div class="form-group">
-                    <label>Nome do Produto:</label>
-                    <input type="text" id="prodNome" placeholder="Ex: Chocolate KitKat, Coca-Cola 2L...">
-                </div>
-                <div class="form-group">
-                    <label>Categoria:</label>
-                    <select id="prodCat">
-                        <option value="Balas e Pirulitos">Balas e Pirulitos</option>
-                        <option value="Bebidas">Bebidas</option>
-                        <option value="Biscoitos">Biscoitos</option>
-                        <option value="Descartáveis">Descartáveis</option>
-                        <option value="Doces">Doces</option>
-                        <option value="Drops e Chicletes">Drops e Chicletes</option>
-                        <option value="Higiene">Higiene</option>
-                        <option value="Limpeza">Limpeza</option>
-                        <option value="Mercearia">Mercearia</option>
-                        <option value="Papelaria">Papelaria</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Quantidade:</label>
-                    <input type="number" id="prodQtd" placeholder="Ex: 50">
-                </div>
-                <div class="form-group">
-                    <label>Preço Unitário (R$):</label>
-                    <input type="number" step="0.01" id="prodPreco" placeholder="Ex: 8.50">
-                </div>
-                <button type="button" class="btn-salvar" id="btnSalvarEstoque" onclick="salvarEstoque()">Salvar na Nuvem</button>
-                
-                <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                    <input type="text" id="filtroEstoque" placeholder="🔍 Buscar produto..." onkeyup="carregarEstoque()" style="flex: 1; min-width: 200px;">
-                    <select id="filtroCategoria" onchange="carregarEstoque()" style="width: 200px;">
-                        <option value="">Todas as Categorias</option>
-                        <option value="Balas e Pirulitos">Balas e Pirulitos</option>
-                        <option value="Bebidas">Bebidas</option>
-                        <option value="Biscoitos">Biscoitos</option>
-                        <option value="Descartáveis">Descartáveis</option>
-                        <option value="Doces">Doces</option>
-                        <option value="Drops e Chicletes">Drops e Chicletes</option>
-                        <option value="Higiene">Higiene</option>
-                        <option value="Limpeza">Limpeza</option>
-                        <option value="Mercearia">Mercearia</option>
-                        <option value="Papelaria">Papelaria</option>
-                    </select>
-                </div>
-                <ul id="listaEstoque"></ul>
-            </div>
+            <button type="submit" id="btnSalvar" class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200">
+                Salvar Registro
+            </button>
+        </form>
 
-            <!-- ABA 2: VENDEDORES -->
-            <div id="vendedores" class="card">
-                <h2>Cadastro de Vendedores</h2>
-                <div class="form-group">
-                    <label>Nome do Vendedor:</label>
-                    <input type="text" id="vendNome" placeholder="Ex: Carlos Silva">
-                </div>
-                <div class="form-group">
-                    <label>Senha de Acesso:</label>
-                    <input type="password" id="vendSenha" placeholder="Digite uma senha">
-                </div>
-                <button type="button" class="btn-salvar" id="btnSalvarVendedor" onclick="salvarVendedor()">Cadastrar Vendedor</button>
-                <ul id="listaVendedores" style="margin-top:20px;"></ul>
-            </div>
-
-            <!-- ABA 3: CLIENTES -->
-            <div id="clientes" class="card">
-                <h2>Cadastro de Clientes</h2>
-                <div class="form-group">
-                    <label>Nome do Cliente / Estabelecimento:</label>
-                    <input type="text" id="cliNome" placeholder="Ex: Mercearia do João">
-                </div>
-                <div class="form-group">
-                    <label>Telefone / WhatsApp:</label>
-                    <input type="text" id="cliTel" placeholder="Ex: (21) 99999-9999">
-                </div>
-                <div class="form-group">
-                    <label>CPF ou CNPJ:</label>
-                    <input type="text" id="cliDoc" placeholder="Ex: 00.000.000/0001-00">
-                </div>
-                <div class="form-group">
-                    <label>Endereço Completo:</label>
-                    <input type="text" id="cliEnd" placeholder="Ex: Rua Exemplo, 123">
-                </div>
-                <div class="form-group">
-                    <label>Vendedor Responsável:</label>
-                    <select id="cliVendedorSelect">
-                        <option value="admin">Administrador (Geral)</option>
-                    </select>
-                </div>
-                <button type="button" class="btn-salvar" id="btnSalvarCliente" onclick="salvarCliente()">Cadastrar Cliente</button>
-                <ul id="listaClientes" style="margin-top:20px;"></ul>
-            </div>
-
-            <!-- ABA 4: VENDAS -->
-            <div id="vendas" class="card">
-                <h2>Registrar Nova Venda</h2>
-                <div class="form-group">
-                    <label>Selecione o Cliente:</label>
-                    <select id="vendaCliente"></select>
-                </div>
-                <div class="form-group">
-                    <label>Filtrar por Categoria na Venda:</label>
-                    <select id="vendaFiltroCat" onchange="filtrarProdutosVenda()">
-                        <option value="">Todas as Categorias</option>
-                        <option value="Balas e Pirulitos">Balas e Pirulitos</option>
-                        <option value="Bebidas">Bebidas</option>
-                        <option value="Biscoitos">Biscoitos</option>
-                        <option value="Descartáveis">Descartáveis</option>
-                        <option value="Doces">Doces</option>
-                        <option value="Drops e Chicletes">Drops e Chicletes</option>
-                        <option value="Higiene">Higiene</option>
-                        <option value="Limpeza">Limpeza</option>
-                        <option value="Mercearia">Mercearia</option>
-                        <option value="Papelaria">Papelaria</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Selecione o Produto:</label>
-                    <select id="vendaProduto" onchange="atualizarPrecoVenda()"></select>
-                </div>
-                <div class="form-group">
-                    <label>Quantidade:</label>
-                    <input type="number" id="vendaQtd" value="1" min="1">
-                </div>
-                <div class="form-group">
-                    <label>Valor Total (R$):</label>
-                    <input type="text" id="vendaTotal" readonly style="background: #e9ecef;">
-                </div>
-                <button type="button" class="btn-salvar" id="btnSalvarVenda" onclick="registrarVenda()">Concluir Venda e Dar Baixa</button>
-            </div>
-
-            <!-- ABA 5: HISTÓRICO -->
-            <div id="historico" class="card">
-                <h2>Histórico de Vendas</h2>
-                <ul id="listaHistorico"></ul>
-            </div>
-
-            <a href="index.html" class="btn-voltar">← Ir para o Catálogo Público</a>
-        </div>
+        <div id="mensagemStatus" class="mt-4 text-center text-sm font-medium"></div>
     </div>
 
-    <!-- ÁREA OCULTA PARA IMPRESSÃO -->
-    <div id="areaImpressao" style="display:none;"></div>
-
     <script>
-        let usuarioLogado = localStorage.getItem('usuario_logado') || null;
-        let cacheEstoque = [];
-        let cacheClientes = [];
-        let cacheVendedores = [];
-        let cacheVendas = [];
+        // CONFIGURAÇÃO DO FIREBASE (Substitua abaixo com as chaves reais do seu projeto do Realtime Database)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "distribuidora-frazao.firebaseapp.com",
+            databaseURL: "https://distribuidora-frazao-default-rtdb.firebaseio.com",
+            projectId: "distribuidora-frazao",
+            storageBucket: "distribuidora-frazao.appspot.com",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
 
-        window.addEventListener('firebase-pronto', async () => {
-            verificarSessao();
+        // Inicializar Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const database = firebase.database();
+
+        const form = document.getElementById('cadastroForm');
+        const btnSalvar = document.getElementById('btnSalvar');
+        const mensagemStatus = document.getElementById('mensagemStatus');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Anti-Double Click: desativa o botão e muda o texto para evitar duplicidade
+            btnSalvar.disabled = true;
+            btnSalvar.textContent = "Salvando...";
+            mensagemStatus.textContent = "";
+
+            const tipo = document.getElementById('tipoRegistro').value;
+            const nome = document.getElementById('nomeRegistro').value;
+            const detalhes = document.getElementById('detalhesRegistro').value;
+
+            try {
+                // Cria uma referência única no Realtime Database baseada no tipo escolhido
+                const novoRegistroRef = database.ref(tipo + 's').push();
+                
+                await novoRegistroRef.set({
+                    nome: nome,
+                    detalhes: detalhes,
+                    criadoEm: new Date().toISOString()
+                });
+
+                mensagemStatus.textContent = "Salvo com sucesso!";
+                mensagemStatus.className = "mt-4 text-center text-sm font-medium text-green-600";
+                form.reset();
+            } catch (error) {
+                console.error("Erro ao salvar:", error);
+                mensagemStatus.textContent = "Erro ao salvar: " + error.message;
+                mensagemStatus.className = "mt-4 text-center text-sm font-medium text-red-600";
+            } finally {
+                // Reativa o botão independentemente do sucesso ou erro
+                btnSalvar.disabled = false;
+                btnSalvar.textContent = "Salvar Registro";
+            }
         });
-
-        function verificarSessao() {
-            if (usuarioLogado) {
-                document.getElementById('telaLogin').style.display = 'none';
-                document.getElementById('painelPrincipal').style.display = 'block';
-                document.getElementById('lblUsuarioLogado').innerText = usuarioLogado === 'admin' ? 'Administrador' : usuarioLogado;
-                
-                if (usuarioLogado !== 'admin') {
-                    document.getElementById('abaBtnVendedores').style.display = 'none';
-                }
-                carregarTudoDoFirebase();
-            } else {
-                document.getElementById('telaLogin').style.display = 'block';
-                document.getElementById('painelPrincipal').style.display = 'none';
-                carregarVendedoresLogin();
-            }
-        }
-
-        async function carregarVendedoresLogin() {
-            try {
-                let snap = await getDocs(collection(window.db, "vendedores"));
-                let sel = document.getElementById('loginUsuario');
-                sel.innerHTML = '<option value="admin">Administrador (Acesso Total)</option>';
-                snap.forEach(d => {
-                    let v = d.data().nome;
-                    sel.innerHTML += `<option value="${v}">${v}</option>`;
-                });
-                verificarSeAdminLogin();
-            } catch(e) { console.error(e); }
-        }
-
-        function verificarSeAdminLogin() {
-            let sel = document.getElementById('loginUsuario').value;
-            let grupoSenha = document.getElementById('grupoSenhaLogin');
-            if(sel === 'admin') {
-                grupoSenha.style.display = 'none';
-            } else {
-                grupoSenha.style.display = 'block';
-            }
-        }
-
-        function fazerLogin() {
-            let sel = document.getElementById('loginUsuario').value;
-            let senhaDigitada = document.getElementById('loginSenha').value.trim();
-
-            if(sel === 'admin') {
-                localStorage.setItem('usuario_logado', 'admin');
-                usuarioLogado = 'admin';
-                verificarSessao();
-                return;
-            }
-
-            let vendedorObj = cacheVendedores.find(v => v.nome === sel);
-            if(!vendedorObj) return alert('Selecione um usuário válido.');
-            if(vendedorObj.senha && vendedorObj.senha !== senhaDigitada) return alert('Senha incorreta!');
-
-            localStorage.setItem('usuario_logado', sel);
-            usuarioLogado = sel;
-            document.getElementById('loginSenha').value = '';
-            verificarSessao();
-        }
-
-        function fazerLogout() {
-            localStorage.removeItem('usuario_logado');
-            usuarioLogado = null;
-            verificarSessao();
-        }
-
-        async function carregarTudoDoFirebase() {
-            try {
-                let snapV = await getDocs(collection(window.db, "vendedores"));
-                cacheVendedores = [];
-                snapV.forEach(d => cacheVendedores.push({ id: d.id, ...d.data() }));
-
-                let snapE = await getDocs(collection(window.db, "estoque"));
-                cacheEstoque = [];
-                snapE.forEach(d => cacheEstoque.push({ id: d.id, ...d.data() }));
-
-                let snapC = await getDocs(collection(window.db, "clientes"));
-                cacheClientes = [];
-                snapC.forEach(d => cacheClientes.push({ id: d.id, ...d.data() }));
-
-                let snapVendas = await getDocs(collection(window.db, "vendas"));
-                cacheVendas = [];
-                snapVendas.forEach(d => cacheVendas.push({ id: d.id, ...d.data() }));
-                cacheVendas.sort((a, b) => b.criadoEm - a.criadoEm);
-
-                carregarEstoque();
-                carregarVendedores();
-                carregarClientes();
-            } catch(e) {
-                console.error("Erro ao carregar dados:", e);
-            }
-        }
-
-        function mudarAba(abaId, evt) {
-            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(abaId).classList.add('active');
-            if(evt && evt.currentTarget) evt.currentTarget.classList.add('active');
-            
-            if(abaId === 'vendas') carregarSelectsVenda();
-            if(abaId === 'historico') carregarHistorico();
-            if(abaId === 'clientes') { carregarSelectVendedoresCliente(); carregarClientes(); }
-            if(abaId === 'vendedores') carregarVendedores();
-            if(abaId === 'estoque') carregarEstoque();
-        }
-
-        // --- VENDEDORES (Com Proteção contra Travamento) ---
-        async function salvarVendedor() {
-            let nomeElem = document.getElementById('vendNome');
-            let senhaElem = document.getElementById('vendSenha');
-            let btn = document.getElementById('btnSalvarVendedor');
-            
-            if(!nomeElem || !senhaElem) return;
-
-            let nome = nomeElem.value.trim();
-            let senha = senhaElem.value.trim();
-
-            if(!nome || !senha) {
-                alert('Por favor, digite o nome e a senha do vendedor!');
-                return;
-            }
-            
-            let jaExiste = cacheVendedores.some(v => v.nome.toLowerCase() === nome.toLowerCase());
-            if(jaExiste) {
-                alert('Este vendedor já está cadastrado!');
-                return;
-            }
-            
-            try {
-                btn.disabled = true;
-                btn.innerText = 'Salvando...';
-
-                await addDoc(collection(window.db, "vendedores"), { nome, senha });
-                
-                nomeElem.value = '';
-                senhaElem.value = '';
-                
-                await carregarTudoDoFirebase();
-                alert('Vendedor cadastrado com sucesso!');
-            } catch(e) {
-                console.error("Erro ao salvar vendedor:", e);
-                alert('FALHA AO SALVAR: ' + e.message); // Exibe o erro exato na tela do celular
-            } finally {
-                btn.disabled = false;
-                btn.innerText = 'Cadastrar Vendedor';
-            }
-        }
-
-        function carregarVendedores() {
-            let lista = document.getElementById('listaVendedores');
-            if(!lista) return;
-            lista.innerHTML = '';
-            
-            if(cacheVendedores.length === 0) {
-                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum vendedor cadastrado.</li>';
-                return;
-            }
-            
-            cacheVendedores.forEach((v) => {
-                let btnExc = usuarioLogado === 'admin' ? `<button type="button" class="btn-excluir" onclick="removerVendedor('${v.id}')">Excluir</button>` : '';
-                lista.innerHTML += `<li><div><strong>${v.nome}</strong> <small style="color:#888;">(Senha cadastrada)</small></div> ${btnExc}</li>`;
-            });
-        }
-
-        async function removerVendedor(id) {
-            if(!confirm('Deseja excluir este vendedor?')) return;
-            try {
-                await deleteDoc(doc(window.db, "vendedores", id));
-                await carregarTudoDoFirebase();
-                alert('Vendedor excluído com sucesso!');
-            } catch(e) { 
-                alert('Erro ao excluir: ' + e.message); 
-            }
-        }
-
-        // --- CLIENTES (Com Proteção contra Travamento) ---
-        function carregarSelectVendedoresCliente() {
-            let sel = document.getElementById('cliVendedorSelect');
-            if(!sel) return;
-            sel.innerHTML = '<option value="admin">Administrador (Geral)</option>';
-            cacheVendedores.forEach(v => { sel.innerHTML += `<option value="${v.nome}">${v.nome}</option>`; });
-        }
-
-        async function salvarCliente() {
-            let nomeElem = document.getElementById('cliNome');
-            let telElem = document.getElementById('cliTel');
-            let docElem = document.getElementById('cliDoc');
-            let endElem = document.getElementById('cliEnd');
-            let selVend = document.getElementById('cliVendedorSelect');
-            let btn = document.getElementById('btnSalvarCliente');
-
-            if(!nomeElem || !telElem) return;
-
-            let nome = nomeElem.value.trim();
-            let tel = telElem.value.trim();
-            let doc = docElem ? docElem.value.trim() : '';
-            let end = endElem ? endElem.value.trim() : '';
-            let vendedorResp = selVend ? selVend.value : 'admin';
-
-            if(!nome || !tel) {
-                alert('Preencha Nome e Telefone do cliente!');
-                return;
-            }
-
-            try {
-                btn.disabled = true;
-                btn.innerText = 'Salvando...';
-
-                await addDoc(collection(window.db, "clientes"), { nome, tel, doc, end, vendedor: vendedorResp });
-                
-                nomeElem.value = '';
-                telElem.value = '';
-                if(docElem) docElem.value = '';
-                if(endElem) endElem.value = '';
-                
-                await carregarTudoDoFirebase();
-                alert('Cliente salvo com sucesso!');
-            } catch(e) { 
-                console.error("Erro ao salvar cliente:", e);
-                alert('FALHA AO SALVAR CLIENTE: ' + e.message); 
-            } finally {
-                btn.disabled = false;
-                btn.innerText = 'Cadastrar Cliente';
-            }
-        }
-
-        function carregarClientes() {
-            let lista = document.getElementById('listaClientes');
-            if(!lista) return;
-            lista.innerHTML = '';
-            
-            let meusClientes = cacheClientes.filter(c => usuarioLogado === 'admin' || c.vendedor === usuarioLogado);
-
-            if(meusClientes.length === 0) {
-                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum cliente cadastrado.</li>';
-                return;
-            }
-
-            meusClientes.forEach((c) => {
-                lista.innerHTML += `
-                    <li>
-                        <div><strong>${c.nome}</strong><br><small>Tel: ${c.tel} | Vendedor: ${c.vendedor}</small></div> 
-                        <button type="button" class="btn-excluir" onclick="removerCliente('${c.id}')">Excluir</button>
-                    </li>`;
-            });
-        }
-
-        async function removerCliente(id) {
-            if(!confirm('Deseja excluir este cliente?')) return;
-            try {
-                await deleteDoc(doc(window.db, "clientes", id));
-                await carregarTudoDoFirebase();
-                alert('Cliente excluído com sucesso!');
-            } catch(e) { 
-                alert('Erro ao excluir: ' + e.message); 
-            }
-        }
-
-        // --- LIMPEZA DE DUPLICADOS EXISTENTES NO BANCO ---
-        async function limparDuplicadosAutomaticamente() {
-            if(!confirm('Deseja limpar todos os vendedores e clientes duplicados do banco de dados?')) return;
-            
-            try {
-                let snapV = await getDocs(collection(window.db, "vendedores"));
-                let nomesVistosV = new Set();
-                let apagadosV = 0;
-
-                for (let d of snapV.docs) {
-                    let nome = (d.data().nome || '').trim().toLowerCase();
-                    if (nomesVistosV.has(nome)) {
-                        await deleteDoc(doc(window.db, "vendedores", d.id));
-                        apagadosV++;
-                    } else {
-                        nomesVistosV.add(nome);
-                    }
-                }
-
-                let snapC = await getDocs(collection(window.db, "clientes"));
-                let nomesVistosC = new Set();
-                let apagadosC = 0;
-
-                for (let d of snapC.docs) {
-                    let nome = (d.data().nome || '').trim().toLowerCase();
-                    if (nomesVistosC.has(nome)) {
-                        await deleteDoc(doc(window.db, "clientes", d.id));
-                        apagadosC++;
-                    } else {
-                        nomesVistosC.add(nome);
-                    }
-                }
-
-                await carregarTudoDoFirebase();
-                alert(`Limpeza concluída!\n- Vendedores duplicados removidos: ${apagadosV}\n- Clientes duplicados removidos: ${apagadosC}`);
-            } catch(e) {
-                alert('Erro ao limpar duplicados: ' + e.message);
-            }
-        }
-
-        // --- ESTOQUE ---
-        async function salvarEstoque() {
-            let produto = document.getElementById('prodNome').value.trim();
-            let categoria = document.getElementById('prodCat').value;
-            let qtd = parseInt(document.getElementById('prodQtd').value);
-            let preco = parseFloat(document.getElementById('prodPreco').value);
-            let btn = document.getElementById('btnSalvarEstoque');
-
-            if(!produto || isNaN(qtd) || isNaN(preco)) return alert('Preencha todos os campos!');
-
-            try {
-                btn.disabled = true;
-                btn.innerText = 'Salvando...';
-
-                let existente = cacheEstoque.find(p => p.produto.toLowerCase() === produto.toLowerCase());
-                if(existente) {
-                    await updateDoc(doc(window.db, "estoque", existente.id), { categoria, qtd, preco });
-                } else {
-                    await addDoc(collection(window.db, "estoque"), { produto, categoria, qtd, preco });
-                }
-                document.getElementById('prodNome').value = '';
-                document.getElementById('prodQtd').value = '';
-                document.getElementById('prodPreco').value = '';
-                await carregarTudoDoFirebase();
-                alert('Produto salvo!');
-            } catch(e) { 
-                alert('FALHA AO SALVAR ESTOQUE: ' + e.message); 
-            } finally {
-                btn.disabled = false;
-                btn.innerText = 'Salvar na Nuvem';
-            }
-        }
-
-        function carregarEstoque() {
-            let filtroTexto = document.getElementById('filtroEstoque').value.toLowerCase();
-            let filtroCat = document.getElementById('filtroCategoria').value;
-            let lista = document.getElementById('listaEstoque');
-            if(!lista) return;
-            lista.innerHTML = '';
-
-            let filtrados = cacheEstoque.filter(i => {
-                let matchTexto = i.produto.toLowerCase().includes(filtroTexto);
-                let matchCat = filtroCat ? ((i.categoria || '').trim().toLowerCase() === filtroCat.trim().toLowerCase()) : true;
-                return matchTexto && matchCat;
-            });
-
-            if(filtrados.length === 0) {
-                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum produto.</li>';
-                return;
-            }
-
-            filtrados.forEach((item) => {
-                let botaoExcluir = usuarioLogado === 'admin' ? `<button type="button" class="btn-excluir" onclick="removerEstoque('${item.id}')">Excluir</button>` : '';
-                lista.innerHTML += `
-                    <li>
-                        <div><strong>${item.produto}</strong> <small style="color: #27ae60;">[${item.categoria || 'Geral'}]</small><br>
-                        Estoque: <strong>${item.qtd} un</strong> | R$ ${item.preco ? item.preco.toFixed(2) : '0.00'}</div>
-                        ${botaoExcluir}
-                    </li>`;
-            });
-        }
-
-        async function removerEstoque(id) {
-            if(!confirm('Excluir?')) return;
-            try {
-                await deleteDoc(doc(window.db, "estoque", id));
-                await carregarTudoDoFirebase();
-            } catch(e) { alert('Erro: ' + e.message); }
-        }
-
-        // --- VENDAS ---
-        function carregarSelectsVenda() {
-            let clientesPermitidos = cacheClientes.filter(c => usuarioLogado === 'admin' || c.vendedor === usuarioLogado);
-            let selCli = document.getElementById('vendaCliente');
-            if(!selCli) return;
-            selCli.innerHTML = '';
-            
-            if(clientesPermitidos.length === 0) {
-                selCli.innerHTML = '<option value="">Cadastre um cliente primeiro</option>';
-            } else {
-                clientesPermitidos.forEach(c => { selCli.innerHTML += `<option value="${c.nome}">${c.nome}</option>`; });
-            }
-            filtrarProdutosVenda();
-        }
-
-        function filtrarProdutosVenda() {
-            let catFiltro = document.getElementById('vendaFiltroCat').value.trim().toLowerCase();
-            let selProd = document.getElementById('vendaProduto');
-            if(!selProd) return;
-            selProd.innerHTML = '';
-
-            let produtosFiltrados = cacheEstoque.filter(p => {
-                if (!catFiltro) return true;
-                return (p.categoria || '').trim().toLowerCase() === catFiltro;
-            });
-
-            if(produtosFiltrados.length === 0) {
-                selProd.innerHTML = '<option value="">Nenhum produto nesta categoria</option>';
-                atualizarPrecoVenda();
-                return;
-            }
-
-            produtosFiltrados.forEach(p => { 
-                let precoVal = p.preco || 0;
-                selProd.innerHTML += `<option value="${p.produto}" data-id="${p.id}" data-preco="${precoVal}">${p.produto} [${p.categoria || 'Geral'}] (Estq: ${p.qtd} | R$ ${precoVal.toFixed(2)})</option>`; 
-            });
-            atualizarPrecoVenda();
-        }
-
-        function atualizarPrecoVenda() {
-            let sel = document.getElementById('vendaProduto');
-            if(!sel) return;
-            let opt = sel.options[sel.selectedIndex];
-            if(!opt || !opt.getAttribute('data-preco')) {
-                document.getElementById('vendaTotal').value = '0.00';
-                return;
-            }
-            let preco = parseFloat(opt.getAttribute('data-preco')) || 0;
-            let qtd = parseInt(document.getElementById('vendaQtd').value) || 1;
-            document.getElementById('vendaTotal').value = (preco * qtd).toFixed(2);
-        }
-
-        let campoQtdVenda = document.getElementById('vendaQtd');
-        if(campoQtdVenda) campoQtdVenda.addEventListener('input', atualizarPrecoVenda);
-
-        async function registrarVenda() {
-            let clienteNome = document.getElementById('vendaCliente').value;
-            let selProd = document.getElementById('vendaProduto');
-            let optProd = selProd.options[selProd.selectedIndex];
-            let btn = document.getElementById('btnSalvarVenda');
-            
-            if(!clienteNome || !optProd || !optProd.getAttribute('data-id')) return alert('Selecione cliente e produto!');
-
-            let produtoId = optProd.getAttribute('data-id');
-            let produtoNome = selProd.value;
-            let qtdVendida = parseInt(document.getElementById('vendaQtd').value);
-            let total = document.getElementById('vendaTotal').value;
-
-            let prodDoc = cacheEstoque.find(p => p.id === produtoId);
-            if(!prodDoc || prodDoc.qtd < qtdVendida) return alert('Estoque insuficiente!');
-
-            try {
-                btn.disabled = true;
-                btn.innerText = 'Processando...';
-
-                await updateDoc(doc(window.db, "estoque", produtoId), { qtd: prodDoc.qtd - qtdVendida });
-                let cliObj = cacheClientes.find(c => c.nome === clienteNome);
-                let dataHora = new Date().toLocaleString('pt-BR');
-                let idPedido = Date.now().toString().slice(-6);
-
-                await addDoc(collection(window.db, "vendas"), {
-                    id: idPedido, data: dataHora, cliente: clienteNome, produto: produtoNome,
-                    qtd: qtdVendida, total, vendedor: cliObj ? cliObj.vendedor : usuarioLogado, criadoEm: Date.now()
-                });
-
-                alert('Venda registrada com sucesso!');
-                await carregarTudoDoFirebase();
-                carregarSelectsVenda();
-            } catch(e) { 
-                alert('FALHA AO REGISTRAR VENDA: ' + e.message); 
-            } finally {
-                btn.disabled = false;
-                btn.innerText = 'Concluir Venda e Dar Baixa';
-            }
-        }
-
-        // --- HISTÓRICO E IMPRESSÃO ---
-        function carregarHistorico() {
-            let lista = document.getElementById('listaHistorico');
-            if(!lista) return;
-            lista.innerHTML = '';
-            
-            let historicoPermitido = cacheVendas.filter(v => usuarioLogado === 'admin' || v.vendedor === usuarioLogado);
-
-            if(historicoPermitido.length === 0) {
-                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhuma venda registrada.</li>';
-                return;
-            }
-
-            historicoPermitido.forEach((v) => {
-                lista.innerHTML += `
-                    <li class="venda-item">
-                        <div class="venda-header">
-                            <span>🛒 ${v.cliente}</span>
-                            <span style="color: #27ae60;">R$ ${v.total}</span>
-                        </div>
-                        <div style="font-size: 13px; color: #555; width: 100%;">
-                            Produto: <strong>${v.produto}</strong> (Qtd: ${v.qtd})<br>
-                            <small style="color: #888;">Data: ${v.data} | Vendedor: ${v.vendedor}</small>
-                            <div style="margin-top: 8px; text-align: right;">
-                                <button type="button" class="btn-imprimir" onclick="imprimirPedidoPorId('${v.id}')">🖨️ Imprimir</button>
-                            </div>
-                        </div>
-                    </li>`;
-            });
-        }
-
-        function imprimirPedidoPorId(idPedido) {
-            let v = cacheVendas.find(item => item.id === idPedido);
-            if(!v) return alert('Pedido não encontrado.');
-
-            let area = document.getElementById('areaImpressao');
-            area.style.display = 'block';
-            area.innerHTML = `
-                <div style="font-family: monospace; font-size: 12px; color: #000; width: 78mm; padding: 5px;">
-                    <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 8px; margin-bottom: 8px;">
-                        <h3 style="margin: 0; font-size: 14px;">DISTRIBUIDORA FRAZÃO</h3>
-                        <p style="margin: 3px 0 0 0; font-size: 11px; font-weight: bold;">PEDIDO #${v.id}</p>
-                    </div>
-                    <div style="margin-bottom: 8px; font-size: 11px;">
-                        <div><strong>Data:</strong> ${v.data}</div>
-                        <div><strong>Cliente:</strong> ${v.cliente}</div>
-                        <div><strong>Vendedor:</strong> ${v.vendedor}</div>
-                    </div>
-                    <div style="border-top: 1px dashed #000; padding-top: 4px; display: flex; justify-content: space-between;">
-                        <span>${v.produto} (x${v.qtd})</span>
-                        <span>R$ ${v.total}</span>
-                    </div>
-                    <div style="border-top: 1px dashed #000; margin-top: 8px; padding-top: 5px; text-align: right; font-size: 13px; font-weight: bold;">
-                        TOTAL: R$ ${v.total}</div>
-                </div>`;
-            window.print();
-            area.style.display = 'none';
-        }
     </script>
 </body>
 </html>

@@ -195,6 +195,7 @@
                     <label>Senha de Acesso:</label>
                     <input type="password" id="vendSenha" placeholder="Digite uma senha para o vendedor">
                 </div>
+                <!-- BOTÃO CORRIGIDO COM A CLASSE BTN-SALVAR -->
                 <button class="btn-salvar" onclick="salvarVendedor()">Cadastrar Vendedor</button>
                 <ul id="listaVendedores" style="margin-top:20px;"></ul>
             </div>
@@ -324,7 +325,7 @@
             let sel = document.getElementById('loginUsuario').value;
             let grupoSenha = document.getElementById('grupoSenhaLogin');
             if(sel === 'admin') {
-                grupoSenha.style.display = 'none'; // Admin entra direto sem senha padrão, ou se preferir pode pedir
+                grupoSenha.style.display = 'none';
             } else {
                 grupoSenha.style.display = 'block';
             }

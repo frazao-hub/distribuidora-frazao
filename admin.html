@@ -95,16 +95,16 @@
 
             <!-- Menu de Abas -->
             <div class="tabs">
-                <button class="tab-btn active" onclick="mudarAba('estoque', event)">📦 Estoque</button>
+                <button class="tab-btn active" onclick="mudarAba('estoque', event)">📦 Estoque & Produtos</button>
                 <button class="tab-btn" onclick="mudarAba('vendedores', event)" id="abaBtnVendedores">👔 Vendedores</button>
                 <button class="tab-btn" onclick="mudarAba('clientes', event)">👥 Clientes</button>
                 <button class="tab-btn" onclick="mudarAba('vendas', event)">🛒 Nova Venda</button>
                 <button class="tab-btn" onclick="mudarAba('historico', event)">📊 Histórico</button>
             </div>
 
-            <!-- ABA 1: ESTOQUE -->
+            <!-- ABA 1: ESTOQUE / PRODUTOS -->
             <div id="estoque" class="card active">
-                <h2>Gerenciar Estoque e Catálogo</h2>
+                <h2>Gerenciamento de Produtos e Estoque</h2>
                 <div class="form-group">
                     <label>Nome do Produto:</label>
                     <input type="text" id="prodNome" placeholder="Ex: Chocolate KitKat, Coca-Cola 2L...">
@@ -132,9 +132,24 @@
                     <label>Preço Unitário (R$):</label>
                     <input type="number" step="0.01" id="prodPreco" placeholder="Ex: 8.50">
                 </div>
-                <button class="btn-salvar" onclick="salvarEstoque()">Salvar e Atualizar Catálogo</button>
+                <button class="btn-salvar" onclick="salvarEstoque()">Adicionar / Atualizar Produto</button>
                 
-                <input type="text" id="filtroEstoque" placeholder="🔍 Buscar no estoque..." onkeyup="carregarEstoque()" style="margin-top:20px;">
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <input type="text" id="filtroEstoque" placeholder="🔍 Buscar produto..." onkeyup="carregarEstoque()">
+                    <select id="filtroCategoria" onchange="carregarEstoque()" style="width: 200px;">
+                        <option value="">Todas as Categorias</option>
+                        <option value="Balas e Pirulitos">Balas e Pirulitos</option>
+                        <option value="Bebidas">Bebidas</option>
+                        <option value="Biscoitos">Biscoitos</option>
+                        <option value="Descartáveis">Descartáveis</option>
+                        <option value="Doces">Doces</option>
+                        <option value="Drops e Chicletes">Drops e Chicletes</option>
+                        <option value="Higiene">Higiene</option>
+                        <option value="Limpeza">Limpeza</option>
+                        <option value="Mercearia">Mercearia</option>
+                        <option value="Papelaria">Papelaria</option>
+                    </select>
+                </div>
                 <ul id="listaEstoque"></ul>
             </div>
 
@@ -187,6 +202,22 @@
                     <select id="vendaCliente"></select>
                 </div>
                 <div class="form-group">
+                    <label>Filtrar por Categoria na Venda:</label>
+                    <select id="vendaFiltroCat" onchange="filtrarProdutosVenda()">
+                        <option value="">Todas as Categorias</option>
+                        <option value="Balas e Pirulitos">Balas e Pirulitos</option>
+                        <option value="Bebidas">Bebidas</option>
+                        <option value="Biscoitos">Biscoitos</option>
+                        <option value="Descartáveis">Descartáveis</option>
+                        <option value="Doces">Doces</option>
+                        <option value="Drops e Chicletes">Drops e Chicletes</option>
+                        <option value="Higiene">Higiene</option>
+                        <option value="Limpeza">Limpeza</option>
+                        <option value="Mercearia">Mercearia</option>
+                        <option value="Papelaria">Papelaria</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>Selecione o Produto:</label>
                     <select id="vendaProduto" onchange="atualizarPrecoVenda()"></select>
                 </div>
@@ -198,7 +229,7 @@
                     <label>Valor Total (R$):</label>
                     <input type="text" id="vendaTotal" readonly style="background: #e9ecef;">
                 </div>
-                <button class="btn-salvar" onclick="registrarVenda()">Concluir Venda e Dar Baixa</button>
+                <button class="btn-salvar" onclick="registrarVenda()">Concluir Venda e Dar Baixa no Estoque</button>
             </div>
 
             <!-- ABA 5: HISTÓRICO DE VENDAS -->
@@ -304,14 +335,14 @@
             carregarVendedores();
         }
 
-        // --- ESTOQUE ---
+        // --- ESTOQUE E PRODUTOS ---
         function salvarEstoque() {
             let produto = document.getElementById('prodNome').value.trim();
             let categoria = document.getElementById('prodCat').value;
             let qtd = parseInt(document.getElementById('prodQtd').value);
             let preco = parseFloat(document.getElementById('prodPreco').value);
 
-            if(!produto || isNaN(qtd) || isNaN(preco)) return alert('Preencha todos os campos!');
+            if(!produto || isNaN(qtd) || isNaN(preco)) return alert('Preencha todos os campos do produto!');
 
             let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
             let existente = estoque.find(p => p.produto.toLowerCase() === produto.toLowerCase());
@@ -329,18 +360,24 @@
             document.getElementById('prodQtd').value = '';
             document.getElementById('prodPreco').value = '';
             carregarEstoque();
-            alert('Produto salvo!');
+            alert('Produto salvo e vinculado ao estoque com sucesso!');
         }
 
         function carregarEstoque() {
             let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
-            let filtro = document.getElementById('filtroEstoque').value.toLowerCase();
+            let filtroTexto = document.getElementById('filtroEstoque').value.toLowerCase();
+            let filtroCat = document.getElementById('filtroCategoria').value;
             let lista = document.getElementById('listaEstoque');
             lista.innerHTML = '';
 
-            let filtrados = estoque.filter(i => i.produto.toLowerCase().includes(filtro));
+            let filtrados = estoque.filter(i => {
+                let matchTexto = i.produto.toLowerCase().includes(filtroTexto);
+                let matchCat = filtroCat ? i.categoria === filtroCat : true;
+                return matchTexto && matchCat;
+            });
+
             if(filtrados.length === 0) {
-                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum produto cadastrado.</li>';
+                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum produto encontrado nesta categoria/busca.</li>';
                 return;
             }
 
@@ -349,8 +386,8 @@
                 let botaoExcluir = usuarioLogado === 'admin' ? `<button class="btn-excluir" onclick="removerEstoque(${idx})">Excluir</button>` : '';
                 lista.innerHTML += `
                     <li>
-                        <div><strong>${item.produto}</strong> <small>(${item.categoria})</small><br>
-                        Estoque: <strong>${item.qtd}</strong> | R$ ${item.preco ? item.preco.toFixed(2) : '0.00'}</div>
+                        <div><strong>${item.produto}</strong> <small style="color: #27ae60; font-weight:bold;">[${item.categoria}]</small><br>
+                        Estoque: <strong>${item.qtd} un</strong> | Preço: R$ ${item.preco ? item.preco.toFixed(2) : '0.00'}</div>
                         ${botaoExcluir}
                     </li>`;
             });
@@ -435,8 +472,6 @@
         // --- VENDAS ---
         function carregarSelectsVenda() {
             let clientes = JSON.parse(localStorage.getItem('admin_clientes')) || [];
-            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
-            
             let clientesPermitidos = clientes.filter(c => usuarioLogado === 'admin' || c.vendedor === usuarioLogado);
 
             let selCli = document.getElementById('vendaCliente');
@@ -444,10 +479,27 @@
             if(clientesPermitidos.length === 0) selCli.innerHTML = '<option value="">Cadastre um cliente primeiro</option>';
             clientesPermitidos.forEach(c => { selCli.innerHTML += `<option value="${c.nome}">${c.nome}</option>`; });
 
+            filtrarProdutosVenda();
+        }
+
+        function filtrarProdutosVenda() {
+            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
+            let catFiltro = document.getElementById('vendaFiltroCat').value;
             let selProd = document.getElementById('vendaProduto');
             selProd.innerHTML = '';
-            if(estoque.length === 0) selProd.innerHTML = '<option value="">Adicione produtos no estoque</option>';
-            estoque.forEach(p => { 
+
+            let produtosFiltrados = estoque.filter(p => {
+                let matchCat = catFiltro ? p.categoria === catFiltro : true;
+                return matchCat;
+            });
+
+            if(produtosFiltrados.length === 0) {
+                selProd.innerHTML = '<option value="">Nenhum produto nesta categoria</option>';
+                atualizarPrecoVenda();
+                return;
+            }
+
+            produtosFiltrados.forEach(p => { 
                 let precoVal = p.preco || 0;
                 selProd.innerHTML += `<option value="${p.produto}" data-preco="${precoVal}" data-qtd="${p.qtd}">${p.produto} [${p.categoria}] (Estoque: ${p.qtd} | R$ ${precoVal.toFixed(2)})</option>`; 
             });
@@ -457,7 +509,10 @@
         function atualizarPrecoVenda() {
             let sel = document.getElementById('vendaProduto');
             let opt = sel.options[sel.selectedIndex];
-            if(!opt) return;
+            if(!opt || !opt.getAttribute('data-preco')) {
+                document.getElementById('vendaTotal').value = '0.00';
+                return;
+            }
             let preco = parseFloat(opt.getAttribute('data-preco')) || 0;
             let qtd = parseInt(document.getElementById('vendaQtd').value) || 1;
             document.getElementById('vendaTotal').value = (preco * qtd).toFixed(2);
@@ -471,12 +526,12 @@
             let qtdVendida = parseInt(document.getElementById('vendaQtd').value);
             let total = document.getElementById('vendaTotal').value;
 
-            if(!clienteNome || !produtoNome || isNaN(qtdVendida)) return alert('Preencha os dados da venda!');
+            if(!clienteNome || !produtoNome || isNaN(qtdVendida)) return alert('Preencha todos os dados da venda!');
 
             let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
             let prod = estoque.find(p => p.produto === produtoNome);
 
-            if(!prod || prod.qtd < qtdVendida) return alert('Estoque insuficiente!');
+            if(!prod || prod.qtd < qtdVendida) return alert('Estoque insuficiente para este produto!');
 
             prod.qtd -= qtdVendida;
             localStorage.setItem('estoque_frazao_v2', JSON.stringify(estoque));
@@ -500,7 +555,7 @@
             
             localStorage.setItem('admin_vendas', JSON.stringify(historico));
 
-            alert('Venda registrada com sucesso!');
+            alert('Venda registrada e estoque atualizado com sucesso!');
             carregarSelectsVenda();
         }
 

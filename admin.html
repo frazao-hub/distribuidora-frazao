@@ -15,7 +15,7 @@
         <!-- Cabeçalho -->
         <header class="text-center mb-6">
             <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight">Distribuidora Frazão</h1>
-            <p class="text-sm text-gray-500">Qualidade, variedade e os melhores preços</p>
+            <p class="text-sm text-gray-500">Painel de Gestão e Vendas</p>
         </header>
 
         <!-- Menu de Cartões Clicáveis (5 Opções) -->
@@ -103,7 +103,7 @@
             </form>
         </div>
 
-        <!-- 3. SEÇÃO CADASTRO DE PRODUTOS -->
+        <!-- 3. SEÇÃO CADASTRO DE PRODUTOS (Com as 10 Categorias Oficiais) -->
         <div id="secao-produto" class="secao-conteudo hidden">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Cadastrar Produto</h2>
             <form id="formProduto" class="space-y-4">
@@ -115,11 +115,16 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
                     <select id="categoriaProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
                         <option value="">Selecione uma categoria...</option>
-                        <option value="Doces">Doces (Balas, chocolates, biscoitos, bombons...)</option>
-                        <option value="Mercearia">Mercearia (Arroz, feijão, açúcar, café, óleo...)</option>
-                        <option value="Higiene e Limpeza">Higiene e Limpeza (Sabão, detergente, papel higiênico...)</option>
-                        <option value="Descartáveis">Descartáveis (Copos, pratos, talheres, marmitas...)</option>
-                        <option value="Material Escolar">Material Escolar (Cadernos, lápis, canetas, mochilas...)</option>
+                        <option value="Balas e Pirulitos">Balas e Pirulitos</option>
+                        <option value="Bebidas">Bebidas</option>
+                        <option value="Biscoitos">Biscoitos</option>
+                        <option value="Descartáveis">Descartáveis</option>
+                        <option value="Doces">Doces</option>
+                        <option value="Drops e Chicletes">Drops e Chicletes</option>
+                        <option value="Higiene">Higiene</option>
+                        <option value="Limpeza">Limpeza</option>
+                        <option value="Mercearia">Mercearia</option>
+                        <option value="Papelaria">Papelaria</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -138,7 +143,7 @@
             </form>
         </div>
 
-        <!-- 4. SEÇÃO VENDER (Com Categorias Oficiais do Index.html) -->
+        <!-- 4. SEÇÃO VENDER (Com as 10 Categorias Oficiais) -->
         <div id="secao-vender" class="secao-conteudo hidden">
             <h2 class="text-xl font-bold text-emerald-800 mb-4">Registrar Nova Venda</h2>
             <form id="formVenda" class="space-y-4">
@@ -160,11 +165,16 @@
                             <label class="block text-xs font-medium text-gray-700 mb-1">Filtrar por Categoria</label>
                             <select id="filtroCategoria" onchange="filtrarProdutosPorCategoria()" class="w-full rounded-lg border border-gray-300 p-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                                 <option value="">Todas as categorias</option>
-                                <option value="Doces">Doces</option>
-                                <option value="Mercearia">Mercearia</option>
-                                <option value="Higiene e Limpeza">Higiene e Limpeza</option>
+                                <option value="Balas e Pirulitos">Balas e Pirulitos</option>
+                                <option value="Bebidas">Bebidas</option>
+                                <option value="Biscoitos">Biscoitos</option>
                                 <option value="Descartáveis">Descartáveis</option>
-                                <option value="Material Escolar">Material Escolar</option>
+                                <option value="Doces">Doces</option>
+                                <option value="Drops e Chicletes">Drops e Chicletes</option>
+                                <option value="Higiene">Higiene</option>
+                                <option value="Limpeza">Limpeza</option>
+                                <option value="Mercearia">Mercearia</option>
+                                <option value="Papelaria">Papelaria</option>
                             </select>
                         </div>
                         <div class="md:col-span-2">

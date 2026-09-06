@@ -114,7 +114,7 @@
                 <button class="btn-sair" onclick="fazerLogout()">Sair</button>
             </div>
 
-            <!-- Botão de Limpeza Automática de Duplicados (Caso queira limpar os clones presos) -->
+            <!-- Botão de Limpeza Automática de Duplicados -->
             <button type="button" class="btn-limpar" onclick="limparDuplicadosAutomaticamente()">🧹 Limpar Clones / Duplicados do Banco</button>
 
             <!-- Menu de Abas -->
@@ -185,7 +185,7 @@
                     <input type="text" id="vendNome" placeholder="Ex: Carlos Silva">
                 </div>
                 <div class="form-group">
-                    <label>Senha de Acesso (6 números ou texto):</label>
+                    <label>Senha de Acesso:</label>
                     <input type="password" id="vendSenha" placeholder="Digite uma senha">
                 </div>
                 <button type="button" class="btn-salvar" onclick="salvarVendedor()">Cadastrar Vendedor</button>
@@ -388,42 +388,54 @@
             if(abaId === 'estoque') carregarEstoque();
         }
 
-        // --- VENDEDORES ---
+        // --- VENDEDORES (Com Proteção e Alerta contra travamentos) ---
         async function salvarVendedor() {
             let nomeElem = document.getElementById('vendNome');
             let senhaElem = document.getElementById('vendSenha');
             
-            if(!nomeElem || !senhaElem) return alert('Erro nos campos.');
+            if(!nomeElem || !senhaElem) {
+                alert('Erro: Campos do formulário não encontrados.');
+                return;
+            }
 
             let nome = nomeElem.value.trim();
             let senha = senhaElem.value.trim();
 
-            if(!nome || !senha) return alert('Digite o nome e a senha do vendedor!');
+            if(!nome || !senha) {
+                alert('Por favor, digite o nome e a senha do vendedor!');
+                return;
+            }
             
             let jaExiste = cacheVendedores.some(v => v.nome.toLowerCase() === nome.toLowerCase());
             if(jaExiste) {
-                return alert('Este vendedor já está cadastrado!');
+                alert('Este vendedor já está cadastrado!');
+                return;
             }
             
             try {
                 await addDoc(collection(window.db, "vendedores"), { nome, senha });
                 nomeElem.value = '';
                 senhaElem.value = '';
+                
                 await carregarTudoDoFirebase();
                 carregarVendedores();
                 alert('Vendedor cadastrado com sucesso!');
             } catch(e) {
-                alert('Erro ao salvar: ' + e.message);
+                console.error("Erro ao salvar vendedor:", e);
+                alert('Erro ao salvar no Firebase: ' + e.message);
             }
         }
 
         function carregarVendedores() {
             let lista = document.getElementById('listaVendedores');
+            if(!lista) return;
             lista.innerHTML = '';
+            
             if(cacheVendedores.length === 0) {
                 lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum vendedor cadastrado.</li>';
                 return;
             }
+            
             cacheVendedores.forEach((v) => {
                 let btnExc = usuarioLogado === 'admin' ? `<button type="button" class="btn-excluir" onclick="removerVendedor('${v.id}')">Excluir</button>` : '';
                 lista.innerHTML += `<li><div><strong>${v.nome}</strong> <small style="color:#888;">(Senha cadastrada)</small></div> ${btnExc}</li>`;
@@ -437,44 +449,68 @@
                 await carregarTudoDoFirebase();
                 carregarVendedores();
                 alert('Vendedor excluído com sucesso!');
-            } catch(e) { alert('Erro ao excluir: ' + e.message); }
+            } catch(e) { 
+                alert('Erro ao excluir: ' + e.message); 
+            }
         }
 
-        // --- CLIENTES ---
+        // --- CLIENTES (Com Proteção e Alerta) ---
         function carregarSelectVendedoresCliente() {
             let sel = document.getElementById('cliVendedorSelect');
+            if(!sel) return;
             sel.innerHTML = '<option value="admin">Administrador (Geral)</option>';
             cacheVendedores.forEach(v => { sel.innerHTML += `<option value="${v.nome}">${v.nome}</option>`; });
         }
 
         async function salvarCliente() {
-            let nome = document.getElementById('cliNome').value.trim();
-            let tel = document.getElementById('cliTel').value.trim();
-            let doc = document.getElementById('cliDoc').value.trim();
-            let end = document.getElementById('cliEnd').value.trim();
-            let vendedorResp = document.getElementById('cliVendedorSelect').value;
+            let nomeElem = document.getElementById('cliNome');
+            let telElem = document.getElementById('cliTel');
+            let docElem = document.getElementById('cliDoc');
+            let endElem = document.getElementById('cliEnd');
+            let selVend = document.getElementById('cliVendedorSelect');
 
-            if(!nome || !tel) return alert('Preencha Nome e Telefone!');
+            if(!nomeElem || !telElem) {
+                alert('Erro: Campos do cliente não encontrados.');
+                return;
+            }
+
+            let nome = nomeElem.value.trim();
+            let tel = telElem.value.trim();
+            let doc = docElem ? docElem.value.trim() : '';
+            let end = endElem ? endElem.value.trim() : '';
+            let vendedorResp = selVend ? selVend.value : 'admin';
+
+            if(!nome || !tel) {
+                alert('Preencha Nome e Telefone do cliente!');
+                return;
+            }
 
             try {
                 await addDoc(collection(window.db, "clientes"), { nome, tel, doc, end, vendedor: vendedorResp });
-                document.getElementById('cliNome').value = '';
-                document.getElementById('cliTel').value = '';
-                document.getElementById('cliDoc').value = '';
-                document.getElementById('cliEnd').value = '';
+                
+                nomeElem.value = '';
+                telElem.value = '';
+                if(docElem) docElem.value = '';
+                if(endElem) endElem.value = '';
+                
                 await carregarTudoDoFirebase();
                 carregarClientes();
-                alert('Cliente salvo!');
-            } catch(e) { alert('Erro: ' + e.message); }
+                alert('Cliente salvo com sucesso!');
+            } catch(e) { 
+                console.error("Erro ao salvar cliente:", e);
+                alert('Erro ao salvar cliente: ' + e.message); 
+            }
         }
 
         function carregarClientes() {
             let lista = document.getElementById('listaClientes');
+            if(!lista) return;
             lista.innerHTML = '';
+            
             let meusClientes = cacheClientes.filter(c => usuarioLogado === 'admin' || c.vendedor === usuarioLogado);
 
             if(meusClientes.length === 0) {
-                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum cliente.</li>';
+                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum cliente cadastrado.</li>';
                 return;
             }
 
@@ -494,7 +530,9 @@
                 await carregarTudoDoFirebase();
                 carregarClientes();
                 alert('Cliente excluído com sucesso!');
-            } catch(e) { alert('Erro ao excluir: ' + e.message); }
+            } catch(e) { 
+                alert('Erro ao excluir: ' + e.message); 
+            }
         }
 
         // --- LIMPEZA AUTOMÁTICA DE DUPLICADOS ---
@@ -569,6 +607,7 @@
             let filtroTexto = document.getElementById('filtroEstoque').value.toLowerCase();
             let filtroCat = document.getElementById('filtroCategoria').value;
             let lista = document.getElementById('listaEstoque');
+            if(!lista) return;
             lista.innerHTML = '';
 
             let filtrados = cacheEstoque.filter(i => {
@@ -606,7 +645,9 @@
         function carregarSelectsVenda() {
             let clientesPermitidos = cacheClientes.filter(c => usuarioLogado === 'admin' || c.vendedor === usuarioLogado);
             let selCli = document.getElementById('vendaCliente');
+            if(!selCli) return;
             selCli.innerHTML = '';
+            
             if(clientesPermitidos.length === 0) {
                 selCli.innerHTML = '<option value="">Cadastre um cliente primeiro</option>';
             } else {
@@ -618,6 +659,7 @@
         function filtrarProdutosVenda() {
             let catFiltro = document.getElementById('vendaFiltroCat').value.trim().toLowerCase();
             let selProd = document.getElementById('vendaProduto');
+            if(!selProd) return;
             selProd.innerHTML = '';
 
             let produtosFiltrados = cacheEstoque.filter(p => {
@@ -640,6 +682,7 @@
 
         function atualizarPrecoVenda() {
             let sel = document.getElementById('vendaProduto');
+            if(!sel) return;
             let opt = sel.options[sel.selectedIndex];
             if(!opt || !opt.getAttribute('data-preco')) {
                 document.getElementById('vendaTotal').value = '0.00';
@@ -688,11 +731,13 @@
         // --- HISTÓRICO E IMPRESSÃO ---
         function carregarHistorico() {
             let lista = document.getElementById('listaHistorico');
+            if(!lista) return;
             lista.innerHTML = '';
+            
             let historicoPermitido = cacheVendas.filter(v => usuarioLogado === 'admin' || v.vendedor === usuarioLogado);
 
             if(historicoPermitido.length === 0) {
-                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhuma venda.</li>';
+                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhuma venda registrada.</li>';
                 return;
             }
 
@@ -716,7 +761,7 @@
 
         function imprimirPedidoPorId(idPedido) {
             let v = cacheVendas.find(item => item.id === idPedido);
-            if(!v) return alert('Não encontrado.');
+            if(!v) return alert('Pedido não encontrado.');
 
             let area = document.getElementById('areaImpressao');
             area.style.display = 'block';

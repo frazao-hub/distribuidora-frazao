@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - Distribuidora Frazão</title>
     
-    <!-- Link essencial para o celular liberar a instalação -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#27ae60">
     <meta name="mobile-web-app-capable" content="yes">
@@ -56,7 +55,7 @@
             <button class="tab-btn" onclick="mudarAba('historico', event)">📊 Histórico</button>
         </div>
 
-        <!-- ABA 1: ESTOQUE (Vinculado às 10 categorias do catálogo) -->
+        <!-- ABA 1: ESTOQUE -->
         <div id="estoque" class="card active">
             <h2>Gerenciar Estoque e Catálogo</h2>
             <div class="form-group">
@@ -64,7 +63,7 @@
                 <input type="text" id="prodNome" placeholder="Ex: Chocolate KitKat, Coca-Cola 2L...">
             </div>
             <div class="form-group">
-                <label>Categoria (Mesmas 10 do Catálogo):</label>
+                <label>Categoria:</label>
                 <select id="prodCat">
                     <option value="Balas e Pirulitos">Balas e Pirulitos</option>
                     <option value="Bebidas">Bebidas</option>
@@ -92,7 +91,7 @@
             <ul id="listaEstoque"></ul>
         </div>
 
-        <!-- ABA 2: CLIENTES -->
+        <!-- ABA 2: CLIENTES (Atualizada com CPF/CNPJ e Endereço) -->
         <div id="clientes" class="card">
             <h2>Cadastro de Clientes</h2>
             <div class="form-group">
@@ -102,6 +101,14 @@
             <div class="form-group">
                 <label>Telefone / WhatsApp:</label>
                 <input type="text" id="cliTel" placeholder="Ex: (21) 99999-9999">
+            </div>
+            <div class="form-group">
+                <label>CPF ou CNPJ:</label>
+                <input type="text" id="cliDoc" placeholder="Ex: 00.000.000/0001-00 ou 000.000.000-00">
+            </div>
+            <div class="form-group">
+                <label>Endereço Completo:</label>
+                <input type="text" id="cliEnd" placeholder="Ex: Rua Exemplo, 123 - Bairro - Cidade">
             </div>
             <button class="btn-salvar" onclick="salvarCliente()">Cadastrar Cliente</button>
             
@@ -152,7 +159,7 @@
             if(abaId === 'estoque') carregarEstoque();
         }
 
-        // --- ESTOQUE E CONEXÃO COM CATÁLOGO ---
+        // --- ESTOQUE ---
         function salvarEstoque() {
             let produto = document.getElementById('prodNome').value.trim();
             let categoria = document.getElementById('prodCat').value;
@@ -164,7 +171,6 @@
                 return;
             }
 
-            // Salva na chave unificada que o catálogo do site também pode ler
             let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
             let existente = estoque.find(p => p.produto.toLowerCase() === produto.toLowerCase());
             
@@ -215,17 +221,24 @@
             carregarEstoque();
         }
 
-        // --- CLIENTES ---
+        // --- CLIENTES (Com CPF/CNPJ e Endereço) ---
         function salvarCliente() {
             let nome = document.getElementById('cliNome').value.trim();
             let tel = document.getElementById('cliTel').value.trim();
-            if(!nome || !tel) return alert('Preencha nome e telefone!');
+            let doc = document.getElementById('cliDoc').value.trim();
+            let end = document.getElementById('cliEnd').value.trim();
+
+            if(!nome || !tel) return alert('Preencha pelo menos o Nome e o Telefone do cliente!');
 
             let clientes = JSON.parse(localStorage.getItem('admin_clientes')) || [];
-            clientes.push({nome, tel});
+            clientes.push({nome, tel, doc, end});
             localStorage.setItem('admin_clientes', JSON.stringify(clientes));
+
             document.getElementById('cliNome').value = '';
             document.getElementById('cliTel').value = '';
+            document.getElementById('cliDoc').value = '';
+            document.getElementById('cliEnd').value = '';
+            
             carregarClientes();
             alert('Cliente cadastrado com sucesso!');
         }
@@ -239,7 +252,16 @@
                 return;
             }
             clientes.forEach((c, idx) => {
-                lista.innerHTML += `<li><div><strong>${c.nome}</strong><br><small>${c.tel}</small></div> <button class="btn-excluir" onclick="removerCliente(${idx})">Excluir</button></li>`;
+                let docInfo = c.doc ? `<br>Doc: ${c.doc}` : '';
+                let endInfo = c.end ? `<br>End: ${c.end}` : '';
+                lista.innerHTML += `
+                    <li>
+                        <div>
+                            <strong>${c.nome}</strong><br>
+                            <small>Tel: ${c.tel} ${docInfo} ${endInfo}</small>
+                        </div> 
+                        <button class="btn-excluir" onclick="removerCliente(${idx})">Excluir</button>
+                    </li>`;
             });
         }
 
@@ -300,11 +322,9 @@
                 return;
             }
 
-            // Dá baixa automática no estoque unificado
             prod.qtd -= qtdVendida;
             localStorage.setItem('estoque_frazao_v2', JSON.stringify(estoque));
 
-            // Salva no histórico de vendas
             let historico = JSON.parse(localStorage.getItem('admin_vendas')) || [];
             let dataHora = new Date().toLocaleString('pt-BR');
             historico.unshift({ data: dataHora, cliente, produto: produtoNome, qtd: qtdVendida, total });

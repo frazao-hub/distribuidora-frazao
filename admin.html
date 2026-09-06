@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - Distribuidora Frazão</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Firebase App (v10 Modular SDK via CDN compatível para Realtime Database) -->
+    <!-- Firebase App (v10 Modular SDK via CDN para Firestore) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body class="bg-gray-100 font-sans min-h-screen p-4">
     <div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-md">
@@ -42,11 +42,10 @@
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO FIREBASE (Substitua abaixo com as chaves reais do seu projeto do Realtime Database)
+        // CONFIGURAÇÃO DO FIREBASE (Certifique-se de que sua apiKey e projectId correspondem ao projeto distribuidora-frazao)
         const firebaseConfig = {
             apiKey: "SUA_API_KEY",
             authDomain: "distribuidora-frazao.firebaseapp.com",
-            databaseURL: "https://distribuidora-frazao-default-rtdb.firebaseio.com",
             projectId: "distribuidora-frazao",
             storageBucket: "distribuidora-frazao.appspot.com",
             messagingSenderId: "SEU_MESSAGING_SENDER_ID",
@@ -57,7 +56,7 @@
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
-        const database = firebase.database();
+        const db = firebase.firestore();
 
         const form = document.getElementById('cadastroForm');
         const btnSalvar = document.getElementById('btnSalvar');
@@ -76,10 +75,9 @@
             const detalhes = document.getElementById('detalhesRegistro').value;
 
             try {
-                // Cria uma referência única no Realtime Database baseada no tipo escolhido
-                const novoRegistroRef = database.ref(tipo + 's').push();
-                
-                await novoRegistroRef.set({
+                // Salva na coleção correspondente no Firestore (ex: 'vendedores', 'clientes', 'produtos')
+                const colecao = tipo + 'es'; // ajuste simples para plural
+                await db.collection(colecao).add({
                     nome: nome,
                     detalhes: detalhes,
                     criadoEm: new Date().toISOString()

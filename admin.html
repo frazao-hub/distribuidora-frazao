@@ -289,7 +289,7 @@
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(abaId).classList.add('active');
-            evt.currentTarget.classList.add('active');
+            if(evt && evt.currentTarget) evt.currentTarget.classList.add('active');
             
             if(abaId === 'vendas') carregarSelectsVenda();
             if(abaId === 'historico') carregarHistorico();
@@ -370,12 +370,17 @@
 
             let filtrados = estoque.filter(i => {
                 let matchTexto = i.produto.toLowerCase().includes(filtroTexto);
-                let matchCat = filtroCat ? (i.categoria && i.categoria.trim() === filtroCat.trim()) : true;
+                let matchCat = true;
+                if(filtroCat) {
+                    let catItem = (i.categoria || '').trim().toLowerCase();
+                    let catFiltro = filtroCat.trim().toLowerCase();
+                    matchCat = (catItem === catFiltro);
+                }
                 return matchTexto && matchCat;
             });
 
             if(filtrados.length === 0) {
-                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum produto encontrado nesta categoria/busca. (Certifique-se de cadastrar produtos na aba de Estoque).</li>';
+                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum produto encontrado nesta categoria/busca.</li>';
                 return;
             }
 
@@ -486,17 +491,18 @@
 
         function filtrarProdutosVenda() {
             let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
-            let catFiltro = document.getElementById('vendaFiltroCat').value;
+            let catFiltro = document.getElementById('vendaFiltroCat').value.trim().toLowerCase();
             let selProd = document.getElementById('vendaProduto');
             selProd.innerHTML = '';
 
             let produtosFiltrados = estoque.filter(p => {
-                if (!catFiltro) return true; // Se "Todas as Categorias", traz tudo
-                return p.categoria && p.categoria.trim() === catFiltro.trim();
+                if (!catFiltro) return true; // Se vazio ("Todas as Categorias"), traz tudo
+                let catItem = (p.categoria || '').trim().toLowerCase();
+                return catItem === catFiltro;
             });
 
             if(produtosFiltrados.length === 0) {
-                selProd.innerHTML = '<option value="">Nenhum produto cadastrado nesta categoria</option>';
+                selProd.innerHTML = '<option value="">Nenhum produto encontrado nesta categoria</option>';
                 atualizarPrecoVenda();
                 return;
             }
@@ -521,7 +527,10 @@
             document.getElementById('vendaTotal').value = (preco * qtd).toFixed(2);
         }
 
-        document.getElementById('vendaQtd').addEventListener('input', atualizarPrecoVenda);
+        let campoQtdVenda = document.getElementById('vendaQtd');
+        if(campoQtdVenda) {
+            campoQtdVenda.addEventListener('input', atualizarPrecoVenda);
+        }
 
         function registrarVenda() {
             let clienteNome = document.getElementById('vendaCliente').value;

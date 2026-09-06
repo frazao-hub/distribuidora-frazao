@@ -1,1 +1,66 @@
-estoque.html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Estoque - Distribuidora Frazão</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; color: #333; }
+        .card { background: #fff; border-radius: 8px; padding: 25px; max-width: 600px; margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h2 { color: #27ae60; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-top: 0; }
+        input, button { padding: 12px; margin: 8px 0; width: 100%; box-sizing: border-box; font-size: 14px; }
+        button { background: #27ae60; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #219653; }
+        ul { list-style: none; padding: 0; }
+        li { background: #f9f9f9; padding: 12px; margin-top: 8px; border-left: 4px solid #27ae60; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; }
+        .btn-voltar { display: inline-block; margin-top: 20px; text-decoration: none; color: #3498db; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Controle de Estoque</h2>
+        <input type="text" id="produto" placeholder="Nome do Produto">
+        <input type="number" id="qtd" placeholder="Quantidade Disponível">
+        <button onclick="adicionarProduto()">Salvar no Estoque</button>
+        
+        <h3>Produtos Cadastrados</h3>
+        <ul id="listaEstoque"></ul>
+        
+        <a href="index.html" class="btn-voltar">← Voltar para o Catálogo Geral</a>
+    </div>
+
+    <script>
+        function carregarEstoque() {
+            let estoque = JSON.parse(localStorage.getItem('estoque_frazao')) || [];
+            let lista = document.getElementById('listaEstoque');
+            lista.innerHTML = '';
+            estoque.forEach((item, index) => {
+                lista.innerHTML += `<li>${item.produto} — <strong>Qtd: ${item.qtd}</strong> <button onclick="remover(${index})" style="width:auto; padding:5px 10px; background:#e74c3c; margin:0;">Excluir</button></li>`;
+            });
+        }
+
+        function adicionarProduto() {
+            let produto = document.getElementById('produto').value.trim();
+            let qtd = document.getElementById('qtd').value;
+            if(!produto || !qtd) return alert('Preencha todos os campos!');
+
+            let estoque = JSON.parse(localStorage.getItem('estoque_frazao')) || [];
+            estoque.push({produto, qtd});
+            localStorage.setItem('estoque_frazao', JSON.stringify(estoque));
+            
+            document.getElementById('produto').value = '';
+            document.getElementById('qtd').value = '';
+            carregarEstoque();
+        }
+
+        function remover(index) {
+            let estoque = JSON.parse(localStorage.getItem('estoque_frazao')) || [];
+            estoque.splice(index, 1);
+            localStorage.setItem('estoque_frazao', JSON.stringify(estoque));
+            carregarEstoque();
+        }
+
+        window.onload = carregarEstoque;
+    </script>
+</body>
+</html>

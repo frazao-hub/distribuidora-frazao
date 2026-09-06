@@ -3,50 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Estoque - Distribuidora Frazão</title>
+    <title>Painel de Estoque - Distribuidora Frazão</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; color: #333; }
-        .card { background: #fff; border-radius: 8px; padding: 25px; max-width: 600px; margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .card { background: #fff; border-radius: 8px; padding: 25px; max-width: 700px; margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         h2 { color: #27ae60; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-top: 0; }
-        input, button { padding: 12px; margin: 8px 0; width: 100%; box-sizing: border-box; font-size: 14px; }
-        button { background: #27ae60; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #444; }
+        input, select, button { padding: 12px; width: 100%; box-sizing: border-box; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
         button:hover { background: #219653; }
-        ul { list-style: none; padding: 0; }
+        
+        .busca-box { margin: 20px 0 10px 0; }
+        
+        ul { list-style: none; padding: 0; margin-top: 10px; }
         li { background: #f9f9f9; padding: 12px; margin-top: 8px; border-left: 4px solid #27ae60; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; }
-        .btn-voltar { display: inline-block; margin-top: 20px; text-decoration: none; color: #3498db; font-weight: bold; }
+        .info-produto { font-size: 14px; }
+        .info-produto strong { font-size: 16px; color: #2c3e50; }
+        .acoes-btn { display: flex; gap: 8px; }
+        .btn-excluir { background: #e74c3c; width: auto; padding: 6px 12px; margin: 0; font-size: 13px; }
+        .btn-excluir:hover { background: #c0392b; }
+        .btn-voltar { display: inline-block; margin-top: 25px; text-decoration: none; color: #3498db; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="card">
-        <h2>Controle de Estoque</h2>
-        <input type="text" id="produto" placeholder="Nome do Produto">
-        <input type="number" id="qtd" placeholder="Quantidade Disponível">
-        <button onclick="adicionarProduto()">Salvar no Estoque</button>
+        <h2>Controle de Estoque Unificado</h2>
         
-        <h3>Produtos Cadastrados</h3>
+        <div class="form-group">
+            <label for="produto">Nome do Produto:</label>
+            <input type="text" id="produto" placeholder="Ex: Refrigerante Coca-Cola 2L, Chocolate X, Papel A4...">
+        </div>
+        
+        <div class="form-group">
+            <label for="categoria">Categoria:</label>
+            <select id="categoria">
+                <option value="Balas e Pirulitos">Balas e Pirulitos</option>
+                <option value="Bebidas">Bebidas</option>
+                <option value="Biscoitos">Biscoitos</option>
+                <option value="Descartáveis">Descartáveis</option>
+                <option value="Doces">Doces</option>
+                <option value="Drops e Chicletes">Drops e Chicletes</option>
+                <option value="Higiene">Higiene</option>
+                <option value="Limpeza">Limpeza</option>
+                <option value="Mercearia">Mercearia</option>
+                <option value="Papelaria">Papelaria</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="qtd">Quantidade em Estoque:</label>
+            <input type="number" id="qtd" placeholder="Ex: 50">
+        </div>
+
+        <button onclick="adicionarProduto()">Salvar / Atualizar Produto</button>
+        
+        <div class="busca-box">
+            <input type="text" id="filtro" placeholder="🔍 Buscar produto cadastrado..." onkeyup="carregarEstoque()">
+        </div>
+
+        <h3>Produtos Cadastrados no Estoque</h3>
         <ul id="listaEstoque"></ul>
         
-        <a href="index.html" class="btn-voltar">← Voltar para o Catálogo Geral</a>
+        <a href="index.html" class="btn-voltar">← Ir para o Catálogo Público</a>
     </div>
 
     <script>
         function carregarEstoque() {
-            let estoque = JSON.parse(localStorage.getItem('estoque_frazao')) || [];
+            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
+            let filtro = document.getElementById('filtro').value.toLowerCase();
             let lista = document.getElementById('listaEstoque');
             lista.innerHTML = '';
-            estoque.forEach((item, index) => {
-                lista.innerHTML += `<li>${item.produto} — <strong>Qtd: ${item.qtd}</strong> <button onclick="remover(${index})" style="width:auto; padding:5px 10px; background:#e74c3c; margin:0;">Excluir</button></li>`;
+
+            let estoqueFiltrado = estoque.filter(item => item.produto.toLowerCase().includes(filtro));
+
+            if(estoqueFiltrado.length === 0) {
+                lista.innerHTML = '<li style="border-left-color: #bdc3c7; color: #7f8c8d;">Nenhum produto encontrado.</li>';
+                return;
+            }
+
+            estoqueFiltrado.forEach((item) => {
+                // Achar o índice real no array original para exclusão correta
+                let indexReal = estoque.findIndex(p => p.produto === item.produto && p.categoria === item.categoria);
+                
+                lista.innerHTML += `
+                    <li class="info-produto">
+                        <div>
+                            <strong>${item.produto}</strong><br>
+                            <small style="color: #7f8c8d;">Categoria: ${item.categoria}</small> — Qtd: <strong>${item.qtd}</strong>
+                        </div>
+                        <div class="acoes-btn">
+                            <button class="btn-excluir" onclick="remover(${indexReal})">Excluir</button>
+                        </div>
+                    </li>`;
             });
         }
 
         function adicionarProduto() {
             let produto = document.getElementById('produto').value.trim();
+            let categoria = document.getElementById('categoria').value;
             let qtd = document.getElementById('qtd').value;
-            if(!produto || !qtd) return alert('Preencha todos os campos!');
 
-            let estoque = JSON.parse(localStorage.getItem('estoque_frazao')) || [];
-            estoque.push({produto, qtd});
-            localStorage.setItem('estoque_frazao', JSON.stringify(estoque));
+            if(!produto || !qtd) {
+                alert('Por favor, preencha o nome do produto e a quantidade!');
+                return;
+            }
+
+            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
+            
+            // Verifica se o produto já existe para atualizar a quantidade ou adicionar novo
+            let existente = estoque.find(p => p.produto.toLowerCase() === produto.toLowerCase());
+            if(existente) {
+                existente.qtd = qtd;
+                existente.categoria = categoria;
+            } else {
+                estoque.push({produto, categoria, qtd});
+            }
+
+            localStorage.setItem('estoque_frazao_v2', JSON.stringify(estoque));
             
             document.getElementById('produto').value = '';
             document.getElementById('qtd').value = '';
@@ -54,9 +128,9 @@
         }
 
         function remover(index) {
-            let estoque = JSON.parse(localStorage.getItem('estoque_frazao')) || [];
+            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
             estoque.splice(index, 1);
-            localStorage.setItem('estoque_frazao', JSON.stringify(estoque));
+            localStorage.setItem('estoque_frazao_v2', JSON.stringify(estoque));
             carregarEstoque();
         }
 

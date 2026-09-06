@@ -401,7 +401,6 @@
             const senha = document.getElementById('novaSenhaVendedor').value;
 
             try {
-                // Verifica se já existe
                 const check = await db.collection('vendedores').where('nome', '==', nome).get();
                 if (!check.empty) {
                     alert("Já existe um vendedor cadastrado com este nome.");
@@ -478,7 +477,7 @@
                     documento: document.getElementById('docCliente').value,
                     telefone: document.getElementById('telCliente').value,
                     endereco: document.getElementById('enderecoCliente').value,
-                    vendedorResponsavel: vendedorLogado, // Vincula ao vendedor atual
+                    vendedorResponsavel: vendedorLogado,
                     criadoEm: new Date().toISOString()
                 });
                 exibirMensagem("Cliente cadastrado com sucesso!");
@@ -509,7 +508,6 @@
                     return;
                 }
 
-                // Ordenação local por nome
                 let clientes = [];
                 snapshot.forEach(doc => clientes.push({ id: doc.id, ...doc.data() }));
                 clientes.sort((a, b) => a.nome.localeCompare(b.nome));
@@ -588,7 +586,7 @@
             }
         });
 
-        // CORREÇÃO: EXIBIR ESTOQUE SEPARADO POR CATEGORIA NA ABA DE PRODUTOS
+        // EXIBIR ESTOQUE SEPARADO POR CATEGORIA NA ABA DE PRODUTOS
         async function carregarEstoquePorCategoria() {
             const container = document.getElementById('listaEstoqueCategorias');
             container.innerHTML = `<p class="text-sm text-gray-500">Carregando estoque...</p>`;
@@ -612,7 +610,6 @@
                 }
 
                 container.innerHTML = "";
-                // Ordena as categorias alfabeticamente
                 const categoriasOrdenadas = Object.keys(categoriasMap).sort();
 
                 categoriasOrdenadas.forEach(cat => {
@@ -648,7 +645,7 @@
             }
         }
 
-        // CARREGAR PRODUTOS DO FIREBASE PARA A TELA DE VENDA
+        // CARREGAR PRODUTOS PARA A TELA DE VENDA
         async function carregarProdutosParaVenda() {
             const select = document.getElementById('selectProdutoCatalogo');
             select.innerHTML = `<option value="">Carregando produtos...</option>`;
@@ -754,7 +751,7 @@
 
                 await db.collection('vendas').add({
                     cliente: document.getElementById('vendaCliente').value,
-                    vendedor: vendedorLogado, // Garante que a venda pertence ao vendedor logado
+                    vendedor: vendedorLogado,
                     valorTotal: parseFloat(document.getElementById('vendaValor').value) || 0,
                     produtos: `${qtdVendida}x ${document.getElementById('vendaProdutos').value}`,
                     criadoEm: new Date().toISOString()
@@ -792,7 +789,6 @@
 
                 let vendas = [];
                 snapshot.forEach(doc => vendas.push({ id: doc.id, ...doc.data() }));
-                // Ordenação por data decrescente
                 vendas.sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
 
                 vendas.forEach(v => {

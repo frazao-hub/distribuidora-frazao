@@ -29,14 +29,14 @@
         .card.active { display: block; }
         
         h2 { color: #27ae60; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-top: 0; font-size: 20px; }
-        .form-group { margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
         label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #444; }
         input, select, textarea, button { padding: 10px; width: 100%; box-sizing: border-box; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
         
         button.btn-salvar { background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 5px; }
         button.btn-salvar:hover { background: #219653; }
         
-        ul { list-style: none; padding: 0; margin-top: 10px; }
+        ul { list-style: none; padding: 0; margin-top: 10px; text-align: left; }
         li { background: #f9f9f9; padding: 12px; margin-top: 8px; border-left: 4px solid #27ae60; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; font-size: 14px; }
         
         .btn-excluir { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
@@ -85,7 +85,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Disponibilizar funções globalmente para o script do sistema
         window.db = db;
         window.collection = collection;
         window.getDocs = getDocs;
@@ -95,7 +94,6 @@
         window.deleteDoc = deleteDoc;
         window.updateDoc = updateDoc;
 
-        // Iniciar após carregar o Firebase
         window.dispatchEvent(new Event('firebase-pronto'));
     </script>
 </head>
@@ -108,9 +106,13 @@
             <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Conectado à Nuvem - Entre com sua conta</p>
             <div class="form-group">
                 <label>Selecione o Usuário:</label>
-                <select id="loginUsuario">
+                <select id="loginUsuario" onchange="verificarSeAdminLogin()">
                     <option value="admin">Administrador (Acesso Total)</option>
                 </select>
+            </div>
+            <div class="form-group" id="grupoSenhaLogin">
+                <label>Senha:</label>
+                <input type="password" id="loginSenha" placeholder="Digite sua senha">
             </div>
             <button class="btn-salvar" onclick="fazerLogin()">Entrar no Sistema</button>
         </div>
@@ -188,6 +190,10 @@
                 <div class="form-group">
                     <label>Nome do Vendedor:</label>
                     <input type="text" id="vendNome" placeholder="Ex: Carlos Silva">
+                </div>
+                <div class="form-group">
+                    <label>Senha de Acesso:</label>
+                    <input type="password" id="vendSenha" placeholder="Digite uma senha para o vendedor">
                 </div>
                 <button class="btn-salvar" onclick="salvarVendedor()">Cadastrar Vendedor</button>
                 <ul id="listaVendedores" style="margin-top:20px;"></ul>
@@ -310,13 +316,43 @@
                     let v = d.data().nome;
                     sel.innerHTML += `<option value="${v}">${v}</option>`;
                 });
+                verificarSeAdminLogin();
             } catch(e) { console.error(e); }
+        }
+
+        function verificarSeAdminLogin() {
+            let sel = document.getElementById('loginUsuario').value;
+            let grupoSenha = document.getElementById('grupoSenhaLogin');
+            if(sel === 'admin') {
+                grupoSenha.style.display = 'none'; // Admin entra direto sem senha padrão, ou se preferir pode pedir
+            } else {
+                grupoSenha.style.display = 'block';
+            }
         }
 
         function fazerLogin() {
             let sel = document.getElementById('loginUsuario').value;
+            let senhaDigitada = document.getElementById('loginSenha').value.trim();
+
+            if(sel === 'admin') {
+                localStorage.setItem('usuario_logado', 'admin');
+                usuarioLogado = 'admin';
+                verificarSessao();
+                return;
+            }
+
+            let vendedorObj = cacheVendedores.find(v => v.nome === sel);
+            if(!vendedorObj) {
+                return alert('Selecione um usuário válido.');
+            }
+
+            if(vendedorObj.senha && vendedorObj.senha !== senhaDigitada) {
+                return alert('Senha incorreta!');
+            }
+
             localStorage.setItem('usuario_logado', sel);
             usuarioLogado = sel;
+            document.getElementById('loginSenha').value = '';
             verificarSessao();
         }
 
@@ -328,26 +364,21 @@
 
         async function carregarTudoDoFirebase() {
             try {
-                // Carregar Vendedores
                 let snapV = await getDocs(collection(window.db, "vendedores"));
                 cacheVendedores = [];
                 snapV.forEach(d => cacheVendedores.push({ id: d.id, ...d.data() }));
 
-                // Carregar Estoque
                 let snapE = await getDocs(collection(window.db, "estoque"));
                 cacheEstoque = [];
                 snapE.forEach(d => cacheEstoque.push({ id: d.id, ...d.data() }));
 
-                // Carregar Clientes
                 let snapC = await getDocs(collection(window.db, "clientes"));
                 cacheClientes = [];
                 snapC.forEach(d => cacheClientes.push({ id: d.id, ...d.data() }));
 
-                // Carregar Vendas
                 let snapVendas = await getDocs(collection(window.db, "vendas"));
                 cacheVendas = [];
                 snapVendas.forEach(d => cacheVendas.push({ id: d.id, ...d.data() }));
-                // Ordenar por data mais recente se tiver timestamp
                 cacheVendas.sort((a, b) => b.criadoEm - a.criadoEm);
 
                 carregarEstoque();
@@ -372,18 +403,21 @@
         // --- VENDEDORES ---
         async function salvarVendedor() {
             let nome = document.getElementById('vendNome').value.trim();
-            if(!nome) return alert('Digite o nome do vendedor!');
+            let senha = document.getElementById('vendSenha').value.trim();
+
+            if(!nome || !senha) return alert('Digite o nome e a senha do vendedor!');
             
             if(cacheVendedores.some(v => v.nome.toLowerCase() === nome.toLowerCase())) {
                 return alert('Este vendedor já está cadastrado!');
             }
             
             try {
-                await addDoc(collection(window.db, "vendedores"), { nome });
+                await addDoc(collection(window.db, "vendedores"), { nome, senha });
                 document.getElementById('vendNome').value = '';
+                document.getElementById('vendSenha').value = '';
                 await carregarTudoDoFirebase();
                 carregarVendedores();
-                alert('Vendedor cadastrado na nuvem com sucesso!');
+                alert('Vendedor cadastrado na nuvem com senha!');
             } catch(e) {
                 alert('Erro ao salvar vendedor: ' + e.message);
             }
@@ -398,7 +432,7 @@
             }
             cacheVendedores.forEach((v) => {
                 let btnExc = usuarioLogado === 'admin' ? `<button class="btn-excluir" onclick="removerVendedor('${v.id}')">Excluir</button>` : '';
-                lista.innerHTML += `<li><div><strong>${v.nome}</strong></div> ${btnExc}</li>`;
+                lista.innerHTML += `<li><div><strong>${v.nome}</strong> <small style="color:#888;">(Senha cadastrada)</small></div> ${btnExc}</li>`;
             });
         }
 
@@ -631,7 +665,6 @@
             }
 
             try {
-                // Atualizar estoque na nuvem
                 let novaQtd = prodDoc.qtd - qtdVendida;
                 await updateDoc(doc(window.db, "estoque", produtoId), { qtd: novaQtd });
 
@@ -640,7 +673,6 @@
                 let dataHora = new Date().toLocaleString('pt-BR');
                 let idPedido = Date.now().toString().slice(-6);
 
-                // Salvar venda na nuvem
                 await addDoc(collection(window.db, "vendas"), {
                     id: idPedido,
                     data: dataHora,

@@ -114,7 +114,7 @@
                 <label>Senha:</label>
                 <input type="password" id="loginSenha" placeholder="Digite sua senha">
             </div>
-            <button class="btn-salvar" onclick="fazerLogin()">Entrar no Sistema</button>
+            <button type="button" class="btn-salvar" onclick="fazerLogin()">Entrar no Sistema</button>
         </div>
 
         <!-- PAINEL PRINCIPAL -->
@@ -163,7 +163,7 @@
                     <label>Preço Unitário (R$):</label>
                     <input type="number" step="0.01" id="prodPreco" placeholder="Ex: 8.50">
                 </div>
-                <button class="btn-salvar" onclick="salvarEstoque()">Salvar na Nuvem</button>
+                <button type="button" class="btn-salvar" onclick="salvarEstoque()">Salvar na Nuvem</button>
                 
                 <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
                     <input type="text" id="filtroEstoque" placeholder="🔍 Buscar produto..." onkeyup="carregarEstoque()" style="flex: 1; min-width: 200px;">
@@ -195,7 +195,7 @@
                     <label>Senha de Acesso:</label>
                     <input type="password" id="vendSenha" placeholder="Digite uma senha para o vendedor">
                 </div>
-                <button class="btn-salvar" onclick="salvarVendedor()">Cadastrar Vendedor</button>
+                <button type="button" class="btn-salvar" id="btnCadastrarVendedor" onclick="salvarVendedor()">Cadastrar Vendedor</button>
                 <ul id="listaVendedores" style="margin-top:20px;"></ul>
             </div>
 
@@ -224,7 +224,7 @@
                         <option value="admin">Administrador (Geral)</option>
                     </select>
                 </div>
-                <button class="btn-salvar" onclick="salvarCliente()">Cadastrar Cliente</button>
+                <button type="button" class="btn-salvar" onclick="salvarCliente()">Cadastrar Cliente</button>
                 <ul id="listaClientes" style="margin-top:20px;"></ul>
             </div>
 
@@ -263,7 +263,7 @@
                     <label>Valor Total (R$):</label>
                     <input type="text" id="vendaTotal" readonly style="background: #e9ecef;">
                 </div>
-                <button class="btn-salvar" onclick="registrarVenda()">Concluir Venda e Dar Baixa no Estoque</button>
+                <button type="button" class="btn-salvar" onclick="registrarVenda()">Concluir Venda e Dar Baixa no Estoque</button>
             </div>
 
             <!-- ABA 5: HISTÓRICO DE VENDAS -->
@@ -442,7 +442,7 @@
                 return;
             }
             cacheVendedores.forEach((v) => {
-                let btnExc = usuarioLogado === 'admin' ? `<button class="btn-excluir" onclick="removerVendedor('${v.id}')">Excluir</button>` : '';
+                let btnExc = usuarioLogado === 'admin' ? `<button type="button" class="btn-excluir" onclick="removerVendedor('${v.id}')">Excluir</button>` : '';
                 lista.innerHTML += `<li><div><strong>${v.nome}</strong> <small style="color:#888;">(Senha cadastrada)</small></div> ${btnExc}</li>`;
             });
         }
@@ -509,7 +509,7 @@
             }
 
             filtrados.forEach((item) => {
-                let botaoExcluir = usuarioLogado === 'admin' ? `<button class="btn-excluir" onclick="removerEstoque('${item.id}')">Excluir</button>` : '';
+                let botaoExcluir = usuarioLogado === 'admin' ? `<button type="button" class="btn-excluir" onclick="removerEstoque('${item.id}')">Excluir</button>` : '';
                 let catNome = item.categoria || 'Sem Categoria';
                 lista.innerHTML += `
                     <li>
@@ -585,7 +585,7 @@
                             <strong>${c.nome}</strong><br>
                             <small>Tel: ${c.tel} ${docInfo} ${endInfo} ${vendInfo}</small>
                         </div> 
-                        <button class="btn-excluir" onclick="removerCliente('${c.id}')">Excluir</button>
+                        <button type="button" class="btn-excluir" onclick="removerCliente('${c.id}')">Excluir</button>
                     </li>`;
             });
         }
@@ -727,7 +727,7 @@
                             Produto: <strong>${v.produto}</strong> (Qtd: ${v.qtd})${vendInfo}<br>
                             <small style="color: #888;">Data: ${v.data}</small>
                             <div style="margin-top: 8px; text-align: right;">
-                                <button class="btn-imprimir" onclick="imprimirPedidoPorId('${v.id}')">🖨️ Imprimir Pedido</button>
+                                <button type="button" class="btn-imprimir" onclick="imprimirPedidoPorId('${v.id}')">🖨️ Imprimir Pedido</button>
                             </div>
                         </div>
                     </li>`;

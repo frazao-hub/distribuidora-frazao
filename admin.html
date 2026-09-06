@@ -15,7 +15,7 @@
         <!-- Cabeçalho -->
         <header class="text-center mb-6">
             <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight">Distribuidora Frazão</h1>
-            <p class="text-sm text-gray-500">Painel de Gestão e Vendas</p>
+            <p class="text-sm text-gray-500">Qualidade, variedade e os melhores preços</p>
         </header>
 
         <!-- Menu de Cartões Clicáveis (5 Opções) -->
@@ -115,16 +115,11 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
                     <select id="categoriaProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
                         <option value="">Selecione uma categoria...</option>
-                        <option value="Doces">Doces</option>
-                        <option value="Bebidas">Bebidas</option>
-                        <option value="Mercearia">Mercearia</option>
-                        <option value="Papelaria">Papelaria</option>
-                        <option value="Artigos de Limpeza">Artigos de Limpeza</option>
-                        <option value="Descartáveis">Descartáveis</option>
-                        <option value="Perfumaria">Perfumaria</option>
-                        <option value="Bomboniere">Bomboniere</option>
-                        <option value="Utilidades">Utilidades</option>
-                        <option value="Perecíveis">Perecíveis</option>
+                        <option value="Doces">Doces (Balas, chocolates, biscoitos, bombons...)</option>
+                        <option value="Mercearia">Mercearia (Arroz, feijão, açúcar, café, óleo...)</option>
+                        <option value="Higiene e Limpeza">Higiene e Limpeza (Sabão, detergente, papel higiênico...)</option>
+                        <option value="Descartáveis">Descartáveis (Copos, pratos, talheres, marmitas...)</option>
+                        <option value="Material Escolar">Material Escolar (Cadernos, lápis, canetas, mochilas...)</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -143,7 +138,7 @@
             </form>
         </div>
 
-        <!-- 4. SEÇÃO VENDER (Com Seleção de Categoria e Produtos do Banco) -->
+        <!-- 4. SEÇÃO VENDER (Com Categorias Oficiais do Index.html) -->
         <div id="secao-vender" class="secao-conteudo hidden">
             <h2 class="text-xl font-bold text-emerald-800 mb-4">Registrar Nova Venda</h2>
             <form id="formVenda" class="space-y-4">
@@ -159,22 +154,17 @@
                 </div>
 
                 <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200 space-y-3">
-                    <h3 class="font-bold text-emerald-900 text-sm">Adicionar Produto ao Pedido</h3>
+                    <h3 class="font-bold text-emerald-900 text-sm">Adicionar Produto do Estoque</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-gray-700 mb-1">Filtrar por Categoria</label>
                             <select id="filtroCategoria" onchange="filtrarProdutosPorCategoria()" class="w-full rounded-lg border border-gray-300 p-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                                 <option value="">Todas as categorias</option>
                                 <option value="Doces">Doces</option>
-                                <option value="Bebidas">Bebidas</option>
                                 <option value="Mercearia">Mercearia</option>
-                                <option value="Papelaria">Papelaria</option>
-                                <option value="Artigos de Limpeza">Artigos de Limpeza</option>
+                                <option value="Higiene e Limpeza">Higiene e Limpeza</option>
                                 <option value="Descartáveis">Descartáveis</option>
-                                <option value="Perfumaria">Perfumaria</option>
-                                <option value="Bomboniere">Bomboniere</option>
-                                <option value="Utilidades">Utilidades</option>
-                                <option value="Perecíveis">Perecíveis</option>
+                                <option value="Material Escolar">Material Escolar</option>
                             </select>
                         </div>
                         <div class="md:col-span-2">
@@ -257,7 +247,7 @@
             const cardAtivo = document.getElementById('card-' + aba);
             if (aba === 'vender') {
                 cardAtivo.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-100');
-                carregarProdutosParaVenda(); // Atualiza a lista de produtos ao abrir a aba Vender
+                carregarProdutosParaVenda();
             } else if (aba === 'produto') {
                 cardAtivo.classList.add('ring-2', 'ring-purple-500', 'bg-purple-50');
             } else {

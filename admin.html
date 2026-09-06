@@ -3,491 +3,622 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo - Distribuidora Frazão</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#27ae60">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Frazão Admin">
-
+    <title>Painel do Administrador - Sistema de Vendas</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 15px; color: #333; }
-        .container { max-width: 800px; margin: auto; }
-        
-        /* Tela de Login */
-        #telaLogin { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 400px; margin: 50px auto; text-align: center; }
-        #telaLogin h2 { color: #27ae60; margin-bottom: 20px; }
-        
-        #painelPrincipal { display: none; }
-        
-        .tabs { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab-btn { flex: 1; padding: 12px; background: #2c3e50; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 13px; text-align: center; min-width: 100px; }
-        .tab-btn.active { background: #27ae60; }
-        
-        .card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: none; }
-        .card.active { display: block; }
-        
-        h2 { color: #27ae60; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-top: 0; font-size: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #444; }
-        input, select, textarea, button { padding: 10px; width: 100%; box-sizing: border-box; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
-        
-        button.btn-salvar { background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        button.btn-salvar:hover { background: #219653; }
-        
-        ul { list-style: none; padding: 0; margin-top: 10px; }
-        li { background: #f9f9f9; padding: 12px; margin-top: 8px; border-left: 4px solid #27ae60; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; font-size: 14px; }
-        
-        .btn-excluir { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-        .btn-excluir:hover { background: #c0392b; }
-        
-        .venda-item { border-left-color: #3498db; flex-direction: column; align-items: flex-start; gap: 5px; }
-        .venda-header { display: flex; justify-content: space-between; width: 100%; font-weight: bold; color: #2c3e50; }
-        
-        .user-info { display: flex; justify-content: space-between; align-items: center; background: #2c3e50; color: white; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; }
-        .btn-sair { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-        
-        .btn-voltar { display: inline-block; margin-top: 25px; text-decoration: none; color: #3498db; font-weight: bold; font-size: 14px; }
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        aside {
+            width: 260px;
+            background-color: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-brand {
+            padding: 20px;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 10px;
+            flex: 1;
+        }
+
+        .sidebar-menu li {
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-light);
+            margin-bottom: 5px;
+            transition: all 0.2s;
+        }
+
+        .sidebar-menu li:hover, .sidebar-menu li.active {
+            background-color: #eff6ff;
+            color: var(--primary);
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 10px;
+            background-color: #fee2e2;
+            color: var(--danger);
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover {
+            background-color: #fecaca;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        header {
+            background-color: var(--surface);
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        .content-body {
+            padding: 30px;
+            flex: 1;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Cards & Tables */
+        .card {
+            background-color: var(--surface);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-light);
+        }
+
+        .form-group input, .form-group select {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            height: 42px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: #e0f2fe;
+            color: #0369a1;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        
-        <!-- TELA DE LOGIN -->
-        <div id="telaLogin">
-            <h2>Distribuidora Frazão</h2>
-            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Entre com sua conta de vendedor ou admin</p>
-            <div class="form-group">
-                <label>Selecione o Vendedor:</label>
-                <select id="loginVendedor">
-                    <option value="admin">Administrador (Acesso Total)</option>
-                </select>
-            </div>
-            <button class="btn-salvar" onclick="fazerLogin()">Entrar no Sistema</button>
+
+    <aside>
+        <div class="sidebar-brand">Painel Admin</div>
+        <ul class="sidebar-menu">
+            <li class="active" onclick="switchTab('dashboard', this)">Dashboard</li>
+            <li onclick="switchTab('clientes', this)">Clientes</li>
+            <li onclick="switchTab('vendedores', this)">Vendedores</li>
+            <li onclick="switchTab('produtos', this)">Produtos & Estoque</li>
+            <li onclick="switchTab('vendas', this)">Histórico de Vendas</li>
+        </ul>
+        <div class="sidebar-footer">
+            <button class="btn-logout" onclick="logout()">Sair</button>
         </div>
+    </aside>
 
-        <!-- PAINEL PRINCIPAL -->
-        <div id="painelPrincipal">
-            <div class="user-info">
-                <span>👤 Logado como: <strong id="lblUsuarioLogado">Admin</strong></span>
-                <button class="btn-sair" onclick="fazerLogout()">Sair</button>
+    <main>
+        <header>
+            <h1 id="page-title">Dashboard</h1>
+            <span id="user-info" style="font-weight: 500; color: var(--text-light);"></span>
+        </header>
+
+        <div class="content-body">
+            
+            <!-- TAB: DASHBOARD -->
+            <div id="dashboard" class="tab-content active">
+                <div class="card">
+                    <h3>Visão Geral do Sistema</h3>
+                    <p>Bem-vindo ao painel administrativo. Utilize o menu ao lado para gerenciar sua distribuidora.</p>
+                </div>
             </div>
 
-            <!-- Menu de Abas -->
-            <div class="tabs">
-                <button class="tab-btn active" onclick="mudarAba('estoque', event)">📦 Estoque</button>
-                <button class="tab-btn" onclick="mudarAba('vendedores', event)" id="abaBtnVendedores">👔 Vendedores</button>
-                <button class="tab-btn" onclick="mudarAba('clientes', event)">👥 Clientes</button>
-                <button class="tab-btn" onclick="mudarAba('vendas', event)">🛒 Nova Venda</button>
-                <button class="tab-btn" onclick="mudarAba('historico', event)">📊 Histórico</button>
+            <!-- TAB: CLIENTES -->
+            <div id="clientes" class="tab-content">
+                <div class="card">
+                    <h3>Cadastrar Novo Cliente</h3>
+                    <form id="form-cliente" onsubmit="cadastrarCliente(event)">
+                        <div class="form-group">
+                            <label>Nome / Razão Social</label>
+                            <input type="text" id="cli-nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label>CNPJ / CPF</label>
+                            <input type="text" id="cli-doc">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone / WhatsApp</label>
+                            <input type="text" id="cli-tel">
+                        </div>
+                        <!-- CAMPO NOVO: ESCOLHER O VENDEDOR RESPONSÁVEL -->
+                        <div class="form-group">
+                            <label>Vendedor Responsável</label>
+                            <select id="cli-vendedor" required>
+                                <option value="">Carregando vendedores...</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn">Salvar Cliente</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Clientes Cadastrados</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Documento</th>
+                                <th>Telefone</th>
+                                <th>Vendedor Responsável</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-clientes">
+                            <tr><td colspan="4" style="text-align: center;">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <!-- ABA 1: ESTOQUE -->
-            <div id="estoque" class="card active">
-                <h2>Gerenciar Estoque e Catálogo</h2>
-                <div class="form-group">
-                    <label>Nome do Produto:</label>
-                    <input type="text" id="prodNome" placeholder="Ex: Chocolate KitKat, Coca-Cola 2L...">
+            <!-- TAB: VENDEDORES -->
+            <div id="vendedores" class="tab-content">
+                <div class="card">
+                    <h3>Cadastrar Novo Vendedor</h3>
+                    <form id="form-vendedor" onsubmit="cadastrarVendedor(event)">
+                        <div class="form-group">
+                            <label>Nome do Vendedor</label>
+                            <input type="text" id="vend-nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail de Acesso</label>
+                            <input type="email" id="vend-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Senha Temporária</label>
+                            <input type="password" id="vend-senha" required>
+                        </div>
+                        <button type="submit" class="btn">Criar Vendedor</button>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label>Categoria:</label>
-                    <select id="prodCat">
-                        <option value="Balas e Pirulitos">Balas e Pirulitos</option>
-                        <option value="Bebidas">Bebidas</option>
-                        <option value="Biscoitos">Biscoitos</option>
-                        <option value="Descartáveis">Descartáveis</option>
-                        <option value="Doces">Doces</option>
-                        <option value="Drops e Chicletes">Drops e Chicletes</option>
-                        <option value="Higiene">Higiene</option>
-                        <option value="Limpeza">Limpeza</option>
-                        <option value="Mercearia">Mercearia</option>
-                        <option value="Papelaria">Papelaria</option>
-                    </select>
+
+                <div class="card">
+                    <h3>Vendedores Cadastrados</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-vendedores">
+                            <tr><td colspan="3" style="text-align: center;">Carregando...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="form-group">
-                    <label>Quantidade em Estoque:</label>
-                    <input type="number" id="prodQtd" placeholder="Ex: 50">
-                </div>
-                <div class="form-group">
-                    <label>Preço Unitário (R$):</label>
-                    <input type="number" step="0.01" id="prodPreco" placeholder="Ex: 8.50">
-                </div>
-                <button class="btn-salvar" onclick="salvarEstoque()">Salvar e Atualizar Catálogo</button>
-                
-                <input type="text" id="filtroEstoque" placeholder="🔍 Buscar no estoque..." onkeyup="carregarEstoque()" style="margin-top:20px;">
-                <ul id="listaEstoque"></ul>
             </div>
 
-            <!-- ABA 2: VENDEDORES (Apenas visível para Admin) -->
-            <div id="vendedores" class="card">
-                <h2>Cadastro de Vendedores</h2>
-                <div class="form-group">
-                    <label>Nome do Vendedor:</label>
-                    <input type="text" id="vendNome" placeholder="Ex: Carlos Silva">
+            <!-- TAB: PRODUTOS -->
+            <div id="produtos" class="tab-content">
+                <div class="card">
+                    <h3>Cadastrar Produto</h3>
+                    <form id="form-produto" onsubmit="cadastrarProduto(event)">
+                        <div class="form-group">
+                            <label>Nome do Produto</label>
+                            <input type="text" id="prod-nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Preço (R$)</label>
+                            <input type="number" step="0.01" id="prod-preco" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Estoque Atual</label>
+                            <input type="number" id="prod-estoque" required>
+                        </div>
+                        <button type="submit" class="btn">Salvar Produto</button>
+                    </form>
                 </div>
-                <button class="btn-salvar" onclick="salvarVendedor()">Cadastrar Vendedor</button>
-                <ul id="listaVendedores" style="margin-top:20px;"></ul>
+
+                <div class="card">
+                    <h3>Estoque de Produtos</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Preço Unitário</th>
+                                <th>Estoque</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-produtos">
+                            <tr><td colspan="3" style="text-align: center;">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <!-- ABA 3: CLIENTES -->
-            <div id="clientes" class="card">
-                <h2>Cadastro de Clientes</h2>
-                <div class="form-group">
-                    <label>Nome do Cliente / Estabelecimento:</label>
-                    <input type="text" id="cliNome" placeholder="Ex: Mercearia do João">
+            <!-- TAB: VENDAS -->
+            <div id="vendas" class="tab-content">
+                <div class="card">
+                    <h3>Histórico Geral de Vendas</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Cliente</th>
+                                <th>Vendedor</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-vendas">
+                            <tr><td colspan="4" style="text-align: center;">Carregando...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="form-group">
-                    <label>Telefone / WhatsApp:</label>
-                    <input type="text" id="cliTel" placeholder="Ex: (21) 99999-9999">
-                </div>
-                <div class="form-group">
-                    <label>CPF ou CNPJ:</label>
-                    <input type="text" id="cliDoc" placeholder="Ex: 00.000.000/0001-00">
-                </div>
-                <div class="form-group">
-                    <label>Endereço Completo:</label>
-                    <input type="text" id="cliEnd" placeholder="Ex: Rua Exemplo, 123">
-                </div>
-                <button class="btn-salvar" onclick="salvarCliente()">Cadastrar Cliente</button>
-                
-                <ul id="listaClientes" style="margin-top:20px;"></ul>
             </div>
 
-            <!-- ABA 4: REGISTRAR VENDA -->
-            <div id="vendas" class="card">
-                <h2>Registrar Nova Venda</h2>
-                <div class="form-group">
-                    <label>Selecione o Cliente:</label>
-                    <select id="vendaCliente"></select>
-                </div>
-                <div class="form-group">
-                    <label>Selecione o Produto:</label>
-                    <select id="vendaProduto" onchange="atualizarPrecoVenda()"></select>
-                </div>
-                <div class="form-group">
-                    <label>Quantidade Vendida:</label>
-                    <input type="number" id="vendaQtd" value="1" min="1">
-                </div>
-                <div class="form-group">
-                    <label>Valor Total (R$):</label>
-                    <input type="text" id="vendaTotal" readonly style="background: #e9ecef;">
-                </div>
-                <button class="btn-salvar" onclick="registrarVenda()">Concluir Venda e Dar Baixa</button>
-            </div>
-
-            <!-- ABA 5: HISTÓRICO DE VENDAS -->
-            <div id="historico" class="card">
-                <h2>Histórico de Vendas</h2>
-                <ul id="listaHistorico"></ul>
-            </div>
-
-            <a href="index.html" class="btn-voltar">← Ir para o Catálogo Público (Clientes)</a>
         </div>
-    </div>
+    </main>
 
     <script>
-        let usuarioLogado = localStorage.getItem('usuario_logado') || null;
+        // CONFIGURAÇÃO DO SUPABASE (Substitua pelas suas chaves)
+        const SUPABASE_URL = 'SUA_URL_SUPABASE';
+        const SUPABASE_ANON_KEY = 'SUA_CHAVE_ANON';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        function verificarSessao() {
-            if (usuarioLogado) {
-                document.getElementById('telaLogin').style.display = 'none';
-                document.getElementById('painelPrincipal').style.display = 'block';
-                document.getElementById('lblUsuarioLogado').innerText = usuarioLogado === 'admin' ? 'Administrador' : usuarioLogado;
-                
-                // Se for vendedor, oculta a aba de gerenciar vendedores
-                if (usuarioLogado !== 'admin') {
-                    document.getElementById('abaBtnVendedores').style.display = 'none';
-                }
-                carregarEstoque();
-            } else {
-                document.getElementById('telaLogin').style.display = 'block';
-                document.getElementById('painelPrincipal').style.display = 'none';
-                popularSelectLogin();
+        // Verificar autenticação ao carregar a página
+        window.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'index.html';
+                return;
             }
+            document.getElementById('user-info').innerText = session.user.email;
+            carregarDadosIniciais();
+        });
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+            
+            const titles = {
+                'dashboard': 'Dashboard',
+                'clientes': 'Gerenciamento de Clientes',
+                'vendedores': 'Gerenciamento de Vendedores',
+                'produtos': 'Produtos & Estoque',
+                'vendas': 'Histórico de Vendas'
+            };
+            document.getElementById('page-title').innerText = titles[tabId];
         }
 
-        function popularSelectLogin() {
-            let sel = document.getElementById('loginVendedor');
-            sel.innerHTML = '<option value="admin">Administrador (Acesso Total)</option>';
-            let vendedores = JSON.parse(localStorage.getItem('admin_vendedores')) || [];
-            vendedores.forEach(v => {
-                sel.innerHTML += `<option value="${v}">${v}</option>`;
+        async function carregarDadosIniciais() {
+            carregarClientes();
+            carregarVendedores();
+            carregarProdutos();
+            carregarVendas();
+            carregarSelectVendedores();
+        }
+
+        // --- CARREGAR SELECT DE VENDEDORES NO CADASTRO DE CLIENTES ---
+        async function carregarSelectVendedores() {
+            const select = document.getElementById('cli-vendedor');
+            select.innerHTML = '<option value="">Selecione o vendedor...</option>';
+            
+            const { data, error } = await supabase.from('profiles').select('id, nome').eq('role', 'vendedor');
+            if (error) {
+                console.error('Erro ao carregar vendedores:', error);
+                return;
+            }
+
+            data.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.id;
+                opt.textContent = v.nome || v.id;
+                select.appendChild(opt);
             });
         }
 
-        function fazerLogin() {
-            let sel = document.getElementById('loginVendedor').value;
-            localStorage.setItem('usuario_logado', sel);
-            usuarioLogado = sel;
-            verificarSessao();
+        // --- CLIENTES ---
+        async function cadastrarCliente(event) {
+            event.preventDefault();
+            const nome = document.getElementById('cli-nome').value;
+            const documento = document.getElementById('cli-doc').value;
+            const telefone = document.getElementById('cli-tel').value;
+            const vendedorId = document.getElementById('cli-vendedor').value;
+
+            const { error } = await supabase.from('clientes').insert([
+                { nome, documento, telefone, user_id: vendedorId }
+            ]);
+
+            if (error) {
+                alert('Erro ao cadastrar cliente: ' + error.message);
+            } else {
+                alert('Cliente cadastrado e vinculado com sucesso!');
+                document.getElementById('form-cliente').reset();
+                carregarClientes();
+            }
         }
 
-        function fazerLogout() {
-            localStorage.removeItem('usuario_logado');
-            usuarioLogado = null;
-            verificarSessao();
-        }
+        async function carregarClientes() {
+            const tbody = document.getElementById('tabela-clientes');
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Carregando...</td></tr>';
 
-        function mudarAba(abaId, evt) {
-            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(abaId).classList.add('active');
-            evt.currentTarget.classList.add('active');
-            
-            if(abaId === 'vendas') carregarSelectsVenda();
-            if(abaId === 'historico') carregarHistorico();
-            if(abaId === 'clientes') carregarClientes();
-            if(abaId === 'vendedores') carregarVendedores();
-            if(abaId === 'estoque') carregarEstoque();
+            // Buscamos clientes fazendo join com a tabela de profiles para pegar o nome do vendedor
+            const { data, error } = await supabase
+                .from('clientes')
+                .select(`
+                    *,
+                    profiles (nome)
+                `);
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: red;">Erro ao carregar</td></tr>`;
+                return;
+            }
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Nenhum cliente cadastrado.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            data.forEach(c => {
+                const nomeVendedor = c.profiles ? c.profiles.nome : 'Não atribuído';
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${c.nome}</td>
+                        <td>${c.documento || '-'}</td>
+                        <td>${c.telefone || '-'}</td>
+                        <td><span class="badge">${nomeVendedor}</span></td>
+                    </tr>
+                `;
+            });
         }
 
         // --- VENDEDORES ---
-        function salvarVendedor() {
-            let nome = document.getElementById('vendNome').value.trim();
-            if(!nome) return alert('Digite o nome do vendedor!');
-            
-            let vendedores = JSON.parse(localStorage.getItem('admin_vendedores')) || [];
-            if(vendedores.includes(nome)) return alert('Este vendedor já está cadastrado!');
-            
-            vendedores.push(nome);
-            localStorage.setItem('admin_vendedores', JSON.stringify(vendedores));
-            document.getElementById('vendNome').value = '';
-            carregarVendedores();
-            alert('Vendedor cadastrado com sucesso!');
+        async function cadastrarVendedor(event) {
+            event.preventDefault();
+            alert('Funcionalidade de criação de login via Supabase Auth requer Edge Function ou inserção direta no painel. Cadastre o usuário na aba Auth do Supabase e o perfil correspondente.');
         }
 
-        function carregarVendedores() {
-            let vendedores = JSON.parse(localStorage.getItem('admin_vendedores')) || [];
-            let lista = document.getElementById('listaVendedores');
-            lista.innerHTML = '';
-            if(vendedores.length === 0) {
-                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum vendedor cadastrado.</li>';
+        async function carregarVendedores() {
+            const tbody = document.getElementById('tabela-vendedores');
+            const { data, error } = await supabase.from('profiles').select('*').eq('role', 'vendedor');
+            
+            if (error || !data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align: center;">Nenhum vendedor encontrado.</td></tr>`;
                 return;
             }
-            vendedores.forEach((v, idx) => {
-                lista.innerHTML += `<li><div><strong>${v}</strong></div> <button class="btn-excluir" onclick="removerVendedor(${idx})">Excluir</button></li>`;
+
+            tbody.innerHTML = '';
+            data.forEach(v => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${v.nome || 'Sem nome'}</td>
+                        <td>${v.email || '-'}</td>
+                        <td>Ativo</td>
+                    </tr>
+                `;
             });
         }
 
-        function removerVendedor(idx) {
-            let vendedores = JSON.parse(localStorage.getItem('admin_vendedores')) || [];
-            vendedores.splice(idx, 1);
-            localStorage.setItem('admin_vendedores', JSON.stringify(vendedores));
-            carregarVendedores();
-        }
+        // --- PRODUTOS ---
+        async function cadastrarProduto(event) {
+            event.preventDefault();
+            const nome = document.getElementById('prod-nome').value;
+            const preco = parseFloat(document.getElementById('prod-preco').value);
+            const estoque = parseInt(document.getElementById('prod-estoque').value);
 
-        // --- ESTOQUE ---
-        function salvarEstoque() {
-            let produto = document.getElementById('prodNome').value.trim();
-            let categoria = document.getElementById('prodCat').value;
-            let qtd = parseInt(document.getElementById('prodQtd').value);
-            let preco = parseFloat(document.getElementById('prodPreco').value);
-
-            if(!produto || isNaN(qtd) || isNaN(preco)) return alert('Preencha todos os campos!');
-
-            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
-            let existente = estoque.find(p => p.produto.toLowerCase() === produto.toLowerCase());
-            
-            if(existente) {
-                existente.qtd = qtd;
-                existente.preco = preco;
-                existente.categoria = categoria;
+            const { error } = await supabase.from('produtos').insert([{ nome, preco, estoque }]);
+            if (error) {
+                alert('Erro ao cadastrar produto: ' + error.message);
             } else {
-                estoque.push({produto, categoria, qtd, preco});
+                alert('Produto cadastrado com sucesso!');
+                document.getElementById('form-produto').reset();
+                carregarProdutos();
             }
-
-            localStorage.setItem('estoque_frazao_v2', JSON.stringify(estoque));
-            document.getElementById('prodNome').value = '';
-            document.getElementById('prodQtd').value = '';
-            document.getElementById('prodPreco').value = '';
-            carregarEstoque();
-            alert('Produto salvo!');
         }
 
-        function carregarEstoque() {
-            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
-            let filtro = document.getElementById('filtroEstoque').value.toLowerCase();
-            let lista = document.getElementById('listaEstoque');
-            lista.innerHTML = '';
-
-            let filtrados = estoque.filter(i => i.produto.toLowerCase().includes(filtro));
-            if(filtrados.length === 0) {
-                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum produto cadastrado.</li>';
+        async function carregarProdutos() {
+            const tbody = document.getElementById('tabela-produtos');
+            const { data, error } = await supabase.from('produtos').select('*');
+            if (error || !data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align: center;">Nenhum produto cadastrado.</td></tr>`;
                 return;
             }
-
-            filtrados.forEach((item) => {
-                let idx = estoque.findIndex(p => p.produto === item.produto);
-                let botaoExcluir = usuarioLogado === 'admin' ? `<button class="btn-excluir" onclick="removerEstoque(${idx})">Excluir</button>` : '';
-                lista.innerHTML += `
-                    <li>
-                        <div><strong>${item.produto}</strong> <small>(${item.categoria})</small><br>
-                        Estoque: <strong>${item.qtd}</strong> | R$ ${item.preco ? item.preco.toFixed(2) : '0.00'}</div>
-                        ${botaoExcluir}
-                    </li>`;
+            tbody.innerHTML = '';
+            data.forEach(p => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${p.nome}</td>
+                        <td>R$ ${p.preco.toFixed(2)}</td>
+                        <td>${p.estoque}</td>
+                    </tr>
+                `;
             });
-        }
-
-        function removerEstoque(idx) {
-            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
-            estoque.splice(idx, 1);
-            localStorage.setItem('estoque_frazao_v2', JSON.stringify(estoque));
-            carregarEstoque();
-        }
-
-        // --- CLIENTES (Vinculados ao vendedor logado) ---
-        function salvarCliente() {
-            let nome = document.getElementById('cliNome').value.trim();
-            let tel = document.getElementById('cliTel').value.trim();
-            let doc = document.getElementById('cliDoc').value.trim();
-            let end = document.getElementById('cliEnd').value.trim();
-
-            if(!nome || !tel) return alert('Preencha Nome e Telefone!');
-
-            let clientes = JSON.parse(localStorage.getItem('admin_clientes')) || [];
-            // Associa o cliente ao vendedor logado (se for admin, salva como 'admin' ou geral)
-            let dono = usuarioLogado; 
-            
-            clientes.push({nome, tel, doc, end, vendedor: dono});
-            localStorage.setItem('admin_clientes', JSON.stringify(clientes));
-
-            document.getElementById('cliNome').value = '';
-            document.getElementById('cliTel').value = '';
-            document.getElementById('cliDoc').value = '';
-            document.getElementById('cliEnd').value = '';
-            
-            carregarClientes();
-            alert('Cliente cadastrado com sucesso!');
-        }
-
-        function carregarClientes() {
-            let clientes = JSON.parse(localStorage.getItem('admin_clientes')) || [];
-            let lista = document.getElementById('listaClientes');
-            lista.innerHTML = '';
-
-            // Se for admin, vê todos. Se for vendedor, filtra apenas os dele.
-            let meusClientes = clientes.map((c, originalIdx) => ({...c, originalIdx})).filter(c => {
-                if(usuarioLogado === 'admin') return true;
-                return c.vendedor === usuarioLogado;
-            });
-
-            if(meusClientes.length === 0) {
-                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum cliente cadastrado.</li>';
-                return;
-            }
-
-            meusClientes.forEach((c) => {
-                let docInfo = c.doc ? `<br>Doc: ${c.doc}` : '';
-                let endInfo = c.end ? `<br>End: ${c.end}` : '';
-                let vendInfo = usuarioLogado === 'admin' ? `<br><span style="color:#e67e22;">Vendedor: ${c.vendedor}</span>` : '';
-                lista.innerHTML += `
-                    <li>
-                        <div>
-                            <strong>${c.nome}</strong><br>
-                            <small>Tel: ${c.tel} ${docInfo} ${endInfo} ${vendInfo}</small>
-                        </div> 
-                        <button class="btn-excluir" onclick="removerCliente(${c.originalIdx})">Excluir</button>
-                    </li>`;
-            });
-        }
-
-        function removerCliente(idx) {
-            let clientes = JSON.parse(localStorage.getItem('admin_clientes')) || [];
-            clientes.splice(idx, 1);
-            localStorage.setItem('admin_clientes', JSON.stringify(clientes));
-            carregarClientes();
         }
 
         // --- VENDAS ---
-        function carregarSelectsVenda() {
-            let clientes = JSON.parse(localStorage.getItem('admin_clientes')) || [];
-            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
-            
-            // Filtra clientes para o select da venda baseada em quem está logado
-            let clientesPermitidos = clientes.filter(c => usuarioLogado === 'admin' || c.vendedor === usuarioLogado);
+        async function carregarVendas() {
+            const tbody = document.getElementById('tabela-vendas');
+            const { data, error } = await supabase
+                .from('vendas')
+                .select(`
+                    *,
+                    clientes (nome),
+                    profiles (nome)
+                `);
 
-            let selCli = document.getElementById('vendaCliente');
-            selCli.innerHTML = '';
-            if(clientesPermitidos.length === 0) selCli.innerHTML = '<option value="">Cadastre um cliente primeiro</option>';
-            clientesPermitidos.forEach(c => { selCli.innerHTML += `<option value="${c.nome}">${c.nome}</option>`; });
-
-            let selProd = document.getElementById('vendaProduto');
-            selProd.innerHTML = '';
-            if(estoque.length === 0) selProd.innerHTML = '<option value="">Adicione produtos no estoque</option>';
-            estoque.forEach(p => { 
-                let precoVal = p.preco || 0;
-                selProd.innerHTML += `<option value="${p.produto}" data-preco="${precoVal}" data-qtd="${p.qtd}">${p.produto} [${p.categoria}] (Estoque: ${p.qtd} | R$ ${precoVal.toFixed(2)})</option>`; 
-            });
-            atualizarPrecoVenda();
-        }
-
-        function atualizarPrecoVenda() {
-            let sel = document.getElementById('vendaProduto');
-            let opt = sel.options[sel.selectedIndex];
-            if(!opt) return;
-            let preco = parseFloat(opt.getAttribute('data-preco')) || 0;
-            let qtd = parseInt(document.getElementById('vendaQtd').value) || 1;
-            document.getElementById('vendaTotal').value = (preco * qtd).toFixed(2);
-        }
-
-        document.getElementById('vendaQtd').addEventListener('input', atualizarPrecoVenda);
-
-        function registrarVenda() {
-            let cliente = document.getElementById('vendaCliente').value;
-            let produtoNome = document.getElementById('vendaProduto').value;
-            let qtdVendida = parseInt(document.getElementById('vendaQtd').value);
-            let total = document.getElementById('vendaTotal').value;
-
-            if(!cliente || !produtoNome || isNaN(qtdVendida)) return alert('Preencha os dados da venda!');
-
-            let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
-            let prod = estoque.find(p => p.produto === produtoNome);
-
-            if(!prod || prod.qtd < qtdVendida) return alert('Estoque insuficiente!');
-
-            prod.qtd -= qtdVendida;
-            localStorage.setItem('estoque_frazao_v2', JSON.stringify(estoque));
-
-            let historico = JSON.parse(localStorage.getItem('admin_vendas')) || [];
-            let dataHora = new Date().toLocaleString('pt-BR');
-            historico.unshift({ data: dataHora, cliente, produto: produtoNome, qtd: qtdVendida, total, vendedor: usuarioLogado });
-            localStorage.setItem('admin_vendas', JSON.stringify(historico));
-
-            alert('Venda registrada com sucesso!');
-            carregarSelectsVenda();
-        }
-
-        // --- HISTÓRICO ---
-        function carregarHistorico() {
-            let historico = JSON.parse(localStorage.getItem('admin_vendas')) || [];
-            let lista = document.getElementById('listaHistorico');
-            lista.innerHTML = '';
-
-            let historicoPermitido = historico.filter(v => usuarioLogado === 'admin' || v.vendedor === usuarioLogado);
-
-            if(historicoPermitido.length === 0) {
-                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhuma venda registrada.</li>';
+            if (error || !data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Nenhuma venda registrada.</td></tr>`;
                 return;
             }
-            historicoPermitido.forEach(v => {
-                let vendInfo = usuarioLogado === 'admin' ? `<br><small style="color:#e67e22;">Vendedor: ${v.vendedor}</small>` : '';
-                lista.innerHTML += `
-                    <li class="venda-item">
-                        <div class="venda-header">
-                            <span>🛒 ${v.cliente}</span>
-                            <span style="color: #27ae60;">R$ ${v.total}</span>
-                        </div>
-                        <div style="font-size: 13px; color: #555;">
-                            Produto: <strong>${v.produto}</strong> (Qtd: ${v.qtd})${vendInfo}<br>
-                            <small style="color: #888;">Data: ${v.data}</small>
-                        </div>
-                    </li>`;
+
+            tbody.innerHTML = '';
+            data.forEach(v => {
+                const dataFormatada = new Date(v.created_at).toLocaleDateString('pt-BR');
+                const nomeCliente = v.clientes ? v.clientes.nome : 'Cliente não encontrado';
+                const nomeVendedor = v.profiles ? v.profiles.nome : 'Vendedor não encontrado';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${dataFormatada}</td>
+                        <td>${nomeCliente}</td>
+                        <td>${nomeVendedor}</td>
+                        <td>R$ ${v.total ? v.total.toFixed(2) : '0.00'}</td>
+                    </tr>
+                `;
             });
         }
 
-        window.onload = verificarSessao;
+        async function logout() {
+            await supabase.auth.signOut();
+            window.location.href = 'index.html';
+        }
     </script>
 </body>
 </html>

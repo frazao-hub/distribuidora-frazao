@@ -34,7 +34,6 @@
         ul { list-style: none; padding: 0; margin-top: 10px; }
         li { background: #f9f9f9; padding: 12px; margin-top: 8px; border-left: 4px solid #27ae60; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; font-size: 14px; }
         
-        .acoes-btn { display: flex; gap: 6px; }
         .btn-excluir { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
         .btn-excluir:hover { background: #c0392b; }
         
@@ -91,7 +90,7 @@
             <ul id="listaEstoque"></ul>
         </div>
 
-        <!-- ABA 2: CLIENTES (Atualizada com CPF/CNPJ e Endereço) -->
+        <!-- ABA 2: CLIENTES -->
         <div id="clientes" class="card">
             <h2>Cadastro de Clientes</h2>
             <div class="form-group">
@@ -221,14 +220,17 @@
             carregarEstoque();
         }
 
-        // --- CLIENTES (Com CPF/CNPJ e Endereço) ---
+        // --- CLIENTES ---
         function salvarCliente() {
             let nome = document.getElementById('cliNome').value.trim();
             let tel = document.getElementById('cliTel').value.trim();
             let doc = document.getElementById('cliDoc').value.trim();
             let end = document.getElementById('cliEnd').value.trim();
 
-            if(!nome || !tel) return alert('Preencha pelo menos o Nome e o Telefone do cliente!');
+            if(!nome || !tel) {
+                alert('Preencha pelo menos o Nome e o Telefone do cliente!');
+                return;
+            }
 
             let clientes = JSON.parse(localStorage.getItem('admin_clientes')) || [];
             clientes.push({nome, tel, doc, end});
@@ -247,10 +249,12 @@
             let clientes = JSON.parse(localStorage.getItem('admin_clientes')) || [];
             let lista = document.getElementById('listaClientes');
             lista.innerHTML = '';
+            
             if(clientes.length === 0) {
                 lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum cliente cadastrado.</li>';
                 return;
             }
+
             clientes.forEach((c, idx) => {
                 let docInfo = c.doc ? `<br>Doc: ${c.doc}` : '';
                 let endInfo = c.end ? `<br>End: ${c.end}` : '';

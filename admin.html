@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - Distribuidora Frazão</title>
     
-    <link rel="manifest" href="manifest.json?v=2026">
+    <link rel="manifest" href="manifest.json?v=2026.2">
     <meta name="theme-color" content="#27ae60">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -31,10 +31,11 @@
         h2 { color: #27ae60; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-top: 0; font-size: 20px; }
         .form-group { margin-bottom: 15px; text-align: left; }
         label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #444; }
-        input, select, textarea, button { padding: 12px; width: 100%; box-sizing: border-box; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
+        input, select, textarea { padding: 12px; width: 100%; box-sizing: border-box; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
         
-        button.btn-salvar { background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 5px; min-height: 48px; }
-        button.btn-salvar:active { background: #1e8449; }
+        /* Botões com altura generosa e toque otimizado para celulares */
+        button.btn-salvar { background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; padding: 14px; font-size: 16px; border-radius: 4px; display: block; }
+        button.btn-salvar:active { background: #1e8449; transform: scale(0.98); }
         
         ul { list-style: none; padding: 0; margin-top: 10px; text-align: left; }
         li { background: #f9f9f9; padding: 12px; margin-top: 8px; border-left: 4px solid #27ae60; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; font-size: 14px; }
@@ -92,7 +93,7 @@
         <!-- TELA DE LOGIN -->
         <div id="telaLogin">
             <h2>Distribuidora Frazão</h2>
-            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Painel Atualizado (v2026)</p>
+            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Painel Administrativo</p>
             <div class="form-group">
                 <label>Selecione o Usuário:</label>
                 <select id="loginUsuario" onchange="verificarSeAdminLogin()">
@@ -115,11 +116,11 @@
 
             <!-- Menu de Abas -->
             <div class="tabs">
-                <button class="tab-btn active" onclick="mudarAba('estoque', event)">📦 Estoque</button>
-                <button class="tab-btn" onclick="mudarAba('vendedores', event)" id="abaBtnVendedores">👔 Vendedores</button>
-                <button class="tab-btn" onclick="mudarAba('clientes', event)">👥 Clientes</button>
-                <button class="tab-btn" onclick="mudarAba('vendas', event)">🛒 Venda</button>
-                <button class="tab-btn" onclick="mudarAba('historico', event)">📊 Histórico</button>
+                <button type="button" class="tab-btn active" onclick="mudarAba('estoque', event)">📦 Estoque</button>
+                <button type="button" class="tab-btn" onclick="mudarAba('vendedores', event)" id="abaBtnVendedores">👔 Vendedores</button>
+                <button type="button" class="tab-btn" onclick="mudarAba('clientes', event)">👥 Clientes</button>
+                <button type="button" class="tab-btn" onclick="mudarAba('vendas', event)">🛒 Venda</button>
+                <button type="button" class="tab-btn" onclick="mudarAba('historico', event)">📊 Histórico</button>
             </div>
 
             <!-- ABA 1: ESTOQUE / PRODUTOS -->
@@ -181,10 +182,10 @@
                     <input type="text" id="vendNome" placeholder="Ex: Carlos Silva">
                 </div>
                 <div class="form-group">
-                    <label>Senha de Acesso:</label>
-                    <input type="password" id="vendSenha" placeholder="Digite uma senha para o vendedor">
+                    <label>Senha de Acesso (6 números ou texto):</label>
+                    <input type="password" id="vendSenha" placeholder="Digite uma senha">
                 </div>
-                <!-- Botão com escuta de clique direta via JS para evitar travamento mobile -->
+                <!-- Botão blindado contra travamento de toque no celular -->
                 <button type="button" class="btn-salvar" id="btnCadastrarVendedor">Cadastrar Vendedor</button>
                 <ul id="listaVendedores" style="margin-top:20px;"></ul>
             </div>
@@ -278,13 +279,17 @@
 
         window.addEventListener('firebase-pronto', async () => {
             verificarSessao();
-            // Vincula o botão de cadastro de vendedor via código para forçar o clique no mobile
+            
+            // Vinculação de toque forçada via JavaScript para ignorar problemas do teclado virtual mobile
             let btnCadV = document.getElementById('btnCadastrarVendedor');
             if(btnCadV) {
-                btnCadV.onclick = function(e) {
+                let executarCadastro = function(e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     salvarVendedor();
                 };
+                btnCadV.addEventListener('click', executarCadastro);
+                btnCadV.addEventListener('touchend', executarCadastro);
             }
         });
 
@@ -430,7 +435,7 @@
             }
             cacheVendedores.forEach((v) => {
                 let btnExc = usuarioLogado === 'admin' ? `<button type="button" class="btn-excluir" onclick="removerVendedor('${v.id}')">Excluir</button>` : '';
-                lista.innerHTML += `<li><div><strong>${v.nome}</strong> <small style="color:#888;">(Senha ok)</small></div> ${btnExc}</li>`;
+                lista.innerHTML += `<li><div><strong>${v.nome}</strong> <small style="color:#888;">(Senha cadastrada)</small></div> ${btnExc}</li>`;
             });
         }
 

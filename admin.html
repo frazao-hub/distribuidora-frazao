@@ -1,4 +1,48 @@
-async function salvarCliente() {
+// --- FUNÇÕES DE VENDEDORES ---
+        async function salvarVendedor() {
+            let nomeElem = document.getElementById('vendNome');
+            let senhaElem = document.getElementById('vendSenha');
+            
+            if(!nomeElem || !senhaElem) return alert('Erro nos campos.');
+
+            let nome = nomeElem.value.trim();
+            let senha = senhaElem.value.trim();
+
+            if(!nome || !senha) return alert('Digite o nome e a senha do vendedor!');
+            
+            let jaExiste = cacheVendedores.some(v => v.nome.toLowerCase() === nome.toLowerCase());
+            if(jaExiste) {
+                return alert('Este vendedor já está cadastrado!');
+            }
+            
+            try {
+                await addDoc(collection(window.db, "vendedores"), { nome, senha });
+                
+                nomeElem.value = '';
+                senhaElem.value = '';
+                
+                await carregarTudoDoFirebase();
+                carregarVendedores();
+                alert('Vendedor cadastrado com sucesso!');
+            } catch(e) {
+                alert('Erro ao salvar: ' + e.message);
+            }
+        }
+
+        async function removerVendedor(id) {
+            if(!confirm('Deseja excluir este vendedor?')) return;
+            try {
+                await deleteDoc(doc(window.db, "vendedores", id));
+                await carregarTudoDoFirebase();
+                carregarVendedores();
+                alert('Vendedor excluído com sucesso!');
+            } catch(e) { 
+                alert('Erro ao excluir: ' + e.message); 
+            }
+        }
+
+        // --- FUNÇÕES DE CLIENTES ---
+        async function salvarCliente() {
             let nome = document.getElementById('cliNome').value.trim();
             let tel = document.getElementById('cliTel').value.trim();
             let doc = document.getElementById('cliDoc').value.trim();
@@ -8,7 +52,6 @@ async function salvarCliente() {
             if(!nome || !tel) return alert('Preencha Nome e Telefone!');
 
             try {
-                // Adiciona e TRAVA a execução até o Firebase confirmar que salvou
                 await addDoc(collection(window.db, "clientes"), { nome, tel, doc, end, vendedor: vendedorResp });
                 
                 document.getElementById('cliNome').value = '';
@@ -16,13 +59,67 @@ async function salvarCliente() {
                 document.getElementById('cliDoc').value = '';
                 document.getElementById('cliEnd').value = '';
                 
-                // Recarrega todos os dados do banco antes de atualizar a tela
                 await carregarTudoDoFirebase();
-                
-                // Só depois desenha a lista nova
                 carregarClientes();
                 alert('Cliente salvo!');
             } catch(e) { 
                 alert('Erro: ' + e.message); 
+            }
+        }
+
+        async function removerCliente(id) {
+            if(!confirm('Deseja excluir este cliente?')) return;
+            try {
+                await deleteDoc(doc(window.db, "clientes", id));
+                await carregarTudoDoFirebase();
+                carregarClientes();
+                alert('Cliente excluído com sucesso!');
+            } catch(e) { 
+                alert('Erro ao excluir: ' + e.message); 
+            }
+        }
+
+        // --- FUNÇÃO DE LIMPEZA AUTOMÁTICA ---
+        async function limparDuplicadosAutomaticamente() {
+            if(!confirm('Deseja limpar todos os vendedores e clientes duplicados do banco de dados?')) return;
+            
+            try {
+                // 1. Limpar Vendedores Duplicados
+                let snapV = await getDocs(collection(window.db, "vendedores"));
+                let nomesVistosV = new Set();
+                let apagadosV = 0;
+
+                for (let d of snapV.docs) {
+                    let nome = (d.data().nome || '').trim().toLowerCase();
+                    if (nomesVistosV.has(nome)) {
+                        await deleteDoc(doc(window.db, "vendedores", d.id));
+                        apagadosV++;
+                    } else {
+                        nomesVistosV.add(nome);
+                    }
+                }
+
+                // 2. Limpar Clientes Duplicados
+                let snapC = await getDocs(collection(window.db, "clientes"));
+                let nomesVistosC = new Set();
+                let apagadosC = 0;
+
+                for (let d of snapC.docs) {
+                    let nome = (d.data().nome || '').trim().toLowerCase();
+                    if (nomesVistosC.has(nome)) {
+                        await deleteDoc(doc(window.db, "clientes", d.id));
+                        apagadosC++;
+                    } else {
+                        nomesVistosC.add(nome);
+                    }
+                }
+
+                await carregarTudoDoFirebase();
+                carregarVendedores();
+                carregarClientes();
+
+                alert(`Limpeza concluída!\n- Vendedores duplicados removidos: ${apagadosV}\n- Clientes duplicados removidos: ${apagadosC}`);
+            } catch(e) {
+                alert('Erro ao limpar duplicados: ' + e.message);
             }
         }

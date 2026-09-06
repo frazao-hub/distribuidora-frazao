@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Distribuidora Frazão - Catálogo Geral</title>
+    
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
         
@@ -11,6 +12,11 @@
         header h1 { margin: 0 0 10px 0; font-size: 28px; }
         header p { margin: 0; font-size: 16px; opacity: 0.9; }
         
+        /* Menu do Aplicativo (Estoque e Clientes) */
+        .app-menu { background: #2c3e50; padding: 12px; text-align: center; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .app-menu a { color: white; text-decoration: none; font-weight: bold; font-size: 14px; background: #34495e; padding: 8px 15px; border-radius: 4px; transition: background 0.2s; }
+        .app-menu a:hover { background: #1abc9c; }
+
         .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; flex: 1; width: 100%; box-sizing: border-box; }
         
         .card-secao { background: #fff; border-radius: 8px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -38,6 +44,12 @@
         <h1>Distribuidora Frazão</h1>
         <p>Seu atacadista de confiança em mercearia, bebidas, doces, papelaria e muito mais.</p>
     </header>
+
+    <!-- Menu Superior -->
+    <div class="app-menu">
+        <a href="estoque.html">📦 Controle de Estoque</a>
+        <a href="clientes.html">👥 Cadastro de Clientes</a>
+    </div>
 
     <div class="container">
 
@@ -91,41 +103,4 @@
     </footer>
 
 </body>
-</html><!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distribuidora Frazão - Catálogo Geral</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
-        
-        header { background: #27ae60; color: white; text-align: center; padding: 30px 20px; }
-        header h1 { margin: 0 0 10px 0; font-size: 28px; }
-        header p { margin: 0; font-size: 16px; opacity: 0.9; }
-        
-        .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; flex: 1; width: 100%; box-sizing: border-box; }
-        
-        .card-secao { background: #fff; border-radius: 8px; padding: 25px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .card-secao h2 { color: #27ae60; margin-top: 0; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; font-size: 20px; }
-        
-        /* Grade de Categorias em ordem alfabética */
-        .grid-categorias { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; }
-        .btn-categoria { background: #3498db; color: white; text-align: center; padding: 15px; border-radius: 6px; text-decoration: none; font-weight: bold; transition: background 0.2s; display: flex; align-items: center; justify-content: center; height: 50px; box-sizing: border-box; }
-        .btn-categoria:hover { background: #2980b9; }
-
-        p, li { line-height: 1.6; font-size: 14px; color: #555; }
-
-        /* Rodapé com Políticas */
-        footer { background: #2c3e50; color: #ecf0f1; padding: 40px 20px 20px 20px; margin-top: auto; font-size: 13px; }
-        .footer-content { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 30px; }
-        .footer-section h3 { color: #27ae60; font-size: 16px; margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid #455d7a; padding-bottom: 6px; }
-        .footer-section p, .footer-section li { color: #bdc3c7; font-size: 13px; }
-        .footer-section ul { padding-left: 15px; margin: 0; }
-        .footer-bottom { text-align: center; border-top: 1px solid #34495e; padding-top: 20px; color: #95a5a6; font-size: 12px; }
-    </style>
-</head>
-<body>
-
-    <header>
-       
+</html>

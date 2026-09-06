@@ -54,7 +54,6 @@
         
         .btn-voltar { display: inline-block; margin-top: 25px; text-decoration: none; color: #3498db; font-weight: bold; font-size: 14px; }
 
-        /* Estilos específicos para Impressão em Bobina Térmica 80mm */
         @media print {
             body * { visibility: hidden; }
             #areaImpressao, #areaImpressao * { visibility: visible; }
@@ -134,8 +133,8 @@
                 </div>
                 <button class="btn-salvar" onclick="salvarEstoque()">Adicionar / Atualizar Produto</button>
                 
-                <div style="margin-top: 20px; display: flex; gap: 10px;">
-                    <input type="text" id="filtroEstoque" placeholder="🔍 Buscar produto..." onkeyup="carregarEstoque()">
+                <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="text" id="filtroEstoque" placeholder="🔍 Buscar produto..." onkeyup="carregarEstoque()" style="flex: 1; min-width: 200px;">
                     <select id="filtroCategoria" onchange="carregarEstoque()" style="width: 200px;">
                         <option value="">Todas as Categorias</option>
                         <option value="Balas e Pirulitos">Balas e Pirulitos</option>
@@ -190,7 +189,6 @@
                     </select>
                 </div>
                 <button class="btn-salvar" onclick="salvarCliente()">Cadastrar Cliente</button>
-                
                 <ul id="listaClientes" style="margin-top:20px;"></ul>
             </div>
 
@@ -360,7 +358,7 @@
             document.getElementById('prodQtd').value = '';
             document.getElementById('prodPreco').value = '';
             carregarEstoque();
-            alert('Produto salvo e vinculado ao estoque com sucesso!');
+            alert('Produto salvo e vinculado com sucesso!');
         }
 
         function carregarEstoque() {
@@ -372,21 +370,22 @@
 
             let filtrados = estoque.filter(i => {
                 let matchTexto = i.produto.toLowerCase().includes(filtroTexto);
-                let matchCat = filtroCat ? i.categoria === filtroCat : true;
+                let matchCat = filtroCat ? (i.categoria && i.categoria.trim() === filtroCat.trim()) : true;
                 return matchTexto && matchCat;
             });
 
             if(filtrados.length === 0) {
-                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum produto encontrado nesta categoria/busca.</li>';
+                lista.innerHTML = '<li style="color:#7f8c8d;">Nenhum produto encontrado nesta categoria/busca. (Certifique-se de cadastrar produtos na aba de Estoque).</li>';
                 return;
             }
 
             filtrados.forEach((item) => {
-                let idx = estoque.findIndex(p => p.produto === item.produto);
+                let idx = estoque.findIndex(p => p.produto.toLowerCase() === item.produto.toLowerCase());
                 let botaoExcluir = usuarioLogado === 'admin' ? `<button class="btn-excluir" onclick="removerEstoque(${idx})">Excluir</button>` : '';
+                let catNome = item.categoria || 'Sem Categoria';
                 lista.innerHTML += `
                     <li>
-                        <div><strong>${item.produto}</strong> <small style="color: #27ae60; font-weight:bold;">[${item.categoria}]</small><br>
+                        <div><strong>${item.produto}</strong> <small style="color: #27ae60; font-weight:bold;">[${catNome}]</small><br>
                         Estoque: <strong>${item.qtd} un</strong> | Preço: R$ ${item.preco ? item.preco.toFixed(2) : '0.00'}</div>
                         ${botaoExcluir}
                     </li>`;
@@ -429,7 +428,7 @@
             document.getElementById('cliEnd').value = '';
             
             carregarClientes();
-            alert('Cliente cadastrado e vinculado com sucesso!');
+            alert('Cliente cadastrado com sucesso!');
         }
 
         function carregarClientes() {
@@ -476,8 +475,11 @@
 
             let selCli = document.getElementById('vendaCliente');
             selCli.innerHTML = '';
-            if(clientesPermitidos.length === 0) selCli.innerHTML = '<option value="">Cadastre um cliente primeiro</option>';
-            clientesPermitidos.forEach(c => { selCli.innerHTML += `<option value="${c.nome}">${c.nome}</option>`; });
+            if(clientesPermitidos.length === 0) {
+                selCli.innerHTML = '<option value="">Cadastre um cliente primeiro</option>';
+            } else {
+                clientesPermitidos.forEach(c => { selCli.innerHTML += `<option value="${c.nome}">${c.nome}</option>`; });
+            }
 
             filtrarProdutosVenda();
         }
@@ -489,19 +491,20 @@
             selProd.innerHTML = '';
 
             let produtosFiltrados = estoque.filter(p => {
-                let matchCat = catFiltro ? p.categoria === catFiltro : true;
-                return matchCat;
+                if (!catFiltro) return true; // Se "Todas as Categorias", traz tudo
+                return p.categoria && p.categoria.trim() === catFiltro.trim();
             });
 
             if(produtosFiltrados.length === 0) {
-                selProd.innerHTML = '<option value="">Nenhum produto nesta categoria</option>';
+                selProd.innerHTML = '<option value="">Nenhum produto cadastrado nesta categoria</option>';
                 atualizarPrecoVenda();
                 return;
             }
 
             produtosFiltrados.forEach(p => { 
                 let precoVal = p.preco || 0;
-                selProd.innerHTML += `<option value="${p.produto}" data-preco="${precoVal}" data-qtd="${p.qtd}">${p.produto} [${p.categoria}] (Estoque: ${p.qtd} | R$ ${precoVal.toFixed(2)})</option>`; 
+                let catNome = p.categoria || 'Geral';
+                selProd.innerHTML += `<option value="${p.produto}" data-preco="${precoVal}" data-qtd="${p.qtd}">${p.produto} [${catNome}] (Estq: ${p.qtd} | R$ ${precoVal.toFixed(2)})</option>`; 
             });
             atualizarPrecoVenda();
         }
@@ -529,7 +532,7 @@
             if(!clienteNome || !produtoNome || isNaN(qtdVendida)) return alert('Preencha todos os dados da venda!');
 
             let estoque = JSON.parse(localStorage.getItem('estoque_frazao_v2')) || [];
-            let prod = estoque.find(p => p.produto === produtoNome);
+            let prod = estoque.find(p => p.produto.toLowerCase() === produtoNome.toLowerCase());
 
             if(!prod || prod.qtd < qtdVendida) return alert('Estoque insuficiente para este produto!');
 
@@ -557,6 +560,7 @@
 
             alert('Venda registrada e estoque atualizado com sucesso!');
             carregarSelectsVenda();
+            carregarEstoque();
         }
 
         // --- HISTÓRICO E IMPRESSÃO TÉRMICA 80mm ---

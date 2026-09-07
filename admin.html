@@ -3,225 +3,1079 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo - Gestão de Clientes</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h2, h3 {
-            color: #0056b3;
-        }
-        form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 30px;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 6px;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        .form-group.full {
-            grid-column: span 2;
-        }
-        label {
-            margin-bottom: 5px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        input, select {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        button {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .btn-save {
-            background-color: #28a745;
-            color: white;
-            grid-column: span 2;
-        }
-        .btn-save:hover { background-color: #218838; }
-        .btn-edit {
-            background-color: #ffc107;
-            color: #333;
-            padding: 5px 10px;
-            margin-right: 5px;
-        }
-        .btn-delete {
-            background-color: #dc3545;
-            color: white;
-            padding: 5px 10px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #dee2e6;
-            padding: 10px;
-            text-align: left;
-            font-size: 14px;
-        }
-        th {
-            background-color: #0056b3;
-            color: white;
-        }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-    </style>
+    <title>Painel Administrativo - Distribuidora Frazão</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Firebase App & Firestore SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
-<body>
+<body class="bg-gray-100 font-sans min-h-screen p-3 md:p-6">
 
-<div class="container">
-    <h2>Painel Administrativo - Clientes e Vendedores</h2>
+    <!-- TELA DE LOGIN / SELEÇÃO DE PERFIL -->
+    <div id="telaLogin" class="max-w-md mx-auto mt-12 bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-extrabold text-gray-800 tracking-tight">Distribuidora Frazão</h1>
+            <p id="subtituloLogin" class="text-sm text-gray-500 mt-1">Selecione o modo de acesso</p>
+        </div>
 
-    <!-- Formulário de Cadastro / Edição -->
-    <form id="clienteForm">
-        <input type="hidden" id="clienteId">
+        <!-- Abas de Escolha de Login -->
+        <div id="abasLoginContainer" class="flex rounded-lg bg-gray-100 p-1 mb-6">
+            <button type="button" onclick="alternarModoLogin('admin')" id="abaLoginAdminBtn" class="flex-1 py-2 text-xs md:text-sm font-bold rounded-md transition shadow-sm bg-blue-600 text-white cursor-pointer">Administrador</button>
+            <button type="button" onclick="alternarModoLogin('vendedor')" id="abaLoginVendedorBtn" class="flex-1 py-2 text-xs md:text-sm font-bold rounded-md transition text-gray-600 hover:text-gray-900 cursor-pointer">Vendedor</button>
+        </div>
+
+        <!-- FORMULÁRIO LOGIN ADMIN -->
+        <form id="formLoginAdmin" class="space-y-4">
+            <div>
+                <label id="labelSenhaAdmin" class="block text-sm font-medium text-gray-700 mb-1">Senha de Administrador</label>
+                <input type="password" id="senhaAdminMestra" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Digite sua senha">
+            </div>
+            <p id="textoAjudaAdmin" class="text-xs text-gray-500">Acesso total para cadastrar vendedores, gerenciar produtos e ver todas as vendas.</p>
+            <button type="submit" id="btnSubmitAdmin" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm cursor-pointer">
+                Entrar como Administrador
+            </button>
+        </form>
+
+        <!-- FORMULÁRIO LOGIN VENDEDOR -->
+        <form id="formLoginVendedor" class="space-y-4 hidden">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Selecione o Vendedor</label>
+                <select id="loginVendedorSelect" class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    <option value="">Carregando usuários...</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Senha do Vendedor</label>
+                <input type="password" id="loginSenhaVendedor" class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Digite sua senha">
+            </div>
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm cursor-pointer">
+                Entrar como Vendedor
+            </button>
+        </form>
+    </div>
+
+    <!-- PAINEL PRINCIPAL (OCULTO ATÉ O LOGIN) -->
+    <div id="painelPrincipal" class="max-w-5xl mx-auto bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-gray-100 hidden">
         
-        <div class="form-group">
-            <label for="nomeCliente">Nome do Cliente:</label>
-            <input type="text" id="nomeCliente" required placeholder="Digite o nome do cliente">
+        <!-- Cabeçalho -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-6 border-b border-gray-200 pb-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight">Distribuidora Frazão</h1>
+                <p class="text-sm text-gray-500">Perfil ativo: <strong id="usuarioLogadoNome" class="text-blue-600"></strong></p>
+            </div>
+            <button onclick="fazerLogout()" class="mt-3 md:mt-0 text-sm bg-red-50 text-red-600 hover:bg-red-100 font-semibold px-4 py-2 rounded-lg transition cursor-pointer">
+                Sair / Trocar Perfil
+            </button>
+        </header>
+
+        <!-- Menu de Cartões Clicáveis -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+            <button onclick="mudarAba('cliente')" id="card-cliente" class="card-btn flex flex-col items-center justify-center p-3 bg-gray-50 hover:bg-indigo-50 border-2 border-gray-200 hover:border-indigo-500 rounded-xl transition duration-200 cursor-pointer group">
+                <div class="p-2.5 bg-indigo-100 text-indigo-600 rounded-full mb-1 group-hover:scale-110 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                </div>
+                <span class="font-bold text-gray-700 text-xs md:text-sm group-hover:text-indigo-600">Clientes</span>
+            </button>
+
+            <button onclick="mudarAba('produto')" id="card-produto" class="card-btn flex flex-col items-center justify-center p-3 bg-gray-50 hover:bg-purple-50 border-2 border-gray-200 hover:border-purple-500 rounded-xl transition duration-200 cursor-pointer group">
+                <div class="p-2.5 bg-purple-100 text-purple-600 rounded-full mb-1 group-hover:scale-110 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                </div>
+                <span class="font-bold text-gray-700 text-xs md:text-sm group-hover:text-purple-600">Produtos / Estoque</span>
+            </button>
+
+            <button onclick="mudarAba('vender')" id="card-vender" class="card-btn flex flex-col items-center justify-center p-3 bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-300 hover:border-emerald-600 rounded-xl transition duration-200 cursor-pointer group">
+                <div class="p-2.5 bg-emerald-500 text-white rounded-full mb-1 group-hover:scale-110 transition shadow-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"></path></svg>
+                </div>
+                <span class="font-bold text-emerald-800 text-xs md:text-sm">Vender</span>
+            </button>
+
+            <button onclick="mudarAba('historico')" id="card-historico" class="card-btn flex flex-col items-center justify-center p-3 bg-gray-50 hover:bg-amber-50 border-2 border-gray-200 hover:border-amber-500 rounded-xl transition duration-200 cursor-pointer group">
+                <div class="p-2.5 bg-amber-100 text-amber-600 rounded-full mb-1 group-hover:scale-110 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                </div>
+                <span class="font-bold text-gray-700 text-xs md:text-sm group-hover:text-amber-600">Histórico</span>
+            </button>
+
+            <button onclick="mudarAba('admin')" id="card-admin" class="card-btn col-span-2 md:col-span-1 flex flex-col items-center justify-center p-3 bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 hover:border-blue-600 rounded-xl transition duration-200 cursor-pointer group">
+                <div class="p-2.5 bg-blue-600 text-white rounded-full mb-1 group-hover:scale-110 transition shadow-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+                <span class="font-bold text-blue-900 text-xs md:text-sm">Administrador</span>
+            </button>
         </div>
 
-        <div class="form-group">
-            <label for="vendedorSelect">Vendedor Responsável:</label>
-            <select id="vendedorSelect" required>
-                <option value="">Selecione o vendedor</option>
-                <!-- Os vendedores podem ser carregados dinamicamente ou fixos -->
-                <option value="Carlos Silva">Carlos Silva</option>
-                <option value="Ana Souza">Ana Souza</option>
-                <option value="Marcos Oliveira">Marcos Oliveira</option>
-            </select>
+        <!-- MENSAGEM DE STATUS -->
+        <div id="mensagemStatus" class="mb-4 text-center text-sm font-semibold hidden p-3 rounded-lg"></div>
+
+        <!-- 1. SEÇÃO CADASTRO DE CLIENTES -->
+        <div id="secao-cliente" class="secao-conteudo">
+            <div class="bg-indigo-50 p-4 md:p-6 rounded-2xl border border-indigo-200 mb-6">
+                <h2 class="text-xl font-bold text-indigo-900 mb-1">Cadastrar Cliente</h2>
+                <p class="text-xs text-indigo-700 mb-4">Cadastre novos clientes na base da distribuidora.</p>
+                <form id="formCliente" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nome / Razão Social</label>
+                        <input type="text" id="nomeCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Ex: Mercearia do Bairro Ltda">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">CPF ou CNPJ</label>
+                            <input type="text" id="docCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Ex: 00.000.000/0001-00">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Telefone / WhatsApp</label>
+                            <input type="text" id="telCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Ex: (21) 99999-9999">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Endereço Completo</label>
+                        <input type="text" id="enderecoCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Ex: Rua Rocha, nº 123, Bairro Rocha, São Gonçalo - RJ">
+                    </div>
+                    <button type="submit" class="btn-submit w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm cursor-pointer">
+                        Salvar Cliente
+                    </button>
+                </form>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold text-gray-800 mb-3">Lista de Clientes Cadastrados</h3>
+                <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left font-bold text-gray-600">Nome / Razão Social</th>
+                                <th class="px-4 py-3 text-left font-bold text-gray-600">CPF / CNPJ</th>
+                                <th class="px-4 py-3 text-left font-bold text-gray-600">Telefone</th>
+                                <th class="px-4 py-3 text-left font-bold text-gray-600">Endereço</th>
+                                <th class="px-4 py-3 text-center font-bold text-gray-600">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaClientes" class="divide-y divide-gray-100">
+                            <!-- Preenchido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
-        <div class="form-group full">
-            <label for="emailCliente">E-mail / Contato:</label>
-            <input type="text" id="emailCliente" placeholder="E-mail ou telefone do cliente">
+        <!-- 2. SEÇÃO ESTOQUE E PRODUTOS -->
+        <div id="secao-produto" class="secao-conteudo hidden space-y-8">
+            <div class="bg-purple-50 p-4 md:p-6 rounded-2xl border border-purple-200">
+                <h2 class="text-xl font-bold text-purple-900 mb-4">Cadastrar Novo Produto</h2>
+                <form id="formProduto" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Produto</label>
+                        <input type="text" id="nomeProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="Ex: Caixa de Bombom Garoto">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                        <select id="categoriaProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                            <option value="">Selecione uma categoria...</option>
+                            <option value="Balas e Pirulitos">Balas e Pirulitos</option>
+                            <option value="Bebidas">Bebidas</option>
+                            <option value="Biscoitos">Biscoitos</option>
+                            <option value="Descartáveis">Descartáveis</option>
+                            <option value="Doces">Doces</option>
+                            <option value="Drops e Chicletes">Drops e Chicletes</option>
+                            <option value="Higiene">Higiene</option>
+                            <option value="Limpeza">Limpeza</option>
+                            <option value="Mercearia">Mercearia</option>
+                            <option value="Papelaria">Papelaria</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Preço de Venda (R$)</label>
+                            <input type="number" step="0.01" id="precoProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="0,00">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Quantidade em Estoque</label>
+                            <input type="number" id="estoqueProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="Ex: 50">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">URL da Foto do Produto (Opcional)</label>
+                        <input type="url" id="fotoProduto" class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="https://exemplo.com/imagem.jpg">
+                        <p class="text-xs text-gray-500 mt-1">Cole o link direto de uma imagem da internet para exibir no estoque.</p>
+                    </div>
+                    <button type="submit" class="btn-submit w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm cursor-pointer">
+                        Cadastrar no Estoque
+                    </button>
+                </form>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold text-gray-800 mb-3">Estoque Atual por Categoria</h3>
+                <div id="listaEstoqueCategorias" class="space-y-4">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
         </div>
 
-        <button type="submit" class="btn-save" id="btnSalvar">Salvar Cliente</button>
-    </form>
+        <!-- 3. SEÇÃO VENDER -->
+        <div id="secao-vender" class="secao-conteudo hidden">
+            <h2 class="text-xl font-bold text-emerald-800 mb-4">Registrar Nova Venda</h2>
+            <form id="formVenda" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
+                        <select id="vendaCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="">Carregando clientes...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Vendedor Responsável</label>
+                        <input type="text" id="vendaVendedor" readonly class="w-full rounded-lg border border-gray-300 p-2.5 bg-gray-100 text-gray-700 font-medium focus:outline-none">
+                    </div>
+                </div>
 
-    <h3>Lista de Clientes Cadastrados</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Nome do Cliente</th>
-                <th>Contato</th>
-                <th>Vendedor Responsável</th>
-                <th>Ações</th>
-            </tr>
-        <div id="statusMensagem"></div>
-        </thead>
-        <tbody id="tabelaClientes">
-            <!-- Os dados inseridos aparecerão aqui dinamicamente -->
-        </tbody>
-    </table>
-</div>
+                <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200 space-y-3">
+                    <h3 class="font-bold text-emerald-900 text-sm">Selecionar Produto do Estoque</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Filtrar por Categoria</label>
+                            <select id="filtroCategoria" onchange="filtrarProdutosPorCategoria()" class="w-full rounded-lg border border-gray-300 p-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                                <option value="">Todas as categorias</option>
+                                <option value="Balas e Pirulitos">Balas e Pirulitos</option>
+                                <option value="Bebidas">Bebidas</option>
+                                <option value="Biscoitos">Biscoitos</option>
+                                <option value="Descartáveis">Descartáveis</option>
+                                <option value="Doces">Doces</option>
+                                <option value="Drops e Chicletes">Drops e Chicletes</option>
+                                <option value="Higiene">Higiene</option>
+                                <option value="Limpeza">Limpeza</option>
+                                <option value="Mercearia">Mercearia</option>
+                                <option value="Papelaria">Papelaria</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Produto (Disponível em Estoque)</label>
+                            <select id="selectProdutoCatalogo" onchange="selecionarProdutoDoCatalogo()" class="w-full rounded-lg border border-gray-300 p-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                                <option value="">Carregando produtos...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
-<script>
-    // Chave utilizada para salvar no localStorage (substitua por chamadas de API/Fetch se seu projeto usar backend próprio)
-    const STORAGE_KEY = 'clientes_sistema';
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Itens no Pedido</label>
+                        <input type="text" id="vendaProdutos" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Ex: 5 unidades">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Qtd Vendida</label>
+                        <input type="number" id="vendaQtd" required min="1" value="1" oninput="calcularTotalVenda()" class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                </div>
 
-    document.addEventListener('DOMContentLoaded', () => {
-        carregarClientes();
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Valor Total (R$)</label>
+                    <input type="number" step="0.01" id="vendaValor" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="0,00">
+                </div>
 
-        const form = document.getElementById('clienteForm');
-        form.addEventListener('submit', function(e) {
+                <button type="submit" class="btn-submit w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md cursor-pointer">
+                    Confirmar Venda e Dar Baixa no Estoque
+                </button>
+            </form>
+        </div>
+
+        <!-- 4. SEÇÃO HISTÓRICO -->
+        <div id="secao-historico" class="secao-conteudo hidden">
+            <h2 id="tituloHistorico" class="text-xl font-bold text-gray-800 mb-4">Vendas Realizadas</h2>
+            <div class="overflow-x-auto rounded-lg border border-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-bold text-gray-600">Data</th>
+                            <th class="px-4 py-3 text-left font-bold text-gray-600">Vendedor</th>
+                            <th class="px-4 py-3 text-left font-bold text-gray-600">Cliente</th>
+                            <th class="px-4 py-3 text-left font-bold text-gray-600">Produtos</th>
+                            <th class="px-4 py-3 text-right font-bold text-gray-600">Valor (R$)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaHistorico" class="bg-white divide-y divide-gray-100">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 5. SEÇÃO ADMINISTRADOR -->
+        <div id="secao-admin" class="secao-conteudo hidden space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Cadastrar Novo Vendedor -->
+                <div class="bg-blue-50 p-4 md:p-6 rounded-2xl border border-blue-200">
+                    <h2 class="text-xl font-bold text-blue-900 mb-4">Cadastrar Novo Vendedor</h2>
+                    <form id="formCadastrarVendedorAdmin" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Vendedor</label>
+                            <input type="text" id="adminNovoNomeVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Ex: Carlos Silva">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Senha de Acesso</label>
+                            <input type="password" id="adminNovaSenhaVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Digite uma senha segura">
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm cursor-pointer">
+                            Cadastrar Vendedor
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Alterar Senha do Administrador -->
+                <div class="bg-amber-50 p-4 md:p-6 rounded-2xl border border-amber-200">
+                    <h2 class="text-xl font-bold text-amber-900 mb-4">Alterar Senha de Administrador</h2>
+                    <form id="formAlterarSenhaAdmin" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nova Senha Mestra</label>
+                            <input type="password" id="adminNovaSenhaMestra" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Digite a nova senha">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Confirmar Nova Senha</label>
+                            <input type="password" id="adminConfirmaSenhaMestra" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Confirme a nova senha">
+                        </div>
+                        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm cursor-pointer">
+                            Atualizar Senha Admin
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Listagem de Vendedores Cadastrados com Opção de Exclusão -->
+            <div class="bg-white p-4 md:p-6 rounded-2xl border border-gray-200 shadow-xs">
+                <h3 class="text-lg font-bold text-gray-800 mb-3">Vendedores Cadastrados</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left font-bold text-gray-600">Nome do Vendedor</th>
+                                <th class="px-4 py-3 text-center font-bold text-gray-600">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaVendedoresAdmin" class="divide-y divide-gray-100">
+                            <!-- Preenchido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL DE EDIÇÃO DE PRODUTO -->
+    <div id="modalEdicaoProduto" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white max-w-md w-full p-6 rounded-2xl shadow-xl">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Editar Produto</h2>
+            <form id="formEdicaoProduto" class="space-y-4">
+                <input type="hidden" id="editProdId">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Produto</label>
+                    <input type="text" id="editNomeProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                    <select id="editCategoriaProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                        <option value="Balas e Pirulitos">Balas e Pirulitos</option>
+                        <option value="Bebidas">Bebidas</option>
+                        <option value="Biscoitos">Biscoitos</option>
+                        <option value="Descartáveis">Descartáveis</option>
+                        <option value="Doces">Doces</option>
+                        <option value="Drops e Chicletes">Drops e Chicletes</option>
+                        <option value="Higiene">Higiene</option>
+                        <option value="Limpeza">Limpeza</option>
+                        <option value="Mercearia">Mercearia</option>
+                        <option value="Papelaria">Papelaria</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Preço de Venda (R$)</label>
+                        <input type="number" step="0.01" id="editPrecoProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quantidade em Estoque</label>
+                        <input type="number" id="editEstoqueProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">URL da Foto do Produto</label>
+                    <input type="url" id="editFotoProduto" class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="https://exemplo.com/imagem.jpg">
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="fecharModalEdicao()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-lg transition cursor-pointer">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-lg transition cursor-pointer">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE EDIÇÃO DE CLIENTE -->
+    <div id="modalEdicaoCliente" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white max-w-md w-full p-6 rounded-2xl shadow-xl">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Editar Cliente</h2>
+            <form id="formEdicaoCliente" class="space-y-4">
+                <input type="hidden" id="editClienteId">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome / Razão Social</label>
+                    <input type="text" id="editNomeCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">CPF ou CNPJ</label>
+                        <input type="text" id="editDocCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Telefone / WhatsApp</label>
+                        <input type="text" id="editTelCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Endereço Completo</label>
+                    <input type="text" id="editEnderecoCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="fecharModalEdicaoCliente()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-lg transition cursor-pointer">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg transition cursor-pointer">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURAÇÃO DO FIREBASE
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "distribuidora-frazao.firebaseapp.com",
+            projectId: "distribuidora-frazao",
+            storageBucket: "distribuidora-frazao.appspot.com",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        let usuarioLogado = localStorage.getItem('usuarioLogado') || null;
+        let tipoUsuario = localStorage.getItem('tipoUsuario') || null; 
+        let listaProdutosCache = [];
+        let produtoSelecionadoPrecoUnitario = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            verificarEstadoLogin();
+            carregarVendedoresSelectLogin();
+            
+            // Event Listeners dos Formulários
+            document.getElementById('formLoginAdmin').addEventListener('submit', fazerLoginAdmin);
+            document.getElementById('formLoginVendedor').addEventListener('submit', fazerLoginVendedor);
+            document.getElementById('formCliente').addEventListener('submit', salvarCliente);
+            document.getElementById('formProduto').addEventListener('submit', salvarProduto);
+            document.getElementById('formVenda').addEventListener('submit', registrarVenda);
+            document.getElementById('formCadastrarVendedorAdmin').addEventListener('submit', cadastrarVendedor);
+            document.getElementById('formAlterarSenhaAdmin').addEventListener('submit', alterarSenhaMestra);
+            document.getElementById('formEdicaoProduto').addEventListener('submit', salvarEdicaoProduto);
+            document.getElementById('formEdicaoCliente').addEventListener('submit', salvarEdicaoCliente);
+        });
+
+        function alternarModoLogin(modo) {
+            const formAdmin = document.getElementById('formLoginAdmin');
+            const formVendedor = document.getElementById('formLoginVendedor');
+            const btnAdmin = document.getElementById('abaLoginAdminBtn');
+            const btnVendedor = document.getElementById('abaLoginVendedorBtn');
+            const subtitulo = document.getElementById('subtituloLogin');
+
+            if (modo === 'admin') {
+                formAdmin.classList.remove('hidden');
+                formVendedor.classList.add('hidden');
+                btnAdmin.className = "flex-1 py-2 text-xs md:text-sm font-bold rounded-md transition shadow-sm bg-blue-600 text-white cursor-pointer";
+                btnVendedor.className = "flex-1 py-2 text-xs md:text-sm font-bold rounded-md transition text-gray-600 hover:text-gray-900 cursor-pointer";
+                subtitulo.innerText = "Acesso de Administrador Mestre";
+            } else {
+                formAdmin.classList.add('hidden');
+                formVendedor.classList.remove('hidden');
+                btnVendedor.className = "flex-1 py-2 text-xs md:text-sm font-bold rounded-md transition shadow-sm bg-emerald-600 text-white cursor-pointer";
+                btnAdmin.className = "flex-1 py-2 text-xs md:text-sm font-bold rounded-md transition text-gray-600 hover:text-gray-900 cursor-pointer";
+                subtitulo.innerText = "Acesso de Vendedor Autorizado";
+            }
+        }
+
+        async function carregarVendedoresSelectLogin() {
+            const selectLogin = document.getElementById('loginVendedorSelect');
+            if (!selectLogin) return;
+            try {
+                const snapshot = await db.collection('vendedores').get();
+                selectLogin.innerHTML = '<option value="">Selecione seu nome...</option>';
+                if (snapshot.empty) {
+                    selectLogin.innerHTML = '<option value="">Nenhum vendedor cadastrado</option>';
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    const v = doc.data();
+                    selectLogin.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
+                });
+            } catch (error) {
+                console.error("Erro ao carregar vendedores:", error);
+            }
+        }
+
+        async function fazerLoginAdmin(e) {
             e.preventDefault();
-            salvarCliente();
-        });
-    });
+            const senhaDigitada = document.getElementById('senhaAdminMestra').value;
+            try {
+                const docRef = await db.collection('config').doc('admin').get();
+                let senhaSalva = "123456"; 
+                if (docRef.exists && docRef.data().senha) {
+                    senhaSalva = docRef.data().senha;
+                }
 
-    function carregarClientes() {
-        const clientes = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-        const tbody = document.getElementById('tabelaClientes');
-        tbody.innerHTML = '';
-
-        clientes.forEach((cliente, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${cliente.nome}</td>
-                <td>${cliente.email}</td>
-                <td>${cliente.vendedor}</td>
-                <td>
-                    <button class="btn-edit" onclick="editarCliente(${index})">Editar</button>
-                    <button class="btn-delete" onclick="excluirCliente(${index})">Excluir</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function salvarCliente() {
-        const id = document.getElementById('clienteId').value;
-        const nome = document.getElementById('nomeCliente').value;
-        const vendedor = document.getElementById('vendedorSelect').value;
-        const email = document.getElementById('emailCliente').value;
-
-        let clientes = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-
-        if (id === "") {
-            // Novo cadastro
-            clientes.push({ nome, vendedor, email });
-        } else {
-            // Edição de registro existente
-            clientes[id] = { nome, vendedor, email };
+                if (senhaDigitada === senhaSalva) {
+                    usuarioLogado = "Administrador";
+                    tipoUsuario = "admin";
+                    localStorage.setItem('usuarioLogado', usuarioLogado);
+                    localStorage.setItem('tipoUsuario', tipoUsuario);
+                    verificarEstadoLogin();
+                } else {
+                    mostrarStatus("Senha de Administrador incorreta!", "bg-red-100 text-red-700");
+                }
+            } catch (error) {
+                console.error("Erro no login admin:", error);
+                mostrarStatus("Erro ao autenticar administrador.", "bg-red-100 text-red-700");
+            }
         }
 
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(clientes));
-        
-        // Limpa o formulário
-        document.getElementById('clienteForm').reset();
-        document.getElementById('clienteId').value = '';
-        document.getElementById('btnSalvar').innerText = 'Salvar Cliente';
+        async function fazerLoginVendedor(e) {
+            e.preventDefault();
+            const nomeVendedor = document.getElementById('loginVendedorSelect').value;
+            const senhaVendedor = document.getElementById('loginSenhaVendedor').value;
 
-        carregarClientes();
-    }
+            if (!nomeVendedor) {
+                alert("Selecione um vendedor.");
+                return;
+            }
 
-    function editarCliente(index) {
-        const clientes = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-        const cliente = clientes[index];
+            try {
+                const snapshot = await db.collection('vendedores').where('nome', '==', nomeVendedor).get();
+                if (snapshot.empty) {
+                    mostrarStatus("Vendedor não encontrado.", "bg-red-100 text-red-700");
+                    return;
+                }
 
-        document.getElementById('clienteId').value = index;
-        document.getElementById('nomeCliente').value = cliente.nome;
-        document.getElementById('vendedorSelect').value = cliente.vendedor;
-        document.getElementById('emailCliente').value = cliente.email;
-        document.getElementById('btnSalvar').innerText = 'Atualizar Cliente';
-    }
-
-    function excluirCliente(index) {
-        if (confirm('Deseja realmente excluir este cliente?')) {
-            let clientes = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-            clientes.splice(index, 1);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(clientes));
-            carregarClientes();
+                const dadosVendedor = snapshot.docs[0].data();
+                if (dadosVendedor.senha === senhaVendedor) {
+                    usuarioLogado = dadosVendedor.nome;
+                    tipoUsuario = "vendedor";
+                    localStorage.setItem('usuarioLogado', usuarioLogado);
+                    localStorage.setItem('tipoUsuario', tipoUsuario);
+                    verificarEstadoLogin();
+                } else {
+                    mostrarStatus("Senha do vendedor incorreta!", "bg-red-100 text-red-700");
+                }
+            } catch (error) {
+                console.error("Erro no login do vendedor:", error);
+                mostrarStatus("Erro ao autenticar vendedor.", "bg-red-100 text-red-700");
+            }
         }
-    }
-</script>
 
+        function verificarEstadoLogin() {
+            const telaLogin = document.getElementById('telaLogin');
+            const painelPrincipal = document.getElementById('painelPrincipal');
+            const nomeSpan = document.getElementById('usuarioLogadoNome');
+
+            if (usuarioLogado && tipoUsuario) {
+                telaLogin.classList.add('hidden');
+                painelPrincipal.classList.remove('hidden');
+                nomeSpan.innerText = `${usuarioLogado} (${tipoUsuario === 'admin' ? 'Administrador' : 'Vendedor'})`;
+
+                const cardAdmin = document.getElementById('card-admin');
+                if (tipoUsuario === 'vendedor') {
+                    cardAdmin.classList.add('hidden');
+                    mudarAba('vender');
+                } else {
+                    cardAdmin.classList.remove('hidden');
+                    mudarAba('cliente');
+                }
+
+                document.getElementById('vendaVendedor').value = usuarioLogado;
+                carregarClientes();
+                carregarProdutos();
+                carregarHistorico();
+                if (tipoUsuario === 'admin') {
+                    carregarVendedoresAdmin();
+                }
+            } else {
+                telaLogin.classList.remove('hidden');
+                painelPrincipal.classList.add('hidden');
+            }
+        }
+
+        function fazerLogout() {
+            localStorage.removeItem('usuarioLogado');
+            localStorage.removeItem('tipoUsuario');
+            usuarioLogado = null;
+            tipoUsuario = null;
+            verificarEstadoLogin();
+        }
+
+        function mudarAba(aba) {
+            document.querySelectorAll('.secao-conteudo').forEach(el => el.classList.add('hidden'));
+            const alvo = document.getElementById(`secao-${aba}`);
+            if (alvo) alvo.classList.remove('hidden');
+        }
+
+        function mostrarStatus(texto, classe) {
+            const statusDiv = document.getElementById('mensagemStatus');
+            statusDiv.innerText = texto;
+            statusDiv.className = `mb-4 text-center text-sm font-semibold p-3 rounded-lg ${classe}`;
+            statusDiv.classList.remove('hidden');
+            setTimeout(() => { statusDiv.classList.add('hidden'); }, 4000);
+        }
+
+        // CLIENTES
+        async function salvarCliente(e) {
+            e.preventDefault();
+            const cliente = {
+                nome: document.getElementById('nomeCliente').value,
+                doc: document.getElementById('docCliente').value,
+                tel: document.getElementById('telCliente').value,
+                endereco: document.getElementById('enderecoCliente').value,
+                cadastradoPor: usuarioLogado,
+                criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                await db.collection('clientes').add(cliente);
+                mostrarStatus("Cliente cadastrado com sucesso!", "bg-emerald-100 text-emerald-700");
+                document.getElementById('formCliente').reset();
+                carregarClientes();
+            } catch (error) {
+                console.error("Erro ao salvar cliente:", error);
+                mostrarStatus("Erro ao salvar cliente.", "bg-red-100 text-red-700");
+            }
+        }
+
+        async function carregarClientes() {
+            const tabela = document.getElementById('tabelaClientes');
+            const selectVenda = document.getElementById('vendaCliente');
+            if (!tabela) return;
+
+            try {
+                const snapshot = await db.collection('clientes').orderBy('nome').get();
+                tabela.innerHTML = '';
+                if (selectVenda) selectVenda.innerHTML = '<option value="">Selecione o cliente...</option>';
+
+                if (snapshot.empty) {
+                    tabela.innerHTML = '<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500">Nenhum cliente cadastrado.</td></tr>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const c = { id: doc.id, ...doc.data() };
+                    tabela.innerHTML += `
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 font-medium text-gray-800">${c.nome}</td>
+                            <td class="px-4 py-3 text-gray-600">${c.doc}</td>
+                            <td class="px-4 py-3 text-gray-600">${c.tel}</td>
+                            <td class="px-4 py-3 text-gray-600">${c.endereco}</td>
+                            <td class="px-4 py-3 text-center space-x-2">
+                                <button onclick="abrirModalEdicaoCliente('${c.id}')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold text-xs rounded-md transition cursor-pointer">Editar</button>
+                                <button onclick="excluirCliente('${c.id}')" class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs rounded-md transition cursor-pointer">Excluir</button>
+                            </td>
+                        </tr>
+                    `;
+                    if (selectVenda) {
+                        selectVenda.innerHTML += `<option value="${c.nome}">${c.nome} - ${c.doc}</option>`;
+                    }
+                });
+            } catch (error) {
+                console.error("Erro ao carregar clientes:", error);
+            }
+        }
+
+        async function abrirModalEdicaoCliente(id) {
+            try {
+                const doc = await db.collection('clientes').doc(id).get();
+                if (doc.exists) {
+                    const c = doc.data();
+                    document.getElementById('editClienteId').value = id;
+                    document.getElementById('editNomeCliente').value = c.nome;
+                    document.getElementById('editDocCliente').value = c.doc;
+                    document.getElementById('editTelCliente').value = c.tel;
+                    document.getElementById('editEnderecoCliente').value = c.endereco;
+                    document.getElementById('modalEdicaoCliente').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error("Erro ao carregar dados para edição:", error);
+            }
+        }
+
+        function fecharModalEdicaoCliente() {
+            document.getElementById('modalEdicaoCliente').classList.add('hidden');
+        }
+
+        async function salvarEdicaoCliente(e) {
+            e.preventDefault();
+            const id = document.getElementById('editClienteId').value;
+            const dadosAtualizados = {
+                nome: document.getElementById('editNomeCliente').value,
+                doc: document.getElementById('editDocCliente').value,
+                tel: document.getElementById('editTelCliente').value,
+                endereco: document.getElementById('editEnderecoCliente').value
+            };
+
+            try {
+                await db.collection('clientes').doc(id).update(dadosAtualizados);
+                fecharModalEdicaoCliente();
+                mostrarStatus("Cliente atualizado com sucesso!", "bg-emerald-100 text-emerald-700");
+                carregarClientes();
+            } catch (error) {
+                console.error("Erro ao atualizar cliente:", error);
+                mostrarStatus("Erro ao atualizar cliente.", "bg-red-100 text-red-700");
+            }
+        }
+
+        async function excluirCliente(id) {
+            if (confirm("Tem certeza que deseja excluir este cliente?")) {
+                try {
+                    await db.collection('clientes').doc(id).delete();
+                    mostrarStatus("Cliente excluído com sucesso.", "bg-amber-100 text-amber-700");
+                    carregarClientes();
+                } catch (error) {
+                    console.error("Erro ao excluir cliente:", error);
+                    mostrarStatus("Erro ao excluir cliente.", "bg-red-100 text-red-700");
+                }
+            }
+        }
+
+        // PRODUTOS / ESTOQUE
+        async function salvarProduto(e) {
+            e.preventDefault();
+            const produto = {
+                nome: document.getElementById('nomeProduto').value,
+                categoria: document.getElementById('categoriaProduto').value,
+                preco: parseFloat(document.getElementById('precoProduto').value),
+                estoque: parseInt(document.getElementById('estoqueProduto').value),
+                foto: document.getElementById('fotoProduto').value || "",
+                atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                await db.collection('produtos').add(produto);
+                mostrarStatus("Produto cadastrado no estoque!", "bg-purple-100 text-purple-700");
+                document.getElementById('formProduto').reset();
+                carregarProdutos();
+            } catch (error) {
+                console.error("Erro ao salvar produto:", error);
+                mostrarStatus("Erro ao salvar produto.", "bg-red-100 text-red-700");
+            }
+        }
+
+        async function carregarProdutos() {
+            const container = document.getElementById('listaEstoqueCategorias');
+            const selectCatalogo = document.getElementById('selectProdutoCatalogo');
+            if (!container) return;
+
+            try {
+                const snapshot = await db.collection('produtos').orderBy('categoria').get();
+                listaProdutosCache = [];
+                let categoriasMap = {};
+
+                snapshot.forEach(doc => {
+                    const p = { id: doc.id, ...doc.data() };
+                    listaProdutosCache.push(p);
+                    if (!categoriasMap[p.categoria]) categoriasMap[p.categoria] = [];
+                    categoriasMap[p.categoria].push(p);
+                });
+
+                container.innerHTML = '';
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhum produto em estoque.</p>';
+                } else {
+                    for (const [cat, prods] of Object.entries(categoriasMap)) {
+                        let htmlProds = prods.map(p => `
+                            <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-100 shadow-2xs">
+                                <div class="flex items-center space-x-3">
+                                    ${p.foto ? `<img src="${p.foto}" class="w-10 h-10 object-cover rounded-md border">` : '<div class="w-10 h-10 bg-gray-100 rounded-md flex items-center text-xs text-gray-400 justify-center">Sem foto</div>'}
+                                    <div>
+                                        <p class="font-bold text-gray-800 text-sm">${p.nome}</p>
+                                        <p class="text-xs text-gray-500">Estoque: <strong class="${p.estoque <= 5 ? 'text-red-600 font-bold' : 'text-gray-700'}">${p.estoque} un</strong> | R$ ${p.preco.toFixed(2)}</p>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button onclick="abrirModalEdicao('${p.id}')" class="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-xs rounded-md transition cursor-pointer">Editar</button>
+                                    ${tipoUsuario === 'admin' ? `<button onclick="excluirProduto('${p.id}')" class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs rounded-md transition cursor-pointer">Excluir</button>` : ''}
+                                </div>
+                            </div>
+                        `).join('');
+
+                        container.innerHTML += `
+                            <div class="border border-purple-100 bg-purple-50/50 rounded-xl p-4">
+                                <h4 class="font-bold text-purple-900 mb-3 text-sm border-b border-purple-200 pb-1">${cat}</h4>
+                                <div class="space-y-2">${htmlProds}</div>
+                            </div>
+                        `;
+                    }
+                }
+
+                atualizarSelectCatalogoVenda(listaProdutosCache);
+            } catch (error) {
+                console.error("Erro ao carregar produtos:", error);
+            }
+        }
+
+        function atualizarSelectCatalogoVenda(produtos) {
+            const select = document.getElementById('selectProdutoCatalogo');
+            if (!select) return;
+            select.innerHTML = '<option value="">Selecione um produto...</option>';
+            produtos.forEach(p => {
+                if (p.estoque > 0) {
+                    select.innerHTML += `<option value="${p.id}">${p.nome} (Estoque: ${p.estoque}) - R$ ${p.preco.toFixed(2)}</option>`;
+                }
+            });
+        }
+
+        function filtrarProdutosPorCategoria() {
+            const filtroCat = document.getElementById('filtroCategoria').value;
+            if (!filtroCat) {
+                atualizarSelectCatalogoVenda(listaProdutosCache);
+            } else {
+                const filtrados = listaProdutosCache.filter(p => p.categoria === filtroCat);
+                atualizarSelectCatalogoVenda(filtrados);
+            }
+        }
+
+        function selecionarProdutoDoCatalogo() {
+            const id = document.getElementById('selectProdutoCatalogo').value;
+            const prod = listaProdutosCache.find(p => p.id === id);
+            if (prod) {
+                document.getElementById('vendaProdutos').value = prod.nome;
+                document.getElementById('vendaQtd').value = 1;
+                produtoSelecionadoPrecoUnitario = prod.preco;
+                calcularTotalVenda();
+            }
+        }
+
+        function calcularTotalVenda() {
+            const qtd = parseInt(document.getElementById('vendaQtd').value) || 0;
+            const total = qtd * produtoSelecionadoPrecoUnitario;
+            document.getElementById('vendaValor').value = total.toFixed(2);
+        }
+
+        // EDIÇÃO DE PRODUTOS
+        async function abrirModalEdicao(id) {
+            try {
+                const doc = await db.collection('produtos').doc(id).get();
+                if (doc.exists) {
+                    const p = doc.data();
+                    document.getElementById('editProdId').value = id;
+                    document.getElementById('editNomeProduto').value = p.nome;
+                    document.getElementById('editCategoriaProduto').value = p.categoria;
+                    document.getElementById('editPrecoProduto').value = p.preco;
+                    document.getElementById('editEstoqueProduto').value = p.estoque;
+                    document.getElementById('editFotoProduto').value = p.foto || "";
+                    document.getElementById('modalEdicaoProduto').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error("Erro ao abrir edição:", error);
+            }
+        }
+
+        function fecharModalEdicao() {
+            document.getElementById('modalEdicaoProduto').classList.add('hidden');
+        }
+
+        async function salvarEdicaoProduto(e) {
+            e.preventDefault();
+            const id = document.getElementById('editProdId').value;
+            const dadosAtualizados = {
+                nome: document.getElementById('editNomeProduto').value,
+                categoria: document.getElementById('editCategoriaProduto').value,
+                preco: parseFloat(document.getElementById('editPrecoProduto').value),
+                estoque: parseInt(document.getElementById('editEstoqueProduto').value),
+                foto: document.getElementById('editFotoProduto').value || ""
+            };
+
+            try {
+                await db.collection('produtos').doc(id).update(dadosAtualizados);
+                fecharModalEdicao();
+                mostrarStatus("Produto atualizado com sucesso!", "bg-emerald-100 text-emerald-700");
+                carregarProdutos();
+            } catch (error) {
+                console.error("Erro ao atualizar produto:", error);
+                mostrarStatus("Erro ao atualizar produto.", "bg-red-100 text-red-700");
+            }
+        }
+
+        async function excluirProduto(id) {
+            if (confirm("Deseja realmente excluir este produto do estoque?")) {
+                try {
+                    await db.collection('produtos').doc(id).delete();
+                    mostrarStatus("Produto excluído.", "bg-amber-100 text-amber-700");
+                    carregarProdutos();
+                } catch (error) {
+                    console.error("Erro ao excluir produto:", error);
+                }
+            }
+        }
+
+        // VENDAS
+        async function registrarVenda(e) {
+            e.preventDefault();
+            const clienteNome = document.getElementById('vendaCliente').value;
+            const produtosStr = document.getElementById('vendaProdutos').value;
+            const qtdVendida = parseInt(document.getElementById('vendaQtd').value);
+            const valorTotal = parseFloat(document.getElementById('vendaValor').value);
+            const produtoIdSelect = document.getElementById('selectProdutoCatalogo').value;
+
+            if (!clienteNome) {
+                alert("Selecione um cliente.");
+                return;
+            }
+
+            if (produtoIdSelect) {
+                const prod = listaProdutosCache.find(p => p.id === produtoIdSelect);
+                if (prod) {
+                    if (prod.estoque < qtdVendida) {
+                        alert(`Estoque insuficiente! Restam apenas ${prod.estoque} unidades.`);
+                        return;
+                    }
+                    const novoEstoque = prod.estoque - qtdVendida;
+                    await db.collection('produtos').doc(produtoIdSelect).update({ estoque: novoEstoque });
+                }
+            }
+
+            const venda = {
+                cliente: clienteNome,
+                vendedor: usuarioLogado,
+                produtos: `${produtosStr} (${qtdVendida} un)`,
+                valor: valorTotal,
+                data: new Date().toLocaleDateString('pt-BR'),
+                criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                await db.collection('vendas').add(venda);
+                mostrarStatus("Venda registrada e estoque atualizado com sucesso!", "bg-emerald-100 text-emerald-700");
+                document.getElementById('formVenda').reset();
+                document.getElementById('vendaVendedor').value = usuarioLogado;
+                carregarProdutos();
+                carregarHistorico();
+            } catch (error) {
+                console.error("Erro ao registrar venda:", error);
+                mostrarStatus("Erro ao registrar venda.", "bg-red-100 text-red-700");
+            }
+        }
+
+        async function carregarHistorico() {
+            const tabela = document.getElementById('tabelaHistorico');
+            if (!tabela) return;
+
+            try {
+                let query = db.collection('vendas').orderBy('criadoEm', 'desc');
+                const snapshot = await query.get();
+                tabela.innerHTML = '';
+
+                if (snapshot.empty) {
+                    tabela.innerHTML = '<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500">Nenhuma venda registrada.</td></tr>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const v = doc.data();
+                    tabela.innerHTML += `
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 text-gray-600">${v.data || 'Recente'}</td>
+                            <td class="px-4 py-3 font-semibold text-blue-600">${v.vendedor}</td>
+                            <td class="px-4 py-3 font-medium text-gray-800">${v.cliente}</td>
+                            <td class="px-4 py-3 text-gray-600">${v.produtos}</td>
+                            <td class="px-4 py-3 text-right font-bold text-emerald-600">R$ ${Number(v.valor).toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error("Erro ao carregar histórico:", error);
+            }
+        }
+
+        // PAINEL ADMINISTRADOR (VENDEDORES E SENHA)
+        async function cadastrarVendedor(e) {
+            e.preventDefault();
+            const nome = document.getElementById('adminNovoNomeVendedor').value.trim();
+            const senha = document.getElementById('adminNovaSenhaVendedor').value;
+
+            try {
+                await db.collection('vendedores').add({ nome, senha });
+                mostrarStatus(`Vendedor ${nome} cadastrado com sucesso!`, "bg-blue-100 text-blue-700");
+                document.getElementById('formCadastrarVendedorAdmin').reset();
+                carregarVendedoresAdmin();
+                carregarVendedoresSelectLogin();
+            } catch (error) {
+                console.error("Erro ao cadastrar vendedor:", error);
+                mostrarStatus("Erro ao cadastrar vendedor.", "bg-red-100 text-red-700");
+            }
+        }
+
+        async function carregarVendedoresAdmin() {
+            const tabela = document.getElementById('tabelaVendedoresAdmin');
+            if (!tabela) return;
+
+            try {
+                const snapshot = await db.collection('vendedores').get();
+                tabela.innerHTML = '';
+                if (snapshot.empty) {
+                    tabela.innerHTML = '<tr><td colspan="2" class="px-4 py-4 text-center text-gray-500">Nenhum vendedor cadastrado.</td></tr>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const v = doc.data();
+                    tabela.innerHTML += `
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 font-medium text-gray-800">${v.nome}</td>
+                            <td class="px-4 py-3 text-center">
+                                <button onclick="excluirVendedor('${doc.id}')" class="px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-md transition cursor-pointer">Excluir</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error("Erro ao carregar vendedores:", error);
+            }
+        }
+
+        async function excluirVendedor(id) {
+            if (confirm("Tem certeza que deseja remover este vendedor?")) {
+                try {
+                    await db.collection('vendedores').doc(id).delete();
+                    mostrarStatus("Vendedor removido.", "bg-amber-100 text-amber-700");
+                    carregarVendedoresAdmin();
+                    carregarVendedoresSelectLogin();
+                } catch (error) {
+                    console.error("Erro ao excluir vendedor:", error);
+                }
+            }
+        }
+
+        async function alterarSenhaMestra(e) {
+            e.preventDefault();
+            const novaSenha = document.getElementById('adminNovaSenhaMestra').value;
+            const confirmaSenha = document.getElementById('adminConfirmaSenhaMestra').value;
+
+            if (novaSenha !== confirmaSenha) {
+                alert("As senhas não coincidem!");
+                return;
+            }
+
+            try {
+                await db.collection('config').doc('admin').set({ senha: novaSenha });
+                mostrarStatus("Senha de Administrador alterada com sucesso!", "bg-amber-100 text-amber-700");
+                document.getElementById('formAlterarSenhaAdmin').reset();
+            } catch (error) {
+                console.error("Erro ao alterar senha:", error);
+                mostrarStatus("Erro ao alterar senha.", "bg-red-100 text-red-700");
+            }
+        }
+    </script>
 </body>
 </html>

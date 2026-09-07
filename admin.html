@@ -565,6 +565,55 @@
         "Papelaria"
     ];
 
+    // Validação matemática de CPF e CNPJ
+    function validarCPFCNPJ(val) {
+        const doc = val.replace(/\D/g, '');
+        if (doc === "") return true; 
+
+        if (doc.length === 11) {
+            if (/^(\d)\1{10}$/.test(doc)) return false;
+            let soma = 0;
+            for (let i = 0; i < 9; i++) soma += parseInt(doc.charAt(i)) * (10 - i);
+            let resto = 11 - (soma % 11);
+            let digito1 = (resto === 10 || resto === 11) ? 0 : resto;
+            if (digito1 !== parseInt(doc.charAt(9))) return false;
+
+            soma = 0;
+            for (let i = 0; i < 10; i++) soma += parseInt(doc.charAt(i)) * (11 - i);
+            resto = 11 - (soma % 11);
+            let digito2 = (resto === 10 || resto === 11) ? 0 : resto;
+            return digito2 === parseInt(doc.charAt(10));
+        }
+        
+        if (doc.length === 14) {
+            if (/^(\d)\1{13}$/.test(doc)) return false;
+            let tamanho = doc.length - 2;
+            let numeros = doc.substring(0, tamanho);
+            let digitos = doc.substring(tamanho);
+            let soma = 0;
+            let pos = tamanho - 7;
+            for (let i = tamanho; i >= 1; i--) {
+                soma += numeros.charAt(tamanho - i) * pos--;
+                if (pos < 2) pos = 9;
+            }
+            let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+            if (resultado !== parseInt(digitos.charAt(0))) return false;
+
+            tamanho = tamanho + 1;
+            numeros = doc.substring(0, tamanho);
+            soma = 0;
+            pos = tamanho - 7;
+            for (let i = tamanho; i >= 1; i--) {
+                soma += numeros.charAt(tamanho - i) * pos--;
+                if (pos < 2) pos = 9;
+            }
+            resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+            return resultado === parseInt(digitos.charAt(1));
+        }
+
+        return false;
+    }
+
     function alternarCampoLogin() {
         const perfil = document.getElementById('loginPerfil').value;
         const grupoVendedor = document.getElementById('grupoSeletorVendedor');
@@ -856,6 +905,11 @@
         const vendedor = document.getElementById('vendedorClienteCad').value;
         const endereco = document.getElementById('enderecoClienteCad').value;
 
+        // Validação de CPF/CNPJ antes de salvar
+        if (doc.trim() !== "" && !validarCPFCNPJ(doc)) {
+            return alert("O CPF ou CNPJ digitado é inválido! Por favor, verifique os números.");
+        }
+
         const dados = { nome, doc, telefone, vendedor, endereco };
 
         if (id) {
@@ -1052,7 +1106,6 @@
             formaPagamento: formaPagamento
         };
 
-        // Dar baixa no estoque
         for (let item of carrinho) {
             const prod = produtosCache.find(p => p.id === item.produtoId);
             if (prod) {
@@ -1061,7 +1114,6 @@
             }
         }
 
-        // Se for fiado, atualizar saldo devedor do cliente
         if (formaPagamento === 'Fiado' && clienteObj) {
             const novoSaldo = (clienteObj.saldoDevedor || 0) + valorFinal;
             await db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo });

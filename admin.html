@@ -186,6 +186,10 @@
                 <h3>👥 Clientes & Fiado</h3>
                 <p>Cadastre clientes, valide CPFs/CNPJs e controle o saldo devedor.</p>
             </div>
+            <div class="menu-card" onclick="mudarAba('vendedores')">
+                <h3>💼 Vendedores</h3>
+                <p>Cadastre equipe interna/externa e defina regras.</p>
+            </div>
             <div class="menu-card" onclick="mudarAba('vendas')">
                 <h3>🛒 Nova Venda / PDV</h3>
                 <p>Realize vendas multi-itens, escolha pagamentos e aplique regras.</p>
@@ -256,9 +260,6 @@
                 <label for="vendedorCliente">Vendedor Responsável:</label>
                 <select id="vendedorCliente" required>
                     <option value="">Selecione...</option>
-                    <option value="Carlos Silva">Carlos Silva</option>
-                    <option value="Ana Souza">Ana Souza</option>
-                    <option value="Vendedor Externo">Vendedor Externo (Restrito)</option>
                 </select>
             </div>
             <div class="form-group">
@@ -283,7 +284,45 @@
         </table>
     </div>
 
-    <!-- ABA 3: VENDAS (PDV MULTI-ITENS COM PAGAMENTO E FIADO) -->
+    <!-- ABA 3: VENDEDORES -->
+    <div id="aba-vendedores" class="tab-content">
+        <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
+        <h2>Cadastro de Vendedores</h2>
+        <form id="vendedorForm">
+            <input type="hidden" id="vendedorIdInput">
+            <div class="form-group">
+                <label for="nomeVendedor">Nome do Vendedor:</label>
+                <input type="text" id="nomeVendedor" required>
+            </div>
+            <div class="form-group">
+                <label for="tipoVendedor">Tipo / Permissão:</label>
+                <select id="tipoVendedor" required>
+                    <option value="Interno">Interno (Admin / Geral)</option>
+                    <option value="Externo">Vendedor Externo (Restrito a descontos)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="telefoneVendedor">Telefone / Contato:</label>
+                <input type="text" id="telefoneVendedor" placeholder="(21) 99999-9999">
+            </div>
+            <button type="submit" class="btn btn-save">Salvar Vendedor</button>
+        </form>
+
+        <h3>Lista de Vendedores Cadastrados</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Tipo</th>
+                    <th>Telefone</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaVendedores"></tbody>
+        </table>
+    </div>
+
+    <!-- ABA 4: VENDAS (PDV MULTI-ITENS COM PAGAMENTO E FIADO) -->
     <div id="aba-vendas" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
         <h2>Nova Venda (Múltiplos Itens)</h2>
@@ -295,10 +334,7 @@
             <div class="form-group">
                 <label for="vendaVendedor">Vendedor:</label>
                 <select id="vendaVendedor" required onchange="verificarRegraDescontoPreco()">
-                    <option value="Admin">Administrador</option>
-                    <option value="Carlos Silva">Carlos Silva</option>
-                    <option value="Ana Souza">Ana Souza</option>
-                    <option value="Vendedor Externo">Vendedor Externo</option>
+                    <option value="">Selecione o vendedor...</option>
                 </select>
             </div>
             <div class="form-group full">
@@ -348,7 +384,7 @@
         </form>
     </div>
 
-    <!-- ABA 4: RELATÓRIOS E FATURAMENTO -->
+    <!-- ABA 5: RELATÓRIOS E FATURAMENTO -->
     <div id="aba-relatorios" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
         <h2>Relatórios de Vendas e Faturamento</h2>
@@ -405,6 +441,7 @@
 
     let carrinho = [];
     let produtosCache = [];
+    let vendedoresCache = [];
 
     function mudarAba(aba) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -477,6 +514,7 @@
     // --- CARREGAR DADOS DO FIREBASE ---
     document.addEventListener('DOMContentLoaded', () => {
         carregarProdutos();
+        carregarVendedores();
         carregarClientes();
         carregarVendas();
 
@@ -488,6 +526,11 @@
         document.getElementById('clienteForm').addEventListener('submit', (e) => {
             e.preventDefault();
             salvarCliente();
+        });
+
+        document.getElementById('vendedorForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            salvarVendedor();
         });
     });
 
@@ -553,6 +596,71 @@
 
     function excluirProduto(id) {
         if (confirm('Deseja excluir este produto?')) db.collection("produtos").doc(id).delete();
+    }
+
+    // --- VENDEDORES ---
+    function carregarVendedores() {
+        db.collection("vendedores").onSnapshot((snapshot) => {
+            const tbody = document.getElementById('tabelaVendedores');
+            const selectClienteVen = document.getElementById('vendedorCliente');
+            const selectVendaVen = document.getElementById('vendaVendedor');
+            
+            tbody.innerHTML = '';
+            selectClienteVen.innerHTML = '<option value="">Selecione o vendedor...</option>';
+            selectVendaVen.innerHTML = '<option value="">Selecione o vendedor...</option>';
+            vendedoresCache = [];
+
+            snapshot.forEach((doc) => {
+                const v = doc.data();
+                const id = doc.id;
+                vendedoresCache.push({ id, ...v });
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${v.nome}</td>
+                        <td>${v.tipo}</td>
+                        <td>${v.telefone || '-'}</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editarVendedor('${id}', '${v.nome}', '${v.tipo}', '${v.telefone || ''}')">Editar</button>
+                            <button class="btn btn-delete" onclick="excluirVendedor('${id}')">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+
+                selectClienteVen.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
+                selectVendaVen.innerHTML += `<option value="${v.nome}">${v.nome} (${v.tipo})</option>`;
+            });
+        });
+    }
+
+    function salvarVendedor() {
+        const id = document.getElementById('vendedorIdInput').value;
+        const nome = document.getElementById('nomeVendedor').value;
+        const tipo = document.getElementById('tipoVendedor').value;
+        const telefone = document.getElementById('telefoneVendedor').value;
+
+        const dados = { nome, tipo, telefone };
+
+        if (id === "") {
+            db.collection("vendedores").add(dados).then(() => document.getElementById('vendedorForm').reset());
+        } else {
+            db.collection("vendedores").doc(id).update(dados).then(() => {
+                document.getElementById('vendedorForm').reset();
+                document.getElementById('vendedorIdInput').value = '';
+            });
+        }
+    }
+
+    function editarVendedor(id, nome, tipo, telefone) {
+        document.getElementById('vendedorIdInput').value = id;
+        document.getElementById('nomeVendedor').value = nome;
+        document.getElementById('tipoVendedor').value = tipo;
+        document.getElementById('telefoneVendedor').value = telefone;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function excluirVendedor(id) {
+        if (confirm('Deseja excluir este vendedor?')) db.collection("vendedores").doc(id).delete();
     }
 
     // --- CLIENTES E FIADO ---
@@ -687,12 +795,15 @@
     }
 
     function verificarRegraDescontoPreco() {
-        const vendedor = document.getElementById('vendaVendedor').value;
+        const nomeVendedorSelecionado = document.getElementById('vendaVendedor').value;
         const descontoInput = document.getElementById('descontoVenda');
         const aviso = document.getElementById('avisoPermissao');
 
-        if (vendedor === "Vendedor Externo") {
+        const vendedorObj = vendedoresCache.find(v => v.nome === nomeVendedorSelecionado);
+
+        if (vendedorObj && vendedorObj.tipo === "Externo") {
             descontoInput.disabled = true;
+            descontoInput.value = 0;
             aviso.innerText = "Vendedor Externo não tem permissão para alterar preços ou dar descontos.";
         } else {
             descontoInput.disabled = false;
@@ -709,9 +820,11 @@
 
         if (carrinho.length === 0) return alert("Adicione itens ao carrinho!");
         if (!clienteId) return alert("Selecione um cliente.");
+        if (!vendedor) return alert("Selecione o vendedor responsável.");
 
+        const vendedorObj = vendedoresCache.find(v => v.nome === vendedor);
         let totalPedido = carrinho.reduce((acc, item) => acc + (item.qtd * item.precoUnit), 0);
-        if (vendedor !== "Vendedor Externo") totalPedido -= desconto;
+        if (!vendedorObj || vendedorObj.tipo !== "Externo") totalPedido -= desconto;
 
         const hoje = new Date();
         const dataStr = hoje.toISOString().slice(0,10).replace(/-/g,'');
@@ -720,7 +833,6 @@
         const sequencial = String(pedidosSnapshot.size + 1).padStart(3, '0');
         const numeroPedido = `${dataStr}-${sequencial}`;
 
-        // Nome do cliente para exibição facilitada
         const clienteDoc = await db.collection("clientes").doc(clienteId).get();
         const nomeCliente = clienteDoc.exists ? clienteDoc.data().nome : "Cliente";
 

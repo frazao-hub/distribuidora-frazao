@@ -17,14 +17,14 @@
             font-family: Arial, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             color: var(--dark);
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
             background: #fff;
-            padding: 25px;
+            padding: 15px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
@@ -37,9 +37,9 @@
         /* Tela de Login Inicial */
         #tela-login {
             max-width: 400px;
-            margin: 40px auto;
+            margin: 20px auto;
             background: #fff;
-            padding: 30px;
+            padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             text-align: center;
@@ -57,14 +57,14 @@
         /* Layout em Retângulos Clicáveis */
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
         .menu-card {
             background: #ffffff;
             color: var(--dark);
-            padding: 25px;
+            padding: 20px;
             border-radius: 8px;
             cursor: pointer;
             text-align: left;
@@ -96,7 +96,7 @@
         .btn-voltar {
             background-color: #6c757d;
             color: white;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             padding: 8px 15px;
             border: none;
             border-radius: 4px;
@@ -111,21 +111,23 @@
         form {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 12px;
             background: var(--light);
-            padding: 20px;
+            padding: 15px;
             border-radius: 6px;
             border: 1px solid #e9ecef;
             margin-bottom: 20px;
         }
         .form-group { display: flex; flex-direction: column; }
         .form-group.full { grid-column: span 2; }
-        label { margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        label { margin-bottom: 5px; font-weight: bold; font-size: 13px; }
         input, select, textarea {
             padding: 10px;
             border: 1px solid #ced4da;
             border-radius: 4px;
             font-size: 14px;
+            box-sizing: border-box;
+            width: 100%;
         }
         button.btn {
             padding: 10px 15px;
@@ -135,32 +137,53 @@
             font-weight: bold;
         }
         .btn-save { background-color: var(--success); color: white; grid-column: span 2; }
-        .btn-edit { background-color: var(--warning); color: #333; padding: 5px 10px; }
-        .btn-delete { background-color: var(--danger); color: white; padding: 5px 10px; }
+        .btn-edit { background-color: var(--warning); color: #333; padding: 5px 8px; font-size: 12px; }
+        .btn-delete { background-color: var(--danger); color: white; padding: 5px 8px; font-size: 12px; }
         .btn-primary { background-color: var(--primary); color: white; }
-        .btn-pagar { background-color: #17a2b8; color: white; padding: 5px 10px; }
-        .btn-print { background-color: #6c757d; color: white; padding: 5px 10px; }
+        .btn-pagar { background-color: #17a2b8; color: white; padding: 5px 8px; font-size: 12px; }
+        .btn-print { background-color: #6c757d; color: white; padding: 5px 8px; font-size: 12px; }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { border: 1px solid #dee2e6; padding: 10px; text-align: left; font-size: 14px; }
+        /* Tabelas Responsivas com Rolagem Lateral no Celular */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        th, td { border: 1px solid #dee2e6; padding: 8px 10px; text-align: left; font-size: 13px; }
         th { background-color: var(--primary); color: white; }
         tr:nth-child(even) { background-color: #f9f9f9; }
-        .product-img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; }
+        .product-img { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; }
         
         .dashboard-cards {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            gap: 10px;
             margin-bottom: 20px;
         }
         .card {
             background: var(--light);
-            padding: 15px;
+            padding: 12px;
             border-radius: 6px;
             border-left: 5px solid var(--primary);
         }
-        .card h4 { margin: 0 0 5px 0; color: #666; }
-        .card p { font-size: 20px; font-weight: bold; margin: 0; color: var(--primary); }
+        .card h4 { margin: 0 0 5px 0; color: #666; font-size: 12px; }
+        .card p { font-size: 18px; font-weight: bold; margin: 0; color: var(--primary); }
+
+        /* Ajuste Específico para Celulares (Telas Menores) */
+        @media (max-width: 768px) {
+            body { padding: 5px; }
+            .container { padding: 10px; }
+            form { grid-template-columns: 1fr; }
+            .form-group.full { grid-column: span 1; }
+            .btn-save { grid-column: span 1; }
+            h1 { font-size: 20px; }
+            h2 { font-size: 18px; }
+            h3 { font-size: 16px; }
+            .dashboard-cards { grid-template-columns: 1fr; }
+        }
 
         /* Estilo específico para impressão */
         @media print {
@@ -204,25 +227,25 @@
 
 <!-- SISTEMA PRINCIPAL -->
 <div class="container" id="sistemaPrincipal" style="display:none;">
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 20px;">
-        <h1 style="border:none; margin:0; padding:0;">Distribuidora Frazão - Gestão</h1>
-        <div>
-            <span id="infoUsuarioLogado" style="font-weight: bold; margin-right: 15px; color: #555;"></span>
-            <button class="btn btn-delete" onclick="sairDoSistema()">Sair</button>
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
+        <h1 style="border:none; margin:0; padding:0; font-size: 20px;">Distribuidora Frazão</h1>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span id="infoUsuarioLogado" style="font-weight: bold; color: #555; font-size: 12px;"></span>
+            <button class="btn btn-delete" style="padding: 5px 10px;" onclick="sairDoSistema()">Sair</button>
         </div>
     </div>
 
     <!-- TELA INICIAL -->
     <div id="aba-inicio" class="tab-content active">
         <h2>Painel Principal</h2>
-        <p>Selecione abaixo a seção desejada em formato de blocos:</p>
+        <p>Selecione abaixo a seção desejada:</p>
         <div class="menu-grid" id="gridMenuPrincipal"></div>
     </div>
 
-    <!-- ABA 1: VENDER (Com Categorias Primeiro) -->
+    <!-- ABA 1: VENDER -->
     <div id="aba-vendas" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
-        <h2>Nova Venda (PDV por Categorias)</h2>
+        <h2>Nova Venda (PDV)</h2>
         <form id="vendaForm" onsubmit="event.preventDefault(); finalizarVenda();">
             <div class="form-group">
                 <label for="vendaCliente">Cliente (Sua Base):</label>
@@ -233,7 +256,6 @@
                 <input type="text" id="vendaVendedorExibicao" readonly style="background:#e9ecef;">
             </div>
 
-            <!-- SELEÇÃO EM 2 ETAPAS: CATEGORIA -> PRODUTO -->
             <div class="form-group">
                 <label for="selectCategoriaVenda">1. Selecione a Categoria:</label>
                 <select id="selectCategoriaVenda" onchange="filtrarProdutosPorCategoriaVenda()">
@@ -252,27 +274,29 @@
                 <label>Quantidade e Adição:</label>
                 <div style="display: flex; gap: 10px;">
                     <input type="number" id="qtdProdutoVenda" value="1" min="1" style="flex: 1;" placeholder="Qtd">
-                    <button type="button" class="btn btn-primary" style="flex: 1;" onclick="adicionarItemCarrinho()">Adicionar ao Carrinho</button>
+                    <button type="button" class="btn btn-primary" style="flex: 1;" onclick="adicionarItemCarrinho()">Adicionar</button>
                 </div>
             </div>
 
             <div class="form-group full">
-                <h4>Itens do Pedido:</h4>
-                <table style="margin-top: 0;">
-                    <thead>
-                        <tr>
-                            <th>Produto</th>
-                            <th>Qtd</th>
-                            <th>Preço Unit.</th>
-                            <th>Subtotal</th>
-                            <th>Ação</th>
-                        </tr>
-                    </thead>
-                    <tbody id="carrinhoItens">
-                        <tr><td colspan="5" style="text-align: center;">Carrinho vazio</td></tr>
-                    </tbody>
-                </table>
-                <h3 style="text-align: right; margin-top: 10px;">Total do Pedido: R$ <span id="carrinhoTotal">0.00</span></h3>
+                <h4 style="margin: 5px 0;">Itens do Pedido:</h4>
+                <div class="table-responsive">
+                    <table style="margin-top: 0;">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Qtd</th>
+                                <th>Preço Unit.</th>
+                                <th>Subtotal</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="carrinhoItens">
+                            <tr><td colspan="5" style="text-align: center;">Carrinho vazio</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <h3 style="text-align: right; margin-top: 10px; font-size: 16px;">Total: R$ <span id="carrinhoTotal">0.00</span></h3>
             </div>
 
             <div class="form-group">
@@ -285,18 +309,18 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="descontoVenda">Desconto / Alteração de Preço:</label>
+                <label for="descontoVenda">Desconto / Alteração:</label>
                 <input type="number" step="0.01" id="descontoVenda" value="0" placeholder="0.00">
             </div>
 
-            <button type="submit" class="btn btn-save">Finalizar Venda e Dar Baixa no Estoque</button>
+            <button type="submit" class="btn btn-save">Finalizar Venda e Dar Baixa</button>
         </form>
     </div>
 
     <!-- ABA 2: PRODUTOS / CATÁLOGO -->
     <div id="aba-produtos" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
-        <h2>Catálogo de Produtos e Gestão</h2>
+        <h2>Catálogo de Produtos</h2>
         <div id="containerFormProduto">
             <form id="produtoForm">
                 <input type="hidden" id="produtoId">
@@ -325,49 +349,51 @@
                     <input type="number" step="0.01" id="precoProduto" required>
                 </div>
                 <div class="form-group">
-                    <label for="estoqueProduto">Quantidade em Estoque:</label>
+                    <label for="estoqueProduto">Qtd em Estoque:</label>
                     <input type="number" id="estoqueProduto" required>
                 </div>
                 <div class="form-group full">
                     <label for="fotoProduto">URL da Foto / Catálogo:</label>
                     <input type="url" id="fotoProduto" placeholder="https://exemplo.com/foto.jpg">
                 </div>
-                <button type="submit" class="btn btn-save">Salvar Produto no Catálogo</button>
+                <button type="submit" class="btn btn-save">Salvar Produto</button>
             </form>
         </div>
 
-        <h3>Lista de Produtos Disponíveis</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Foto</th>
-                    <th>Produto</th>
-                    <th>Categoria</th>
-                    <th>Preço</th>
-                    <th>Estoque Atual</th>
-                    <th id="thAcoesProduto">Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabelaProdutos"></tbody>
-        </table>
+        <h3>Lista de Produtos</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Foto</th>
+                        <th>Produto</th>
+                        <th>Categoria</th>
+                        <th>Preço</th>
+                        <th>Estoque</th>
+                        <th id="thAcoesProduto">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaProdutos"></tbody>
+            </table>
+        </div>
     </div>
 
     <!-- ABA 3: CLIENTES -->
     <div id="aba-clientes" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
-        <h2>Gestão de Clientes & Saldo Devedor</h2>
+        <h2>Clientes & Saldo Devedor</h2>
         <form id="clienteForm" onsubmit="event.preventDefault(); salvarCliente();">
             <input type="hidden" id="clienteIdInput">
             <div class="form-group">
-                <label for="nomeClienteCad">Nome do Cliente / Empresa:</label>
+                <label for="nomeClienteCad">Nome / Empresa:</label>
                 <input type="text" id="nomeClienteCad" required placeholder="Nome ou Razão Social">
             </div>
             <div class="form-group">
                 <label for="docClienteCad">CPF ou CNPJ:</label>
-                <input type="text" id="docClienteCad" placeholder="000.000.000-00 ou 00.000.000/0001-00">
+                <input type="text" id="docClienteCad" placeholder="000.000.000-00">
             </div>
             <div class="form-group">
-                <label for="telClienteCad">Telefone / Contato:</label>
+                <label for="telClienteCad">Telefone:</label>
                 <input type="text" id="telClienteCad" placeholder="(21) 99999-9999">
             </div>
             <div class="form-group">
@@ -378,24 +404,26 @@
             </div>
             <div class="form-group full">
                 <label for="enderecoClienteCad">Endereço Completo:</label>
-                <input type="text" id="enderecoClienteCad" placeholder="Rua, Número, Bairro, Cidade - RJ">
+                <input type="text" id="enderecoClienteCad" placeholder="Rua, Número, Bairro, Cidade">
             </div>
             <button type="submit" class="btn btn-save">Salvar Cliente</button>
         </form>
 
-        <h3>Clientes Cadastrados & Contas a Receber</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nome / Empresa</th>
-                    <th>Telefone</th>
-                    <th>Vendedor</th>
-                    <th>Saldo Devedor (Fiado)</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabelaClientes"></tbody>
-        </table>
+        <h3>Lista de Clientes</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome / Empresa</th>
+                        <th>Telefone</th>
+                        <th>Vendedor</th>
+                        <th>Saldo Devedor (Fiado)</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaClientes"></tbody>
+            </table>
+        </div>
     </div>
 
     <!-- ABA 4: HISTÓRICO DE VENDAS -->
@@ -404,7 +432,7 @@
         <h2>Histórico de Vendas</h2>
         <div class="dashboard-cards">
             <div class="card">
-                <h4>Faturamento Total Exibido</h4>
+                <h4>Faturamento Total</h4>
                 <p id="fatTotal">R$ 0,00</p>
             </div>
             <div class="card">
@@ -414,76 +442,80 @@
         </div>
 
         <h3>Registro de Pedidos</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nº Pedido</th>
-                    <th>Data / Hora</th>
-                    <th>Cliente</th>
-                    <th>Vendedor</th>
-                    <th>Pagamento</th>
-                    <th>Total</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabelaHistorico"></tbody>
-        </table>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nº</th>
+                        <th>Data / Hora</th>
+                        <th>Cliente</th>
+                        <th>Vendedor</th>
+                        <th>Pgto</th>
+                        <th>Total</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaHistorico"></tbody>
+            </table>
+        </div>
     </div>
 
     <!-- ABA 5: VENDEDORES -->
     <div id="aba-vendedores" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
-        <h2>Cadastro de Vendedores e Senhas (Acesso Restrito Admin)</h2>
+        <h2>Gestão de Vendedores</h2>
         
-        <div style="margin-bottom: 20px;">
-            <button type="button" class="btn btn-primary" onclick="cadastrarVendedorRapidoModal()">+ Cadastrar Vendedor via Caixa de Diálogo Rápida</button>
+        <div style="margin-bottom: 15px;">
+            <button type="button" class="btn btn-primary" style="width: 100%;" onclick="cadastrarVendedorRapidoModal()">+ Cadastrar Vendedor Rápido</button>
         </div>
 
         <form id="vendedorForm" onsubmit="event.preventDefault(); salvarVendedor();">
             <input type="hidden" id="vendedorIdInput">
             <div class="form-group">
-                <label for="nomeVendedor">Nome do Vendedor:</label>
+                <label for="nomeVendedor">Nome:</label>
                 <input type="text" id="nomeVendedor" required>
             </div>
             <div class="form-group">
-                <label for="tipoVendedor">Tipo / Permissão:</label>
+                <label for="tipoVendedor">Tipo:</label>
                 <select id="tipoVendedor" required>
-                    <option value="Externo">Vendedor Externo</option>
+                    <option value="Externo">Externo</option>
                     <option value="Interno">Interno</option>
                 </select>
             </div>
             <div class="form-group">
-                <label for="telefoneVendedor">Telefone / Contato:</label>
+                <label for="telefoneVendedor">Telefone:</label>
                 <input type="text" id="telefoneVendedor" placeholder="(21) 99999-9999">
             </div>
             <div class="form-group">
-                <label for="senhaVendedor">Senha de Acesso:</label>
-                <input type="password" id="senhaVendedor" placeholder="Digite a senha do vendedor" required>
+                <label for="senhaVendedor">Senha:</label>
+                <input type="password" id="senhaVendedor" placeholder="Senha" required>
             </div>
-            <button type="submit" class="btn btn-save">Salvar Vendedor e Senha</button>
+            <button type="submit" class="btn btn-save">Salvar Vendedor</button>
         </form>
 
         <h3>Vendedores Cadastrados</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Tipo</th>
-                    <th>Telefone</th>
-                    <th>Senha Cadastrada</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabelaVendedores"></tbody>
-        </table>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Telefone</th>
+                        <th>Senha</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaVendedores"></tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <!-- MODAL DE IMPRESSÃO DE PEDIDO -->
-<div id="modalImpressao" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center;">
-    <div style="background:white; width: 500px; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;">
+<div id="modalImpressao" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center; padding: 10px; box-sizing: border-box;">
+    <div style="background:white; width: 100%; max-width: 450px; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;">
         <div style="text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 10px; margin-bottom: 15px;">
-            <h2 style="margin: 0; color: #0056b3; border:none; padding:0;">Distribuidora Frazão</h2>
+            <h2 style="margin: 0; color: #0056b3; border:none; padding:0; font-size: 18px;">Distribuidora Frazão</h2>
             <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Comprovante de Pedido / Venda</p>
         </div>
         
@@ -520,7 +552,6 @@
     let vendedoresCache = [];
     let vendasCacheMap = {};
 
-    // Lista fixa de todas as categorias do negócio
     const listaTodasCategorias = [
         "Balas e Pirulitos",
         "Bebidas",
@@ -534,7 +565,6 @@
         "Papelaria"
     ];
 
-    // --- CONTROLE DE LOGIN ---
     function alternarCampoLogin() {
         const perfil = document.getElementById('loginPerfil').value;
         const grupoVendedor = document.getElementById('grupoSeletorVendedor');
@@ -607,7 +637,7 @@
     function iniciarSessaoSistema() {
         document.getElementById('tela-login').style.display = 'none';
         document.getElementById('sistemaPrincipal').style.display = 'block';
-        document.getElementById('infoUsuarioLogado').innerText = `Logado como: ${usuarioLogado.nome} (${usuarioLogado.perfil.toUpperCase()})`;
+        document.getElementById('infoUsuarioLogado').innerText = `${usuarioLogado.nome} (${usuarioLogado.perfil.toUpperCase()})`;
         document.getElementById('loginSenha').value = '';
 
         montarMenuPrincipal();
@@ -628,27 +658,27 @@
         grid.innerHTML += `
             <div class="menu-card" onclick="mudarAba('vendas')">
                 <h3>🛒 Vender</h3>
-                <p>Realize vendas multi-itens por categorias, escolha formas de pagamento e dê baixa automática no estoque.</p>
+                <p>Realize vendas multi-itens por categorias e dê baixa no estoque.</p>
             </div>
             <div class="menu-card" onclick="mudarAba('produtos')">
-                <h3>📋 Produtos & Catálogo</h3>
-                <p>Consulte preços, fotos, categorias e o estoque atualizado dos produtos da distribuidora.</p>
+                <h3>📋 Produtos</h3>
+                <p>Consulte preços, fotos e estoque atualizado dos produtos.</p>
             </div>
             <div class="menu-card" onclick="mudarAba('clientes')">
                 <h3>👥 Clientes & Fiado</h3>
-                <p>Cadastre clientes, controle saldos devedores (fiados) e registre abates ou pagamentos.</p>
+                <p>Cadastre clientes e controle saldos devedores (fiados).</p>
             </div>
             <div class="menu-card" onclick="mudarAba('historico')">
-                <h3>📊 Histórico de Vendas</h3>
-                <p>Consulte pedidos realizados, faturamento, imprima comprovantes e detalhes de compras.</p>
+                <h3>📊 Histórico</h3>
+                <p>Consulte pedidos realizados, faturamento e imprima recibos.</p>
             </div>
         `;
 
         if (usuarioLogado.perfil === 'admin') {
             grid.innerHTML += `
                 <div class="menu-card" style="border-left-color: #dc3545;" onclick="mudarAba('vendedores')">
-                    <h3>💼 Gestão de Vendedores & Senhas</h3>
-                    <p>Cadastre novos vendedores, defina senhas e controle a equipe.</p>
+                    <h3>💼 Vendedores</h3>
+                    <p>Cadastre novos vendedores e senhas de acesso.</p>
                 </div>
             `;
             document.getElementById('containerFormProduto').style.display = 'block';
@@ -675,7 +705,6 @@
         atualizarSelectCategoriasVenda();
     }
 
-    // --- PRODUTOS & CATEGORIAS NO PDV ---
     function carregarProdutos() {
         db.collection("produtos").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaProdutos');
@@ -697,9 +726,9 @@
 
                 tbody.innerHTML += `
                     <tr>
-                        <td><img src="${p.foto || 'https://via.placeholder.com/50'}" class="product-img"></td>
+                        <td><img src="${p.foto || 'https://via.placeholder.com/40'}" class="product-img"></td>
                         <td>${p.nome}</td>
-                        <td><span style="background: #e9ecef; padding: 3px 6px; border-radius: 4px; font-size: 12px;">${p.categoria || 'Geral'}</span></td>
+                        <td>${p.categoria || 'Geral'}</td>
                         <td>R$ ${Number(p.preco).toFixed(2)}</td>
                         <td><strong>${p.estoque} un.</strong></td>
                         ${acoesTd}
@@ -736,7 +765,7 @@
 
         const produtosFiltrados = produtosCache.filter(p => p.categoria === categoriaSelecionada);
         if (produtosFiltrados.length === 0) {
-            selectProduto.innerHTML = '<option value="">Nenhum produto cadastrado nesta categoria</option>';
+            selectProduto.innerHTML = '<option value="">Nenhum produto nesta categoria</option>';
             return;
         }
 
@@ -778,7 +807,6 @@
         if (confirm('Deseja excluir este produto?')) db.collection("produtos").doc(id).delete();
     }
 
-    // --- CLIENTES & SALDO DEVEDOR ---
     function carregarClientes() {
         db.collection("clientes").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaClientes');
@@ -801,21 +829,21 @@
 
                 tbody.innerHTML += `
                     <tr>
-                        <td><strong>${c.nome}</strong><br><small>${c.documento || ''} - ${c.endereco || ''}</small></td>
+                        <td><strong>${c.nome}</strong><br><small>${c.telefone || ''}</small></td>
                         <td>${c.telefone || '-'}</td>
                         <td>${c.vendedorResponsavel}</td>
                         <td style="color: ${saldoDevedor > 0 ? 'red' : 'green'}; font-weight: bold;">
                             R$ ${saldoDevedor.toFixed(2)}
                         </td>
                         <td>
-                            ${saldoDevedor > 0 ? `<button class="btn btn-pagar" onclick="registrarPagamentoFiado('${id}', '${c.nome}', ${saldoDevedor})">Pagar / Abater</button>` : ''}
+                            ${saldoDevedor > 0 ? `<button class="btn btn-pagar" onclick="registrarPagamentoFiado('${id}', '${c.nome}', ${saldoDevedor})">Pagar</button>` : ''}
                             <button class="btn btn-edit" onclick="editarCliente('${id}', '${c.nome}', '${c.documento || ''}', '${c.telefone || ''}', '${c.vendedorResponsavel || ''}', '${c.endereco || ''}')">Editar</button>
                             <button class="btn btn-delete" onclick="excluirCliente('${id}')">Excluir</button>
                         </td>
                     </tr>
                 `;
 
-                selectVendaCliente.innerHTML += `<option value="${id}">${c.nome} (Vendedor: ${c.vendedorResponsavel})</option>`;
+                selectVendaCliente.innerHTML += `<option value="${id}">${c.nome} (${c.vendedorResponsavel})</option>`;
             });
         });
     }
@@ -861,22 +889,17 @@
     }
 
     function registrarPagamentoFiado(clienteId, nomeCliente, saldoAtual) {
-        const valorPagoStr = prompt(`Cliente: ${nomeCliente}\nSaldo Devedor Atual: R$ ${saldoAtual.toFixed(2)}\n\nDigite o valor que o cliente está pagando/abatendo:`);
+        const valorPagoStr = prompt(`Cliente: ${nomeCliente}\nSaldo Devedor: R$ ${saldoAtual.toFixed(2)}\n\nDigite o valor que o cliente está pagando:`);
         if (!valorPagoStr) return;
         const valorPago = parseFloat(valorPagoStr);
         if (isNaN(valorPago) || valorPago <= 0) return alert("Valor inválido.");
 
-        if (valorPago > saldoAtual) {
-            if (!confirm("O valor pago é maior que o saldo devedor. Deseja zerar o saldo?")) return;
-        }
-
         const novoSaldo = Math.max(0, saldoAtual - valorPago);
         db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo }).then(() => {
-            alert(`Pagamento registrado com sucesso! Novo saldo: R$ ${novoSaldo.toFixed(2)}`);
+            alert(`Pagamento registrado! Novo saldo: R$ ${novoSaldo.toFixed(2)}`);
         });
     }
 
-    // --- CARRINHO & PDV ---
     function adicionarItemCarrinho() {
         const produtoId = document.getElementById('selectProdutoVenda').value;
         const qtd = parseInt(document.getElementById('qtdProdutoVenda').value);
@@ -894,7 +917,7 @@
         const itemExistente = carrinho.find(i => i.produtoId === produtoId);
         if (itemExistente) {
             if (produto.estoque < (itemExistente.qtd + qtd)) {
-                return alert(`Estoque insuficiente para adicionar mais quantidade.`);
+                return alert(`Estoque insuficiente.`);
             }
             itemExistente.qtd += qtd;
             itemExistente.subtotal = itemExistente.qtd * itemExistente.precoUnit;
@@ -937,7 +960,7 @@
                     <td>${item.qtd}</td>
                     <td>R$ ${item.precoUnit.toFixed(2)}</td>
                     <td>R$ ${item.subtotal.toFixed(2)}</td>
-                    <td><button type="button" class="btn btn-delete" onclick="removerItemCarrinho(${index})">Remover</button></td>
+                    <td><button type="button" class="btn btn-delete" onclick="removerItemCarrinho(${index})">X</button></td>
                 </tr>
             `;
         });
@@ -952,7 +975,7 @@
     async function finalizarVenda() {
         if (carrinho.length === 0) return alert("O carrinho está vazio.");
         const clienteId = document.getElementById('vendaCliente').value;
-        if (!clienteId) return alert("Selecione o cliente para a venda.");
+        if (!clienteId) return alert("Selecione o cliente.");
 
         const clienteObj = clientesCache.find(c => c.id === clienteId);
         const formaPagamento = document.getElementById('formaPagamento').value;
@@ -995,7 +1018,7 @@
         batch.set(vendaRef, vendaData);
 
         await batch.commit();
-        alert("Venda realizada com sucesso e estoque atualizado!");
+        alert("Venda realizada com sucesso!");
 
         carrinho = [];
         document.getElementById('vendaForm').reset();
@@ -1006,7 +1029,6 @@
         mudarAba('historico');
     }
 
-    // --- HISTÓRICO ---
     function carregarHistoricoVendas() {
         db.collection("vendas").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaHistorico');
@@ -1033,15 +1055,15 @@
 
                 tbody.innerHTML += `
                     <tr>
-                        <td>#${id.substring(0, 6)}</td>
+                        <td>#${id.substring(0, 4)}</td>
                         <td>${v.data}</td>
                         <td>${v.clienteNome}</td>
                         <td>${v.vendedor}</td>
                         <td>${v.formaPagamento}</td>
                         <td><strong>R$ ${Number(v.totalFinal).toFixed(2)}</strong></td>
                         <td>
-                            <button class="btn btn-print" onclick="imprimirComprovante('${id}')">🖨️ Recibo</button>
-                            ${usuarioLogado.perfil === 'admin' ? `<button class="btn btn-delete" onclick="excluirVenda('${id}')">Excluir</button>` : ''}
+                            <button class="btn btn-print" onclick="imprimirComprovante('${id}')">Recibo</button>
+                            ${usuarioLogado.perfil === 'admin' ? `<button class="btn btn-delete" onclick="excluirVenda('${id}')">X</button>` : ''}
                         </td>
                     </tr>
                 `;
@@ -1091,7 +1113,6 @@
         document.getElementById('modalImpressao').style.display = 'none';
     }
 
-    // --- VENDEDORES ---
     function carregarVendedores() {
         db.collection("vendedores").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaVendedores');
@@ -1114,7 +1135,7 @@
                         <td><code>${v.senha || ''}</code></td>
                         <td>
                             <button class="btn btn-edit" onclick="editarVendedor('${id}', '${v.nome}', '${v.tipo}', '${v.telefone || ''}', '${v.senha || ''}')">Editar</button>
-                            <button class="btn btn-delete" onclick="excluirVendedor('${id}')">Excluir</button>
+                            <button class="btn btn-delete" onclick="excluirVendedor('${id}')">X</button>
                         </td>
                     </tr>
                 `;

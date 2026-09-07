@@ -28,12 +28,12 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
                 <input type="password" id="loginSenha" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Digite sua senha">
             </div>
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm">
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm cursor-pointer">
                 Entrar no Sistema
             </button>
         </form>
         <div class="mt-6 border-t border-gray-200 pt-4">
-            <button onclick="mostrarCadastroVendedorModal()" class="w-full text-center text-sm text-blue-600 hover:underline font-medium">
+            <button onclick="mostrarCadastroVendedorModal()" class="w-full text-center text-sm text-blue-600 hover:underline font-medium cursor-pointer">
                 Primeiro acesso? Cadastrar Novo Vendedor
             </button>
         </div>
@@ -48,7 +48,7 @@
                 <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight">Distribuidora Frazão</h1>
                 <p class="text-sm text-gray-500">Logado como: <strong id="usuarioLogadoNome" class="text-blue-600"></strong></p>
             </div>
-            <button onclick="fazerLogout()" class="mt-3 md:mt-0 text-sm bg-red-50 text-red-600 hover:bg-red-100 font-semibold px-4 py-2 rounded-lg transition">
+            <button onclick="fazerLogout()" class="mt-3 md:mt-0 text-sm bg-red-50 text-red-600 hover:bg-red-100 font-semibold px-4 py-2 rounded-lg transition cursor-pointer">
                 Sair / Trocar Vendedor
             </button>
         </header>
@@ -111,7 +111,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Endereço Completo</label>
                         <input type="text" id="enderecoCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Ex: Rua Rocha, nº 123, Bairro Rocha, São Gonçalo - RJ">
                     </div>
-                    <button type="submit" class="btn-submit w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm">
+                    <button type="submit" class="btn-submit w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm cursor-pointer">
                         Salvar Cliente
                     </button>
                 </form>
@@ -173,15 +173,15 @@
                             <input type="number" id="estoqueProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="Ex: 50">
                         </div>
                     </div>
-                    <button type="submit" class="btn-submit w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm">
+                    <button type="submit" class="btn-submit w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm cursor-pointer">
                         Cadastrar no Estoque
                     </button>
                 </form>
             </div>
 
-            <!-- Listagem de Estoque Organizada por Categoria -->
+            <!-- Listagem de Estoque Organizada por Categoria com Ações de Edição -->
             <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-3">Estoque Atual por Categoria</h3>
+                <h3 class="text-lg font-bold text-gray-800 mb-3">Estoque Atual por Categoria (Gerenciamento)</h3>
                 <div id="listaEstoqueCategorias" class="space-y-4">
                     <!-- Preenchido dinamicamente via JS -->
                 </div>
@@ -249,7 +249,7 @@
                     <input type="number" step="0.01" id="vendaValor" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="0,00">
                 </div>
 
-                <button type="submit" class="btn-submit w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
+                <button type="submit" class="btn-submit w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md cursor-pointer">
                     Confirmar Venda e Dar Baixa no Estoque
                 </button>
             </form>
@@ -291,8 +291,51 @@
                     <input type="password" id="novaSenhaVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Digite uma senha segura">
                 </div>
                 <div class="flex space-x-3 pt-2">
-                    <button type="button" onclick="fecharCadastroVendedorModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-lg transition">Cancelar</button>
-                    <button type="submit" class="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition">Salvar</button>
+                    <button type="button" onclick="fecharCadastroVendedorModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-lg transition cursor-pointer">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition cursor-pointer">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE EDIÇÃO DE PRODUTO -->
+    <div id="modalEdicaoProduto" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white max-w-md w-full p-6 rounded-2xl shadow-xl">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Editar Produto</h2>
+            <form id="formEdicaoProduto" class="space-y-4">
+                <input type="hidden" id="editProdId">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Produto</label>
+                    <input type="text" id="editNomeProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                    <select id="editCategoriaProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                        <option value="Balas e Pirulitos">Balas e Pirulitos</option>
+                        <option value="Bebidas">Bebidas</option>
+                        <option value="Biscoitos">Biscoitos</option>
+                        <option value="Descartáveis">Descartáveis</option>
+                        <option value="Doces">Doces</option>
+                        <option value="Drops e Chicletes">Drops e Chicletes</option>
+                        <option value="Higiene">Higiene</option>
+                        <option value="Limpeza">Limpeza</option>
+                        <option value="Mercearia">Mercearia</option>
+                        <option value="Papelaria">Papelaria</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Preço de Venda (R$)</label>
+                        <input type="number" step="0.01" id="editPrecoProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quantidade em Estoque</label>
+                        <input type="number" id="editEstoqueProduto" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="fecharModalEdicao()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-lg transition cursor-pointer">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-lg transition cursor-pointer">Salvar Alterações</button>
                 </div>
             </form>
         </div>
@@ -529,38 +572,7 @@
             }
         }
 
-        // CARREGAR CLIENTES PARA O SELECT DA ABA VENDER (APENAS DO VENDEDOR)
-        async function carregarClientesParaSelect() {
-            const select = document.getElementById('vendaCliente');
-            select.innerHTML = `<option value="">Selecione um cliente...</option>`;
-
-            try {
-                const snapshot = await db.collection('clientes')
-                    .where('vendedorResponsavel', '==', vendedorLogado)
-                    .get();
-
-                if (snapshot.empty) {
-                    select.innerHTML = `<option value="">Nenhum cliente cadastrado</option>`;
-                    return;
-                }
-
-                let clientes = [];
-                snapshot.forEach(doc => clientes.push({ id: doc.id, ...doc.data() }));
-                clientes.sort((a, b) => a.nome.localeCompare(b.nome));
-
-                clientes.forEach(c => {
-                    const opt = document.createElement('option');
-                    opt.value = c.nome;
-                    opt.textContent = `${c.nome} (${c.documento || 'Sem doc'})`;
-                    select.appendChild(opt);
-                });
-            } catch (err) {
-                console.error("Erro ao carregar clientes para venda:", err);
-                select.innerHTML = `<option value="">Erro ao carregar clientes</option>`;
-            }
-        }
-
-        // CADASTRO DE PRODUTO
+        // CADASTRO DE PRODUTO / ESTOQUE
         document.getElementById('formProduto').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = e.target.querySelector('.btn-submit');
@@ -571,206 +583,269 @@
                 await db.collection('produtos').add({
                     nome: document.getElementById('nomeProduto').value,
                     categoria: document.getElementById('categoriaProduto').value,
-                    preco: parseFloat(document.getElementById('precoProduto').value) || 0,
-                    estoque: parseInt(document.getElementById('estoqueProduto').value) || 0,
+                    preco: parseFloat(document.getElementById('precoProduto').value),
+                    estoque: parseInt(document.getElementById('estoqueProduto').value),
                     criadoEm: new Date().toISOString()
                 });
-                exibirMensagem("Produto cadastrado com sucesso no estoque!");
+                exibirMensagem("Produto cadastrado no estoque com sucesso!");
                 e.target.reset();
                 carregarEstoquePorCategoria();
             } catch (err) {
-                exibirMensagem("Erro ao salvar produto: " + err.message, 'erro');
+                exibirMensagem("Erro ao cadastrar produto: " + err.message, 'erro');
             } finally {
                 btn.disabled = false;
                 btn.textContent = "Cadastrar no Estoque";
             }
         });
 
-        // EXIBIR ESTOQUE SEPARADO POR CATEGORIA NA ABA DE PRODUTOS
+        // CARREGAR ESTOQUE ORGANIZADO POR CATEGORIA COM OPÇÕES DE EDIÇÃO
         async function carregarEstoquePorCategoria() {
             const container = document.getElementById('listaEstoqueCategorias');
-            container.innerHTML = `<p class="text-sm text-gray-500">Carregando estoque...</p>`;
+            container.innerHTML = `<p class="text-center text-gray-500 py-4">Carregando estoque...</p>`;
 
             try {
-                const snapshot = await db.collection('produtos').get();
-                const categoriasMap = {};
-
-                snapshot.forEach(doc => {
-                    const p = { id: doc.id, ...doc.data() };
-                    const cat = p.categoria || 'Sem Categoria';
-                    if (!categoriasMap[cat]) {
-                        categoriasMap[cat] = [];
-                    }
-                    categoriasMap[cat].push(p);
-                });
+                const snapshot = await db.collection('produtos').orderBy('nome').get();
+                container.innerHTML = "";
 
                 if (snapshot.empty) {
-                    container.innerHTML = `<p class="text-sm text-gray-500 p-4 bg-white rounded-lg border border-gray-200">Nenhum produto cadastrado no estoque ainda.</p>`;
+                    container.innerHTML = `<p class="text-center text-gray-500 py-4 bg-white rounded-lg border border-gray-200">Nenhum produto cadastrado no estoque.</p>`;
                     return;
                 }
 
-                container.innerHTML = "";
-                const categoriasOrdenadas = Object.keys(categoriasMap).sort();
+                let produtosPorCategoria = {};
+                snapshot.forEach(doc => {
+                    const p = { id: doc.id, ...doc.data() };
+                    const cat = p.categoria || "Geral";
+                    if (!produtosPorCategoria[cat]) produtosPorCategoria[cat] = [];
+                    produtosPorCategoria[cat].push(p);
+                });
 
-                categoriasOrdenadas.forEach(cat => {
-                    const produtos = categoriasMap[cat];
-                    produtos.sort((a, b) => a.nome.localeCompare(b.nome));
-
-                    let htmlProdutos = produtos.map(p => `
-                        <div class="flex justify-between items-center py-2 px-3 bg-white border-b border-gray-100 last:border-none text-sm">
-                            <span class="font-medium text-gray-800">${p.nome}</span>
-                            <div class="space-x-4">
-                                <span class="text-gray-500">Estoque: <strong class="text-gray-800">${p.estoque}</strong></span>
-                                <span class="text-emerald-600 font-bold">R$ ${(p.preco || 0).toFixed(2)}</span>
-                            </div>
-                        </div>
-                    `).join('');
-
+                Object.keys(produtosPorCategoria).sort().forEach(cat => {
+                    const produtos = produtosPorCategoria[cat];
                     const divCat = document.createElement('div');
-                    divCat.className = "bg-white rounded-xl border border-gray-200 overflow-hidden shadow-xs";
-                    divCat.innerHTML = `
-                        <div class="bg-gray-50 px-4 py-2.5 border-b border-gray-200 font-bold text-purple-800 text-sm flex justify-between items-center">
+                    divCat.className = "bg-white rounded-xl border border-gray-200 overflow-hidden shadow-xs mb-4";
+                    
+                    let tabelaHtml = `
+                        <div class="bg-purple-100 px-4 py-2.5 font-bold text-purple-900 border-b border-purple-200 flex justify-between items-center">
                             <span>${cat}</span>
-                            <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">${produtos.length} iten(s)</span>
+                            <span class="text-xs bg-purple-200 text-purple-800 px-2.5 py-1 rounded-full">${produtos.length} item(ns)</span>
                         </div>
-                        <div class="divide-y divide-gray-100">
-                            ${htmlProdutos}
-                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-2.5 text-left font-bold text-gray-600">Produto</th>
+                                        <th class="px-4 py-2.5 text-right font-bold text-gray-600">Preço (R$)</th>
+                                        <th class="px-4 py-2.5 text-right font-bold text-gray-600">Estoque</th>
+                                        <th class="px-4 py-2.5 text-center font-bold text-gray-600">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
                     `;
+
+                    produtos.forEach(p => {
+                        tabelaHtml += `
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-2.5 font-medium text-gray-800">${p.nome}</td>
+                                <td class="px-4 py-2.5 text-right text-gray-600">R$ ${p.preco.toFixed(2)}</td>
+                                <td class="px-4 py-2.5 text-right font-semibold ${p.estoque > 5 ? 'text-gray-700' : 'text-red-600'}">${p.estoque} un.</td>
+                                <td class="px-4 py-2.5 text-center space-x-2">
+                                    <button onclick='abrirModalEdicao("${p.id}", "${p.nome}", "${p.categoria}", ${p.preco}, ${p.estoque})' class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-semibold px-2.5 py-1.5 rounded-lg transition cursor-pointer">Editar</button>
+                                    <button onclick='deletarProduto("${p.id}", "${p.nome}")' class="text-xs bg-red-50 text-red-600 hover:bg-red-100 font-semibold px-2.5 py-1.5 rounded-lg transition cursor-pointer">Excluir</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    tabelaHtml += `</tbody></table></div>`;
+                    divCat.innerHTML = tabelaHtml;
                     container.appendChild(divCat);
                 });
             } catch (err) {
                 console.error("Erro ao carregar estoque:", err);
-                container.innerHTML = `<p class="text-sm text-red-500">Erro ao carregar produtos do estoque.</p>`;
+                container.innerHTML = `<p class="text-center text-red-500 py-4">Erro ao carregar dados do estoque.</p>`;
             }
         }
 
-        // CARREGAR PRODUTOS PARA A TELA DE VENDA
-        async function carregarProdutosParaVenda() {
-            const select = document.getElementById('selectProdutoCatalogo');
-            select.innerHTML = `<option value="">Carregando produtos...</option>`;
-
-            try {
-                const snapshot = await db.collection('produtos').get();
-                listaProdutosCache = [];
-
-                snapshot.forEach(doc => {
-                    listaProdutosCache.push({ id: doc.id, ...doc.data() });
-                });
-                listaProdutosCache.sort((a, b) => a.nome.localeCompare(b.nome));
-
-                preencherSelectProdutos(listaProdutosCache);
-            } catch (err) {
-                console.error("Erro ao carregar produtos:", err);
-                select.innerHTML = `<option value="">Erro ao carregar produtos do estoque</option>`;
-            }
+        // FUNÇÕES DE EDIÇÃO E EXCLUSÃO DE PRODUTO
+        function abrirModalEdicao(id, nome, categoria, preco, estoque) {
+            document.getElementById('editProdId').value = id;
+            document.getElementById('editNomeProduto').value = nome;
+            document.getElementById('editCategoriaProduto').value = categoria;
+            document.getElementById('editPrecoProduto').value = preco;
+            document.getElementById('editEstoqueProduto').value = estoque;
+            document.getElementById('modalEdicaoProduto').classList.remove('hidden');
         }
 
-        function preencherSelectProdutos(produtos) {
-            const select = document.getElementById('selectProdutoCatalogo');
-            select.innerHTML = `<option value="">Selecione um produto do estoque...</option>`;
-
-            if (produtos.length === 0) {
-                select.innerHTML = `<option value="">Nenhum produto encontrado</option>`;
-                return;
-            }
-
-            produtos.forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = p.id;
-                opt.textContent = `${p.nome} [${p.categoria}] - Estoque: ${p.estoque} - R$ ${(p.preco || 0).toFixed(2)}`;
-                opt.dataset.nome = p.nome;
-                opt.dataset.preco = p.preco || 0;
-                opt.dataset.estoque = p.estoque || 0;
-                select.appendChild(opt);
-            });
+        function fecharModalEdicao() {
+            document.getElementById('modalEdicaoProduto').classList.add('hidden');
+            document.getElementById('formEdicaoProduto').reset();
         }
 
-        function filtrarProdutosPorCategoria() {
-            const catSelecionada = document.getElementById('filtroCategoria').value;
-            if (!catSelecionada) {
-                preencherSelectProdutos(listaProdutosCache);
-                return;
-            }
-
-            const filtrados = listaProdutosCache.filter(p => p.categoria === catSelecionada);
-            preencherSelectProdutos(filtrados);
-        }
-
-        function selecionarProdutoDoCatalogo() {
-            const select = document.getElementById('selectProdutoCatalogo');
-            const optSelecionada = select.options[select.selectedIndex];
-
-            if (!optSelecionada.value) return;
-
-            const nomeProd = optSelecionada.dataset.nome;
-            produtoSelecionadoPrecoUnitario = parseFloat(optSelecionada.dataset.preco);
-
-            document.getElementById('vendaProdutos').value = nomeProd;
-            document.getElementById('vendaQtd').value = 1;
-            calcularTotalVenda();
-        }
-
-        function calcularTotalVenda() {
-            const qtd = parseInt(document.getElementById('vendaQtd').value) || 0;
-            const total = qtd * produtoSelecionadoPrecoUnitario;
-            document.getElementById('vendaValor').value = total.toFixed(2);
-        }
-
-        // REGISTRO DE VENDA E BAIXA NO ESTOQUE
-        document.getElementById('formVenda').addEventListener('submit', async function(e) {
+        document.getElementById('formEdicaoProduto').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const produtoId = document.getElementById('selectProdutoCatalogo').value;
-            const qtdVendida = parseInt(document.getElementById('vendaQtd').value) || 0;
-
-            if (!produtoId) {
-                exibirMensagem("Selecione um produto do estoque para realizar a venda.", 'erro');
-                return;
-            }
-
-            const btn = e.target.querySelector('.btn-submit');
-            btn.disabled = true;
-            btn.textContent = "Registrando Venda e Atualizando Estoque...";
+            const id = document.getElementById('editProdId').value;
+            const nome = document.getElementById('editNomeProduto').value;
+            const categoria = document.getElementById('editCategoriaProduto').value;
+            const preco = parseFloat(document.getElementById('editPrecoProduto').value);
+            const estoque = parseInt(document.getElementById('editEstoqueProduto').value);
 
             try {
-                const produtoRef = db.collection('produtos').doc(produtoId);
-                const produtoDoc = await produtoRef.get();
-
-                if (!produtoDoc.exists) {
-                    throw new Error("O produto selecionado não existe mais no sistema.");
-                }
-
-                const estoqueAtual = produtoDoc.data().estoque || 0;
-                if (estoqueAtual < qtdVendida) {
-                    throw new Error(`Estoque insuficiente! Disponível no momento: ${estoqueAtual} unidade(s).`);
-                }
-
-                await produtoRef.update({
-                    estoque: estoqueAtual - qtdVendida
+                await db.collection('produtos').doc(id).update({
+                    nome: nome,
+                    categoria: categoria,
+                    preco: preco,
+                    estoque: estoque,
+                    atualizadoEm: new Date().toISOString()
                 });
 
-                await db.collection('vendas').add({
-                    cliente: document.getElementById('vendaCliente').value,
-                    vendedor: vendedorLogado,
-                    valorTotal: parseFloat(document.getElementById('vendaValor').value) || 0,
-                    produtos: `${qtdVendida}x ${document.getElementById('vendaProdutos').value}`,
-                    criadoEm: new Date().toISOString()
-                });
-
-                exibirMensagem("Venda registrada com sucesso e estoque atualizado!");
-                e.target.reset();
-                document.getElementById('vendaVendedor').value = vendedorLogado;
-                produtoSelecionadoPrecoUnitario = 0;
-                carregarProdutosParaVenda();
+                exibirMensagem("Produto atualizado com sucesso!");
+                fecharModalEdicao();
+                carregarEstoquePorCategoria();
             } catch (err) {
-                exibirMensagem("Erro ao registrar venda: " + err.message, 'erro');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = "Confirmar Venda e Dar Baixa no Estoque";
+                alert("Erro ao atualizar produto: " + err.message);
             }
         });
 
-        // HISTÓRICO DE VENDAS (APENAS DO VENDEDOR LOGADO)
+        async function deletarProduto(id, nome) {
+            if (confirm(`Tem certeza que deseja excluir o produto "${nome}" do estoque?`)) {
+                try {
+                    await db.collection('produtos').doc(id).delete();
+                    exibirMensagem("Produto excluído com sucesso!");
+                    carregarEstoquePorCategoria();
+                } catch (err) {
+                    alert("Erro ao excluir produto: " + err.message);
+                }
+            }
+        }
+
+        // CARREGAR CLIENTES PARA SELECT DA VENDA (APENAS DO VENDEDOR LOGADO)
+        async function carregarClientesParaSelect() {
+            const select = document.getElementById('vendaCliente');
+            select.innerHTML = `<option value="">Selecione um cliente...</option>`;
+            try {
+                const snapshot = await db.collection('clientes')
+                    .where('vendedorResponsavel', '==', vendedorLogado)
+                    .get();
+                
+                let clientes = [];
+                snapshot.forEach(doc => clientes.push({ id: doc.id, ...doc.data() }));
+                clientes.sort((a, b) => a.nome.localeCompare(b.nome));
+
+                clientes.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.nome;
+                    opt.textContent = c.nome;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error("Erro ao carregar clientes para venda:", err);
+            }
+        }
+
+        // CARREGAR PRODUTOS PARA VENDA
+        async function carregarProdutosParaVenda() {
+            try {
+                const snapshot = await db.collection('produtos').orderBy('nome').get();
+                listaProdutosCache = [];
+                snapshot.forEach(doc => listaProdutosCache.push({ id: doc.id, ...doc.data() }));
+                filtrarProdutosPorCategoria();
+            } catch (err) {
+                console.error("Erro ao carregar produtos para venda:", err);
+            }
+        }
+
+        function filtrarProdutosPorCategoria() {
+            const catFiltro = document.getElementById('filtroCategoria').value;
+            const selectProd = document.getElementById('selectProdutoCatalogo');
+            selectProd.innerHTML = `<option value="">Selecione um produto...</option>`;
+
+            const produtosFiltrados = catFiltro 
+                ? listaProdutosCache.filter(p => p.categoria === catFiltro)
+                : listaProdutosCache;
+
+            produtosFiltrados.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = `${p.nome} - R$ ${p.preco.toFixed(2)} (Estoque: ${p.estoque})`;
+                selectProd.appendChild(opt);
+            });
+
+            document.getElementById('vendaProdutos').value = "";
+            document.getElementById('vendaValor').value = "";
+            produtoSelecionadoPrecoUnitario = 0;
+        }
+
+        function selecionarProdutoDoCatalogo() {
+            const prodId = document.getElementById('selectProdutoCatalogo').value;
+            if (!prodId) return;
+
+            const produto = listaProdutosCache.find(p => p.id === prodId);
+            if (produto) {
+                document.getElementById('vendaProdutos').value = `${produto.nome} (1 un.)`;
+                document.getElementById('vendaQtd').value = 1;
+                produtoSelecionadoPrecoUnitario = produto.preco;
+                calcularTotalVenda();
+            }
+        }
+
+        function calcularTotalVenda() {
+            const qtd = parseInt(document.getElementById('vendaQtd').value) || 1;
+            const total = produtoSelecionadoPrecoUnitario * qtd;
+            document.getElementById('vendaValor').value = total.toFixed(2);
+        }
+
+        // REGISTRAR VENDA E ATUALIZAR ESTOQUE
+        document.getElementById('formVenda').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const prodId = document.getElementById('selectProdutoCatalogo').value;
+            const qtdVendida = parseInt(document.getElementById('vendaQtd').value);
+
+            if (!prodId) {
+                alert("Selecione um produto do catálogo.");
+                return;
+            }
+
+            const produtoRef = db.collection('produtos').doc(prodId);
+            
+            try {
+                await db.runTransaction(async (transaction) => {
+                    const prodDoc = await transaction.get(produtoRef);
+                    if (!prodDoc.exists) {
+                        throw "O produto selecionado não existe mais no estoque.";
+                    }
+
+                    const estoqueAtual = prodDoc.data().estoque;
+                    if (estoqueAtual < qtdVendida) {
+                        throw `Estoque insuficiente! Disponível: ${estoqueAtual} unidade(s).`;
+                    }
+
+                    // Atualizar estoque
+                    transaction.update(produtoRef, { estoque: estoqueAtual - qtdVendida });
+
+                    // Registrar venda
+                    const novaVendaRef = db.collection('vendas').doc();
+                    transaction.set(novaVendaRef, {
+                        cliente: document.getElementById('vendaCliente').value,
+                        vendedor: vendedorLogado,
+                        produtos: document.getElementById('vendaProdutos').value,
+                        quantidade: qtdVendida,
+                        valorTotal: parseFloat(document.getElementById('vendaValor').value),
+                        data: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
+                        criadoEm: new Date().toISOString()
+                    });
+                });
+
+                exibirMensagem("Venda registrada e estoque atualizado com sucesso!");
+                e.target.reset();
+                document.getElementById('vendaVendedor').value = vendedorLogado;
+                carregarProdutosParaVenda();
+            } catch (err) {
+                exibirMensagem("Erro ao processar venda: " + (err.message || err), 'erro');
+            }
+        });
+
+        // CARREGAR HISTÓRICO DE VENDAS DO VENDEDOR LOGADO
         async function carregarHistoricoVendas() {
             const tbody = document.getElementById('tabelaHistorico');
             tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">Carregando histórico...</td></tr>`;
@@ -792,16 +867,13 @@
                 vendas.sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
 
                 vendas.forEach(v => {
-                    const dataFormatada = v.criadoEm ? new Date(v.criadoEm).toLocaleString('pt-BR') : '-';
-                    const valorFormatado = (v.valorTotal || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-gray-50";
                     tr.innerHTML = `
-                        <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">${dataFormatada}</td>
+                        <td class="px-4 py-3 text-gray-600">${v.data || '-'}</td>
                         <td class="px-4 py-3 font-medium text-gray-800">${v.cliente || '-'}</td>
                         <td class="px-4 py-3 text-gray-600">${v.produtos || '-'}</td>
-                        <td class="px-4 py-3 text-right font-bold text-emerald-600">R$ ${valorFormatado}</td>
+                        <td class="px-4 py-3 text-right font-semibold text-emerald-600">R$ ${(v.valorTotal || 0).toFixed(2)}</td>
                     `;
                     tbody.appendChild(tr);
                 });

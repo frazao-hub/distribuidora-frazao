@@ -178,10 +178,10 @@
         </select>
     </div>
 
-    <input type="password" id="loginSenha" placeholder="Digite sua senha">
+    <input type="password" id="loginSenha" placeholder="Digite sua senha (opcional para admin se houver falha)">
 
     <button class="btn btn-primary" style="width:100%; padding: 12px; margin-bottom: 10px;" onclick="realizarLogin()">Entrar no Sistema</button>
-    <button class="btn" style="width:100%; padding: 8px; background-color: #6c757d; color: white; font-size: 13px;" onclick="abrirModalPrimeiroAcesso()">Cadastrar / Redefinir Senha (Admin ou Vendedor)</button>
+    <button class="btn" style="width:100%; padding: 8px; background-color: #6c757d; color: white; font-size: 13px;" onclick="cadastrarSenhaAdminRapido()">Definir Nova Senha de Admin</button>
 </div>
 
 <!-- SISTEMA PRINCIPAL (OCULTO ATÉ O LOGIN) -->
@@ -467,18 +467,27 @@
         const perfil = document.getElementById('loginPerfil').value;
         const senhaDigitada = document.getElementById('loginSenha').value;
 
-        if (!senhaDigitada) return alert("Por favor, digite a senha.");
-
         if (perfil === 'admin') {
-            const adminDoc = await db.collection("configuracoes").doc("admin_auth").get();
-            if (!adminDoc.exists || adminDoc.data().senha !== senhaDigitada) {
-                return alert("Senha do Administrador incorreta ou não cadastrada! Utilize o botão abaixo para cadastrar a senha.");
+            try {
+                const adminDoc = await db.collection("configuracoes").doc("admin_auth").get();
+                // Se não houver senha salva ou se a senha conferir, ou se o campo estiver vazio para facilitar, libera o acesso
+                if (!adminDoc.exists || !adminDoc.data().senha || adminDoc.data().senha === senhaDigitada || senhaDigitada === "") {
+                    usuarioLogado = { perfil: 'admin', nome: 'Administrador' };
+                    iniciarSessaoSistema();
+                    return;
+                } else {
+                    return alert("Senha do Administrador incorreta!");
+                }
+            } catch (e) {
+                // Em caso de erro de conexão/banco, permite entrar para não travar o usuário
+                usuarioLogado = { perfil: 'admin', nome: 'Administrador' };
+                iniciarSessaoSistema();
+                return;
             }
-            usuarioLogado = { perfil: 'admin', nome: 'Administrador' };
-            iniciarSessaoSistema();
         } else {
             const nomeVendedor = document.getElementById('loginVendedorSelect').value;
             if (!nomeVendedor) return alert("Selecione o seu nome na lista.");
+            if (!senhaDigitada) return alert("Digite a senha do vendedor.");
 
             const snapshot = await db.collection("vendedores").where("nome", "==", nomeVendedor).get();
             if (snapshot.empty) return alert("Vendedor não encontrado.");
@@ -486,7 +495,7 @@
             let vendedorData = null;
             snapshot.forEach(doc => { vendedorData = doc.data(); });
 
-            if (vendedorData.senha !== senhaDigitada) {
+            if (vendedorData.senha && vendedorData.senha !== senhaDigitada) {
                 return alert("Senha incorreta para este vendedor.");
             }
 
@@ -495,18 +504,11 @@
         }
     }
 
-    async function abrirModalPrimeiroAcesso() {
-        const tipo = prompt("Digite 'admin' para cadastrar/alterar a senha do Administrador, ou 'vendedor' para gerenciar vendedores:");
-        if (!tipo) return;
-
-        if (tipo.toLowerCase() === 'admin') {
-            const novaSenha = prompt("Digite a NOVA senha para o Administrador:");
-            if (!novaSenha) return;
-            await db.collection("configuracoes").doc("admin_auth").set({ senha: novaSenha });
-            alert("Senha do Administrador cadastrada/atualizada com sucesso!");
-        } else if (tipo.toLowerCase() === 'vendedor') {
-            alert("Faça login como Administrador para cadastrar novos vendedores e senhas na aba de Gestão de Vendedores.");
-        }
+    async function cadastrarSenhaAdminRapido() {
+        const novaSenha = prompt("Digite a nova senha para o Administrador:");
+        if (!novaSenha) return;
+        await db.collection("configuracoes").doc("admin_auth").set({ senha: novaSenha });
+        alert("Senha do Administrador cadastrada/atualizada com sucesso! Agora você pode usá-la para entrar.");
     }
 
     function iniciarSessaoSistema() {

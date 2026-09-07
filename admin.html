@@ -367,7 +367,7 @@
     <!-- ABA 5: VENDEDOR -->
     <div id="aba-vendedores" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
-        <h2>Cadastro e Gestão de Vendedores</h2>
+        <h2>Cadastro e Gestão de Vendedores (Protegido por Senha)</h2>
         <form id="vendedorForm">
             <input type="hidden" id="vendedorIdInput">
             <div class="form-group">
@@ -384,6 +384,10 @@
             <div class="form-group">
                 <label for="telefoneVendedor">Telefone / Contato:</label>
                 <input type="text" id="telefoneVendedor" placeholder="(21) 99999-9999">
+            </div>
+            <div class="form-group full">
+                <label for="senhaAdminVendedor">Senha de Autorização (Admin):</label>
+                <input type="password" id="senhaAdminVendedor" placeholder="Digite a senha para cadastrar/alterar" required>
             </div>
             <button type="submit" class="btn btn-save">Salvar Vendedor</button>
         </form>
@@ -408,7 +412,10 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script>
-    // Cole aqui suas credenciais do Firebase
+    // Defina aqui a senha mestre para gerenciar vendedores
+    const SENHA_MESTRE_VENDEDOR = "123456"; // Altere para a senha que preferir
+
+    // Cole suas credenciais do Firebase
     const firebaseConfig = {
         apiKey: "SUA_API_KEY",
         authDomain: "seu-projeto.firebaseapp.com",
@@ -467,7 +474,6 @@
                 const id = doc.id;
                 produtosCache.push({ id, ...p });
 
-                // Tabela Lista de Produtos & Catálogo
                 tbody.innerHTML += `
                     <tr>
                         <td><img src="${p.foto || 'https://via.placeholder.com/50'}" class="product-img"></td>
@@ -481,7 +487,6 @@
                     </tr>
                 `;
 
-                // Tabela Resumo do Estoque
                 tbodyEstoque.innerHTML += `
                     <tr>
                         <td>${p.nome}</td>
@@ -490,7 +495,6 @@
                     </tr>
                 `;
 
-                // Selects
                 selectVenda.innerHTML += `<option value="${id}">${p.nome} - Estoque: ${p.estoque} (R$ ${Number(p.preco).toFixed(2)})</option>`;
                 selectEstoque.innerHTML += `<option value="${id}">${p.nome} (Atual: ${p.estoque})</option>`;
             });
@@ -541,7 +545,7 @@
         });
     }
 
-    // --- VENDEDOR ---
+    // --- VENDEDOR COM SENHA ---
     function carregarVendedores() {
         db.collection("vendedores").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaVendedores');
@@ -562,8 +566,8 @@
                         <td>${v.tipo}</td>
                         <td>${v.telefone || '-'}</td>
                         <td>
-                            <button class="btn btn-edit" onclick="editarVendedor('${id}', '${v.nome}', '${v.tipo}', '${v.telefone || ''}')">Editar</button>
-                            <button class="btn btn-delete" onclick="excluirVendedor('${id}')">Excluir</button>
+                            <button class="btn btn-edit" onclick="pedirSenhaParaEditar('${id}', '${v.nome}', '${v.tipo}', '${v.telefone || ''}')">Editar</button>
+                            <button class="btn btn-delete" onclick="pedirSenhaParaExcluir('${id}')">Excluir</button>
                         </td>
                     </tr>
                 `;
@@ -574,6 +578,13 @@
     }
 
     function salvarVendedor() {
+        const senhaInformada = document.getElementById('senhaAdminVendedor').value;
+
+        if (senhaInformada !== SENHA_MESTRE_VENDEDOR) {
+            alert("Senha de autorização incorreta! Não é possível salvar o vendedor.");
+            return;
+        }
+
         const id = document.getElementById('vendedorIdInput').value;
         const nome = document.getElementById('nomeVendedor').value;
         const tipo = document.getElementById('tipoVendedor').value;
@@ -582,25 +593,42 @@
         const dados = { nome, tipo, telefone };
 
         if (id === "") {
-            db.collection("vendedores").add(dados).then(() => document.getElementById('vendedorForm').reset());
+            db.collection("vendedores").add(dados).then(() => {
+                alert("Vendedor cadastrado com sucesso!");
+                document.getElementById('vendedorForm').reset();
+            });
         } else {
             db.collection("vendedores").doc(id).update(dados).then(() => {
+                alert("Vendedor atualizado com sucesso!");
                 document.getElementById('vendedorForm').reset();
                 document.getElementById('vendedorIdInput').value = '';
             });
         }
     }
 
-    function editarVendedor(id, nome, tipo, telefone) {
-        document.getElementById('vendedorIdInput').value = id;
-        document.getElementById('nomeVendedor').value = nome;
-        document.getElementById('tipoVendedor').value = tipo;
-        document.getElementById('telefoneVendedor').value = telefone;
-        mudarAba('vendedores');
+    function pedirSenhaParaEditar(id, nome, tipo, telefone) {
+        const senha = prompt("Digite a senha de administrador para editar este vendedor:");
+        if (senha === SENHA_MESTRE_VENDEDOR) {
+            document.getElementById('vendedorIdInput').value = id;
+            document.getElementById('nomeVendedor').value = nome;
+            document.getElementById('tipoVendedor').value = tipo;
+            document.getElementById('telefoneVendedor').value = telefone;
+            document.getElementById('senhaAdminVendedor').value = senha; // Preenche para facilitar
+            mudarAba('vendedores');
+        } else if (senha !== null) {
+            alert("Senha incorreta!");
+        }
     }
 
-    function excluirVendedor(id) {
-        if (confirm('Deseja excluir este vendedor?')) db.collection("vendedores").doc(id).delete();
+    function pedirSenhaParaExcluir(id) {
+        const senha = prompt("Digite a senha de administrador para excluir este vendedor:");
+        if (senha === SENHA_MESTRE_VENDEDOR) {
+            if (confirm('Deseja realmente excluir este vendedor?')) {
+                db.collection("vendedores").doc(id).delete().then(() => alert("Vendedor excluído!"));
+            }
+        } else if (senha !== null) {
+            alert("Senha incorreta!");
+        }
     }
 
     // --- CLIENTES (Para a venda) ---

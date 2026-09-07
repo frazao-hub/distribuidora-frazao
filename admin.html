@@ -138,6 +138,7 @@
         .btn-edit { background-color: var(--warning); color: #333; padding: 5px 10px; }
         .btn-delete { background-color: var(--danger); color: white; padding: 5px 10px; }
         .btn-primary { background-color: var(--primary); color: white; }
+        .btn-pagar { background-color: #17a2b8; color: white; padding: 5px 10px; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { border: 1px solid #dee2e6; padding: 10px; text-align: left; font-size: 14px; }
@@ -306,7 +307,7 @@
     <!-- ABA 3: CLIENTES -->
     <div id="aba-clientes" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
-        <h2>Gestão de Clientes</h2>
+        <h2>Gestão de Clientes & Saldo Devedor</h2>
         <form id="clienteForm">
             <input type="hidden" id="clienteIdInput">
             <div class="form-group">
@@ -334,15 +335,14 @@
             <button type="submit" class="btn btn-save">Salvar Cliente</button>
         </form>
 
-        <h3>Clientes Cadastrados</h3>
+        <h3>Clientes Cadastrados & Contas a Receber</h3>
         <table>
             <thead>
                 <tr>
                     <th>Nome / Empresa</th>
-                    <th>CPF / CNPJ</th>
                     <th>Telefone</th>
-                    <th>Endereço Completo</th>
                     <th>Vendedor</th>
+                    <th>Saldo Devedor (Fiado)</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -555,8 +555,8 @@
                 <p>Consulte preços, fotos e o estoque atualizado dos produtos da distribuidora.</p>
             </div>
             <div class="menu-card" onclick="mudarAba('clientes')">
-                <h3>👥 Clientes</h3>
-                <p>Cadastre e gerencie clientes com CPF/CNPJ, endereço completo e vendedor responsável.</p>
+                <h3>👥 Clientes & Fiado</h3>
+                <p>Cadastre clientes, controle saldos devedores (fiados) e registre abates ou pagamentos.</p>
             </div>
             <div class="menu-card" onclick="mudarAba('historico')">
                 <h3>📊 Histórico de Vendas</h3>
@@ -662,7 +662,7 @@
         if (confirm('Deseja excluir este produto?')) db.collection("produtos").doc(id).delete();
     }
 
-    // --- CLIENTES ---
+    // --- CLIENTES & SALDO DEVEDOR ---
     function carregarClientes() {
         db.collection("clientes").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaClientes');
@@ -681,21 +681,24 @@
                 }
 
                 clientesCache.push({ id, ...c });
+                const saldoDevedor = Number(c.saldoDevedor || 0);
 
                 tbody.innerHTML += `
                     <tr>
-                        <td>${c.nome}</td>
-                        <td>${c.documento || '-'}</td>
+                        <td><strong>${c.nome}</strong><br><small>${c.documento || ''} - ${c.endereco || ''}</small></td>
                         <td>${c.telefone || '-'}</td>
-                        <td>${c.endereco || '-'}</td>
                         <td>${c.vendedorResponsavel}</td>
+                        <td style="color: ${saldoDevedor > 0 ? 'red' : 'green'}; font-weight: bold;">
+                            R$ ${saldoDevedor.toFixed(2)}
+                        </td>
                         <td>
+                            ${saldoDevedor > 0 ? `<button class="btn btn-pagar" onclick="registrarPagamentoFiado('${id}', '${c.nome}', ${saldoDevedor})">Pagar / Abater</button>` : '<span style="color:#6c757d; font-size:12px;">Quitado</span>'}
                             <button class="btn btn-delete" onclick="excluirCliente('${id}')">Excluir</button>
                         </td>
                     </tr>
                 `;
 
-                selectVendaCliente.innerHTML += `<option value="${id}">${c.nome} (${c.documento || 'Sem CPF/CNPJ'})</option>`;
+                selectVendaCliente.innerHTML += `<option value="${id}">${c.nome} (Fiado Ativo: R$ ${saldoDevedor.toFixed(2)})</option>`;
             });
         });
     }
@@ -713,7 +716,7 @@
         if (!vendedorResponsavel) return alert("Selecione o vendedor responsável pelo atendimento.");
 
         db.collection("clientes").add({
-            nome, documento, telefone, endereco, vendedorResponsavel
+            nome, documento, telefone, endereco, vendedorResponsavel, saldoDevedor: 0
         }).then(() => {
             alert("Cliente cadastrado com sucesso!");
             document.getElementById('clienteForm').reset();
@@ -724,6 +727,32 @@
             alert("Erro ao salvar cliente: " + err.message);
         });
     });
+
+    async function registrarPagamentoFiado(clienteId, nomeCliente, saldoAtual) {
+        const valorDigitado = prompt(`Cliente: ${nomeCliente}\nSaldo Devedor Atual: R$ ${saldoAtual.toFixed(2)}\n\nDigite o valor que o cliente está pagando (ou abatendo):`, saldoAtual.toFixed(2));
+        if (valorDigitado === null) return;
+
+        const valorPago = parseFloat(valorDigitado.replace(',', '.'));
+        if (isNaN(valorPago) || valorPago <= 0) {
+            return alert("Por favor, digite um valor válido maior que zero.");
+        }
+
+        if (valorPago > saldoAtual) {
+            if (!confirm(`O valor pago (R$ ${valorPago.toFixed(2)}) é maior que o saldo devedor atual (R$ ${saldoAtual.toFixed(2)}). Deseja zerar a dívida do cliente?`)) {
+                return;
+            }
+        }
+
+        let novoSaldo = saldoAtual - valorPago;
+        if (novoSaldo < 0) novoSaldo = 0;
+
+        try {
+            await db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo });
+            alert(`Pagamento registrado com sucesso!\nNovo saldo devedor de ${nomeCliente}: R$ ${novoSaldo.toFixed(2)}`);
+        } catch (err) {
+            alert("Erro ao registrar pagamento: " + err.message);
+        }
+    }
 
     function excluirCliente(id) {
         if (confirm('Deseja excluir este cliente?')) db.collection("clientes").doc(id).delete();
@@ -803,7 +832,7 @@
         }).then(() => alert("Vendedor cadastrado com sucesso!"));
     }
 
-    // --- CARRINHO E VENDAS COM NUMERAÇÃO AUTOMÁTICA (0001) ---
+    // --- CARRINHO E VENDAS COM NUMERAÇÃO AUTOMÁTICA E FIADO ---
     function adicionarItemCarrinho() {
         const produtoId = document.getElementById('selectProdutoVenda').value;
         const qtd = parseInt(document.getElementById('qtdProdutoVenda').value);
@@ -875,7 +904,7 @@
         if (totalGeral < 0) totalGeral = 0;
 
         try {
-            // Lógica para gerar número sequencial automático (0001, 0002...)
+            // Gera número sequencial automático (0001, 0002...)
             const contadorRef = db.collection("configuracoes").doc("contador_pedidos");
             
             const numeroPedidoFormatado = await db.runTransaction(async (transaction) => {
@@ -887,8 +916,6 @@
                 }
                 
                 transaction.set(contadorRef, { ultimo: proximoNumero });
-                
-                // Formata para 4 dígitos com zeros à esquerda (ex: 1 vira "0001")
                 return String(proximoNumero).padStart(4, '0');
             });
 
@@ -914,9 +941,20 @@
                 }
             }
 
+            // Se a forma de pagamento for "Fiado", atualiza o saldo devedor do cliente
+            if (formaPagamento === "Fiado" && clienteObj) {
+                const clienteRef = db.collection("clientes").doc(clienteId);
+                const clienteDoc = await clienteRef.get();
+                if (clienteDoc.exists) {
+                    const saldoAtual = Number(clienteDoc.data().saldoDevedor || 0);
+                    const novoSaldoDevedor = saldoAtual + totalGeral;
+                    await clienteRef.update({ saldoDevedor: novoSaldoDevedor });
+                }
+            }
+
             // Salva a venda
             await db.collection("vendas").add(dadosVenda);
-            alert(`Venda finalizada com sucesso! Nº do Pedido: ${numeroPedidoFormatado}`);
+            alert(`Venda finalizada com sucesso! Nº do Pedido: ${numeroPedidoFormatado}` + (formaPagamento === "Fiado" ? `\nValor lançado como Saldo Devedor do cliente.` : ''));
             
             carrinho = [];
             renderizarCarrinho();
@@ -959,7 +997,7 @@
                         <td>${dataFmt}</td>
                         <td>${v.cliente}</td>
                         <td>${v.vendedor}</td>
-                        <td>${v.formaPagamento}</td>
+                        <td><span style="${v.formaPagamento === 'Fiado' ? 'color: red; font-weight: bold;' : ''}">${v.formaPagamento}</span></td>
                         <td><strong>R$ ${Number(v.total).toFixed(2)}</strong></td>
                         <td>
                             <button class="btn btn-delete" onclick="excluirVenda('${id}')">Excluir</button>

@@ -452,6 +452,7 @@
     let carrinho = [];
     let produtosCache = [];
     let clientesCache = [];
+    let vendedoresCache = [];
 
     // --- CONTROLE DE LOGIN ---
     function alternarCampoLogin() {
@@ -590,8 +591,7 @@
         carregarProdutos();
         carregarClientes();
         carregarHistoricoVendas();
-        carregarSelectVendedoresClienteForm();
-        if (usuarioLogado.perfil === 'admin') carregarVendedores();
+        carregarVendedores(); // Escuta em tempo real ativada para persistir e sincronizar
     }
 
     // --- PRODUTOS ---
@@ -663,24 +663,20 @@
     }
 
     // --- CLIENTES ---
-    function carregarSelectVendedoresClienteForm() {
+    function atualizarSelectVendedoresClienteForm() {
         const select = document.getElementById('vendedorClienteCad');
         if (!select) return;
         
-        db.collection("vendedores").get().then((snapshot) => {
-            select.innerHTML = '<option value="">Selecione o vendedor...</option>';
-            snapshot.forEach(doc => {
-                const v = doc.data();
-                select.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
-            });
-            select.innerHTML += `<option value="Administrador">Administrador</option>`;
-
-            // Se for vendedor logado, preenche e trava o campo automaticamente para ele
-            if (usuarioLogado.perfil === 'vendedor') {
-                select.value = usuarioLogado.nome;
-                select.disabled = true;
-            }
+        select.innerHTML = '<option value="">Selecione o vendedor...</option>';
+        vendedoresCache.forEach(v => {
+            select.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
         });
+        select.innerHTML += `<option value="Administrador">Administrador</option>`;
+
+        if (usuarioLogado.perfil === 'vendedor') {
+            select.value = usuarioLogado.nome;
+            select.disabled = true;
+        }
     }
 
     function carregarClientes() {
@@ -909,23 +905,32 @@
     function carregarVendedores() {
         db.collection("vendedores").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaVendedores');
-            if(!tbody) return;
-            tbody.innerHTML = '';
+            vendedoresCache = [];
+
             snapshot.forEach((doc) => {
-                const v = doc.data();
-                const id = doc.id;
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${v.nome}</td>
-                        <td>${v.tipo}</td>
-                        <td>${v.telefone || '-'}</td>
-                        <td><code>${v.senha || 'Não definida'}</code></td>
-                        <td>
-                            <button class="btn btn-delete" onclick="excluirVendedor('${id}')">Excluir</button>
-                        </td>
-                    </tr>
-                `;
+                vendedoresCache.push({ id: doc.id, ...doc.data() });
             });
+
+            // Atualiza a tabela na tela de vendedores se o elemento existir
+            if (tbody) {
+                tbody.innerHTML = '';
+                vendedoresCache.forEach(v => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${v.nome}</td>
+                            <td>${v.tipo}</td>
+                            <td>${v.telefone || '-'}</td>
+                            <td><code>${v.senha || 'Não definida'}</code></td>
+                            <td>
+                                <button class="btn btn-delete" onclick="excluirVendedor('${v.id}')">Excluir</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // Atualiza também o select de vendedores no formulário de clientes
+            atualizarSelectVendedoresClienteForm();
         });
     }
 
@@ -938,9 +943,8 @@
 
         db.collection("vendedores").add({ nome, tipo, telefone, senha })
         .then(() => {
-            alert("Vendedor e senha cadastrados com sucesso!");
+            alert("Vendedor e senha salvos com sucesso no banco de dados!");
             document.getElementById('vendedorForm').reset();
-            carregarSelectVendedoresClienteForm();
         })
         .catch((err) => {
             alert("Erro ao cadastrar vendedor: " + err.message);
@@ -960,8 +964,7 @@
                 telefone: telefone,
                 senha: senha
             });
-            alert("Vendedor cadastrado com sucesso!");
-            carregarSelectVendedoresClienteForm();
+            alert("Vendedor cadastrado com sucesso no banco de dados!");
         } catch (err) {
             alert("Erro ao cadastrar: " + err.message);
         }

@@ -1026,6 +1026,13 @@
                 const dataFmt = new Date(v.data).toLocaleString('pt-BR');
                 const numPedidoExibicao = v.numeroPedido || '0000';
 
+                // Botão de impressão visível SOMENTE para o administrador
+                let acoesBotoes = '';
+                if (usuarioLogado.perfil === 'admin') {
+                    acoesBotoes += `<button class="btn btn-print" onclick="imprimirPedido('${id}')">🖨️ Imprimir</button> `;
+                }
+                acoesBotoes += `<button class="btn btn-delete" onclick="excluirVenda('${id}')">Excluir</button>`;
+
                 tbody.innerHTML += `
                     <tr>
                         <td><strong>#${numPedidoExibicao}</strong></td>
@@ -1034,10 +1041,7 @@
                         <td>${v.vendedor}</td>
                         <td><span style="${v.formaPagamento === 'Fiado' ? 'color: red; font-weight: bold;' : ''}">${v.formaPagamento}</span></td>
                         <td><strong>R$ ${Number(v.total).toFixed(2)}</strong></td>
-                        <td>
-                            <button class="btn btn-print" onclick="imprimirPedido('${id}')">🖨️ Imprimir</button>
-                            <button class="btn btn-delete" onclick="excluirVenda('${id}')">Excluir</button>
-                        </td>
+                        <td>${acoesBotoes}</td>
                     </tr>
                 `;
             });
@@ -1048,6 +1052,10 @@
     }
 
     function imprimirPedido(id) {
+        if (usuarioLogado.perfil !== 'admin') {
+            return alert("Acesso negado. Apenas o Administrador pode imprimir pedidos.");
+        }
+
         const v = vendasCacheMap[id];
         if (!v) return alert("Dados do pedido não encontrados.");
 

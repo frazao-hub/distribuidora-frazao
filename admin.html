@@ -144,7 +144,6 @@
         th { background-color: var(--primary); color: white; }
         tr:nth-child(even) { background-color: #f9f9f9; }
         .product-img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; }
-        .error-msg { color: var(--danger); font-size: 12px; margin-top: 3px; }
         
         .dashboard-cards {
             display: grid;
@@ -164,7 +163,7 @@
 </head>
 <body>
 
-<!-- TELA DE LOGIN DE ACESSO -->
+<!-- TELA DE LOGIN COM SENHA PARA ADMIN -->
 <div id="tela-login">
     <h2>Distribuidora Frazão</h2>
     <p>Selecione seu perfil para entrar:</p>
@@ -173,17 +172,17 @@
         <option value="vendedor">Vendedor</option>
     </select>
 
+    <div id="grupoSenhaAdmin">
+        <input type="password" id="loginSenhaAdmin" placeholder="Digite a senha do Administrador">
+    </div>
+
     <div id="grupoSeletorVendedor" style="display:none;">
         <select id="loginVendedorSelect">
             <option value="">Selecione seu nome...</option>
         </select>
     </div>
 
-    <div id="grupoSenha">
-        <input type="password" id="senhaAcesso" placeholder="Senha de Acesso">
-    </div>
-
-    <button class="btn btn-primary" style="width:100%; padding: 12px;" onclick="realizarLogin()">Entrar no Sistema</button>
+    <button class="btn btn-primary" style="width:100%; padding: 12px; margin-top: 5px;" onclick="realizarLogin()">Entrar no Sistema</button>
 </div>
 
 <!-- SISTEMA PRINCIPAL (OCULTO ATÉ O LOGIN) -->
@@ -386,10 +385,6 @@
                 <input type="text" id="nomeVendedor" required>
             </div>
             <div class="form-group">
-                <label for="senhaVendedorLogin">Senha de Acesso do Vendedor:</label>
-                <input type="password" id="senhaVendedorLogin" required placeholder="Senha numérica ou texto">
-            </div>
-            <div class="form-group">
                 <label for="tipoVendedor">Tipo / Permissão:</label>
                 <select id="tipoVendedor" required>
                     <option value="Externo">Vendedor Externo</option>
@@ -423,8 +418,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script>
-    const SENHA_ADMIN = "123456"; // Senha mestre do Administrador
-
     const firebaseConfig = {
         apiKey: "SUA_API_KEY",
         authDomain: "seu-projeto.firebaseapp.com",
@@ -437,25 +430,28 @@
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.firestore();
 
+    // Defina a senha do Administrador aqui:
+    const SENHA_ADMIN_PADRAO = "admin123";
+
     let usuarioLogado = { perfil: null, nome: null };
     let carrinho = [];
     let produtosCache = [];
     let vendedoresCache = [];
     let clientesCache = [];
 
-    // --- CONTROLE DE LOGIN ---
+    // --- CONTROLE DE LOGIN (COM SENHA PARA ADMIN) ---
     function alternarCampoLogin() {
         const perfil = document.getElementById('loginPerfil').value;
+        const grupoSenha = document.getElementById('grupoSenhaAdmin');
         const grupoVendedor = document.getElementById('grupoSeletorVendedor');
-        const senhaInput = document.getElementById('senhaAcesso');
 
-        if (perfil === 'vendedor') {
-            grupoVendedor.style.display = 'block';
-            senhaInput.placeholder = "Senha do Vendedor";
-            carregarSelectVendedoresLogin();
-        } else {
+        if (perfil === 'admin') {
+            grupoSenha.style.display = 'block';
             grupoVendedor.style.display = 'none';
-            senhaInput.placeholder = "Senha Mestre Admin";
+        } else {
+            grupoSenha.style.display = 'none';
+            grupoVendedor.style.display = 'block';
+            carregarSelectVendedoresLogin();
         }
     }
 
@@ -472,31 +468,20 @@
 
     function realizarLogin() {
         const perfil = document.getElementById('loginPerfil').value;
-        const senha = document.getElementById('senhaAcesso').value;
 
         if (perfil === 'admin') {
-            if (senha === SENHA_ADMIN) {
-                usuarioLogado = { perfil: 'admin', nome: 'Administrador' };
-                iniciarSessaoSistema();
-            } else {
-                alert("Senha do Administrador incorreta!");
+            const senhaDigitada = document.getElementById('loginSenhaAdmin').value;
+            if (senhaDigitada !== SENHA_ADMIN_PADRAO) {
+                return alert("Senha do Administrador incorreta!");
             }
+            usuarioLogado = { perfil: 'admin', nome: 'Administrador' };
+            iniciarSessaoSistema();
         } else {
             const nomeVendedor = document.getElementById('loginVendedorSelect').value;
             if (!nomeVendedor) return alert("Selecione o seu nome na lista.");
             
-            db.collection("vendedores").where("nome", "==", nomeVendedor).get().then((snapshot) => {
-                if (snapshot.empty) return alert("Vendedor não encontrado.");
-                let dadosVend = null;
-                snapshot.forEach(doc => dadosVend = doc.data());
-
-                if (dadosVend.senha === senha) {
-                    usuarioLogado = { perfil: 'vendedor', nome: nomeVendedor };
-                    iniciarSessaoSistema();
-                } else {
-                    alert("Senha incorreta para este vendedor!");
-                }
-            });
+            usuarioLogado = { perfil: 'vendedor', nome: nomeVendedor };
+            iniciarSessaoSistema();
         }
     }
 
@@ -505,6 +490,9 @@
         document.getElementById('sistemaPrincipal').style.display = 'block';
         document.getElementById('infoUsuarioLogado').innerText = `Logado como: ${usuarioLogado.nome} (${usuarioLogado.perfil.toUpperCase()})`;
         
+        // Limpa o campo de senha por segurança
+        document.getElementById('loginSenhaAdmin').value = '';
+
         montarMenuPrincipal();
         carregarDadosIniciais();
     }
@@ -514,14 +502,12 @@
         carrinho = [];
         document.getElementById('sistemaPrincipal').style.display = 'none';
         document.getElementById('tela-login').style.display = 'block';
-        document.getElementById('senhaAcesso').value = '';
     }
 
     function montarMenuPrincipal() {
         const grid = document.getElementById('gridMenuPrincipal');
         grid.innerHTML = '';
 
-        // Cards comuns
         grid.innerHTML += `
             <div class="menu-card" onclick="mudarAba('vendas')">
                 <h3>🛒 Vender</h3>
@@ -541,12 +527,11 @@
             </div>
         `;
 
-        // Card exclusivo de Vendedores para Admin
         if (usuarioLogado.perfil === 'admin') {
             grid.innerHTML += `
                 <div class="menu-card" style="border-left-color: #dc3545;" onclick="mudarAba('vendedores')">
                     <h3>💼 Gestão de Vendedores</h3>
-                    <p>Cadastre novos vendedores, defina senhas e controle a equipe.</p>
+                    <p>Cadastre novos vendedores e controle a equipe.</p>
                 </div>
             `;
             document.getElementById('containerFormProduto').style.display = 'block';
@@ -565,7 +550,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // --- CARREGAMENTO DE DADOS ---
     function carregarDadosIniciais() {
         carregarProdutos();
         carregarClientes();
@@ -640,7 +624,7 @@
         if (confirm('Deseja excluir este produto?')) db.collection("produtos").doc(id).delete();
     }
 
-    // --- CLIENTES (Base separada por vendedor ou total para Admin) ---
+    // --- CLIENTES ---
     function carregarClientes() {
         db.collection("clientes").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaClientes');
@@ -653,7 +637,6 @@
                 const c = doc.data();
                 const id = doc.id;
 
-                // Vendedor só vê os seus próprios clientes. Admin vê todos.
                 if (usuarioLogado.perfil === 'vendedor' && c.vendedorResponsavel !== usuarioLogado.nome) {
                     return;
                 }
@@ -791,7 +774,6 @@
         const novaVendaRef = db.collection("vendas").doc();
         batch.set(novaVendaRef, dadosVenda);
 
-        // DAR BAIXA AUTOMÁTICA NO ESTOQUE GERAL
         for (const item of carrinho) {
             const prodRef = db.collection("produtos").doc(item.produtoId);
             const pDoc = await prodRef.get();
@@ -818,7 +800,6 @@
                 const v = doc.data();
                 const id = doc.id;
 
-                // Vendedor só vê o histórico das vendas dele. Admin vê de todos.
                 if (usuarioLogado.perfil === 'vendedor' && v.vendedor !== usuarioLogado.nome) {
                     return;
                 }
@@ -852,7 +833,7 @@
         }
     }
 
-    // --- CADASTRO DE VENDEDORES (ADMIN) ---
+    // --- CADASTRO DE VENDEDORES ---
     function carregarVendedores() {
         db.collection("vendedores").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaVendedores');
@@ -878,11 +859,10 @@
     document.getElementById('vendedorForm')?.addEventListener('submit', (e) => {
         e.preventDefault();
         const nome = document.getElementById('nomeVendedor').value;
-        const senha = document.getElementById('senhaVendedorLogin').value;
         const tipo = document.getElementById('tipoVendedor').value;
         const telefone = document.getElementById('telefoneVendedor').value;
 
-        db.collection("vendedores").add({ nome, senha, tipo, telefone }).then(() => {
+        db.collection("vendedores").add({ nome, tipo, telefone }).then(() => {
             alert("Vendedor cadastrado com sucesso!");
             document.getElementById('vendedorForm').reset();
         });

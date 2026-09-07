@@ -199,9 +199,7 @@
         <h2>Painel Principal</h2>
         <p>Selecione abaixo a seção desejada em formato de blocos:</p>
         
-        <div class="menu-grid" id="gridMenuPrincipal">
-            <!-- Os cards serão injetados dinamicamente baseados na permissão -->
-        </div>
+        <div class="menu-grid" id="gridMenuPrincipal"></div>
     </div>
 
     <!-- ABA 1: VENDER -->
@@ -308,32 +306,43 @@
     <!-- ABA 3: CLIENTES -->
     <div id="aba-clientes" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
-        <h2>Gestão de Clientes (Base do Vendedor)</h2>
+        <h2>Gestão de Clientes</h2>
         <form id="clienteForm">
             <input type="hidden" id="clienteIdInput">
             <div class="form-group">
                 <label for="nomeClienteCad">Nome do Cliente / Empresa:</label>
-                <input type="text" id="nomeClienteCad" required>
+                <input type="text" id="nomeClienteCad" required placeholder="Nome ou Razão Social">
+            </div>
+            <div class="form-group">
+                <label for="docClienteCad">CPF ou CNPJ:</label>
+                <input type="text" id="docClienteCad" placeholder="000.000.000-00 ou 00.000.000/0001-00">
             </div>
             <div class="form-group">
                 <label for="telClienteCad">Telefone / Contato:</label>
                 <input type="text" id="telClienteCad" placeholder="(21) 99999-9999">
             </div>
-            <div class="form-group full">
-                <label for="enderecoClienteCad">Endereço:</label>
-                <input type="text" id="enderecoClienteCad" placeholder="Rua, Número, Bairro - São Gonçalo">
+            <div class="form-group">
+                <label for="vendedorClienteCad">Vendedor Responsável:</label>
+                <select id="vendedorClienteCad" required>
+                    <option value="">Selecione o vendedor...</option>
+                </select>
             </div>
-            <button type="submit" class="btn btn-save">Salvar Cliente na Sua Base</button>
+            <div class="form-group full">
+                <label for="enderecoClienteCad">Endereço Completo:</label>
+                <input type="text" id="enderecoClienteCad" placeholder="Rua, Número, Bairro, Cidade - RJ">
+            </div>
+            <button type="submit" class="btn btn-save">Salvar Cliente</button>
         </form>
 
-        <h3>Seus Clientes Cadastrados</h3>
+        <h3>Clientes Cadastrados</h3>
         <table>
             <thead>
                 <tr>
-                    <th>Nome</th>
+                    <th>Nome / Empresa</th>
+                    <th>CPF / CNPJ</th>
                     <th>Telefone</th>
-                    <th>Endereço</th>
-                    <th>Vendedor Responsável</th>
+                    <th>Endereço Completo</th>
+                    <th>Vendedor</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -546,7 +555,7 @@
             </div>
             <div class="menu-card" onclick="mudarAba('clientes')">
                 <h3>👥 Clientes</h3>
-                <p>Cadastre e gerencie a base dos seus próprios clientes e consulte compras anteriores.</p>
+                <p>Cadastre e gerencie clientes com CPF/CNPJ, endereço completo e vendedor responsável.</p>
             </div>
             <div class="menu-card" onclick="mudarAba('historico')">
                 <h3>📊 Histórico de Vendas</h3>
@@ -581,6 +590,7 @@
         carregarProdutos();
         carregarClientes();
         carregarHistoricoVendas();
+        carregarSelectVendedoresClienteForm();
         if (usuarioLogado.perfil === 'admin') carregarVendedores();
     }
 
@@ -653,6 +663,26 @@
     }
 
     // --- CLIENTES ---
+    function carregarSelectVendedoresClienteForm() {
+        const select = document.getElementById('vendedorClienteCad');
+        if (!select) return;
+        
+        db.collection("vendedores").get().then((snapshot) => {
+            select.innerHTML = '<option value="">Selecione o vendedor...</option>';
+            snapshot.forEach(doc => {
+                const v = doc.data();
+                select.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
+            });
+            select.innerHTML += `<option value="Administrador">Administrador</option>`;
+
+            // Se for vendedor logado, preenche e trava o campo automaticamente para ele
+            if (usuarioLogado.perfil === 'vendedor') {
+                select.value = usuarioLogado.nome;
+                select.disabled = true;
+            }
+        });
+    }
+
     function carregarClientes() {
         db.collection("clientes").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaClientes');
@@ -675,6 +705,7 @@
                 tbody.innerHTML += `
                     <tr>
                         <td>${c.nome}</td>
+                        <td>${c.documento || '-'}</td>
                         <td>${c.telefone || '-'}</td>
                         <td>${c.endereco || '-'}</td>
                         <td>${c.vendedorResponsavel}</td>
@@ -684,7 +715,7 @@
                     </tr>
                 `;
 
-                selectVendaCliente.innerHTML += `<option value="${id}">${c.nome}</option>`;
+                selectVendaCliente.innerHTML += `<option value="${id}">${c.nome} (${c.documento || 'Sem CPF/CNPJ'})</option>`;
             });
         });
     }
@@ -692,15 +723,25 @@
     document.getElementById('clienteForm')?.addEventListener('submit', (e) => {
         e.preventDefault();
         const nome = document.getElementById('nomeClienteCad').value;
+        const documento = document.getElementById('docClienteCad').value;
         const telefone = document.getElementById('telClienteCad').value;
         const endereco = document.getElementById('enderecoClienteCad').value;
-        const vendedorResponsavel = usuarioLogado.perfil === 'vendedor' ? usuarioLogado.nome : 'Administrador';
+        
+        const vendedorSelect = document.getElementById('vendedorClienteCad');
+        const vendedorResponsavel = vendedorSelect.disabled ? usuarioLogado.nome : vendedorSelect.value;
+
+        if (!vendedorResponsavel) return alert("Selecione o vendedor responsável pelo atendimento.");
 
         db.collection("clientes").add({
-            nome, telefone, endereco, vendedorResponsavel
+            nome, documento, telefone, endereco, vendedorResponsavel
         }).then(() => {
-            alert("Cliente cadastrado com sucesso na sua base!");
+            alert("Cliente cadastrado com sucesso!");
             document.getElementById('clienteForm').reset();
+            if (usuarioLogado.perfil === 'vendedor') {
+                vendedorSelect.value = usuarioLogado.nome;
+            }
+        }).catch(err => {
+            alert("Erro ao salvar cliente: " + err.message);
         });
     });
 
@@ -774,7 +815,7 @@
         const vendedorResponsavel = usuarioLogado.perfil === 'vendedor' ? usuarioLogado.nome : 'Administrador';
 
         if (carrinho.length === 0) return alert("Adicione itens ao carrinho!");
-        if (!clienteId) return alert("Selecione um cliente da sua base.");
+        if (!clienteId) return alert("Selecione um cliente.");
 
         let totalPedido = carrinho.reduce((acc, item) => acc + (item.qtd * item.precoUnit), 0) - desconto;
 
@@ -899,6 +940,7 @@
         .then(() => {
             alert("Vendedor e senha cadastrados com sucesso!");
             document.getElementById('vendedorForm').reset();
+            carregarSelectVendedoresClienteForm();
         })
         .catch((err) => {
             alert("Erro ao cadastrar vendedor: " + err.message);
@@ -919,6 +961,7 @@
                 senha: senha
             });
             alert("Vendedor cadastrado com sucesso!");
+            carregarSelectVendedoresClienteForm();
         } catch (err) {
             alert("Erro ao cadastrar: " + err.message);
         }

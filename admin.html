@@ -29,9 +29,8 @@
             gap: 15px;
             margin-bottom: 30px;
             background: #f8f9fa;
-            padding: 20px;
+            padding: 15px;
             border-radius: 6px;
-            border: 1px solid #e9ecef;
         }
         .form-group {
             display: flex;
@@ -44,11 +43,10 @@
             margin-bottom: 5px;
             font-weight: bold;
             font-size: 14px;
-            color: #495057;
         }
         input, select {
-            padding: 10px;
-            border: 1px solid #ced4da;
+            padding: 8px;
+            border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 14px;
         }
@@ -63,21 +61,18 @@
             background-color: #28a745;
             color: white;
             grid-column: span 2;
-            font-size: 16px;
         }
         .btn-save:hover { background-color: #218838; }
         .btn-edit {
             background-color: #ffc107;
             color: #333;
-            padding: 6px 12px;
+            padding: 5px 10px;
             margin-right: 5px;
-            border-radius: 4px;
         }
         .btn-delete {
             background-color: #dc3545;
             color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
+            padding: 5px 10px;
         }
         table {
             width: 100%;
@@ -86,7 +81,7 @@
         }
         th, td {
             border: 1px solid #dee2e6;
-            padding: 12px;
+            padding: 10px;
             text-align: left;
             font-size: 14px;
         }
@@ -102,7 +97,7 @@
 <div class="container">
     <h2>Painel Administrativo - Clientes e Vendedores</h2>
 
-    <!-- Formulário de Cadastro / Edição com Seleção de Vendedor -->
+    <!-- Formulário de Cadastro / Edição -->
     <form id="clienteForm">
         <input type="hidden" id="clienteId">
         
@@ -114,8 +109,8 @@
         <div class="form-group">
             <label for="vendedorSelect">Vendedor Responsável:</label>
             <select id="vendedorSelect" required>
-                <option value="">Selecione o vendedor...</option>
-                <!-- Altere ou adicione os nomes dos seus vendedores abaixo -->
+                <option value="">Selecione o vendedor</option>
+                <!-- Os vendedores podem ser carregados dinamicamente ou fixos -->
                 <option value="Carlos Silva">Carlos Silva</option>
                 <option value="Ana Souza">Ana Souza</option>
                 <option value="Marcos Oliveira">Marcos Oliveira</option>
@@ -127,7 +122,7 @@
             <input type="text" id="emailCliente" placeholder="E-mail ou telefone do cliente">
         </div>
 
-        <button type="submit" class="btn-save" id="btnSalvar">Cadastrar Cliente</button>
+        <button type="submit" class="btn-save" id="btnSalvar">Salvar Cliente</button>
     </form>
 
     <h3>Lista de Clientes Cadastrados</h3>
@@ -139,6 +134,7 @@
                 <th>Vendedor Responsável</th>
                 <th>Ações</th>
             </tr>
+        <div id="statusMensagem"></div>
         </thead>
         <tbody id="tabelaClientes">
             <!-- Os dados inseridos aparecerão aqui dinamicamente -->
@@ -147,6 +143,7 @@
 </div>
 
 <script>
+    // Chave utilizada para salvar no localStorage (substitua por chamadas de API/Fetch se seu projeto usar backend próprio)
     const STORAGE_KEY = 'clientes_sistema';
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -164,17 +161,12 @@
         const tbody = document.getElementById('tabelaClientes');
         tbody.innerHTML = '';
 
-        if (clientes.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #777;">Nenhum cliente cadastrado.</td></tr>`;
-            return;
-        }
-
         clientes.forEach((cliente, index) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${cliente.nome}</td>
-                <td>${cliente.email || '-'}</td>
-                <td><strong>${cliente.vendedor}</strong></td>
+                <td>${cliente.email}</td>
+                <td>${cliente.vendedor}</td>
                 <td>
                     <button class="btn-edit" onclick="editarCliente(${index})">Editar</button>
                     <button class="btn-delete" onclick="excluirCliente(${index})">Excluir</button>
@@ -202,10 +194,10 @@
 
         localStorage.setItem(STORAGE_KEY, JSON.stringify(clientes));
         
-        // Limpa o formulário e reseta o botão
+        // Limpa o formulário
         document.getElementById('clienteForm').reset();
         document.getElementById('clienteId').value = '';
-        document.getElementById('btnSalvar').innerText = 'Cadastrar Cliente';
+        document.getElementById('btnSalvar').innerText = 'Salvar Cliente';
 
         carregarClientes();
     }
@@ -217,10 +209,8 @@
         document.getElementById('clienteId').value = index;
         document.getElementById('nomeCliente').value = cliente.nome;
         document.getElementById('vendedorSelect').value = cliente.vendedor;
-        document.getElementById('emailCliente').value = cliente.email || '';
+        document.getElementById('emailCliente').value = cliente.email;
         document.getElementById('btnSalvar').innerText = 'Atualizar Cliente';
-        
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function excluirCliente(index) {

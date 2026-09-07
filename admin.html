@@ -149,7 +149,7 @@
                                 <th class="px-4 py-3 text-left font-bold text-gray-600">CPF / CNPJ</th>
                                 <th class="px-4 py-3 text-left font-bold text-gray-600">Telefone</th>
                                 <th class="px-4 py-3 text-left font-bold text-gray-600">Endereço</th>
-                                <th class="px-4 py-3 text-left font-bold text-gray-600">Cadastrado por</th>
+                                <th class="px-4 py-3 text-center font-bold text-gray-600">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="tabelaClientes" class="divide-y divide-gray-100">
@@ -302,7 +302,7 @@
             </div>
         </div>
 
-        <!-- 5. SEÇÃO ADMINISTRADOR (GERENCIAR VENDEDORES, VENDAS E SENHA) -->
+        <!-- 5. SEÇÃO ADMINISTRADOR -->
         <div id="secao-admin" class="secao-conteudo hidden space-y-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Cadastrar Novo Vendedor -->
@@ -410,6 +410,38 @@
         </div>
     </div>
 
+    <!-- MODAL DE EDIÇÃO DE CLIENTE -->
+    <div id="modalEdicaoCliente" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white max-w-md w-full p-6 rounded-2xl shadow-xl">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Editar Cliente</h2>
+            <form id="formEdicaoCliente" class="space-y-4">
+                <input type="hidden" id="editClienteId">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome / Razão Social</label>
+                    <input type="text" id="editNomeCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">CPF ou CNPJ</label>
+                        <input type="text" id="editDocCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Telefone / WhatsApp</label>
+                        <input type="text" id="editTelCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Endereço Completo</label>
+                    <input type="text" id="editEnderecoCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="fecharModalEdicaoCliente()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-lg transition cursor-pointer">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg transition cursor-pointer">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // CONFIGURAÇÃO DO FIREBASE
         const firebaseConfig = {
@@ -444,6 +476,7 @@
             document.getElementById('formCadastrarVendedorAdmin').addEventListener('submit', cadastrarVendedor);
             document.getElementById('formAlterarSenhaAdmin').addEventListener('submit', alterarSenhaMestra);
             document.getElementById('formEdicaoProduto').addEventListener('submit', salvarEdicaoProduto);
+            document.getElementById('formEdicaoCliente').addEventListener('submit', salvarEdicaoCliente);
         });
 
         function alternarModoLogin(modo) {
@@ -492,7 +525,7 @@
             const senhaDigitada = document.getElementById('senhaAdminMestra').value;
             try {
                 const docRef = await db.collection('config').doc('admin').get();
-                let senhaSalva = "123456"; // Padrão inicial
+                let senhaSalva = "123456"; 
                 if (docRef.exists && docRef.data().senha) {
                     senhaSalva = docRef.data().senha;
                 }
@@ -555,7 +588,6 @@
                 painelPrincipal.classList.remove('hidden');
                 nomeSpan.innerText = `${usuarioLogado} (${tipoUsuario === 'admin' ? 'Administrador' : 'Vendedor'})`;
 
-                // Controlar visibilidade do botão/aba Admin
                 const cardAdmin = document.getElementById('card-admin');
                 if (tipoUsuario === 'vendedor') {
                     cardAdmin.classList.add('hidden');
@@ -639,14 +671,17 @@
                 }
 
                 snapshot.forEach(doc => {
-                    const c = doc.data();
+                    const c = { id: doc.id, ...doc.data() };
                     tabela.innerHTML += `
                         <tr class="hover:bg-gray-50">
                             <td class="px-4 py-3 font-medium text-gray-800">${c.nome}</td>
                             <td class="px-4 py-3 text-gray-600">${c.doc}</td>
                             <td class="px-4 py-3 text-gray-600">${c.tel}</td>
                             <td class="px-4 py-3 text-gray-600">${c.endereco}</td>
-                            <td class="px-4 py-3 text-gray-500 text-xs">${c.cadastradoPor || 'Sistema'}</td>
+                            <td class="px-4 py-3 text-center space-x-2">
+                                <button onclick="abrirModalEdicaoCliente('${c.id}')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold text-xs rounded-md transition cursor-pointer">Editar</button>
+                                <button onclick="excluirCliente('${c.id}')" class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs rounded-md transition cursor-pointer">Excluir</button>
+                            </td>
                         </tr>
                     `;
                     if (selectVenda) {
@@ -655,6 +690,61 @@
                 });
             } catch (error) {
                 console.error("Erro ao carregar clientes:", error);
+            }
+        }
+
+        async function abrirModalEdicaoCliente(id) {
+            try {
+                const doc = await db.collection('clientes').doc(id).get();
+                if (doc.exists) {
+                    const c = doc.data();
+                    document.getElementById('editClienteId').value = id;
+                    document.getElementById('editNomeCliente').value = c.nome;
+                    document.getElementById('editDocCliente').value = c.doc;
+                    document.getElementById('editTelCliente').value = c.tel;
+                    document.getElementById('editEnderecoCliente').value = c.endereco;
+                    document.getElementById('modalEdicaoCliente').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error("Erro ao carregar dados para edição:", error);
+            }
+        }
+
+        function fecharModalEdicaoCliente() {
+            document.getElementById('modalEdicaoCliente').classList.add('hidden');
+        }
+
+        async function salvarEdicaoCliente(e) {
+            e.preventDefault();
+            const id = document.getElementById('editClienteId').value;
+            const dadosAtualizados = {
+                nome: document.getElementById('editNomeCliente').value,
+                doc: document.getElementById('editDocCliente').value,
+                tel: document.getElementById('editTelCliente').value,
+                endereco: document.getElementById('editEnderecoCliente').value
+            };
+
+            try {
+                await db.collection('clientes').doc(id).update(dadosAtualizados);
+                fecharModalEdicaoCliente();
+                mostrarStatus("Cliente atualizado com sucesso!", "bg-emerald-100 text-emerald-700");
+                carregarClientes();
+            } catch (error) {
+                console.error("Erro ao atualizar cliente:", error);
+                mostrarStatus("Erro ao atualizar cliente.", "bg-red-100 text-red-700");
+            }
+        }
+
+        async function excluirCliente(id) {
+            if (confirm("Tem certeza que deseja excluir este cliente?")) {
+                try {
+                    await db.collection('clientes').doc(id).delete();
+                    mostrarStatus("Cliente excluído com sucesso.", "bg-amber-100 text-amber-700");
+                    carregarClientes();
+                } catch (error) {
+                    console.error("Erro ao excluir cliente:", error);
+                    mostrarStatus("Erro ao excluir cliente.", "bg-red-100 text-red-700");
+                }
             }
         }
 
@@ -843,7 +933,6 @@
                 return;
             }
 
-            // Validar estoque caso tenha selecionado do catálogo
             if (produtoIdSelect) {
                 const prod = listaProdutosCache.find(p => p.id === produtoIdSelect);
                 if (prod) {
@@ -851,7 +940,6 @@
                         alert(`Estoque insuficiente! Restam apenas ${prod.estoque} unidades.`);
                         return;
                     }
-                    // Dar baixa no estoque
                     const novoEstoque = prod.estoque - qtdVendida;
                     await db.collection('produtos').doc(produtoIdSelect).update({ estoque: novoEstoque });
                 }
@@ -885,7 +973,6 @@
 
             try {
                 let query = db.collection('vendas').orderBy('criadoEm', 'desc');
-                
                 const snapshot = await query.get();
                 tabela.innerHTML = '';
 
@@ -896,7 +983,6 @@
 
                 snapshot.forEach(doc => {
                     const v = doc.data();
-                    // Se for vendedor, opcionalmente pode ver apenas as dele ou todas. Aqui exibe todas ou filtra se preferir.
                     tabela.innerHTML += `
                         <tr class="hover:bg-gray-50">
                             <td class="px-4 py-3 text-gray-600">${v.data || 'Recente'}</td>

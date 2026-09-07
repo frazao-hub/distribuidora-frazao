@@ -202,7 +202,7 @@
     <button class="btn" style="width:100%; padding: 8px; background-color: #6c757d; color: white; font-size: 13px;" onclick="cadastrarSenhaAdminRapido()">Definir Senha de Admin</button>
 </div>
 
-<!-- SISTEMA PRINCIPAL (OCULTO ATÉ O LOGIN) -->
+<!-- SISTEMA PRINCIPAL -->
 <div class="container" id="sistemaPrincipal" style="display:none;">
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 20px;">
         <h1 style="border:none; margin:0; padding:0;">Distribuidora Frazão - Gestão</h1>
@@ -212,18 +212,17 @@
         </div>
     </div>
 
-    <!-- TELA INICIAL: PAINEL EM RETÂNGULOS CLICÁVEIS -->
+    <!-- TELA INICIAL -->
     <div id="aba-inicio" class="tab-content active">
         <h2>Painel Principal</h2>
         <p>Selecione abaixo a seção desejada em formato de blocos:</p>
-        
         <div class="menu-grid" id="gridMenuPrincipal"></div>
     </div>
 
-    <!-- ABA 1: VENDER -->
+    <!-- ABA 1: VENDER (Com Categorias Primeiro) -->
     <div id="aba-vendas" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
-        <h2>Nova Venda (PDV Multi-Itens)</h2>
+        <h2>Nova Venda (PDV por Categorias)</h2>
         <form id="vendaForm" onsubmit="event.preventDefault(); finalizarVenda();">
             <div class="form-group">
                 <label for="vendaCliente">Cliente (Sua Base):</label>
@@ -233,12 +232,27 @@
                 <label for="vendaVendedorExibicao">Vendedor Responsável:</label>
                 <input type="text" id="vendaVendedorExibicao" readonly style="background:#e9ecef;">
             </div>
+
+            <!-- SELEÇÃO EM 2 ETAPAS: CATEGORIA -> PRODUTO -->
+            <div class="form-group">
+                <label for="selectCategoriaVenda">1. Selecione a Categoria:</label>
+                <select id="selectCategoriaVenda" onchange="filtrarProdutosPorCategoriaVenda()">
+                    <option value="">Selecione a categoria...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="selectProdutoVenda">2. Selecione o Produto:</label>
+                <select id="selectProdutoVenda">
+                    <option value="">Primeiro escolha a categoria acima...</option>
+                </select>
+            </div>
+
             <div class="form-group full">
-                <label>Adicionar Produtos ao Carrinho:</label>
+                <label>Quantidade e Adição:</label>
                 <div style="display: flex; gap: 10px;">
-                    <select id="selectProdutoVenda" style="flex: 2;"></select>
                     <input type="number" id="qtdProdutoVenda" value="1" min="1" style="flex: 1;" placeholder="Qtd">
-                    <button type="button" class="btn btn-primary" onclick="adicionarItemCarrinho()">Adicionar Item</button>
+                    <button type="button" class="btn btn-primary" style="flex: 1;" onclick="adicionarItemCarrinho()">Adicionar ao Carrinho</button>
                 </div>
             </div>
 
@@ -342,7 +356,7 @@
     <div id="aba-clientes" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
         <h2>Gestão de Clientes & Saldo Devedor</h2>
-        <form id="clienteForm">
+        <form id="clienteForm" onsubmit="event.preventDefault(); salvarCliente();">
             <input type="hidden" id="clienteIdInput">
             <div class="form-group">
                 <label for="nomeClienteCad">Nome do Cliente / Empresa:</label>
@@ -416,7 +430,7 @@
         </table>
     </div>
 
-    <!-- ABA 5: VENDEDORES (EXCLUSIVO ADMIN) -->
+    <!-- ABA 5: VENDEDORES -->
     <div id="aba-vendedores" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
         <h2>Cadastro de Vendedores e Senhas (Acesso Restrito Admin)</h2>
@@ -425,7 +439,7 @@
             <button type="button" class="btn btn-primary" onclick="cadastrarVendedorRapidoModal()">+ Cadastrar Vendedor via Caixa de Diálogo Rápida</button>
         </div>
 
-        <form id="vendedorForm">
+        <form id="vendedorForm" onsubmit="event.preventDefault(); salvarVendedor();">
             <input type="hidden" id="vendedorIdInput">
             <div class="form-group">
                 <label for="nomeVendedor">Nome do Vendedor:</label>
@@ -473,9 +487,7 @@
             <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Comprovante de Pedido / Venda</p>
         </div>
         
-        <div id="conteudoReciboImpresso" style="font-size: 13px; line-height: 1.5;">
-            <!-- Preenchido via Script -->
-        </div>
+        <div id="conteudoReciboImpresso" style="font-size: 13px; line-height: 1.5;"></div>
 
         <div class="nao-imprimir" style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
             <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir</button>
@@ -506,7 +518,7 @@
     let produtosCache = [];
     let clientesCache = [];
     let vendedoresCache = [];
-    let vendasCacheMap = {}; // Guarda dados para impressão rápida
+    let vendasCacheMap = {};
 
     // --- CONTROLE DE LOGIN ---
     function alternarCampoLogin() {
@@ -602,7 +614,7 @@
         grid.innerHTML += `
             <div class="menu-card" onclick="mudarAba('vendas')">
                 <h3>🛒 Vender</h3>
-                <p>Realize vendas multi-itens, escolha formas de pagamento e dê baixa automática no estoque.</p>
+                <p>Realize vendas multi-itens por categorias, escolha formas de pagamento e dê baixa automática no estoque.</p>
             </div>
             <div class="menu-card" onclick="mudarAba('produtos')">
                 <h3>📋 Produtos & Catálogo</h3>
@@ -648,20 +660,21 @@
         carregarVendedores();
     }
 
-    // --- PRODUTOS ---
+    // --- PRODUTOS & CATEGORIAS NO PDV ---
     function carregarProdutos() {
         db.collection("produtos").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaProdutos');
-            const selectVenda = document.getElementById('selectProdutoVenda');
-            if(!tbody || !selectVenda) return;
+            if(!tbody) return;
             tbody.innerHTML = '';
-            selectVenda.innerHTML = '<option value="">Selecione um produto...</option>';
             produtosCache = [];
+
+            const categoriasSet = new Set();
 
             snapshot.forEach((doc) => {
                 const p = doc.data();
                 const id = doc.id;
                 produtosCache.push({ id, ...p });
+                if (p.categoria) categoriasSet.add(p.categoria);
 
                 let acoesTd = usuarioLogado.perfil === 'admin' ? `
                     <td>
@@ -680,9 +693,46 @@
                         ${acoesTd}
                     </tr>
                 `;
-
-                selectVenda.innerHTML += `<option value="${id}">${p.nome} [${p.categoria || 'Geral'}] - Estoque: ${p.estoque} (R$ ${Number(p.preco).toFixed(2)})</option>`;
             });
+
+            // Atualizar o select de categorias na tela de vendas
+            atualizarSelectCategoriasVenda(categoriasSet);
+        });
+    }
+
+    function atualizarSelectCategoriasVenda(categoriasSet) {
+        const selectCat = document.getElementById('selectCategoriaVenda');
+        const categoriaAtual = selectCat.value;
+        selectCat.innerHTML = '<option value="">Selecione a categoria...</option>';
+        
+        const categoriasOrdenadas = Array.from(categoriasSet).sort();
+        categoriasOrdenadas.forEach(cat => {
+            selectCat.innerHTML += `<option value="${cat}">${cat}</option>`;
+        });
+
+        if(categoriaAtual) {
+            selectCat.value = categoriaAtual;
+        }
+    }
+
+    function filtrarProdutosPorCategoriaVenda() {
+        const categoriaSelecionada = document.getElementById('selectCategoriaVenda').value;
+        const selectProduto = document.getElementById('selectProdutoVenda');
+        
+        selectProduto.innerHTML = '<option value="">Selecione o produto...</option>';
+        if (!categoriaSelecionada) {
+            selectProduto.innerHTML = '<option value="">Primeiro escolha a categoria acima...</option>';
+            return;
+        }
+
+        const produtosFiltrados = produtosCache.filter(p => p.categoria === categoriaSelecionada);
+        if (produtosFiltrados.length === 0) {
+            selectProduto.innerHTML = '<option value="">Nenhum produto nesta categoria</option>';
+            return;
+        }
+
+        produtosFiltrados.forEach(p => {
+            selectProduto.innerHTML += `<option value="${p.id}">${p.nome} - Estoque: ${p.estoque} (R$ ${Number(p.preco).toFixed(2)})</option>`;
         });
     }
 
@@ -749,287 +799,216 @@
                             R$ ${saldoDevedor.toFixed(2)}
                         </td>
                         <td>
-                            ${saldoDevedor > 0 ? `<button class="btn btn-pagar" onclick="registrarPagamentoFiado('${id}', '${c.nome}', ${saldoDevedor})">Pagar / Abater</button>` : '<span style="color:#6c757d; font-size:12px;">Quitado</span>'}
+                            ${saldoDevedor > 0 ? `<button class="btn btn-pagar" onclick="registrarPagamentoFiado('${id}', '${c.nome}', ${saldoDevedor})">Pagar / Abater</button>` : ''}
+                            <button class="btn btn-edit" onclick="editarCliente('${id}', '${c.nome}', '${c.documento || ''}', '${c.telefone || ''}', '${c.vendedorResponsavel || ''}', '${c.endereco || ''}')">Editar</button>
                             <button class="btn btn-delete" onclick="excluirCliente('${id}')">Excluir</button>
                         </td>
                     </tr>
                 `;
 
-                selectVendaCliente.innerHTML += `<option value="${id}">${c.nome} (Fiado Ativo: R$ ${saldoDevedor.toFixed(2)})</option>`;
+                selectVendaCliente.innerHTML += `<option value="${id}">${c.nome} (Vendedor: ${c.vendedorResponsavel})</option>`;
             });
         });
     }
 
-    document.getElementById('clienteForm')?.addEventListener('submit', (e) => {
-        e.preventDefault();
+    function salvarCliente() {
+        const id = document.getElementById('clienteIdInput').value;
         const nome = document.getElementById('nomeClienteCad').value;
         const documento = document.getElementById('docClienteCad').value;
         const telefone = document.getElementById('telClienteCad').value;
+        const vendedorResponsavel = document.getElementById('vendedorClienteCad').value;
         const endereco = document.getElementById('enderecoClienteCad').value;
-        
-        const vendedorSelect = document.getElementById('vendedorClienteCad');
-        const vendedorResponsavel = vendedorSelect.disabled ? usuarioLogado.nome : vendedorSelect.value;
 
-        if (!vendedorResponsavel) return alert("Selecione o vendedor responsável pelo atendimento.");
+        if (!vendedorResponsavel) return alert("Selecione o vendedor responsável pelo cliente.");
 
-        db.collection("clientes").add({
-            nome, documento, telefone, endereco, vendedorResponsavel, saldoDevedor: 0
-        }).then(() => {
-            alert("Cliente cadastrado com sucesso!");
-            document.getElementById('clienteForm').reset();
-            if (usuarioLogado.perfil === 'vendedor') {
-                vendedorSelect.value = usuarioLogado.nome;
-            }
-        }).catch(err => {
-            alert("Erro ao salvar cliente: " + err.message);
-        });
-    });
-
-    async function registrarPagamentoFiado(clienteId, nomeCliente, saldoAtual) {
-        const valorDigitado = prompt(`Cliente: ${nomeCliente}\nSaldo Devedor Atual: R$ ${saldoAtual.toFixed(2)}\n\nDigite o valor que o cliente está pagando (ou abatendo):`, saldoAtual.toFixed(2));
-        if (valorDigitado === null) return;
-
-        const valorPago = parseFloat(valorDigitado.replace(',', '.'));
-        if (isNaN(valorPago) || valorPago <= 0) {
-            return alert("Por favor, digite um valor válido maior que zero.");
+        const dados = { nome, documento, telefone, vendedorResponsavel, endereco };
+        if (id === "") {
+            dados.saldoDevedor = 0;
+            db.collection("clientes").add(dados).then(() => {
+                document.getElementById('clienteForm').reset();
+                alert("Cliente cadastrado com sucesso!");
+            });
+        } else {
+            db.collection("clientes").doc(id).update(dados).then(() => {
+                document.getElementById('clienteForm').reset();
+                document.getElementById('clienteIdInput').value = '';
+                alert("Cliente atualizado com sucesso!");
+            });
         }
+    }
 
-        if (valorPago > saldoAtual) {
-            if (!confirm(`O valor pago (R$ ${valorPago.toFixed(2)}) é maior que o saldo devedor atual (R$ ${saldoAtual.toFixed(2)}). Deseja zerar a dívida do cliente?`)) {
-                return;
-            }
-        }
-
-        let novoSaldo = saldoAtual - valorPago;
-        if (novoSaldo < 0) novoSaldo = 0;
-
-        try {
-            await db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo });
-            alert(`Pagamento registrado com sucesso!\nNovo saldo devedor de ${nomeCliente}: R$ ${novoSaldo.toFixed(2)}`);
-        } catch (err) {
-            alert("Erro ao registrar pagamento: " + err.message);
-        }
+    function editarCliente(id, nome, documento, telefone, vendedorResponsavel, endereco) {
+        document.getElementById('clienteIdInput').value = id;
+        document.getElementById('nomeClienteCad').value = nome;
+        document.getElementById('docClienteCad').value = documento;
+        document.getElementById('telClienteCad').value = telefone;
+        document.getElementById('vendedorClienteCad').value = vendedorResponsavel;
+        document.getElementById('enderecoClienteCad').value = endereco;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function excluirCliente(id) {
         if (confirm('Deseja excluir este cliente?')) db.collection("clientes").doc(id).delete();
     }
 
-    // --- VENDEDORES ---
-    function carregarVendedores() {
-        db.collection("vendedores").onSnapshot((snapshot) => {
-            const tbody = document.getElementById('tabelaVendedores');
-            vendedoresCache = [];
-            if(tbody) tbody.innerHTML = '';
+    function registrarPagamentoFiado(clienteId, nomeCliente, saldoAtual) {
+        const valorPagoStr = prompt(`Cliente: ${nomeCliente}\nSaldo Devedor Atual: R$ ${saldoAtual.toFixed(2)}\n\nDigite o valor que o cliente está pagando/abatendo:`);
+        if (!valorPagoStr) return;
+        const valorPago = parseFloat(valorPagoStr);
+        if (isNaN(valorPago) || valorPago <= 0) return alert("Valor inválido.");
 
-            snapshot.forEach((doc) => {
-                const v = doc.data();
-                const id = doc.id;
-                vendedoresCache.push({ id, ...v });
-
-                if(tbody) {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${v.nome}</td>
-                            <td>${v.tipo}</td>
-                            <td>${v.telefone || '-'}</td>
-                            <td>******</td>
-                            <td>
-                                <button class="btn btn-delete" onclick="excluirVendedor('${id}')">Excluir</button>
-                            </td>
-                        </tr>
-                    `;
-                }
-            });
-            atualizarSelectVendedoresClienteForm();
-        });
-    }
-
-    function atualizarSelectVendedoresClienteForm() {
-        const select = document.getElementById('vendedorClienteCad');
-        if (!select) return;
-        
-        select.innerHTML = '<option value="">Selecione o vendedor...</option>';
-        vendedoresCache.forEach(v => {
-            select.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
-        });
-        select.innerHTML += `<option value="Administrador">Administrador</option>`;
-
-        if (usuarioLogado.perfil === 'vendedor') {
-            select.value = usuarioLogado.nome;
-            select.disabled = true;
+        if (valorPago > saldoAtual) {
+            if (!confirm("O valor pago é maior que o saldo devedor. Deseja zerar o saldo?")) return;
         }
-    }
 
-    document.getElementById('vendedorForm')?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const nome = document.getElementById('nomeVendedor').value;
-        const tipo = document.getElementById('tipoVendedor').value;
-        const telefone = document.getElementById('telefoneVendedor').value;
-        const senha = document.getElementById('senhaVendedor').value;
-
-        db.collection("vendedores").add({ nome, tipo, telefone, senha }).then(() => {
-            alert("Vendedor cadastrado com sucesso!");
-            document.getElementById('vendedorForm').reset();
+        const novoSaldo = Math.max(0, saldoAtual - valorPago);
+        db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo }).then(() => {
+            alert(`Pagamento registrado com sucesso! Novo saldo: R$ ${novoSaldo.toFixed(2)}`);
         });
-    });
-
-    function excluirVendedor(id) {
-        if (confirm('Deseja excluir este vendedor?')) db.collection("vendedores").doc(id).delete();
     }
 
-    function cadastrarVendedorRapidoModal() {
-        const nome = prompt("Nome do Vendedor:");
-        if (!nome) return;
-        const senha = prompt("Senha de acesso:");
-        if (!senha) return;
-
-        db.collection("vendedores").add({
-            nome, tipo: "Externo", telefone: "", senha
-        }).then(() => alert("Vendedor cadastrado com sucesso!"));
-    }
-
-    // --- CARRINHO E VENDAS COM NUMERAÇÃO AUTOMÁTICA E FIADO ---
+    // --- CARRINHO & PDV ---
     function adicionarItemCarrinho() {
         const produtoId = document.getElementById('selectProdutoVenda').value;
         const qtd = parseInt(document.getElementById('qtdProdutoVenda').value);
 
-        if (!produtoId || qtd <= 0) return alert("Selecione um produto e quantidade válidos.");
+        if (!produtoId) return alert("Selecione um produto.");
+        if (isNaN(qtd) || qtd <= 0) return alert("Quantidade inválida.");
 
         const produto = produtosCache.find(p => p.id === produtoId);
-        if (!produto) return;
+        if (!produto) return alert("Produto não encontrado.");
 
-        if (qtd > produto.estoque) {
-            alert(`Estoque insuficiente! Disponível: ${produto.estoque}`);
-            return;
+        if (produto.estoque < qtd) {
+            return alert(`Estoque insuficiente! Disponível: ${produto.estoque} un.`);
         }
 
         const itemExistente = carrinho.find(i => i.produtoId === produtoId);
         if (itemExistente) {
+            if (produto.estoque < (itemExistente.qtd + qtd)) {
+                return alert(`Estoque insuficiente para adicionar mais quantidade.`);
+            }
             itemExistente.qtd += qtd;
+            itemExistente.subtotal = itemExistente.qtd * itemExistente.precoUnit;
         } else {
-            carrinho.push({ produtoId, nome: produto.nome, precoUnit: produto.preco, qtd });
+            carrinho.push({
+                produtoId,
+                nome: produto.nome,
+                precoUnit: Number(produto.preco),
+                qtd,
+                subtotal: Number(produto.preco) * qtd
+            });
         }
-        renderizarCarrinho();
+
+        atualizarTabelaCarrinho();
     }
 
     function removerItemCarrinho(index) {
         carrinho.splice(index, 1);
-        renderizarCarrinho();
+        atualizarTabelaCarrinho();
     }
 
-    function renderizarCarrinho() {
+    function atualizarTabelaCarrinho() {
         const tbody = document.getElementById('carrinhoItens');
-        const totalSpan = document.getElementById('carrinhoTotal');
-        if(!tbody || !totalSpan) return;
-        tbody.innerHTML = '';
+        const spanTotal = document.getElementById('carrinhoTotal');
+        if(!tbody) return;
 
+        tbody.innerHTML = '';
         if (carrinho.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Carrinho vazio</td></tr>`;
-            totalSpan.innerText = "0.00";
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Carrinho vazio</td></tr>';
+            spanTotal.innerText = '0.00';
             return;
         }
 
         let totalGeral = 0;
         carrinho.forEach((item, index) => {
-            const subtotal = item.qtd * item.precoUnit;
-            totalGeral += subtotal;
-
+            totalGeral += item.subtotal;
             tbody.innerHTML += `
                 <tr>
                     <td>${item.nome}</td>
                     <td>${item.qtd}</td>
-                    <td>R$ ${Number(item.precoUnit).toFixed(2)}</td>
-                    <td>R$ ${subtotal.toFixed(2)}</td>
-                    <td><button type="button" class="btn btn-delete" onclick="removerItemCarrinho(${index})">X</button></td>
+                    <td>R$ ${item.precoUnit.toFixed(2)}</td>
+                    <td>R$ ${item.subtotal.toFixed(2)}</td>
+                    <td><button type="button" class="btn btn-delete" onclick="removerItemCarrinho(${index})">Remover</button></td>
                 </tr>
             `;
         });
-        totalSpan.innerText = totalGeral.toFixed(2);
+
+        const desconto = parseFloat(document.getElementById('descontoVenda').value) || 0;
+        const final = Math.max(0, totalGeral - desconto);
+        spanTotal.innerText = final.toFixed(2);
     }
 
+    document.getElementById('descontoVenda')?.addEventListener('input', atualizarTabelaCarrinho);
+
     async function finalizarVenda() {
-        if (carrinho.length === 0) return alert("O carrinho está vazio!");
+        if (carrinho.length === 0) return alert("O carrinho está vazio.");
         const clienteId = document.getElementById('vendaCliente').value;
-        if (!clienteId) return alert("Selecione o cliente.");
+        if (!clienteId) return alert("Selecione o cliente para a venda.");
 
         const clienteObj = clientesCache.find(c => c.id === clienteId);
         const formaPagamento = document.getElementById('formaPagamento').value;
         const desconto = parseFloat(document.getElementById('descontoVenda').value) || 0;
 
-        let totalGeral = carrinho.reduce((acc, i) => acc + (i.qtd * i.precoUnit), 0) - desconto;
-        if (totalGeral < 0) totalGeral = 0;
+        let totalBruto = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
+        let totalFinal = Math.max(0, totalBruto - desconto);
 
-        try {
-            const contadorRef = db.collection("configuracoes").doc("contador_pedidos");
-            
-            const numeroPedidoFormatado = await db.runTransaction(async (transaction) => {
-                const docContador = await transaction.get(contadorRef);
-                let proximoNumero = 1;
-                
-                if (docContador.exists) {
-                    proximoNumero = (docContador.data().ultimo || 0) + 1;
-                }
-                
-                transaction.set(contadorRef, { ultimo: proximoNumero });
-                return String(proximoNumero).padStart(4, '0');
-            });
+        const vendedorResponsavel = usuarioLogado.perfil === 'vendedor' ? usuarioLogado.nome : (clienteObj.vendedorResponsavel || 'Administrador');
 
-            const dadosVenda = {
-                numeroPedido: numeroPedidoFormatado,
-                data: new Date().toISOString(),
-                cliente: clienteObj ? clienteObj.nome : 'Cliente não identificado',
-                clienteId: clienteId,
-                vendedor: usuarioLogado.nome,
-                itens: carrinho,
-                formaPagamento,
-                desconto,
-                total: totalGeral
-            };
-
-            for (let item of carrinho) {
-                const prodRef = db.collection("produtos").doc(item.produtoId);
-                const prodDoc = await prodRef.get();
-                if (prodDoc.exists) {
-                    const novoEstoque = prodDoc.data().estoque - item.qtd;
-                    await prodRef.update({ estoque: novoEstoque >= 0 ? novoEstoque : 0 });
-                }
-            }
-
-            if (formaPagamento === "Fiado" && clienteObj) {
-                const clienteRef = db.collection("clientes").doc(clienteId);
-                const clienteDoc = await clienteRef.get();
-                if (clienteDoc.exists) {
-                    const saldoAtual = Number(clienteDoc.data().saldoDevedor || 0);
-                    const novoSaldoDevedor = saldoAtual + totalGeral;
-                    await clienteRef.update({ saldoDevedor: novoSaldoDevedor });
-                }
-            }
-
-            await db.collection("vendas").add(dadosVenda);
-            alert(`Venda finalizada com sucesso! Nº do Pedido: ${numeroPedidoFormatado}` + (formaPagamento === "Fiado" ? `\nValor lançado como Saldo Devedor do cliente.` : ''));
-            
-            carrinho = [];
-            renderizarCarrinho();
-            document.getElementById('vendaForm').reset();
-            document.getElementById('vendaVendedorExibicao').value = usuarioLogado.perfil === 'vendedor' ? usuarioLogado.nome : 'Administrador (Geral)';
-            mudarAba('historico');
-        } catch (err) {
-            alert("Erro ao finalizar venda: " + err.message);
+        const batch = db.batch();
+        for (const item of carrinho) {
+            const prodRef = db.collection("produtos").doc(item.produtoId);
+            const prodData = produtosCache.find(p => p.id === item.produtoId);
+            const novoEstoque = prodData.estoque - item.qtd;
+            if (novoEstoque < 0) return alert(`Estoque zerado para ${prodData.nome}`);
+            batch.update(prodRef, { estoque: novoEstoque });
         }
+
+        if (formaPagamento === 'Fiado') {
+            const clienteRef = db.collection("clientes").doc(clienteId);
+            const novoSaldo = Number(clienteObj.saldoDevedor || 0) + totalFinal;
+            batch.update(clienteRef, { saldoDevedor: novoSaldo });
+        }
+
+        const vendaData = {
+            data: new Date().toLocaleString('pt-BR'),
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            clienteNome: clienteObj.nome,
+            clienteId,
+            vendedor: vendedorResponsavel,
+            itens: carrinho,
+            totalBruto,
+            desconto,
+            totalFinal,
+            formaPagamento
+        };
+
+        const vendaRef = db.collection("vendas").doc();
+        batch.set(vendaRef, vendaData);
+
+        await batch.commit();
+        alert("Venda realizada com sucesso e estoque atualizado!");
+
+        carrinho = [];
+        document.getElementById('vendaForm').reset();
+        document.getElementById('descontoVenda').value = '0';
+        document.getElementById('vendaVendedorExibicao').value = usuarioLogado.perfil === 'vendedor' ? usuarioLogado.nome : 'Administrador (Geral)';
+        document.getElementById('selectProdutoVenda').innerHTML = '<option value="">Primeiro escolha a categoria acima...</option>';
+        atualizarTabelaCarrinho();
+        mudarAba('historico');
     }
 
+    // --- HISTÓRICO ---
     function carregarHistoricoVendas() {
-        db.collection("vendas").orderBy("data", "desc").onSnapshot((snapshot) => {
+        db.collection("vendas").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaHistorico');
-            const fatTotalElem = document.getElementById('fatTotal');
-            const totalQtdElem = document.getElementById('totalQtdVendas');
+            const fatTotalEl = document.getElementById('fatTotal');
+            const totalQtdVendasEl = document.getElementById('totalQtdVendas');
             if(!tbody) return;
 
             tbody.innerHTML = '';
             vendasCacheMap = {};
             let faturamento = 0;
-            let qtdPedidos = 0;
+            let qtd = 0;
 
             snapshot.forEach((doc) => {
                 const v = doc.data();
@@ -1040,92 +1019,62 @@
                     return;
                 }
 
-                faturamento += v.total || 0;
-                qtdPedidos++;
-
-                const dataFmt = new Date(v.data).toLocaleString('pt-BR');
-                const numPedidoExibicao = v.numeroPedido || '0000';
-
-                // Botão de impressão visível SOMENTE para o administrador
-                let acoesBotoes = '';
-                if (usuarioLogado.perfil === 'admin') {
-                    acoesBotoes += `<button class="btn btn-print" onclick="imprimirPedido('${id}')">🖨️ Imprimir</button> `;
-                }
-                acoesBotoes += `<button class="btn btn-delete" onclick="excluirVenda('${id}')">Excluir</button>`;
+                faturamento += Number(v.totalFinal || 0);
+                qtd++;
 
                 tbody.innerHTML += `
                     <tr>
-                        <td><strong>#${numPedidoExibicao}</strong></td>
-                        <td>${dataFmt}</td>
-                        <td>${v.cliente}</td>
+                        <td>#${id.substring(0, 6)}</td>
+                        <td>${v.data}</td>
+                        <td>${v.clienteNome}</td>
                         <td>${v.vendedor}</td>
-                        <td><span style="${v.formaPagamento === 'Fiado' ? 'color: red; font-weight: bold;' : ''}">${v.formaPagamento}</span></td>
-                        <td><strong>R$ ${Number(v.total).toFixed(2)}</strong></td>
-                        <td>${acoesBotoes}</td>
+                        <td>${v.formaPagamento}</td>
+                        <td><strong>R$ ${Number(v.totalFinal).toFixed(2)}</strong></td>
+                        <td>
+                            <button class="btn btn-print" onclick="imprimirComprovante('${id}')">🖨️ Recibo</button>
+                            ${usuarioLogado.perfil === 'admin' ? `<button class="btn btn-delete" onclick="excluirVenda('${id}')">Excluir</button>` : ''}
+                        </td>
                     </tr>
                 `;
             });
 
-            if(fatTotalElem) fatTotalElem.innerText = `R$ ${faturamento.toFixed(2)}`;
-            if(totalQtdElem) totalQtdElem.innerText = qtdPedidos;
+            if(fatTotalEl) fatTotalEl.innerText = `R$ ${faturamento.toFixed(2)}`;
+            if(totalQtdVendasEl) totalQtdVendasEl.innerText = qtd;
         });
     }
 
-    function imprimirPedido(id) {
-        if (usuarioLogado.perfil !== 'admin') {
-            return alert("Acesso negado. Apenas o Administrador pode imprimir pedidos.");
+    function excluirVenda(id) {
+        if(confirm("Deseja excluir este registro de venda?")) {
+            db.collection("vendas").doc(id).delete();
         }
+    }
 
+    function imprimirComprovante(id) {
         const v = vendasCacheMap[id];
-        if (!v) return alert("Dados do pedido não encontrados.");
+        if (!v) return alert("Dados da venda não encontrados.");
 
-        const dataFmt = new Date(v.data).toLocaleString('pt-BR');
-        let htmlItens = '';
+        let itensHtml = '';
+        v.itens.forEach(i => {
+            itensHtml += `<tr><td>${i.nome}</td><td>${i.qtd}x</td><td>R$ ${i.precoUnit.toFixed(2)}</td><td style="text-align:right;">R$ ${i.subtotal.toFixed(2)}</td></tr>`;
+        });
 
-        if (v.itens && v.itens.length > 0) {
-            v.itens.forEach(i => {
-                const sub = i.qtd * i.precoUnit;
-                htmlItens += `
-                    <tr>
-                        <td style="padding: 5px; border-bottom: 1px solid #ddd;">${i.nome}</td>
-                        <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align:center;">${i.qtd}</td>
-                        <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align:right;">R$ ${Number(i.precoUnit).toFixed(2)}</td>
-                        <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align:right;">R$ ${sub.toFixed(2)}</td>
-                    </tr>
-                `;
-            });
-        }
-
-        const conteudo = `
-            <p><strong>Pedido:</strong> #${v.numeroPedido || '0000'}</p>
-            <p><strong>Data/Hora:</strong> ${dataFmt}</p>
-            <p><strong>Cliente:</strong> ${v.cliente}</p>
+        const html = `
+            <p><strong>Data:</strong> ${v.data}</p>
+            <p><strong>Cliente:</strong> ${v.clienteNome}</p>
             <p><strong>Vendedor:</strong> ${v.vendedor}</p>
             <p><strong>Forma de Pagamento:</strong> ${v.formaPagamento}</p>
-            <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;">
-            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                <thead>
-                    <tr style="background: #f1f1f1;">
-                        <th style="padding: 5px; text-align:left;">Item</th>
-                        <th style="padding: 5px; text-align:center;">Qtd</th>
-                        <th style="padding: 5px; text-align:right;">Unit.</th>
-                        <th style="padding: 5px; text-align:right;">Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${htmlItens}
-                </tbody>
+            <hr style="border: 1px dashed #ccc;">
+            <table style="width:100%; font-size:12px;">
+                <thead><tr><th>Item</th><th>Qtd</th><th>Unit</th><th style="text-align:right;">Subtotal</th></tr></thead>
+                <tbody>${itensHtml}</tbody>
             </table>
-            <div style="text-align: right; margin-top: 15px; font-size: 15px;">
-                ${v.desconto > 0 ? `<p style="margin:2px 0; font-size:12px; color:#666;">Desconto aplicado: R$ ${Number(v.desconto).toFixed(2)}</p>` : ''}
-                <p><strong>Total Geral: R$ ${Number(v.total).toFixed(2)}</strong></p>
-            </div>
-            <div style="margin-top: 30px; text-align: center; font-size: 11px; color: #777;">
-                <p>Obrigado pela preferência!<br>Distribuidora Frazão - Gestão Integrada</p>
-            </div>
+            <hr style="border: 1px dashed #ccc;">
+            <p style="text-align:right;"><strong>Total Bruto:</strong> R$ ${v.totalBruto.toFixed(2)}</p>
+            <p style="text-align:right;"><strong>Desconto:</strong> R$ ${v.desconto.toFixed(2)}</p>
+            <h3 style="text-align:right; color: #0056b3;">Total Final: R$ ${v.totalFinal.toFixed(2)}</h3>
         `;
 
-        document.getElementById('conteudoReciboImpresso').innerHTML = conteudo;
+        document.getElementById('conteudoReciboImpresso').innerHTML = html;
         document.getElementById('modalImpressao').style.display = 'flex';
     }
 
@@ -1133,10 +1082,84 @@
         document.getElementById('modalImpressao').style.display = 'none';
     }
 
-    function excluirVenda(id) {
-        if (confirm("Deseja realmente excluir este registro de venda?")) {
-            db.collection("vendas").doc(id).delete().then(() => alert("Venda excluída do histórico."));
+    // --- VENDEDORES ---
+    function carregarVendedores() {
+        db.collection("vendedores").onSnapshot((snapshot) => {
+            const tbody = document.getElementById('tabelaVendedores');
+            const selectCli = document.getElementById('vendedorClienteCad');
+            if(!tbody || !selectCli) return;
+            tbody.innerHTML = '';
+            selectCli.innerHTML = '<option value="">Selecione o vendedor...</option>';
+            vendedoresCache = [];
+
+            snapshot.forEach((doc) => {
+                const v = doc.data();
+                const id = doc.id;
+                vendedoresCache.push({ id, ...v });
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${v.nome}</td>
+                        <td>${v.tipo}</td>
+                        <td>${v.telefone || '-'}</td>
+                        <td><code>${v.senha || ''}</code></td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editarVendedor('${id}', '${v.nome}', '${v.tipo}', '${v.telefone || ''}', '${v.senha || ''}')">Editar</button>
+                            <button class="btn btn-delete" onclick="excluirVendedor('${id}')">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+
+                selectCli.innerHTML += `<option value="${v.nome}">${v.nome} (${v.tipo})</option>`;
+            });
+        });
+    }
+
+    function salvarVendedor() {
+        const id = document.getElementById('vendedorIdInput').value;
+        const nome = document.getElementById('nomeVendedor').value;
+        const tipo = document.getElementById('tipoVendedor').value;
+        const telefone = document.getElementById('telefoneVendedor').value;
+        const senha = document.getElementById('senhaVendedor').value;
+
+        const dados = { nome, tipo, telefone, senha };
+        if (id === "") {
+            db.collection("vendedores").add(dados).then(() => {
+                document.getElementById('vendedorForm').reset();
+                alert("Vendedor cadastrado com sucesso!");
+            });
+        } else {
+            db.collection("vendedores").doc(id).update(dados).then(() => {
+                document.getElementById('vendedorForm').reset();
+                document.getElementById('vendedorIdInput').value = '';
+                alert("Vendedor atualizado com sucesso!");
+            });
         }
+    }
+
+    function cadastrarVendedorRapidoModal() {
+        const nome = prompt("Nome do Vendedor:");
+        if (!nome) return;
+        const senha = prompt("Senha de acesso do vendedor:");
+        if (!senha) return;
+        const tipo = prompt("Tipo (Externo ou Interno):", "Externo") || "Externo";
+
+        db.collection("vendedores").add({ nome, tipo, telefone: "", senha }).then(() => {
+            alert("Vendedor cadastrado com sucesso!");
+        });
+    }
+
+    function editarVendedor(id, nome, tipo, telefone, senha) {
+        document.getElementById('vendedorIdInput').value = id;
+        document.getElementById('nomeVendedor').value = nome;
+        document.getElementById('tipoVendedor').value = tipo;
+        document.getElementById('telefoneVendedor').value = telefone;
+        document.getElementById('senhaVendedor').value = senha;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function excluirVendedor(id) {
+        if (confirm("Deseja excluir este vendedor?")) db.collection("vendedores").doc(id).delete();
     }
 </script>
 </body>

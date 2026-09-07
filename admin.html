@@ -139,6 +139,7 @@
         .btn-delete { background-color: var(--danger); color: white; padding: 5px 10px; }
         .btn-primary { background-color: var(--primary); color: white; }
         .btn-pagar { background-color: #17a2b8; color: white; padding: 5px 10px; }
+        .btn-print { background-color: #6c757d; color: white; padding: 5px 10px; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { border: 1px solid #dee2e6; padding: 10px; text-align: left; font-size: 14px; }
@@ -160,6 +161,22 @@
         }
         .card h4 { margin: 0 0 5px 0; color: #666; }
         .card p { font-size: 20px; font-weight: bold; margin: 0; color: var(--primary); }
+
+        /* Estilo específico para impressão */
+        @media print {
+            body * { visibility: hidden; }
+            #modalImpressao, #modalImpressao * { visibility: visible; }
+            #modalImpressao {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 10px;
+                background: white;
+            }
+            .nao-imprimir { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -431,6 +448,25 @@
     </div>
 </div>
 
+<!-- MODAL DE IMPRESSÃO DE PEDIDO -->
+<div id="modalImpressao" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:white; width: 500px; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;">
+        <div style="text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 10px; margin-bottom: 15px;">
+            <h2 style="margin: 0; color: #0056b3; border:none; padding:0;">Distribuidora Frazão</h2>
+            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Comprovante de Pedido / Venda</p>
+        </div>
+        
+        <div id="conteudoReciboImpresso" style="font-size: 13px; line-height: 1.5;">
+            <!-- Preenchido via Script -->
+        </div>
+
+        <div class="nao-imprimir" style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir</button>
+            <button class="btn btn-voltar" style="margin:0;" onclick="fecharModalImpressao()">Fechar</button>
+        </div>
+    </div>
+</div>
+
 <!-- Firebase Scripts (Compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -453,6 +489,7 @@
     let produtosCache = [];
     let clientesCache = [];
     let vendedoresCache = [];
+    let vendasCacheMap = {}; // Guarda dados para impressão rápida
 
     // --- CONTROLE DE LOGIN ---
     function alternarCampoLogin() {
@@ -560,7 +597,7 @@
             </div>
             <div class="menu-card" onclick="mudarAba('historico')">
                 <h3>📊 Histórico de Vendas</h3>
-                <p>Consulte pedidos realizados, faturamento e detalhes de compras dos clientes.</p>
+                <p>Consulte pedidos realizados, faturamento, imprima comprovantes e detalhes de compras.</p>
             </div>
         `;
 
@@ -904,7 +941,6 @@
         if (totalGeral < 0) totalGeral = 0;
 
         try {
-            // Gera número sequencial automático (0001, 0002...)
             const contadorRef = db.collection("configuracoes").doc("contador_pedidos");
             
             const numeroPedidoFormatado = await db.runTransaction(async (transaction) => {
@@ -931,7 +967,6 @@
                 total: totalGeral
             };
 
-            // Dá baixa no estoque de cada produto
             for (let item of carrinho) {
                 const prodRef = db.collection("produtos").doc(item.produtoId);
                 const prodDoc = await prodRef.get();
@@ -941,7 +976,6 @@
                 }
             }
 
-            // Se a forma de pagamento for "Fiado", atualiza o saldo devedor do cliente
             if (formaPagamento === "Fiado" && clienteObj) {
                 const clienteRef = db.collection("clientes").doc(clienteId);
                 const clienteDoc = await clienteRef.get();
@@ -952,7 +986,6 @@
                 }
             }
 
-            // Salva a venda
             await db.collection("vendas").add(dadosVenda);
             alert(`Venda finalizada com sucesso! Nº do Pedido: ${numeroPedidoFormatado}` + (formaPagamento === "Fiado" ? `\nValor lançado como Saldo Devedor do cliente.` : ''));
             
@@ -974,12 +1007,14 @@
             if(!tbody) return;
 
             tbody.innerHTML = '';
+            vendasCacheMap = {};
             let faturamento = 0;
             let qtdPedidos = 0;
 
             snapshot.forEach((doc) => {
                 const v = doc.data();
                 const id = doc.id;
+                vendasCacheMap[id] = v;
 
                 if (usuarioLogado.perfil === 'vendedor' && v.vendedor !== usuarioLogado.nome) {
                     return;
@@ -1000,6 +1035,7 @@
                         <td><span style="${v.formaPagamento === 'Fiado' ? 'color: red; font-weight: bold;' : ''}">${v.formaPagamento}</span></td>
                         <td><strong>R$ ${Number(v.total).toFixed(2)}</strong></td>
                         <td>
+                            <button class="btn btn-print" onclick="imprimirPedido('${id}')">🖨️ Imprimir</button>
                             <button class="btn btn-delete" onclick="excluirVenda('${id}')">Excluir</button>
                         </td>
                     </tr>
@@ -1009,6 +1045,64 @@
             if(fatTotalElem) fatTotalElem.innerText = `R$ ${faturamento.toFixed(2)}`;
             if(totalQtdElem) totalQtdElem.innerText = qtdPedidos;
         });
+    }
+
+    function imprimirPedido(id) {
+        const v = vendasCacheMap[id];
+        if (!v) return alert("Dados do pedido não encontrados.");
+
+        const dataFmt = new Date(v.data).toLocaleString('pt-BR');
+        let htmlItens = '';
+
+        if (v.itens && v.itens.length > 0) {
+            v.itens.forEach(i => {
+                const sub = i.qtd * i.precoUnit;
+                htmlItens += `
+                    <tr>
+                        <td style="padding: 5px; border-bottom: 1px solid #ddd;">${i.nome}</td>
+                        <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align:center;">${i.qtd}</td>
+                        <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align:right;">R$ ${Number(i.precoUnit).toFixed(2)}</td>
+                        <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align:right;">R$ ${sub.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        const conteudo = `
+            <p><strong>Pedido:</strong> #${v.numeroPedido || '0000'}</p>
+            <p><strong>Data/Hora:</strong> ${dataFmt}</p>
+            <p><strong>Cliente:</strong> ${v.cliente}</p>
+            <p><strong>Vendedor:</strong> ${v.vendedor}</p>
+            <p><strong>Forma de Pagamento:</strong> ${v.formaPagamento}</p>
+            <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                <thead>
+                    <tr style="background: #f1f1f1;">
+                        <th style="padding: 5px; text-align:left;">Item</th>
+                        <th style="padding: 5px; text-align:center;">Qtd</th>
+                        <th style="padding: 5px; text-align:right;">Unit.</th>
+                        <th style="padding: 5px; text-align:right;">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${htmlItens}
+                </tbody>
+            </table>
+            <div style="text-align: right; margin-top: 15px; font-size: 15px;">
+                ${v.desconto > 0 ? `<p style="margin:2px 0; font-size:12px; color:#666;">Desconto aplicado: R$ ${Number(v.desconto).toFixed(2)}</p>` : ''}
+                <p><strong>Total Geral: R$ ${Number(v.total).toFixed(2)}</strong></p>
+            </div>
+            <div style="margin-top: 30px; text-align: center; font-size: 11px; color: #777;">
+                <p>Obrigado pela preferência!<br>Distribuidora Frazão - Gestão Integrada</p>
+            </div>
+        `;
+
+        document.getElementById('conteudoReciboImpresso').innerHTML = conteudo;
+        document.getElementById('modalImpressao').style.display = 'flex';
+    }
+
+    function fecharModalImpressao() {
+        document.getElementById('modalImpressao').style.display = 'none';
     }
 
     function excluirVenda(id) {

@@ -520,6 +520,20 @@
     let vendedoresCache = [];
     let vendasCacheMap = {};
 
+    // Lista fixa de todas as categorias do negócio
+    const listaTodasCategorias = [
+        "Balas e Pirulitos",
+        "Bebidas",
+        "Biscoitos",
+        "Descartáveis",
+        "Doces",
+        "Drops e Chicletes",
+        "Higiene",
+        "Limpeza",
+        "Mercearia",
+        "Papelaria"
+    ];
+
     // --- CONTROLE DE LOGIN ---
     function alternarCampoLogin() {
         const perfil = document.getElementById('loginPerfil').value;
@@ -658,6 +672,7 @@
         carregarClientes();
         carregarHistoricoVendas();
         carregarVendedores();
+        atualizarSelectCategoriasVenda();
     }
 
     // --- PRODUTOS & CATEGORIAS NO PDV ---
@@ -668,13 +683,10 @@
             tbody.innerHTML = '';
             produtosCache = [];
 
-            const categoriasSet = new Set();
-
             snapshot.forEach((doc) => {
                 const p = doc.data();
                 const id = doc.id;
                 produtosCache.push({ id, ...p });
-                if (p.categoria) categoriasSet.add(p.categoria);
 
                 let acoesTd = usuarioLogado.perfil === 'admin' ? `
                     <td>
@@ -694,19 +706,16 @@
                     </tr>
                 `;
             });
-
-            // Atualizar o select de categorias na tela de vendas
-            atualizarSelectCategoriasVenda(categoriasSet);
         });
     }
 
-    function atualizarSelectCategoriasVenda(categoriasSet) {
+    function atualizarSelectCategoriasVenda() {
         const selectCat = document.getElementById('selectCategoriaVenda');
+        if(!selectCat) return;
         const categoriaAtual = selectCat.value;
         selectCat.innerHTML = '<option value="">Selecione a categoria...</option>';
         
-        const categoriasOrdenadas = Array.from(categoriasSet).sort();
-        categoriasOrdenadas.forEach(cat => {
+        listaTodasCategorias.forEach(cat => {
             selectCat.innerHTML += `<option value="${cat}">${cat}</option>`;
         });
 
@@ -727,7 +736,7 @@
 
         const produtosFiltrados = produtosCache.filter(p => p.categoria === categoriaSelecionada);
         if (produtosFiltrados.length === 0) {
-            selectProduto.innerHTML = '<option value="">Nenhum produto nesta categoria</option>';
+            selectProduto.innerHTML = '<option value="">Nenhum produto cadastrado nesta categoria</option>';
             return;
         }
 

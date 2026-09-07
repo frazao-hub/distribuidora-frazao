@@ -322,7 +322,7 @@
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
         <h2>Catálogo de Produtos</h2>
         <div id="containerFormProduto">
-            <form id="produtoForm">
+            <form id="produtoForm" onsubmit="event.preventDefault(); salvarProduto();">
                 <input type="hidden" id="produtoId">
                 <div class="form-group">
                     <label for="nomeProduto">Nome do Produto:</label>
@@ -465,10 +465,6 @@
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
         <h2>Gestão de Vendedores</h2>
         
-        <div style="margin-bottom: 15px;">
-            <button type="button" class="btn btn-primary" style="width: 100%;" onclick="cadastrarVendedorRapidoModal()">+ Cadastrar Vendedor Rápido</button>
-        </div>
-
         <form id="vendedorForm" onsubmit="event.preventDefault(); salvarVendedor();">
             <input type="hidden" id="vendedorIdInput">
             <div class="form-group">
@@ -550,7 +546,6 @@
     let produtosCache = [];
     let clientesCache = [];
     let vendedoresCache = [];
-    let vendasCacheMap = {};
 
     const listaTodasCategorias = [
         "Balas e Pirulitos",
@@ -565,59 +560,9 @@
         "Papelaria"
     ];
 
-    // Validação matemática de CPF e CNPJ
-    function validarCPFCNPJ(val) {
-        const doc = val.replace(/\D/g, '');
-        if (doc === "") return true; 
-
-        if (doc.length === 11) {
-            if (/^(\d)\1{10}$/.test(doc)) return false;
-            let soma = 0;
-            for (let i = 0; i < 9; i++) soma += parseInt(doc.charAt(i)) * (10 - i);
-            let resto = 11 - (soma % 11);
-            let digito1 = (resto === 10 || resto === 11) ? 0 : resto;
-            if (digito1 !== parseInt(doc.charAt(9))) return false;
-
-            soma = 0;
-            for (let i = 0; i < 10; i++) soma += parseInt(doc.charAt(i)) * (11 - i);
-            resto = 11 - (soma % 11);
-            let digito2 = (resto === 10 || resto === 11) ? 0 : resto;
-            return digito2 === parseInt(doc.charAt(10));
-        }
-        
-        if (doc.length === 14) {
-            if (/^(\d)\1{13}$/.test(doc)) return false;
-            let tamanho = doc.length - 2;
-            let numeros = doc.substring(0, tamanho);
-            let digitos = doc.substring(tamanho);
-            let soma = 0;
-            let pos = tamanho - 7;
-            for (let i = tamanho; i >= 1; i--) {
-                soma += numeros.charAt(tamanho - i) * pos--;
-                if (pos < 2) pos = 9;
-            }
-            let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-            if (resultado !== parseInt(digitos.charAt(0))) return false;
-
-            tamanho = tamanho + 1;
-            numeros = doc.substring(0, tamanho);
-            soma = 0;
-            pos = tamanho - 7;
-            for (let i = tamanho; i >= 1; i--) {
-                soma += numeros.charAt(tamanho - i) * pos--;
-                if (pos < 2) pos = 9;
-            }
-            resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-            return resultado === parseInt(digitos.charAt(1));
-        }
-
-        return false;
-    }
-
     function alternarCampoLogin() {
         const perfil = document.getElementById('loginPerfil').value;
         const grupoVendedor = document.getElementById('grupoSeletorVendedor');
-
         if (perfil === 'vendedor') {
             grupoVendedor.style.display = 'block';
             carregarSelectVendedoresLogin();
@@ -627,7 +572,7 @@
     }
 
     function carregarSelectVendedoresLogin() {
-        db.collection("vendedores").get().then((snapshot) => {
+        db.collection("vendedores").orderBy("nome", "asc").get().then((snapshot) => {
             const select = document.getElementById('loginVendedorSelect');
             select.innerHTML = '<option value="">Selecione seu nome...</option>';
             snapshot.forEach(doc => {
@@ -702,9 +647,7 @@
 
     function montarMenuPrincipal() {
         const grid = document.getElementById('gridMenuPrincipal');
-        grid.innerHTML = '';
-
-        grid.innerHTML += `
+        grid.innerHTML = `
             <div class="menu-card" onclick="mudarAba('vendas')">
                 <h3>🛒 Vender</h3>
                 <p>Realize vendas multi-itens por categorias e dê baixa no estoque.</p>
@@ -754,8 +697,44 @@
         atualizarSelectCategoriasVenda();
     }
 
+    // CRUD PRODUTOS
+    function salvarProduto() {
+        const id = document.getElementById('produtoId').value;
+        const nome = document.getElementById('nomeProduto').value;
+        const categoria = document.getElementById('categoriaProduto').value;
+        const preco = parseFloat(document.getElementById('precoProduto').value);
+        const estoque = parseInt(document.getElementById('estoqueProduto').value);
+        const foto = document.getElementById('fotoProduto').value;
+
+        const dados = { nome, categoria, preco, estoque, foto };
+
+        const acao = id ? db.collection("produtos").doc(id).update(dados) : db.collection("produtos").add(dados);
+
+        acao.then(() => {
+            alert("Produto salvo com sucesso!");
+            document.getElementById('produtoForm').reset();
+            document.getElementById('produtoId').value = '';
+        }).catch(err => alert("Erro ao salvar produto: " + err.message));
+    }
+
+    function editarProduto(id, nome, categoria, preco, estoque, foto) {
+        document.getElementById('produtoId').value = id;
+        document.getElementById('nomeProduto').value = nome;
+        document.getElementById('categoriaProduto').value = categoria;
+        document.getElementById('precoProduto').value = preco;
+        document.getElementById('estoqueProduto').value = estoque;
+        document.getElementById('fotoProduto').value = foto;
+    }
+
+    function excluirProduto(id) {
+        if(confirm("Deseja realmente excluir este produto?")) {
+            db.collection("produtos").doc(id).delete().then(() => alert("Produto excluído!"));
+        }
+    }
+
     function carregarProdutos() {
-        db.collection("produtos").onSnapshot((snapshot) => {
+        // Ordenado por nome alfabeticamente
+        db.collection("produtos").orderBy("nome", "asc").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaProdutos');
             if(!tbody) return;
             tbody.innerHTML = '';
@@ -779,125 +758,94 @@
                         <td>${p.nome}</td>
                         <td>${p.categoria || 'Geral'}</td>
                         <td>R$ ${Number(p.preco).toFixed(2)}</td>
-                        <td><strong>${p.estoque} un.</strong></td>
+                        <td>${p.estoque}</td>
                         ${acoesTd}
                     </tr>
                 `;
             });
+            atualizarSelectCategoriasVenda();
         });
     }
 
+    // CATEGORIAS E PDV
     function atualizarSelectCategoriasVenda() {
-        const selectCat = document.getElementById('selectCategoriaVenda');
-        if(!selectCat) return;
-        const categoriaAtual = selectCat.value;
-        selectCat.innerHTML = '<option value="">Selecione a categoria...</option>';
-        
+        const select = document.getElementById('selectCategoriaVenda');
+        if(!select) return;
+        select.innerHTML = '<option value="">Selecione a categoria...</option>';
         listaTodasCategorias.forEach(cat => {
-            selectCat.innerHTML += `<option value="${cat}">${cat}</option>`;
+            select.innerHTML += `<option value="${cat}">${cat}</option>`;
         });
-
-        if(categoriaAtual) {
-            selectCat.value = categoriaAtual;
-        }
     }
 
     function filtrarProdutosPorCategoriaVenda() {
-        const categoriaSelecionada = document.getElementById('selectCategoriaVenda').value;
-        const selectProduto = document.getElementById('selectProdutoVenda');
-        
-        selectProduto.innerHTML = '<option value="">Selecione o produto...</option>';
-        if (!categoriaSelecionada) {
-            selectProduto.innerHTML = '<option value="">Primeiro escolha a categoria acima...</option>';
-            return;
-        }
+        const cat = document.getElementById('selectCategoriaVenda').value;
+        const selectProd = document.getElementById('selectProdutoVenda');
+        selectProd.innerHTML = '<option value="">Selecione o produto...</option>';
 
-        const produtosFiltrados = produtosCache.filter(p => p.categoria === categoriaSelecionada);
-        if (produtosFiltrados.length === 0) {
-            selectProduto.innerHTML = '<option value="">Nenhum produto nesta categoria</option>';
-            return;
-        }
-
-        produtosFiltrados.forEach(p => {
-            selectProduto.innerHTML += `<option value="${p.id}">${p.nome} - Estoque: ${p.estoque} (R$ ${Number(p.preco).toFixed(2)})</option>`;
+        produtosCache.filter(p => p.categoria === cat).forEach(p => {
+            selectProd.innerHTML += `<option value="${p.id}">${p.nome} - Estoque: ${p.estoque} - R$ ${Number(p.preco).toFixed(2)}</option>`;
         });
     }
 
-    document.getElementById('produtoForm')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const id = document.getElementById('produtoId').value;
-        const nome = document.getElementById('nomeProduto').value;
-        const categoria = document.getElementById('categoriaProduto').value;
-        const preco = parseFloat(document.getElementById('precoProduto').value);
-        const estoque = parseInt(document.getElementById('estoqueProduto').value);
-        const foto = document.getElementById('fotoProduto').value;
+    function adicionarItemCarrinho() {
+        const prodId = document.getElementById('selectProdutoVenda').value;
+        const qtd = parseInt(document.getElementById('qtdProdutoVenda').value) || 1;
 
-        const dadosProduto = { nome, categoria, preco, estoque, foto };
+        if(!prodId) return alert("Selecione um produto.");
+        const produto = produtosCache.find(p => p.id === prodId);
+        if(!produto) return;
 
-        if (id) {
-            await db.collection("produtos").doc(id).update(dadosProduto);
-            alert("Produto atualizado com sucesso!");
+        if(produto.estoque < qtd) return alert("Estoque insuficiente!");
+
+        const existente = carrinho.find(item => item.id === prodId);
+        if(existente) {
+            existente.qtd += qtd;
+            existente.subtotal = existente.qtd * existente.preco;
         } else {
-            await db.collection("produtos").add(dadosProduto);
-            alert("Produto cadastrado com sucesso!");
-        }
-
-        document.getElementById('produtoForm').reset();
-        document.getElementById('produtoId').value = '';
-    });
-
-    function editarProduto(id, nome, categoria, preco, estoque, foto) {
-        document.getElementById('produtoId').value = id;
-        document.getElementById('nomeProduto').value = nome;
-        document.getElementById('categoriaProduto').value = categoria;
-        document.getElementById('precoProduto').value = preco;
-        document.getElementById('estoqueProduto').value = estoque;
-        document.getElementById('fotoProduto').value = foto;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    async function excluirProduto(id) {
-        if (confirm("Tem certeza que deseja excluir este produto?")) {
-            await db.collection("produtos").doc(id).delete();
-            alert("Produto excluído.");
-        }
-    }
-
-    function carregarClientes() {
-        db.collection("clientes").onSnapshot((snapshot) => {
-            const tbody = document.getElementById('tabelaClientes');
-            const selectVenda = document.getElementById('vendaCliente');
-            if(!tbody || !selectVenda) return;
-
-            tbody.innerHTML = '';
-            selectVenda.innerHTML = '<option value="">Selecione o cliente...</option>';
-            clientesCache = [];
-
-            snapshot.forEach((doc) => {
-                const c = doc.data();
-                const id = doc.id;
-                clientesCache.push({ id, ...c });
-
-                selectVenda.innerHTML += `<option value="${id}">${c.nome} (Débito: R$ ${(c.saldoDevedor || 0).toFixed(2)})</option>`;
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${c.nome}</td>
-                        <td>${c.telefone || '-'}</td>
-                        <td>${c.vendedor || '-'}</td>
-                        <td><strong style="color: ${c.saldoDevedor > 0 ? 'red' : 'green'};">R$ ${(c.saldoDevedor || 0).toFixed(2)}</strong></td>
-                        <td>
-                            <button class="btn btn-pagar" onclick="pagarFiado('${id}', ${c.saldoDevedor || 0})">Quitar / Pagar</button>
-                            <button class="btn btn-edit" onclick="editarCliente('${id}', '${c.nome}', '${c.telefone || ''}', '${c.vendedor || ''}')">Editar</button>
-                            <button class="btn btn-delete" onclick="excluirCliente('${id}')">Excluir</button>
-                        </td>
-                    </tr>
-                `;
+            carrinho.push({
+                id: produto.id,
+                nome: produto.nome,
+                preco: produto.preco,
+                qtd: qtd,
+                subtotal: produto.preco * qtd
             });
-        });
+        }
+        atualizarTabelaCarrinho();
     }
 
-    async function salvarCliente() {
+    function atualizarTabelaCarrinho() {
+        const tbody = document.getElementById('carrinhoItens');
+        tbody.innerHTML = '';
+        let total = 0;
+
+        if(carrinho.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Carrinho vazio</td></tr>';
+            document.getElementById('carrinhoTotal').innerText = '0.00';
+            return;
+        }
+
+        carrinho.forEach((item, index) => {
+            total += item.subtotal;
+            tbody.innerHTML += `
+                <tr>
+                    <td>${item.nome}</td>
+                    <td>${item.qtd}</td>
+                    <td>R$ ${Number(item.preco).toFixed(2)}</td>
+                    <td>R$ ${Number(item.subtotal).toFixed(2)}</td>
+                    <td><button type="button" class="btn btn-delete" onclick="removerItemCarrinho(${index})">X</button></td>
+                </tr>
+            `;
+        });
+        document.getElementById('carrinhoTotal').innerText = Number(total).toFixed(2);
+    }
+
+    function removerItemCarrinho(index) {
+        carrinho.splice(index, 1);
+        atualizarTabelaCarrinho();
+    }
+
+    // CLIENTES
+    function salvarCliente() {
         const id = document.getElementById('clienteIdInput').value;
         const nome = document.getElementById('nomeClienteCad').value;
         const doc = document.getElementById('docClienteCad').value;
@@ -905,76 +853,114 @@
         const vendedor = document.getElementById('vendedorClienteCad').value;
         const endereco = document.getElementById('enderecoClienteCad').value;
 
-        // Validação de CPF/CNPJ antes de salvar
-        if (doc.trim() !== "" && !validarCPFCNPJ(doc)) {
-            return alert("O CPF ou CNPJ digitado é inválido! Por favor, verifique os números.");
-        }
-
         const dados = { nome, doc, telefone, vendedor, endereco };
+        const acao = id ? db.collection("clientes").doc(id).update(dados) : db.collection("clientes").add({ ...dados, saldoDevedor: 0 });
 
-        if (id) {
-            await db.collection("clientes").doc(id).update(dados);
-            alert("Cliente atualizado!");
-        } else {
-            dados.saldoDevedor = 0;
-            await db.collection("clientes").add(dados);
-            alert("Cliente cadastrado!");
-        }
-
-        document.getElementById('clienteForm').reset();
-        document.getElementById('clienteIdInput').value = '';
+        acao.then(() => {
+            alert("Cliente salvo!");
+            document.getElementById('clienteForm').reset();
+            document.getElementById('clienteIdInput').value = '';
+        });
     }
 
-    function editarCliente(id, nome, telefone, vendedor) {
+    function carregarClientes() {
+        // Ordenado por nome alfabeticamente
+        db.collection("clientes").orderBy("nome", "asc").onSnapshot(snapshot => {
+            const tbody = document.getElementById('tabelaClientes');
+            const selectVenda = document.getElementById('vendaCliente');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            if(selectVenda) selectVenda.innerHTML = '<option value="">Selecione o cliente...</option>';
+            clientesCache = [];
+
+            snapshot.forEach(doc => {
+                const c = doc.data();
+                const id = doc.id;
+                clientesCache.push({ id, ...c });
+
+                if(selectVenda) selectVenda.innerHTML += `<option value="${id}">${c.nome} (Fiado: R$ ${Number(c.saldoDevedor || 0).toFixed(2)})</option>`;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${c.nome}</td>
+                        <td>${c.telefone || '-'}</td>
+                        <td>${c.vendedor || '-'}</td>
+                        <td>R$ ${Number(c.saldoDevedor || 0).toFixed(2)}</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editarCliente('${id}', '${c.nome}', '${c.doc || ''}', '${c.telefone || ''}', '${c.vendedor || ''}', '${c.endereco || ''}')">Editar</button>
+                            ${c.saldoDevedor > 0 ? `<button class="btn btn-pagar" onclick="quitarDivida('${id}', ${c.saldoDevedor})">Quitar</button>` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+    }
+
+    function editarCliente(id, nome, doc, telefone, vendedor, endereco) {
         document.getElementById('clienteIdInput').value = id;
         document.getElementById('nomeClienteCad').value = nome;
+        document.getElementById('docClienteCad').value = doc;
         document.getElementById('telClienteCad').value = telefone;
         document.getElementById('vendedorClienteCad').value = vendedor;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('enderecoClienteCad').value = endereco;
+        mudarAba('clientes');
     }
 
-    async function excluirCliente(id) {
-        if (confirm("Deseja excluir este cliente?")) {
-            await db.collection("clientes").doc(id).delete();
-        }
+    function quitarDivida(clienteId, valorAtual) {
+        const pagamento = prompt(`Valor da dívida: R$ ${valorAtual.toFixed(2)}. Quanto deseja abater/quitar?`, valorAtual);
+        if(!pagamento) return;
+        const valorPago = parseFloat(pagamento);
+        if(isNaN(valorPago) || valorPago <= 0) return alert("Valor inválido.");
+
+        const novoSaldo = Math.max(0, valorAtual - valorPago);
+        db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo }).then(() => {
+            alert("Pagamento registrado com sucesso!");
+        });
     }
 
-    async function pagarFiado(clienteId, saldoAtual) {
-        if (saldoAtual <= 0) return alert("Este cliente não possui saldo devedor.");
-        const valorPagoStr = prompt(`Saldo devedor atual: R$ ${saldoAtual.toFixed(2)}\nDigite o valor do pagamento recebido:`, saldoAtual.toFixed(2));
-        if (!valorPagoStr) return;
-        const valorPago = parseFloat(valorPagoStr);
-        if (isNaN(valorPago) || valorPago <= 0) return alert("Valor inválido.");
+    // VENDEDORES
+    function salvarVendedor() {
+        const id = document.getElementById('vendedorIdInput').value;
+        const nome = document.getElementById('nomeVendedor').value;
+        const tipo = document.getElementById('tipoVendedor').value;
+        const telefone = document.getElementById('telefoneVendedor').value;
+        const senha = document.getElementById('senhaVendedor').value;
 
-        const novoSaldo = Math.max(0, saldoAtual - valorPago);
-        await db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo });
-        alert("Pagamento registrado com sucesso!");
+        const dados = { nome, tipo, telefone, senha };
+        const acao = id ? db.collection("vendedores").doc(id).update(dados) : db.collection("vendedores").add(dados);
+
+        acao.then(() => {
+            alert("Vendedor salvo!");
+            document.getElementById('vendedorForm').reset();
+            document.getElementById('vendedorIdInput').value = '';
+            carregarVendedores();
+        });
     }
 
     function carregarVendedores() {
-        db.collection("vendedores").onSnapshot((snapshot) => {
+        db.collection("vendedores").orderBy("nome", "asc").onSnapshot(snapshot => {
             const tbody = document.getElementById('tabelaVendedores');
             const selectCad = document.getElementById('vendedorClienteCad');
-            if(!tbody || !selectCad) return;
-
+            if(!tbody) return;
             tbody.innerHTML = '';
-            selectCad.innerHTML = '<option value="">Selecione o vendedor...</option>';
+            if(selectCad) selectCad.innerHTML = '<option value="">Selecione o vendedor...</option>';
             vendedoresCache = [];
 
-            snapshot.forEach((doc) => {
+            snapshot.forEach(doc => {
                 const v = doc.data();
                 const id = doc.id;
                 vendedoresCache.push({ id, ...v });
 
-                selectCad.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
+                if(selectCad) selectCad.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
 
                 tbody.innerHTML += `
                     <tr>
                         <td>${v.nome}</td>
                         <td>${v.tipo}</td>
                         <td>${v.telefone || '-'}</td>
-                        <td>••••</td>
+                        <td>${v.senha ? '••••' : '-'}</td>
                         <td>
+                            <button class="btn btn-edit" onclick="editarVendedor('${id}', '${v.nome}', '${v.tipo}', '${v.telefone || ''}', '${v.senha || ''}')">Editar</button>
                             <button class="btn btn-delete" onclick="excluirVendedor('${id}')">Excluir</button>
                         </td>
                     </tr>
@@ -983,227 +969,132 @@
         });
     }
 
-    async function salvarVendedor() {
-        const nome = document.getElementById('nomeVendedor').value;
-        const tipo = document.getElementById('tipoVendedor').value;
-        const telefone = document.getElementById('telefoneVendedor').value;
-        const senha = document.getElementById('senhaVendedor').value;
-
-        await db.collection("vendedores").add({ nome, tipo, telefone, senha });
-        alert("Vendedor cadastrado com sucesso!");
-        document.getElementById('vendedorForm').reset();
+    function editarVendedor(id, nome, tipo, telefone, senha) {
+        document.getElementById('vendedorIdInput').value = id;
+        document.getElementById('nomeVendedor').value = nome;
+        document.getElementById('tipoVendedor').value = tipo;
+        document.getElementById('telefoneVendedor').value = telefone;
+        document.getElementById('senhaVendedor').value = senha;
     }
 
-    async function cadastrarVendedorRapidoModal() {
-        const nome = prompt("Nome do Vendedor:");
-        if (!nome) return;
-        const senha = prompt("Senha de acesso do vendedor:");
-        if (!senha) return;
-
-        await db.collection("vendedores").add({ nome, tipo: 'Externo', telefone: '', senha });
-        alert("Vendedor cadastrado com sucesso!");
-    }
-
-    async function excluirVendedor(id) {
-        if (confirm("Excluir vendedor?")) {
-            await db.collection("vendedores").doc(id).delete();
+    function excluirVendedor(id) {
+        if(confirm("Deseja excluir este vendedor?")) {
+            db.collection("vendedores").doc(id).delete().then(() => alert("Excluído!"));
         }
     }
 
-    function adicionarItemCarrinho() {
-        const produtoId = document.getElementById('selectProdutoVenda').value;
-        const qtd = parseInt(document.getElementById('qtdProdutoVenda').value);
-
-        if (!produtoId) return alert("Selecione um produto.");
-        if (isNaN(qtd) || qtd <= 0) return alert("Quantidade inválida.");
-
-        const produtoObj = produtosCache.find(p => p.id === produtoId);
-        if (!produtoObj) return alert("Produto não encontrado.");
-
-        if (produtoObj.estoque < qtd) {
-            return alert(`Estoque insuficiente! Disponível: ${produtoObj.estoque}`);
-        }
-
-        const itemExistente = carrinho.find(item => item.produtoId === produtoId);
-        if (itemExistente) {
-            if (produtoObj.estoque < (itemExistente.qtd + qtd)) {
-                return alert("Estoque máximo atingido para este item.");
-            }
-            itemExistente.qtd += qtd;
-            itemExistente.subtotal = itemExistente.qtd * itemExistente.precoUnit;
-        } else {
-            carrinho.push({
-                produtoId: produtoObj.id,
-                nome: produtoObj.nome,
-                precoUnit: produtoObj.preco,
-                qtd: qtd,
-                subtotal: produtoObj.preco * qtd
-            });
-        }
-
-        atualizarTabelaCarrinho();
-    }
-
-    function removerItemCarrinho(index) {
-        carrinho.splice(index, 1);
-        atualizarTabelaCarrinho();
-    }
-
-    function atualizarTabelaCarrinho() {
-        const tbody = document.getElementById('carrinhoItens');
-        const spanTotal = document.getElementById('carrinhoTotal');
-        if(!tbody) return;
-
-        tbody.innerHTML = '';
-        if (carrinho.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Carrinho vazio</td></tr>';
-            spanTotal.innerText = '0.00';
-            return;
-        }
-
-        let totalGeral = 0;
-        carrinho.forEach((item, index) => {
-            totalGeral += item.subtotal;
-            tbody.innerHTML += `
-                <tr>
-                    <td>${item.nome}</td>
-                    <td>${item.qtd}</td>
-                    <td>R$ ${item.precoUnit.toFixed(2)}</td>
-                    <td>R$ ${item.subtotal.toFixed(2)}</td>
-                    <td><button type="button" class="btn btn-delete" onclick="removerItemCarrinho(${index})">X</button></td>
-                </tr>
-            `;
-        });
-
-        const desconto = parseFloat(document.getElementById('descontoVenda').value) || 0;
-        const final = Math.max(0, totalGeral - desconto);
-        spanTotal.innerText = final.toFixed(2);
-    }
-
+    // FINALIZAR VENDA
     async function finalizarVenda() {
-        if (carrinho.length === 0) return alert("O carrinho está vazio.");
+        if(carrinho.length === 0) return alert("Carrinho vazio.");
         const clienteId = document.getElementById('vendaCliente').value;
-        if (!clienteId) return alert("Selecione o cliente.");
+        if(!clienteId) return alert("Selecione um cliente.");
 
         const formaPagamento = document.getElementById('formaPagamento').value;
         const desconto = parseFloat(document.getElementById('descontoVenda').value) || 0;
 
-        let totalGeral = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
-        let valorFinal = Math.max(0, totalGeral - desconto);
+        let subtotalCarrinho = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
+        let totalFinal = Math.max(0, subtotalCarrinho - desconto);
 
         const clienteObj = clientesCache.find(c => c.id === clienteId);
-        const vendedorNome = usuarioLogado.perfil === 'vendedor' ? usuarioLogado.nome : (clienteObj ? clienteObj.vendedor : 'Geral');
 
-        const dadosVenda = {
-            dataHora: new Date().toISOString(),
-            clienteId: clienteId,
-            clienteNome: clienteObj ? clienteObj.nome : 'Desconhecido',
-            vendedor: vendedorNome,
-            itens: carrinho,
-            subtotal: totalGeral,
-            desconto: desconto,
-            total: valorFinal,
-            formaPagamento: formaPagamento
-        };
-
-        for (let item of carrinho) {
-            const prod = produtosCache.find(p => p.id === item.produtoId);
-            if (prod) {
-                const novoEstoque = Math.max(0, prod.estoque - item.qtd);
-                await db.collection("produtos").doc(item.produtoId).update({ estoque: novoEstoque });
+        // Dar baixa no estoque
+        for(let item of carrinho) {
+            const prodRef = db.collection("produtos").doc(item.id);
+            const pDoc = await prodRef.get();
+            if(pDoc.exists) {
+                const novoEstoque = Math.max(0, pDoc.data().estoque - item.qtd);
+                await prodRef.update({ estoque: novoEstoque });
             }
         }
 
-        if (formaPagamento === 'Fiado' && clienteObj) {
-            const novoSaldo = (clienteObj.saldoDevedor || 0) + valorFinal;
+        // Se for fiado, atualizar saldo do cliente
+        if(formaPagamento === 'Fiado') {
+            const novoSaldo = (clienteObj.saldoDevedor || 0) + totalFinal;
             await db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo });
         }
+
+        const dadosVenda = {
+            data: new Date().toISOString(),
+            clienteNome: clienteObj ? clienteObj.nome : 'Cliente',
+            vendedorNome: usuarioLogado.nome,
+            itens: carrinho,
+            formaPagamento,
+            desconto,
+            total: totalFinal
+        };
 
         const docRef = await db.collection("vendas").add(dadosVenda);
         alert("Venda realizada com sucesso!");
 
-        imprimirComprovante({ id: docRef.id, ...dadosVenda });
-
         carrinho = [];
+        atualizarTabelaCarrinho();
         document.getElementById('vendaForm').reset();
         document.getElementById('vendaVendedorExibicao').value = usuarioLogado.perfil === 'vendedor' ? usuarioLogado.nome : 'Administrador (Geral)';
-        atualizarTabelaCarrinho();
-        carregarHistoricoVendas();
+
+        abrirRecibo(docRef.id, dadosVenda);
     }
 
     function carregarHistoricoVendas() {
-        db.collection("vendas").orderBy("dataHora", "desc").onSnapshot((snapshot) => {
+        db.collection("vendas").orderBy("data", "desc").onSnapshot(snapshot => {
             const tbody = document.getElementById('tabelaHistorico');
-            const fatTotalEl = document.getElementById('fatTotal');
-            const qtdVendasEl = document.getElementById('totalQtdVendas');
             if(!tbody) return;
-
             tbody.innerHTML = '';
-            vendasCacheMap = {};
-            let faturamento = 0;
-            let qtd = 0;
+            let fatTotal = 0;
+            let qtdTotal = 0;
 
-            snapshot.forEach((doc) => {
+            snapshot.forEach(doc => {
                 const v = doc.data();
                 const id = doc.id;
-                vendasCacheMap[id] = v;
+                fatTotal += v.total;
+                qtdTotal++;
 
-                faturamento += (v.total || 0);
-                qtd++;
-
-                const dataFmt = new Date(v.dataHora).toLocaleString('pt-BR');
+                const dataFmt = new Date(v.data).toLocaleString('pt-BR');
 
                 tbody.innerHTML += `
                     <tr>
-                        <td>#${id.substring(0, 5)}</td>
+                        <td>${id.substring(0,6)}</td>
                         <td>${dataFmt}</td>
                         <td>${v.clienteNome}</td>
-                        <td>${v.vendedor}</td>
+                        <td>${v.vendedorNome}</td>
                         <td>${v.formaPagamento}</td>
-                        <td><strong>R$ ${(v.total || 0).toFixed(2)}</strong></td>
+                        <td>R$ ${Number(v.total).toFixed(2)}</td>
                         <td>
-                            <button class="btn btn-print" onclick="reabrirImpressao('${id}')">🖨️ Recibo</button>
+                            <button class="btn btn-print" onclick='abrirRecibo("${id}", ${JSON.stringify(v)})'>Recibo</button>
                         </td>
                     </tr>
                 `;
             });
 
-            if(fatTotalEl) fatTotalEl.innerText = `R$ ${faturamento.toFixed(2)}`;
-            if(qtdVendasEl) qtdVendasEl.innerText = qtd;
+            document.getElementById('fatTotal').innerText = `R$ ${Number(fatTotal).toFixed(2)}`;
+            document.getElementById('totalQtdVendas').innerText = qtdTotal;
         });
     }
 
-    function reabrirImpressao(vendaId) {
-        const v = vendasCacheMap[vendaId];
-        if (v) imprimirComprovante(v);
-    }
+    function abrirRecibo(id, venda) {
+        const modal = document.getElementById('modalImpressao');
+        const conteudo = document.getElementById('conteudoReciboImpresso');
+        const dataFmt = new Date(venda.data).toLocaleString('pt-BR');
 
-    function imprimirComprovante(venda) {
-        const container = document.getElementById('conteudoReciboImpresso');
-        const dataFmt = new Date(venda.dataHora).toLocaleString('pt-BR');
-
-        let itensHtml = '';
+        let htmlItens = '';
         venda.itens.forEach(i => {
-            itensHtml += `<div>• ${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}</div>`;
+            htmlItens += `<tr><td>${i.nome}</td><td>${i.qtd}x</td><td>R$ ${Number(i.subtotal).toFixed(2)}</td></tr>`;
         });
 
-        container.innerHTML = `
-            <div><strong>Data:</strong> ${dataFmt}</div>
-            <div><strong>Cliente:</strong> ${venda.clienteNome}</div>
-            <div><strong>Vendedor:</strong> ${venda.vendedor}</div>
-            <div><strong>Pagamento:</strong> ${venda.formaPagamento}</div>
-            <div style="margin: 10px 0; border-top: 1px dashed #ccc; padding-top: 5px;">
-                <strong>Itens:</strong>
-                ${itensHtml}
-            </div>
-            <div style="border-top: 1px dashed #ccc; padding-top: 5px; text-align: right;">
-                <div>Subtotal: R$ ${(venda.subtotal || 0).toFixed(2)}</div>
-                <div>Desconto: R$ ${(venda.desconto || 0).toFixed(2)}</div>
-                <div style="font-size: 15px; font-weight: bold; margin-top: 5px;">Total: R$ ${(venda.total || 0).toFixed(2)}</div>
-            </div>
+        conteudo.innerHTML = `
+            <p><strong>Pedido ID:</strong> ${id}</p>
+            <p><strong>Data:</strong> ${dataFmt}</p>
+            <p><strong>Cliente:</strong> ${venda.clienteNome}</p>
+            <p><strong>Vendedor:</strong> ${venda.vendedorNome}</p>
+            <p><strong>Forma de Pgto:</strong> ${venda.formaPagamento}</p>
+            <hr style="border: 1px dashed #ccc;">
+            <table style="width:100%; font-size: 12px;">
+                <thead><tr><th>Item</th><th>Qtd</th><th>Subtotal</th></tr></thead>
+                <tbody>${htmlItens}</tbody>
+            </table>
+            <hr style="border: 1px dashed #ccc;">
+            <p style="text-align: right; font-size: 14px;"><strong>Total: R$ ${Number(venda.total).toFixed(2)}</strong></p>
         `;
-
-        document.getElementById('modalImpressao').style.display = 'flex';
+        modal.style.display = 'flex';
     }
 
     function fecharModalImpressao() {

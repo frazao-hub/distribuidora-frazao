@@ -803,7 +803,7 @@
         }).then(() => alert("Vendedor cadastrado com sucesso!"));
     }
 
-    // --- CARRINHO E VENDAS ---
+    // --- CARRINHO E VENDAS COM NUMERAÇÃO AUTOMÁTICA (0001) ---
     function adicionarItemCarrinho() {
         const produtoId = document.getElementById('selectProdutoVenda').value;
         const qtd = parseInt(document.getElementById('qtdProdutoVenda').value);
@@ -874,18 +874,36 @@
         let totalGeral = carrinho.reduce((acc, i) => acc + (i.qtd * i.precoUnit), 0) - desconto;
         if (totalGeral < 0) totalGeral = 0;
 
-        const dadosVenda = {
-            data: new Date().toISOString(),
-            cliente: clienteObj ? clienteObj.nome : 'Cliente não identificado',
-            clienteId: clienteId,
-            vendedor: usuarioLogado.nome,
-            itens: carrinho,
-            formaPagamento,
-            desconto,
-            total: totalGeral
-        };
-
         try {
+            // Lógica para gerar número sequencial automático (0001, 0002...)
+            const contadorRef = db.collection("configuracoes").doc("contador_pedidos");
+            
+            const numeroPedidoFormatado = await db.runTransaction(async (transaction) => {
+                const docContador = await transaction.get(contadorRef);
+                let proximoNumero = 1;
+                
+                if (docContador.exists) {
+                    proximoNumero = (docContador.data().ultimo || 0) + 1;
+                }
+                
+                transaction.set(contadorRef, { ultimo: proximoNumero });
+                
+                // Formata para 4 dígitos com zeros à esquerda (ex: 1 vira "0001")
+                return String(proximoNumero).padStart(4, '0');
+            });
+
+            const dadosVenda = {
+                numeroPedido: numeroPedidoFormatado,
+                data: new Date().toISOString(),
+                cliente: clienteObj ? clienteObj.nome : 'Cliente não identificado',
+                clienteId: clienteId,
+                vendedor: usuarioLogado.nome,
+                itens: carrinho,
+                formaPagamento,
+                desconto,
+                total: totalGeral
+            };
+
             // Dá baixa no estoque de cada produto
             for (let item of carrinho) {
                 const prodRef = db.collection("produtos").doc(item.produtoId);
@@ -898,7 +916,7 @@
 
             // Salva a venda
             await db.collection("vendas").add(dadosVenda);
-            alert("Venda finalizada e estoque atualizado com sucesso!");
+            alert(`Venda finalizada com sucesso! Nº do Pedido: ${numeroPedidoFormatado}`);
             
             carrinho = [];
             renderizarCarrinho();
@@ -933,10 +951,11 @@
                 qtdPedidos++;
 
                 const dataFmt = new Date(v.data).toLocaleString('pt-BR');
+                const numPedidoExibicao = v.numeroPedido || '0000';
 
                 tbody.innerHTML += `
                     <tr>
-                        <td>${id.substring(0, 6)}...</td>
+                        <td><strong>#${numPedidoExibicao}</strong></td>
                         <td>${dataFmt}</td>
                         <td>${v.cliente}</td>
                         <td>${v.vendedor}</td>

@@ -172,119 +172,32 @@
 <div class="container">
     <h1>Distribuidora Frazão - Gestão Integrada</h1>
 
-    <!-- TELA INICIAL: BOTÕES EM RETÂNGULOS CLICÁVEIS -->
+    <!-- TELA INICIAL: AS 4 OPÇÕES SOLICITADAS -->
     <div id="aba-inicio" class="tab-content active">
         <h2>Painel Principal</h2>
-        <p>Selecione abaixo a seção que deseja gerenciar:</p>
+        <p>Selecione abaixo a seção que deseja acessar:</p>
         
         <div class="menu-grid">
-            <div class="menu-card" onclick="mudarAba('produtos')">
-                <h3>📦 Produtos & Estoque</h3>
-                <p>Gerencie preços, estoque e fotos do catálogo online.</p>
-            </div>
-            <div class="menu-card" onclick="mudarAba('clientes')">
-                <h3>👥 Clientes & Fiado</h3>
-                <p>Cadastre clientes, valide CPFs/CNPJs e controle o saldo devedor.</p>
-            </div>
             <div class="menu-card" onclick="mudarAba('vendedores')">
-                <h3>💼 Vendedores</h3>
-                <p>Cadastre equipe interna/externa e defina regras.</p>
+                <h3>💼 Cadastro de Vendedores</h3>
+                <p>Cadastre equipe interna e externa e defina permissões.</p>
             </div>
             <div class="menu-card" onclick="mudarAba('vendas')">
-                <h3>🛒 Nova Venda / PDV</h3>
-                <p>Realize vendas multi-itens, escolha pagamentos e aplique regras.</p>
+                <h3>🛒 Vender (PDV)</h3>
+                <p>Realize vendas multi-itens, escolha pagamentos e controle descontos.</p>
             </div>
-            <div class="menu-card" onclick="mudarAba('relatorios')">
-                <h3>📊 Relatórios & Faturamento</h3>
-                <p>Acompanhe o faturamento total, fiados e histórico de pedidos.</p>
+            <div class="menu-card" onclick="mudarAba('estoque')">
+                <h3>📦 Estoque</h3>
+                <p>Gerencie quantidades, entradas e controle de produtos.</p>
+            </div>
+            <div class="menu-card" onclick="mudarAba('produtos')">
+                <h3>📋 Lista de Produtos</h3>
+                <p>Visualize o catálogo completo, preços e altere dados dos itens.</p>
             </div>
         </div>
     </div>
 
-    <!-- ABA 1: PRODUTOS E ESTOQUE -->
-    <div id="aba-produtos" class="tab-content">
-        <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
-        <h2>Cadastro e Gestão de Produtos (Catálogo Online)</h2>
-        <form id="produtoForm">
-            <input type="hidden" id="produtoId">
-            <div class="form-group">
-                <label for="nomeProduto">Nome do Produto:</label>
-                <input type="text" id="nomeProduto" required>
-            </div>
-            <div class="form-group">
-                <label for="precoProduto">Preço (R$):</label>
-                <input type="number" step="0.01" id="precoProduto" required>
-            </div>
-            <div class="form-group">
-                <label for="estoqueProduto">Quantidade em Estoque:</label>
-                <input type="number" id="estoqueProduto" required>
-            </div>
-            <div class="form-group">
-                <label for="fotoProduto">URL da Foto (ou aproveite do catálogo):</label>
-                <input type="url" id="fotoProduto" placeholder="https://exemplo.com/foto.jpg">
-            </div>
-            <button type="submit" class="btn btn-save">Salvar Produto no Estoque e Catálogo</button>
-        </form>
-
-        <h3>Lista de Produtos Cadastrados</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Foto</th>
-                    <th>Produto</th>
-                    <th>Preço</th>
-                    <th>Estoque</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabelaProdutos"></tbody>
-        </table>
-    </div>
-
-    <!-- ABA 2: CLIENTES E CONTROLE DE FIADO -->
-    <div id="aba-clientes" class="tab-content">
-        <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
-        <h2>Cadastro de Clientes e Controle de Fiado</h2>
-        <form id="clienteForm">
-            <input type="hidden" id="clienteId">
-            <div class="form-group">
-                <label for="nomeCliente">Nome do Cliente:</label>
-                <input type="text" id="nomeCliente" required>
-            </div>
-            <div class="form-group">
-                <label for="docCliente">CPF ou CNPJ (Validação Obrigatória):</label>
-                <input type="text" id="docCliente" placeholder="Apenas números ou formatado" required onblur="validarDocumentoInput(this.value)">
-                <div id="docErro" class="error-msg"></div>
-            </div>
-            <div class="form-group">
-                <label for="vendedorCliente">Vendedor Responsável:</label>
-                <select id="vendedorCliente" required>
-                    <option value="">Selecione...</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="telefoneCliente">Telefone / Contato:</label>
-                <input type="text" id="telefoneCliente">
-            </div>
-            <button type="submit" class="btn btn-save">Salvar Cliente</button>
-        </form>
-
-        <h3>Carteira de Clientes e Saldo Devedor (Fiado)</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Cliente</th>
-                    <th>Documento (CPF/CNPJ)</th>
-                    <th>Vendedor</th>
-                    <th>Saldo Devedor (Fiado)</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabelaClientes"></tbody>
-        </table>
-    </div>
-
-    <!-- ABA 3: VENDEDORES -->
+    <!-- ABA 1: CADASTRO DE VENDEDORES -->
     <div id="aba-vendedores" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
         <h2>Cadastro de Vendedores</h2>
@@ -322,10 +235,10 @@
         </table>
     </div>
 
-    <!-- ABA 4: VENDAS (PDV MULTI-ITENS COM PAGAMENTO E FIADO) -->
+    <!-- ABA 2: VENDER (PDV) -->
     <div id="aba-vendas" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
-        <h2>Nova Venda (Múltiplos Itens)</h2>
+        <h2>Nova Venda (PDV Multi-Itens)</h2>
         <form id="vendaForm" onsubmit="event.preventDefault(); finalizarVenda();">
             <div class="form-group">
                 <label for="vendaCliente">Cliente:</label>
@@ -384,39 +297,72 @@
         </form>
     </div>
 
-    <!-- ABA 5: RELATÓRIOS E FATURAMENTO -->
-    <div id="aba-relatorios" class="tab-content">
+    <!-- ABA 3: ESTOQUE -->
+    <div id="aba-estoque" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
-        <h2>Relatórios de Vendas e Faturamento</h2>
-        <div class="dashboard-cards">
-            <div class="card">
-                <h4>Faturamento Total</h4>
-                <p id="fatTotal">R$ 0,00</p>
+        <h2>Gestão de Estoque</h2>
+        <form id="estoqueForm" onsubmit="event.preventDefault(); atualizarEstoqueDireto();">
+            <div class="form-group">
+                <label for="selectProdutoEstoque">Selecione o Produto:</label>
+                <select id="selectProdutoEstoque" required></select>
             </div>
-            <div class="card">
-                <h4>Total em Fiados (A Receber)</h4>
-                <p id="fatFiados">R$ 0,00</p>
+            <div class="form-group">
+                <label for="novoEstoqueValor">Nova Quantidade em Estoque:</label>
+                <input type="number" id="novoEstoqueValor" required min="0">
             </div>
-            <div class="card">
-                <h4>Total de Vendas</h4>
-                <p id="totalQtdVendas">0</p>
-            </div>
-        </div>
+            <button type="submit" class="btn btn-save">Atualizar Quantidade em Estoque</button>
+        </form>
 
-        <h3>Histórico de Pedidos (Numerados por Data)</h3>
+        <h3>Status Atual do Estoque</h3>
         <table>
             <thead>
                 <tr>
-                    <th>Nº do Pedido</th>
-                    <th>Data</th>
-                    <th>Cliente</th>
-                    <th>Vendedor</th>
-                    <th>Pagamento</th>
-                    <th>Total</th>
-                    <th>Ações / Restrições</th>
+                    <th>Produto</th>
+                    <th>Preço</th>
+                    <th>Estoque Atual</th>
                 </tr>
             </thead>
-            <tbody id="tabelaRelatorios"></tbody>
+            <tbody id="tabelaEstoqueResumo"></tbody>
+        </table>
+    </div>
+
+    <!-- ABA 4: LISTA DE PRODUTOS -->
+    <div id="aba-produtos" class="tab-content">
+        <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
+        <h2>Cadastro e Lista de Produtos</h2>
+        <form id="produtoForm">
+            <input type="hidden" id="produtoId">
+            <div class="form-group">
+                <label for="nomeProduto">Nome do Produto:</label>
+                <input type="text" id="nomeProduto" required>
+            </div>
+            <div class="form-group">
+                <label for="precoProduto">Preço (R$):</label>
+                <input type="number" step="0.01" id="precoProduto" required>
+            </div>
+            <div class="form-group">
+                <label for="estoqueProduto">Quantidade Inicial:</label>
+                <input type="number" id="estoqueProduto" required>
+            </div>
+            <div class="form-group">
+                <label for="fotoProduto">URL da Foto:</label>
+                <input type="url" id="fotoProduto" placeholder="https://exemplo.com/foto.jpg">
+            </div>
+            <button type="submit" class="btn btn-save">Salvar Produto</button>
+        </form>
+
+        <h3>Lista de Produtos Cadastrados</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Foto</th>
+                    <th>Produto</th>
+                    <th>Preço</th>
+                    <th>Estoque</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaProdutos"></tbody>
         </table>
     </div>
 </div>
@@ -449,83 +395,14 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // --- VALIDAÇÃO DE CPF / CNPJ ---
-    function validarCPF(cpf) {
-        cpf = cpf.replace(/[^\d]/g, '');
-        if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
-        let soma = 0, resto;
-        for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i-1, i)) * (11 - i);
-        resto = (soma * 10) % 11;
-        if ((resto === 10) || (resto === 11)) resto = 0;
-        if (resto !== parseInt(cpf.substring(9, 10))) return false;
-        soma = 0;
-        for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i-1, i)) * (12 - i);
-        resto = (soma * 10) % 11;
-        if ((resto === 10) || (resto === 11)) resto = 0;
-        return resto === parseInt(cpf.substring(10, 11));
-    }
-
-    function validarCNPJ(cnpj) {
-        cnpj = cnpj.replace(/[^\d]/g, '');
-        if (cnpj.length !== 14) return false;
-        let tamanho = cnpj.length - 2;
-        let numeros = cnpj.substring(0, tamanho);
-        let digitos = cnpj.substring(tamanho);
-        let soma = 0, pos = tamanho - 7;
-        for (let i = tamanho; i >= 1; i--) {
-            soma += numeros.charAt(tamanho - i) * pos--;
-            if (pos < 2) pos = 9;
-        }
-        let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-        if (resultado != digitos.charAt(0)) return false;
-        tamanho = tamanho + 1;
-        numeros = cnpj.substring(0, tamanho);
-        soma = 0;
-        pos = tamanho - 7;
-        for (let i = tamanho; i >= 1; i--) {
-            soma += numeros.charAt(tamanho - i) * pos--;
-            if (pos < 2) pos = 9;
-        }
-        resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-        return resultado == digitos.charAt(1);
-    }
-
-    function validarDocumentoInput(doc) {
-        const limpo = doc.replace(/[^\d]/g, '');
-        const erroDiv = document.getElementById('docErro');
-        if (limpo.length === 11) {
-            if (!validarCPF(limpo)) {
-                erroDiv.innerText = "CPF inválido! Verifique os dígitos.";
-                return false;
-            }
-        } else if (limpo.length === 14) {
-            if (!validarCNPJ(limpo)) {
-                erroDiv.innerText = "CNPJ inválido! Verifique os dígitos.";
-                return false;
-            }
-        } else {
-            erroDiv.innerText = "Digite um CPF (11 dígitos) ou CNPJ (14 dígitos) válido do próprio cliente.";
-            return false;
-        }
-        erroDiv.innerText = "";
-        return true;
-    }
-
-    // --- CARREGAR DADOS DO FIREBASE ---
     document.addEventListener('DOMContentLoaded', () => {
         carregarProdutos();
         carregarVendedores();
-        carregarClientes();
-        carregarVendas();
+        carregarClientesVenda();
 
         document.getElementById('produtoForm').addEventListener('submit', (e) => {
             e.preventDefault();
             salvarProduto();
-        });
-
-        document.getElementById('clienteForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            salvarCliente();
         });
 
         document.getElementById('vendedorForm').addEventListener('submit', (e) => {
@@ -538,9 +415,14 @@
     function carregarProdutos() {
         db.collection("produtos").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaProdutos');
+            const tbodyEstoque = document.getElementById('tabelaEstoqueResumo');
             const selectVenda = document.getElementById('selectProdutoVenda');
+            const selectEstoque = document.getElementById('selectProdutoEstoque');
+
             tbody.innerHTML = '';
+            tbodyEstoque.innerHTML = '';
             selectVenda.innerHTML = '<option value="">Selecione um produto...</option>';
+            selectEstoque.innerHTML = '<option value="">Selecione um produto...</option>';
             produtosCache = [];
 
             snapshot.forEach((doc) => {
@@ -548,6 +430,7 @@
                 const id = doc.id;
                 produtosCache.push({ id, ...p });
 
+                // Tabela Lista de Produtos
                 tbody.innerHTML += `
                     <tr>
                         <td><img src="${p.foto || 'https://via.placeholder.com/50'}" class="product-img"></td>
@@ -561,7 +444,18 @@
                     </tr>
                 `;
 
+                // Tabela Resumo do Estoque
+                tbodyEstoque.innerHTML += `
+                    <tr>
+                        <td>${p.nome}</td>
+                        <td>R$ ${Number(p.preco).toFixed(2)}</td>
+                        <td><strong>${p.estoque} un.</strong></td>
+                    </tr>
+                `;
+
+                // Selects
                 selectVenda.innerHTML += `<option value="${id}">${p.nome} - Estoque: ${p.estoque} (R$ ${Number(p.preco).toFixed(2)})</option>`;
+                selectEstoque.innerHTML += `<option value="${id}">${p.nome} (Atual: ${p.estoque})</option>`;
             });
         });
     }
@@ -591,22 +485,32 @@
         document.getElementById('precoProduto').value = preco;
         document.getElementById('estoqueProduto').value = estoque;
         document.getElementById('fotoProduto').value = foto;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        mudarAba('produtos');
     }
 
     function excluirProduto(id) {
         if (confirm('Deseja excluir este produto?')) db.collection("produtos").doc(id).delete();
     }
 
+    function atualizarEstoqueDireto() {
+        const produtoId = document.getElementById('selectProdutoEstoque').value;
+        const novoEstoque = parseInt(document.getElementById('novoEstoqueValor').value);
+
+        if (!produtoId || isNaN(novoEstoque)) return alert("Selecione um produto e informe a quantidade.");
+
+        db.collection("produtos").doc(produtoId).update({ estoque: novoEstoque }).then(() => {
+            alert("Estoque atualizado com sucesso!");
+            document.getElementById('estoqueForm').reset();
+        });
+    }
+
     // --- VENDEDORES ---
     function carregarVendedores() {
         db.collection("vendedores").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaVendedores');
-            const selectClienteVen = document.getElementById('vendedorCliente');
             const selectVendaVen = document.getElementById('vendaVendedor');
             
             tbody.innerHTML = '';
-            selectClienteVen.innerHTML = '<option value="">Selecione o vendedor...</option>';
             selectVendaVen.innerHTML = '<option value="">Selecione o vendedor...</option>';
             vendedoresCache = [];
 
@@ -627,7 +531,6 @@
                     </tr>
                 `;
 
-                selectClienteVen.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
                 selectVendaVen.innerHTML += `<option value="${v.nome}">${v.nome} (${v.tipo})</option>`;
             });
         });
@@ -656,80 +559,24 @@
         document.getElementById('nomeVendedor').value = nome;
         document.getElementById('tipoVendedor').value = tipo;
         document.getElementById('telefoneVendedor').value = telefone;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function excluirVendedor(id) {
         if (confirm('Deseja excluir este vendedor?')) db.collection("vendedores").doc(id).delete();
     }
 
-    // --- CLIENTES E FIADO ---
-    function carregarClientes() {
+    // --- CLIENTES (Para a venda) ---
+    function carregarClientesVenda() {
         db.collection("clientes").onSnapshot((snapshot) => {
-            const tbody = document.getElementById('tabelaClientes');
             const selectVendaCliente = document.getElementById('vendaCliente');
-            tbody.innerHTML = '';
             selectVendaCliente.innerHTML = '<option value="">Selecione o cliente...</option>';
 
             snapshot.forEach((doc) => {
                 const c = doc.data();
                 const id = doc.id;
-                const saldoFiado = Number(c.saldoFiado || 0);
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${c.nome}</td>
-                        <td>${c.doc}</td>
-                        <td>${c.vendedor}</td>
-                        <td style="color: ${saldoFiado > 0 ? 'red' : 'green'}; font-weight: bold;">R$ ${saldoFiado.toFixed(2)}</td>
-                        <td>
-                            <button class="btn btn-edit" onclick="editarCliente('${id}', '${c.nome}', '${c.doc}', '${c.vendedor}', '${c.telefone || ''}')">Editar</button>
-                            <button class="btn btn-delete" onclick="excluirCliente('${id}')">Excluir</button>
-                        </td>
-                    </tr>
-                `;
-
-                selectVendaCliente.innerHTML += `<option value="${id}">${c.nome} (Fiado Atual: R$ ${saldoFiado.toFixed(2)})</option>`;
+                selectVendaCliente.innerHTML += `<option value="${id}">${c.nome}</option>`;
             });
         });
-    }
-
-    function salvarCliente() {
-        const id = document.getElementById('clienteId').value;
-        const nome = document.getElementById('nomeCliente').value;
-        const doc = document.getElementById('docCliente').value;
-        const vendedor = document.getElementById('vendedorCliente').value;
-        const telefone = document.getElementById('telefoneCliente').value;
-
-        if (!validarDocumentoInput(doc)) {
-            alert("Corrija o CPF ou CNPJ antes de salvar!");
-            return;
-        }
-
-        const dados = { nome, doc, vendedor, telefone };
-
-        if (id === "") {
-            dados.saldoFiado = 0;
-            db.collection("clientes").add(dados).then(() => document.getElementById('clienteForm').reset());
-        } else {
-            db.collection("clientes").doc(id).update(dados).then(() => {
-                document.getElementById('clienteForm').reset();
-                document.getElementById('clienteId').value = '';
-            });
-        }
-    }
-
-    function editarCliente(id, nome, doc, vendedor, telefone) {
-        document.getElementById('clienteId').value = id;
-        document.getElementById('nomeCliente').value = nome;
-        document.getElementById('docCliente').value = doc;
-        document.getElementById('vendedorCliente').value = vendedor;
-        document.getElementById('telefoneCliente').value = telefone;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function excluirCliente(id) {
-        if (confirm('Deseja excluir este cliente?')) db.collection("clientes").doc(id).delete();
     }
 
     // --- CARRINHO DE VENDAS ---
@@ -811,7 +658,7 @@
         }
     }
 
-    // --- FINALIZAR VENDA (NUMERADA POR DATA) ---
+    // --- FINALIZAR VENDA ---
     async function finalizarVenda() {
         const clienteId = document.getElementById('vendaCliente').value;
         const vendedor = document.getElementById('vendaVendedor').value;
@@ -870,48 +717,6 @@
         carrinho = [];
         renderizarCarrinho();
         document.getElementById('vendaForm').reset();
-    }
-
-    // --- RELATÓRIOS E FATURAMENTO ---
-    function carregarVendas() {
-        db.collection("vendas").onSnapshot((snapshot) => {
-            const tbody = document.getElementById('tabelaRelatorios');
-            tbody.innerHTML = '';
-            let fatTotal = 0;
-            let fatFiados = 0;
-            let totalQtd = snapshot.size;
-
-            snapshot.forEach((doc) => {
-                const v = doc.data();
-                const id = doc.id;
-                fatTotal += Number(v.total);
-                if (v.formaPagamento === "Fiado") fatFiados += Number(v.total);
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${v.numeroPedido}</strong></td>
-                        <td>${v.dataHora}</td>
-                        <td>${v.nomeCliente || 'Cliente'}</td>
-                        <td>${v.vendedor}</td>
-                        <td>${v.formaPagamento}</td>
-                        <td>R$ ${Number(v.total).toFixed(2)}</td>
-                        <td>
-                            <button class="btn btn-delete" onclick="cancelarVenda('${id}')">Cancelar Nota / Excluir</button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById('fatTotal').innerText = `R$ ${fatTotal.toFixed(2)}`;
-            document.getElementById('fatFiados').innerText = `R$ ${fatFiados.toFixed(2)}`;
-            document.getElementById('totalQtdVendas').innerText = totalQtd;
-        });
-    }
-
-    function cancelarVenda(id) {
-        if (confirm('Deseja realmente cancelar este pedido?')) {
-            db.collection("vendas").doc(id).delete();
-        }
     }
 </script>
 

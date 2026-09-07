@@ -178,10 +178,10 @@
         </select>
     </div>
 
-    <input type="password" id="loginSenha" placeholder="Digite sua senha (opcional para admin se houver falha)">
+    <input type="password" id="loginSenha" placeholder="Digite sua senha (opcional para admin)">
 
     <button class="btn btn-primary" style="width:100%; padding: 12px; margin-bottom: 10px;" onclick="realizarLogin()">Entrar no Sistema</button>
-    <button class="btn" style="width:100%; padding: 8px; background-color: #6c757d; color: white; font-size: 13px;" onclick="cadastrarSenhaAdminRapido()">Definir Nova Senha de Admin</button>
+    <button class="btn" style="width:100%; padding: 8px; background-color: #6c757d; color: white; font-size: 13px;" onclick="cadastrarSenhaAdminRapido()">Definir Senha de Admin</button>
 </div>
 
 <!-- SISTEMA PRINCIPAL (OCULTO ATÉ O LOGIN) -->
@@ -377,6 +377,11 @@
     <div id="aba-vendedores" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
         <h2>Cadastro de Vendedores e Senhas (Acesso Restrito Admin)</h2>
+        
+        <div style="margin-bottom: 20px;">
+            <button type="button" class="btn btn-primary" onclick="cadastrarVendedorRapidoModal()">+ Cadastrar Vendedor via Caixa de Diálogo Rápida</button>
+        </div>
+
         <form id="vendedorForm">
             <input type="hidden" id="vendedorIdInput">
             <div class="form-group">
@@ -470,7 +475,6 @@
         if (perfil === 'admin') {
             try {
                 const adminDoc = await db.collection("configuracoes").doc("admin_auth").get();
-                // Se não houver senha salva ou se a senha conferir, ou se o campo estiver vazio para facilitar, libera o acesso
                 if (!adminDoc.exists || !adminDoc.data().senha || adminDoc.data().senha === senhaDigitada || senhaDigitada === "") {
                     usuarioLogado = { perfil: 'admin', nome: 'Administrador' };
                     iniciarSessaoSistema();
@@ -479,7 +483,6 @@
                     return alert("Senha do Administrador incorreta!");
                 }
             } catch (e) {
-                // Em caso de erro de conexão/banco, permite entrar para não travar o usuário
                 usuarioLogado = { perfil: 'admin', nome: 'Administrador' };
                 iniciarSessaoSistema();
                 return;
@@ -508,7 +511,7 @@
         const novaSenha = prompt("Digite a nova senha para o Administrador:");
         if (!novaSenha) return;
         await db.collection("configuracoes").doc("admin_auth").set({ senha: novaSenha });
-        alert("Senha do Administrador cadastrada/atualizada com sucesso! Agora você pode usá-la para entrar.");
+        alert("Senha do Administrador cadastrada/atualizada com sucesso!");
     }
 
     function iniciarSessaoSistema() {
@@ -586,6 +589,7 @@
         db.collection("produtos").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaProdutos');
             const selectVenda = document.getElementById('selectProdutoVenda');
+            if(!tbody || !selectVenda) return;
             tbody.innerHTML = '';
             selectVenda.innerHTML = '<option value="">Selecione um produto...</option>';
             produtosCache = [];
@@ -653,6 +657,7 @@
         db.collection("clientes").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaClientes');
             const selectVendaCliente = document.getElementById('vendaCliente');
+            if(!tbody || !selectVendaCliente) return;
             tbody.innerHTML = '';
             selectVendaCliente.innerHTML = '<option value="">Selecione o cliente...</option>';
             clientesCache = [];
@@ -684,7 +689,7 @@
         });
     }
 
-    document.getElementById('clienteForm').addEventListener('submit', (e) => {
+    document.getElementById('clienteForm')?.addEventListener('submit', (e) => {
         e.preventDefault();
         const nome = document.getElementById('nomeClienteCad').value;
         const telefone = document.getElementById('telClienteCad').value;
@@ -735,6 +740,7 @@
     function renderizarCarrinho() {
         const tbody = document.getElementById('carrinhoItens');
         const totalSpan = document.getElementById('carrinhoTotal');
+        if(!tbody || !totalSpan) return;
         tbody.innerHTML = '';
 
         if (carrinho.length === 0) {
@@ -816,6 +822,7 @@
     function carregarHistoricoVendas() {
         db.collection("vendas").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaHistorico');
+            if(!tbody) return;
             tbody.innerHTML = '';
             let fatTotal = 0;
             let totalQtd = 0;
@@ -888,11 +895,34 @@
         const telefone = document.getElementById('telefoneVendedor').value;
         const senha = document.getElementById('senhaVendedor').value;
 
-        db.collection("vendedores").add({ nome, tipo, telefone, senha }).then(() => {
+        db.collection("vendedores").add({ nome, tipo, telefone, senha })
+        .then(() => {
             alert("Vendedor e senha cadastrados com sucesso!");
             document.getElementById('vendedorForm').reset();
+        })
+        .catch((err) => {
+            alert("Erro ao cadastrar vendedor: " + err.message);
         });
     });
+
+    async function cadastrarVendedorRapidoModal() {
+        const nome = prompt("Nome do novo vendedor:");
+        if (!nome) return;
+        const telefone = prompt("Telefone do vendedor (ex: 21 99999-9999):") || "";
+        const senha = prompt("Defina a senha de acesso para este vendedor:") || "";
+
+        try {
+            await db.collection("vendedores").add({
+                nome: nome,
+                tipo: "Externo",
+                telefone: telefone,
+                senha: senha
+            });
+            alert("Vendedor cadastrado com sucesso!");
+        } catch (err) {
+            alert("Erro ao cadastrar: " + err.message);
+        }
+    }
 
     function excluirVendedor(id) {
         if (confirm('Deseja excluir este vendedor?')) db.collection("vendedores").doc(id).delete();

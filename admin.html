@@ -37,7 +37,7 @@
         /* Tela de Login Inicial */
         #tela-login {
             max-width: 400px;
-            margin: 50px auto;
+            margin: 40px auto;
             background: #fff;
             padding: 30px;
             border-radius: 8px;
@@ -163,18 +163,14 @@
 </head>
 <body>
 
-<!-- TELA DE LOGIN COM SENHA PARA ADMIN -->
+<!-- TELA DE LOGIN -->
 <div id="tela-login">
     <h2>Distribuidora Frazão</h2>
-    <p>Selecione seu perfil para entrar:</p>
+    <p>Acesse o seu painel:</p>
     <select id="loginPerfil" onchange="alternarCampoLogin()">
         <option value="admin">Administrador (Master)</option>
         <option value="vendedor">Vendedor</option>
     </select>
-
-    <div id="grupoSenhaAdmin">
-        <input type="password" id="loginSenhaAdmin" placeholder="Digite a senha do Administrador">
-    </div>
 
     <div id="grupoSeletorVendedor" style="display:none;">
         <select id="loginVendedorSelect">
@@ -182,7 +178,10 @@
         </select>
     </div>
 
-    <button class="btn btn-primary" style="width:100%; padding: 12px; margin-top: 5px;" onclick="realizarLogin()">Entrar no Sistema</button>
+    <input type="password" id="loginSenha" placeholder="Digite sua senha">
+
+    <button class="btn btn-primary" style="width:100%; padding: 12px; margin-bottom: 10px;" onclick="realizarLogin()">Entrar no Sistema</button>
+    <button class="btn" style="width:100%; padding: 8px; background-color: #6c757d; color: white; font-size: 13px;" onclick="abrirModalPrimeiroAcesso()">Cadastrar / Redefinir Senha (Admin ou Vendedor)</button>
 </div>
 
 <!-- SISTEMA PRINCIPAL (OCULTO ATÉ O LOGIN) -->
@@ -377,7 +376,7 @@
     <!-- ABA 5: VENDEDORES (EXCLUSIVO ADMIN) -->
     <div id="aba-vendedores" class="tab-content">
         <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Início</button>
-        <h2>Cadastro de Vendedores (Acesso Restrito Admin)</h2>
+        <h2>Cadastro de Vendedores e Senhas (Acesso Restrito Admin)</h2>
         <form id="vendedorForm">
             <input type="hidden" id="vendedorIdInput">
             <div class="form-group">
@@ -395,7 +394,11 @@
                 <label for="telefoneVendedor">Telefone / Contato:</label>
                 <input type="text" id="telefoneVendedor" placeholder="(21) 99999-9999">
             </div>
-            <button type="submit" class="btn btn-save">Salvar Vendedor</button>
+            <div class="form-group">
+                <label for="senhaVendedor">Senha de Acesso:</label>
+                <input type="password" id="senhaVendedor" placeholder="Digite a senha do vendedor" required>
+            </div>
+            <button type="submit" class="btn btn-save">Salvar Vendedor e Senha</button>
         </form>
 
         <h3>Vendedores Cadastrados</h3>
@@ -405,6 +408,7 @@
                     <th>Nome</th>
                     <th>Tipo</th>
                     <th>Telefone</th>
+                    <th>Senha Cadastrada</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -430,28 +434,21 @@
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.firestore();
 
-    // Defina a senha do Administrador aqui:
-    const SENHA_ADMIN_PADRAO = "admin123";
-
     let usuarioLogado = { perfil: null, nome: null };
     let carrinho = [];
     let produtosCache = [];
-    let vendedoresCache = [];
     let clientesCache = [];
 
-    // --- CONTROLE DE LOGIN (COM SENHA PARA ADMIN) ---
+    // --- CONTROLE DE LOGIN ---
     function alternarCampoLogin() {
         const perfil = document.getElementById('loginPerfil').value;
-        const grupoSenha = document.getElementById('grupoSenhaAdmin');
         const grupoVendedor = document.getElementById('grupoSeletorVendedor');
 
-        if (perfil === 'admin') {
-            grupoSenha.style.display = 'block';
-            grupoVendedor.style.display = 'none';
-        } else {
-            grupoSenha.style.display = 'none';
+        if (perfil === 'vendedor') {
             grupoVendedor.style.display = 'block';
             carregarSelectVendedoresLogin();
+        } else {
+            grupoVendedor.style.display = 'none';
         }
     }
 
@@ -466,22 +463,49 @@
         });
     }
 
-    function realizarLogin() {
+    async function realizarLogin() {
         const perfil = document.getElementById('loginPerfil').value;
+        const senhaDigitada = document.getElementById('loginSenha').value;
+
+        if (!senhaDigitada) return alert("Por favor, digite a senha.");
 
         if (perfil === 'admin') {
-            const senhaDigitada = document.getElementById('loginSenhaAdmin').value;
-            if (senhaDigitada !== SENHA_ADMIN_PADRAO) {
-                return alert("Senha do Administrador incorreta!");
+            const adminDoc = await db.collection("configuracoes").doc("admin_auth").get();
+            if (!adminDoc.exists || adminDoc.data().senha !== senhaDigitada) {
+                return alert("Senha do Administrador incorreta ou não cadastrada! Utilize o botão abaixo para cadastrar a senha.");
             }
             usuarioLogado = { perfil: 'admin', nome: 'Administrador' };
             iniciarSessaoSistema();
         } else {
             const nomeVendedor = document.getElementById('loginVendedorSelect').value;
             if (!nomeVendedor) return alert("Selecione o seu nome na lista.");
-            
+
+            const snapshot = await db.collection("vendedores").where("nome", "==", nomeVendedor).get();
+            if (snapshot.empty) return alert("Vendedor não encontrado.");
+
+            let vendedorData = null;
+            snapshot.forEach(doc => { vendedorData = doc.data(); });
+
+            if (vendedorData.senha !== senhaDigitada) {
+                return alert("Senha incorreta para este vendedor.");
+            }
+
             usuarioLogado = { perfil: 'vendedor', nome: nomeVendedor };
             iniciarSessaoSistema();
+        }
+    }
+
+    async function abrirModalPrimeiroAcesso() {
+        const tipo = prompt("Digite 'admin' para cadastrar/alterar a senha do Administrador, ou 'vendedor' para gerenciar vendedores:");
+        if (!tipo) return;
+
+        if (tipo.toLowerCase() === 'admin') {
+            const novaSenha = prompt("Digite a NOVA senha para o Administrador:");
+            if (!novaSenha) return;
+            await db.collection("configuracoes").doc("admin_auth").set({ senha: novaSenha });
+            alert("Senha do Administrador cadastrada/atualizada com sucesso!");
+        } else if (tipo.toLowerCase() === 'vendedor') {
+            alert("Faça login como Administrador para cadastrar novos vendedores e senhas na aba de Gestão de Vendedores.");
         }
     }
 
@@ -489,9 +513,7 @@
         document.getElementById('tela-login').style.display = 'none';
         document.getElementById('sistemaPrincipal').style.display = 'block';
         document.getElementById('infoUsuarioLogado').innerText = `Logado como: ${usuarioLogado.nome} (${usuarioLogado.perfil.toUpperCase()})`;
-        
-        // Limpa o campo de senha por segurança
-        document.getElementById('loginSenhaAdmin').value = '';
+        document.getElementById('loginSenha').value = '';
 
         montarMenuPrincipal();
         carregarDadosIniciais();
@@ -530,8 +552,8 @@
         if (usuarioLogado.perfil === 'admin') {
             grid.innerHTML += `
                 <div class="menu-card" style="border-left-color: #dc3545;" onclick="mudarAba('vendedores')">
-                    <h3>💼 Gestão de Vendedores</h3>
-                    <p>Cadastre novos vendedores e controle a equipe.</p>
+                    <h3>💼 Gestão de Vendedores & Senhas</h3>
+                    <p>Cadastre novos vendedores, defina senhas e controle a equipe.</p>
                 </div>
             `;
             document.getElementById('containerFormProduto').style.display = 'block';
@@ -833,7 +855,7 @@
         }
     }
 
-    // --- CADASTRO DE VENDEDORES ---
+    // --- CADASTRO DE VENDEDORES & SENHAS ---
     function carregarVendedores() {
         db.collection("vendedores").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaVendedores');
@@ -847,6 +869,7 @@
                         <td>${v.nome}</td>
                         <td>${v.tipo}</td>
                         <td>${v.telefone || '-'}</td>
+                        <td><code>${v.senha || 'Não definida'}</code></td>
                         <td>
                             <button class="btn btn-delete" onclick="excluirVendedor('${id}')">Excluir</button>
                         </td>
@@ -861,9 +884,10 @@
         const nome = document.getElementById('nomeVendedor').value;
         const tipo = document.getElementById('tipoVendedor').value;
         const telefone = document.getElementById('telefoneVendedor').value;
+        const senha = document.getElementById('senhaVendedor').value;
 
-        db.collection("vendedores").add({ nome, tipo, telefone }).then(() => {
-            alert("Vendedor cadastrado com sucesso!");
+        db.collection("vendedores").add({ nome, tipo, telefone, senha }).then(() => {
+            alert("Vendedor e senha cadastrados com sucesso!");
             document.getElementById('vendedorForm').reset();
         });
     });

@@ -15,11 +15,11 @@
     <div id="telaLogin" class="max-w-md mx-auto mt-12 bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100">
         <div class="text-center mb-6">
             <h1 class="text-2xl font-extrabold text-gray-800 tracking-tight">Distribuidora Frazão</h1>
-            <p class="text-sm text-gray-500 mt-1">Selecione o modo de acesso</p>
+            <p id="subtituloLogin" class="text-sm text-gray-500 mt-1">Selecione o modo de acesso</p>
         </div>
 
         <!-- Abas de Escolha de Login -->
-        <div class="flex rounded-lg bg-gray-100 p-1 mb-6">
+        <div id="abasLoginContainer" class="flex rounded-lg bg-gray-100 p-1 mb-6">
             <button type="button" onclick="alternarModoLogin('admin')" id="abaLoginAdminBtn" class="flex-1 py-2 text-xs md:text-sm font-bold rounded-md transition shadow-sm bg-blue-600 text-white cursor-pointer">Administrador</button>
             <button type="button" onclick="alternarModoLogin('vendedor')" id="abaLoginVendedorBtn" class="flex-1 py-2 text-xs md:text-sm font-bold rounded-md transition text-gray-600 hover:text-gray-900 cursor-pointer">Vendedor</button>
         </div>
@@ -27,11 +27,11 @@
         <!-- FORMULÁRIO LOGIN ADMIN -->
         <form id="formLoginAdmin" class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Senha de Administrador</label>
-                <input type="password" id="senhaAdminMestra" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Digite a senha mestra">
+                <label id="labelSenhaAdmin" class="block text-sm font-medium text-gray-700 mb-1">Senha de Administrador</label>
+                <input type="password" id="senhaAdminMestra" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Digite sua senha">
             </div>
-            <p class="text-xs text-gray-500">Acesso total para cadastrar vendedores, gerenciar produtos e ver todas as vendas.</p>
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm cursor-pointer">
+            <p id="textoAjudaAdmin" class="text-xs text-gray-500">Acesso total para cadastrar vendedores, gerenciar produtos e ver todas as vendas.</p>
+            <button type="submit" id="btnSubmitAdmin" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm cursor-pointer">
                 Entrar como Administrador
             </button>
         </form>
@@ -297,23 +297,44 @@
             </div>
         </div>
 
-        <!-- 5. SEÇÃO ADMINISTRADOR (GERENCIAR VENDEDORES E VENDAS) -->
+        <!-- 5. SEÇÃO ADMINISTRADOR (GERENCIAR VENDEDORES, VENDAS E SENHA) -->
         <div id="secao-admin" class="secao-conteudo hidden space-y-8">
-            <div class="bg-blue-50 p-4 md:p-6 rounded-2xl border border-blue-200">
-                <h2 class="text-xl font-bold text-blue-900 mb-4">Cadastrar Novo Vendedor</h2>
-                <form id="formCadastrarVendedorAdmin" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Vendedor</label>
-                        <input type="text" id="adminNovoNomeVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Ex: Carlos Silva">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Senha de Acesso</label>
-                        <input type="password" id="adminNovaSenhaVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Digite uma senha segura">
-                    </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm cursor-pointer">
-                        Cadastrar Vendedor
-                    </button>
-                </form>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Cadastrar Novo Vendedor -->
+                <div class="bg-blue-50 p-4 md:p-6 rounded-2xl border border-blue-200">
+                    <h2 class="text-xl font-bold text-blue-900 mb-4">Cadastrar Novo Vendedor</h2>
+                    <form id="formCadastrarVendedorAdmin" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Vendedor</label>
+                            <input type="text" id="adminNovoNomeVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Ex: Carlos Silva">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Senha de Acesso</label>
+                            <input type="password" id="adminNovaSenhaVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Digite uma senha segura">
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm cursor-pointer">
+                            Cadastrar Vendedor
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Alterar Senha do Administrador -->
+                <div class="bg-amber-50 p-4 md:p-6 rounded-2xl border border-amber-200">
+                    <h2 class="text-xl font-bold text-amber-900 mb-4">Alterar Senha de Administrador</h2>
+                    <form id="formAlterarSenhaAdmin" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nova Senha Mestra</label>
+                            <input type="password" id="adminNovaSenhaMestra" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Digite a nova senha">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Confirmar Nova Senha</label>
+                            <input type="password" id="adminConfirmaSenhaMestra" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Confirme a nova senha">
+                        </div>
+                        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm cursor-pointer">
+                            Atualizar Senha Admin
+                        </button>
+                    </form>
+                </div>
             </div>
 
             <!-- Listagem de Vendedores Cadastrados com Opção de Exclusão -->
@@ -396,20 +417,43 @@
         }
         const db = firebase.firestore();
 
-        // Senha mestre padrão do Administrador (Pode alterar se desejar)
-        const SENHA_ADMIN_MESTRA = "frazao2026";
-
         let usuarioLogado = localStorage.getItem('usuarioLogado') || null;
         let tipoUsuario = localStorage.getItem('tipoUsuario') || null; // 'admin' ou 'vendedor'
         let listaProdutosCache = [];
         let produtoSelecionadoPrecoUnitario = 0;
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             carregarSelectLoginVendedores();
+            await verificarConfiguracaoAdmin();
             if (usuarioLogado && tipoUsuario) {
                 entrarNoPainel(usuarioLogado, tipoUsuario);
             }
         });
+
+        // VERIFICAR SE JÁ EXISTE SENHA DE ADMIN CADASTRADA NO FIRESTORE
+        async function verificarConfiguracaoAdmin() {
+            try {
+                const doc = await db.collection('configuracoes').doc('admin_auth').get();
+                const btnAdminTab = document.getElementById('abaLoginAdminBtn');
+                const subtitulo = document.getElementById('subtituloLogin');
+                const labelSenha = document.getElementById('labelSenhaAdmin');
+                const btnSubmit = document.getElementById('btnSubmitAdmin');
+                const textoAjuda = document.getElementById('textoAjudaAdmin');
+
+                if (!doc.exists || !doc.data().senha) {
+                    // Modo de Criação Inicial da Senha
+                    subtitulo.textContent = "Primeiro Acesso: Crie sua senha de Administrador";
+                    labelSenha.textContent = "Definir Nova Senha de Administrador";
+                    btnSubmit.textContent = "Criar Senha e Entrar";
+                    textoAjuda.textContent = "Esta será a sua senha mestra definitiva para gerenciar a distribuidora.";
+                    window.modoCriacaoAdminInicial = true;
+                } else {
+                    window.modoCriacaoAdminInicial = false;
+                }
+            } catch (err) {
+                console.error("Erro ao verificar configuração do admin:", err);
+            }
+        }
 
         function alternarModoLogin(modo) {
             const btnAdmin = document.getElementById('abaLoginAdminBtn');
@@ -447,18 +491,62 @@
             }
         }
 
-        // LOGIN DE ADMINISTRADOR
-        document.getElementById('formLoginAdmin').addEventListener('submit', function(e) {
+        // LOGIN OU CRIAÇÃO DE SENHA DE ADMINISTRADOR
+        document.getElementById('formLoginAdmin').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const senha = document.getElementById('senhaAdminMestra').value;
-            if (senha === SENHA_ADMIN_MESTRA) {
-                usuarioLogado = "Administrador (Ângelo)";
-                tipoUsuario = "admin";
-                localStorage.setItem('usuarioLogado', usuarioLogado);
-                localStorage.setItem('tipoUsuario', tipoUsuario);
-                entrarNoPainel(usuarioLogado, tipoUsuario);
-            } else {
-                alert("Senha de Administrador incorreta!");
+            const senhaDigitada = document.getElementById('senhaAdminMestra').value;
+
+            try {
+                const docRef = db.collection('configuracoes').doc('admin_auth');
+                const doc = await docRef.get();
+
+                if (window.modoCriacaoAdminInicial || !doc.exists || !doc.data().senha) {
+                    // Salva a nova senha criada pelo usuário no Firestore
+                    await docRef.set({ senha: senhaDigitada, atualizadoEm: new Date().toISOString() });
+                    alert("Senha de Administrador criada com sucesso!");
+                    usuarioLogado = "Administrador (Ângelo)";
+                    tipoUsuario = "admin";
+                    localStorage.setItem('usuarioLogado', usuarioLogado);
+                    localStorage.setItem('tipoUsuario', tipoUsuario);
+                    entrarNoPainel(usuarioLogado, tipoUsuario);
+                } else {
+                    // Valida a senha existente
+                    const senhaCadastrada = doc.data().senha;
+                    if (senhaDigitada === senhaCadastrada) {
+                        usuarioLogado = "Administrador (Ângelo)";
+                        tipoUsuario = "admin";
+                        localStorage.setItem('usuarioLogado', usuarioLogado);
+                        localStorage.setItem('tipoUsuario', tipoUsuario);
+                        entrarNoPainel(usuarioLogado, tipoUsuario);
+                    } else {
+                        alert("Senha de Administrador incorreta!");
+                    }
+                }
+            } catch (err) {
+                alert("Erro ao processar autenticação: " + err.message);
+            }
+        });
+
+        // ALTERAR SENHA DO ADMIN DIRETAMENTE PELO PAINEL
+        document.getElementById('formAlterarSenhaAdmin').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const novaSenha = document.getElementById('adminNovaSenhaMestra').value;
+            const confirmaSenha = document.getElementById('adminConfirmaSenhaMestra').value;
+
+            if (novaSenha !== confirmaSenha) {
+                alert("As senhas não coincidem!");
+                return;
+            }
+
+            try {
+                await db.collection('configuracoes').doc('admin_auth').set({
+                    senha: novaSenha,
+                    atualizadoEm: new Date().toISOString()
+                });
+                exibirMensagem("Senha de administrador alterada com sucesso!");
+                e.target.reset();
+            } catch (err) {
+                exibirMensagem("Erro ao alterar senha: " + err.message, 'erro');
             }
         });
 
@@ -513,6 +601,7 @@
             document.getElementById('senhaAdminMestra').value = "";
             document.getElementById('loginSenhaVendedor').value = "";
             carregarSelectLoginVendedores();
+            verificarConfiguracaoAdmin();
         }
 
         // CADASTRAR VENDEDOR PELO ADMIN
@@ -654,7 +743,6 @@
             tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-gray-500">Carregando...</td></tr>`;
 
             try {
-                // Admin vê todos os clientes; vendedor vê os cadastrados por ele (ou todos, se preferir gerenciar geral)
                 let query = db.collection('clientes');
                 if (tipoUsuario !== 'admin') {
                     query = query.where('cadastradoPor', '==', usuarioLogado);
@@ -933,7 +1021,7 @@
             }
         });
 
-        // CARREGAR HISTÓRICO DE VENDAS (ADMIN VÊ TUDO, VENDEDOR VÊ AS PRÓPRIAS)
+        // CARREGAR HISTÓRICO DE VENDAS
         async function carregarHistoricoVendas() {
             const tbody = document.getElementById('tabelaHistorico');
             const titulo = document.getElementById('tituloHistorico');

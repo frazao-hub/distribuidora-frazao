@@ -1,3 +1,24 @@
-.produto-card {
-    display: flex !important;
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 0mm; /* Zera margens do driver */
+  }
+
+  html, body {
+    width: 78mm !important; /* Aproveita melhor a área útil de 80mm */
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 13px;
+    font-family: monospace;
+    color: #000;
+  }
+
+  /* Evita que o Android crie quebras de página desnecessárias */
+  div, table, tr {
+    page-break-inside: avoid;
+  }
+
+  .no-print, button, nav, header, footer {
+    display: none !important;
+  }
 }

@@ -1,33 +1,37 @@
 @media print {
   @page {
     size: 80mm auto;
-    margin: 0mm; /* Remove todas as margens do papel */
+    margin: 0;
   }
 
   html, body {
     width: 100% !important;
     max-width: 78mm !important;
-    margin: 0 !important;
+    margin: 0 auto !important;
     padding: 0 !important;
-    font-size: 12px !important; /* Fonte menor e bem legível */
-    line-height: 1.2 !important; /* Aproxima as linhas para encurtar o cupom */
+    
+    /* FORÇAR ESCURECIMENTO DA IMPRESSÃO TÉRMICA */
+    color: #000000 !important;
+    font-weight: 900 !important;
+    -webkit-text-stroke: 0.5px #000000; /* Engrossa os caracteres para queimar mais o papel */
     font-family: monospace !important;
-    color: #000 !important;
-    font-weight: bold !important; /* Deixa o texto em negrito para escurecer a impressão */
+    font-size: 13px !important;
+    line-height: 1.2 !important;
   }
 
-  /* Esconde tudo que não for o recibo */
+  /* Garante que todos os elementos e tabelas fiquem bem pretos */
+  *, p, span, td, th, h1, h2, h3, div {
+    color: #000000 !important;
+    font-weight: 900 !important;
+  }
+
+  /* Oculta botões e elementos fora do recibo */
   .no-print, button, nav, header, footer {
     display: none !important;
   }
 
-  /* Compacta tabelas e listas */
   table {
     width: 100% !important;
     border-collapse: collapse !important;
-  }
-
-  td, th {
-    padding: 2px 0 !important; /* Minimiza o espaço vertical */
   }
 }

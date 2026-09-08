@@ -1,4 +1,4 @@
-/* Configuração para impressora ESC/POS 80mm via RawBT */
+/* Estilo de Impressão para Bobina Térmica 80mm via Bluetooth */
 @media print {
   @page {
     size: 80mm auto;
@@ -7,7 +7,7 @@
 
   html, body {
     width: 100% !important;
-    max-width: 78mm !important; /* Aproveita a largura total do driver ESC/POS de 80mm */
+    max-width: 78mm !important; /* Deixa margem de segurança para não cortar texto */
     margin: 0 auto !important;
     padding: 2mm 0 !important;
     font-size: 13px;
@@ -16,14 +16,18 @@
     background: #fff;
   }
 
-  /* Oculta elementos de navegação e botões */
+  /* Oculta botões, links e menus do site no cupom */
   .no-print, button, nav, header, footer {
     display: none !important;
   }
 
-  /* Garante que tabelas e produtos ocupem toda a largura */
+  /* Ajusta tabelas e imagens para não estourarem a largura */
   table {
     width: 100% !important;
     border-collapse: collapse;
+  }
+
+  img {
+    max-width: 100% !important;
   }
 }

@@ -988,14 +988,12 @@
 
                 let saldoDevedorSeguro = Number(c.saldoDevedor) || 0;
 
-                let podeVenderParaEsteCliente = true;
-                if (usuarioLogado.perfil === 'vendedor') {
-                    if (c.vendedor !== usuarioLogado.nome) {
-                        podeVenderParaEsteCliente = false;
-                    }
+                // Restrição: Se for vendedor, só exibe e permite vender para os clientes atribuídos a ele
+                if (usuarioLogado.perfil === 'vendedor' && c.vendedor !== usuarioLogado.nome) {
+                    return; // Pula os clientes dos outros vendedores
                 }
 
-                if(selectVenda && podeVenderParaEsteCliente) {
+                if(selectVenda) {
                     selectVenda.innerHTML += `<option value="${id}">${c.nome} (${c.telefone || 'Sem tel'})</option>`;
                 }
 

@@ -659,16 +659,16 @@
             </div>
             <div class="menu-card" onclick="mudarAba('clientes')">
                 <h3>👥 Clientes & Fiado</h3>
-                <p>Cadastre clientes e controle saldos devedores (fiados).</p>
-            </div>
-            <div class="menu-card" onclick="mudarAba('historico')">
-                <h3>📊 Histórico</h3>
-                <p>Consulte pedidos realizados, faturamento e imprima recibos.</p>
+                <p>Cadastre clientes e visualize saldos devedores (fiados).</p>
             </div>
         `;
 
         if (usuarioLogado.perfil === 'admin') {
             grid.innerHTML += `
+                <div class="menu-card" onclick="mudarAba('historico')">
+                    <h3>📊 Histórico</h3>
+                    <p>Consulte pedidos realizados, faturamento e imprima recibos.</p>
+                </div>
                 <div class="menu-card" style="border-left-color: #dc3545;" onclick="mudarAba('vendedores')">
                     <h3>💼 Vendedores</h3>
                     <p>Cadastre novos vendedores e senhas de acesso.</p>
@@ -693,7 +693,9 @@
     function carregarDadosIniciais() {
         carregarProdutos();
         carregarClientes();
-        carregarHistoricoVendas();
+        if (usuarioLogado.perfil === 'admin') {
+            carregarHistoricoVendas();
+        }
         carregarVendedores();
         atualizarSelectCategoriasVenda();
     }
@@ -914,7 +916,9 @@
             document.getElementById('vendaVendedorExibicao').value = usuarioLogado.perfil === 'vendedor' ? usuarioLogado.nome : 'Administrador (Geral)';
             
             abrirModalImpressao(docRef.id, vendaData);
-            carregarHistoricoVendas();
+            if (usuarioLogado.perfil === 'admin') {
+                carregarHistoricoVendas();
+            }
             carregarClientes();
         } catch (err) {
             alert("Erro ao finalizar venda: " + err.message);
@@ -958,6 +962,10 @@
     }
 
     function registrarPagamentoFiado(clienteId, clienteNome, saldoAtual) {
+        if (usuarioLogado.perfil !== 'admin') {
+            return alert("Apenas o Administrador pode registrar o abatimento de fiado.");
+        }
+
         let saldoSeguro = Number(saldoAtual) || 0;
         const valorPagoStr = prompt(`Cliente: ${clienteNome}\nSaldo Devedor Atual: R$ ${saldoSeguro.toFixed(2)}\n\nDigite o valor que o cliente está pagando (baixa na dívida):`);
         if (!valorPagoStr) return;
@@ -997,25 +1005,34 @@
                     selectVenda.innerHTML += `<option value="${id}">${c.nome} (${c.telefone || 'Sem tel'})</option>`;
                 }
 
+                let botoesAcao = `
+                    <button class="btn btn-edit" onclick="editarCliente('${id}', '${c.nome}', '${c.doc || ''}', '${c.telefone || ''}', '${c.vendedor || ''}', '${c.endereco || ''}')">Editar</button>
+                `;
+
+                if (usuarioLogado.perfil === 'admin') {
+                    botoesAcao += `
+                        <button class="btn btn-pagar" onclick="registrarPagamentoFiado('${id}', '${c.nome}', ${saldoDevedorSeguro})">Abater Fiado</button>
+                        <button class="btn btn-delete" onclick="excluirCliente('${id}')">Excluir</button>
+                    `;
+                }
+
                 tbody.innerHTML += `
                     <tr>
                         <td>${c.nome}</td>
                         <td>${c.telefone || '-'}</td>
                         <td>${c.vendedor || '-'}</td>
                         <td style="color: ${saldoDevedorSeguro > 0 ? 'red' : 'green'}; font-weight: bold;">R$ ${saldoDevedorSeguro.toFixed(2)}</td>
-                        <td>
-                            <button class="btn btn-edit" onclick="editarCliente('${id}', '${c.nome}', '${c.doc || ''}', '${c.telefone || ''}', '${c.vendedor || ''}', '${c.endereco || ''}')">Editar</button>
-                            <button class="btn btn-pagar" onclick="registrarPagamentoFiado('${id}', '${c.nome}', ${saldoDevedorSeguro})">Abater Fiado</button>
-                            ${usuarioLogado.perfil === 'admin' ? `<button class="btn btn-delete" onclick="excluirCliente('${id}')">Excluir</button>` : ''}
-                        </td>
+                        <td>${botoesAcao}</td>
                     </tr>
                 `;
             });
         });
     }
 
-    // HISTÓRICO E VENDAS
+    // HISTÓRICO E VENDAS (Apenas Admin)
     function carregarHistoricoVendas() {
+        if (usuarioLogado.perfil !== 'admin') return;
+
         db.collection("vendas").orderBy("data", "asc").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaHistorico');
             if(!tbody) return;
@@ -1060,6 +1077,7 @@
     }
 
     async function reimprimirVenda(id) {
+        if (usuarioLogado.perfil !== 'admin') return;
         const doc = await db.collection("vendas").doc(id).get();
         if (doc.exists) {
             abrirModalImpressao(doc.id, doc.data());

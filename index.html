@@ -32,48 +32,47 @@
         .footer-section ul { padding-left: 15px; margin: 0; }
         .footer-bottom { text-align: center; border-top: 1px solid #34495e; padding-top: 20px; color: #95a5a6; font-size: 12px; }
 
-        /* --- CONFIGURAÇÕES EXCLUSIVAS PARA IMPRESSORA TÉRMICA 80MM --- */
+        /* --- CONFIGURAÇÕES EXCLUSIVAS PARA IMPRESSORA TÉRMICA 80MM (PÁGINA ÚNICA) --- */
         @media print {
             @page {
                 size: 80mm auto;
-                margin: 0mm !important;
+                margin: 0 !important;
             }
 
             html, body {
                 width: 100% !important;
                 max-width: 78mm !important;
+                height: auto !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 background: #ffffff !important;
                 color: #000000 !important;
                 font-family: monospace !important;
-                font-size: 12px !important;
+                font-size: 11px !important;
                 font-weight: 900 !important;
                 -webkit-text-stroke: 0.3px #000000;
+                overflow: hidden !important;
             }
 
-            /* Esconde cabeçalho do site, categorias e rodapé ao mandar imprimir */
+            /* Esconde elementos de navegação e rodapé ao imprimir */
             header, footer, .btn-categoria, .no-print, button, nav {
                 display: none !important;
             }
 
-            .container {
+            .container, .card-secao {
                 max-width: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
-            }
-
-            .card-secao {
                 box-shadow: none !important;
                 border: none !important;
-                padding: 0 !important;
-                margin: 0 !important;
             }
 
-            /* Evita que o Android corte a impressão em várias páginas */
+            /* FORÇA O CONTEÚDO A FICAR EM UMA PÁGINA SÓ */
             *, div, table, tr, td, p {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
+                page-break-before: avoid !important;
+                page-break-after: avoid !important;
             }
         }
     </style>

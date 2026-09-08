@@ -1,45 +1,69 @@
+/* ESTILOS GERAIS DA TELA */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  padding: 10px;
+  margin: 0;
+}
+
+.cupom {
+  max-width: 300px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.center { text-align: center; }
+.right { text-align: right; }
+.bold { font-weight: bold; }
+.linha { border-bottom: 1px dashed #000; margin: 8px 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+th, td {
+  padding: 3px 0;
+  text-align: left;
+}
+
+/* CONFIGURAÇÃO EXCLUSIVA DA IMPRESSORA TÉRMICA (80MM) */
 @media print {
   @page {
-    size: 80mm auto; /* Define largura de 80mm e altura automática */
-    margin: 0mm !important; /* Elimina margens que criam páginas extras */
+    size: 80mm auto;
+    margin: 0mm !important;
   }
 
   html, body {
     width: 100% !important;
     max-width: 78mm !important;
-    height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: visible !important;
-    
-    /* Escurecimento e legibilidade */
-    color: #000000 !important;
-    font-weight: 900 !important;
-    -webkit-text-stroke: 0.3px #000000;
-    font-family: monospace !important;
+    background: #fff !important;
+    color: #000 !important;
+    font-family: 'Courier New', Courier, monospace !important;
     font-size: 12px !important;
-    line-height: 1.2 !important;
+    font-weight: 900 !important;
+    -webkit-text-stroke: 0.3px #000;
   }
 
-  /* IMPEDE QUE O NAVEGADOR QUEBRE EM VÁRIAS PÁGINAS */
-  *, div, table, tr, td, p {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-    page-break-before: avoid !important;
-    page-break-after: avoid !important;
+  .cupom {
+    width: 100% !important;
+    border: none !important;
+    padding: 0 !important;
   }
 
-  /* Oculta botões e menus */
-  .no-print, button, nav, header, footer {
+  /* Esconde o botão de imprimir no papel */
+  .no-print {
     display: none !important;
   }
 
-  table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-  }
-
-  td, th {
-    padding: 2px 0 !important;
+  /* Impede a divisão em várias páginas no Android */
+  *, div, table, tr, td, p {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 }

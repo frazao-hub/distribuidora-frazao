@@ -546,7 +546,7 @@
     let produtosCache = [];
     let clientesCache = [];
     let vendedoresCache = [];
-    let totalVendasRegistradas = 0; // Usado para gerar o número sequencial 0001, 0002...
+    let totalVendasRegistradas = 0;
 
     const listaTodasCategorias = [
         "Balas e Pirulitos",
@@ -703,8 +703,8 @@
         const id = document.getElementById('produtoId').value;
         const nome = document.getElementById('nomeProduto').value;
         const categoria = document.getElementById('categoriaProduto').value;
-        const preco = parseFloat(document.getElementById('precoProduto').value);
-        const estoque = parseInt(document.getElementById('estoqueProduto').value);
+        const preco = parseFloat(document.getElementById('precoProduto').value) || 0;
+        const estoque = parseInt(document.getElementById('estoqueProduto').value) || 0;
         const foto = document.getElementById('fotoProduto').value;
 
         const dados = { nome, categoria, preco, estoque, foto };
@@ -722,8 +722,8 @@
         document.getElementById('produtoId').value = id;
         document.getElementById('nomeProduto').value = nome;
         document.getElementById('categoriaProduto').value = categoria;
-        document.getElementById('precoProduto').value = preco;
-        document.getElementById('estoqueProduto').value = estoque;
+        document.getElementById('precoProduto').value = Number(preco) || 0;
+        document.getElementById('estoqueProduto').value = Number(estoque) || 0;
         document.getElementById('fotoProduto').value = foto;
     }
 
@@ -745,9 +745,12 @@
                 const id = doc.id;
                 produtosCache.push({ id, ...p });
 
+                let precoSeguro = Number(p.preco) || 0;
+                let estoqueSeguro = Number(p.estoque) || 0;
+
                 let acoesTd = usuarioLogado.perfil === 'admin' ? `
                     <td>
-                        <button class="btn btn-edit" onclick="editarProduto('${id}', '${p.nome}', '${p.categoria || ''}', ${p.preco}, ${p.estoque}, '${p.foto || ''}')">Editar</button>
+                        <button class="btn btn-edit" onclick="editarProduto('${id}', '${p.nome}', '${p.categoria || ''}', ${precoSeguro}, ${estoqueSeguro}, '${p.foto || ''}')">Editar</button>
                         <button class="btn btn-delete" onclick="excluirProduto('${id}')">Excluir</button>
                     </td>
                 ` : '';
@@ -757,8 +760,8 @@
                         <td><img src="${p.foto || 'https://via.placeholder.com/40'}" class="product-img"></td>
                         <td>${p.nome}</td>
                         <td>${p.categoria || 'Geral'}</td>
-                        <td>R$ ${Number(p.preco).toFixed(2)}</td>
-                        <td>${p.estoque}</td>
+                        <td>R$ ${precoSeguro.toFixed(2)}</td>
+                        <td>${estoqueSeguro}</td>
                         ${acoesTd}
                     </tr>
                 `;
@@ -784,13 +787,15 @@
 
         const filtrados = produtosCache.filter(p => p.categoria === categoriaSel);
         filtrados.forEach(p => {
-            selectProd.innerHTML += `<option value="${p.id}">${p.nome} (Estoque: ${p.estoque} | R$ ${Number(p.preco).toFixed(2)})</option>`;
+            let precoSeguro = Number(p.preco) || 0;
+            let estoqueSeguro = Number(p.estoque) || 0;
+            selectProd.innerHTML += `<option value="${p.id}">${p.nome} (Estoque: ${estoqueSeguro} | R$ ${precoSeguro.toFixed(2)})</option>`;
         });
     }
 
     function adicionarItemCarrinho() {
         const prodId = document.getElementById('selectProdutoVenda').value;
-        const qtd = parseInt(document.getElementById('qtdProdutoVenda').value);
+        const qtd = parseInt(document.getElementById('qtdProdutoVenda').value) || 0;
 
         if (!prodId) return alert("Selecione um produto.");
         if (!qtd || qtd <= 0) return alert("Quantidade inválida.");
@@ -798,18 +803,20 @@
         const produto = produtosCache.find(p => p.id === prodId);
         if (!produto) return alert("Produto não encontrado.");
 
+        let precoSeguro = Number(produto.preco) || 0;
+
         const existenteIndex = carrinho.findIndex(item => item.id === prodId);
         if (existenteIndex > -1) {
             const novaQtd = carrinho[existenteIndex].qtd + qtd;
             carrinho[existenteIndex].qtd = novaQtd;
-            carrinho[existenteIndex].subtotal = novaQtd * produto.preco;
+            carrinho[existenteIndex].subtotal = novaQtd * precoSeguro;
         } else {
             carrinho.push({
                 id: produto.id,
                 nome: produto.nome,
-                preco: produto.preco,
+                preco: precoSeguro,
                 qtd: qtd,
-                subtotal: qtd * produto.preco
+                subtotal: qtd * precoSeguro
             });
         }
 
@@ -834,13 +841,15 @@
         }
 
         carrinho.forEach((item, index) => {
-            totalGeral += item.subtotal;
+            let subtotalSeguro = Number(item.subtotal) || 0;
+            let precoSeguro = Number(item.preco) || 0;
+            totalGeral += subtotalSeguro;
             tbody.innerHTML += `
                 <tr>
                     <td>${item.nome}</td>
                     <td>${item.qtd}</td>
-                    <td>R$ ${Number(item.preco).toFixed(2)}</td>
-                    <td>R$ ${Number(item.subtotal).toFixed(2)}</td>
+                    <td>R$ ${precoSeguro.toFixed(2)}</td>
+                    <td>R$ ${subtotalSeguro.toFixed(2)}</td>
                     <td><button type="button" class="btn btn-delete" onclick="removerItemCarrinho(${index})">X</button></td>
                 </tr>
             `;
@@ -857,13 +866,12 @@
         const formaPagamento = document.getElementById('formaPagamento').value;
         const desconto = parseFloat(document.getElementById('descontoVenda').value) || 0;
 
-        let totalBruto = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
+        let totalBruto = carrinho.reduce((acc, item) => acc + (Number(item.subtotal) || 0), 0);
         let totalFinal = totalBruto - desconto;
         if (totalFinal < 0) totalFinal = 0;
 
         const clienteObj = clientesCache.find(c => c.id === clienteId);
 
-        // Gera o número do pedido baseado na quantidade atual de vendas + 1 (ex: 0001, 0002...)
         const proximoNumeroInt = totalVendasRegistradas + 1;
         const numeroPedidoFormatado = String(proximoNumeroInt).padStart(4, '0');
 
@@ -881,23 +889,22 @@
         };
 
         try {
-            // Dar baixa no estoque (permite ficar negativo)
             for (let item of carrinho) {
                 const prodRef = db.collection("produtos").doc(item.id);
                 const pDoc = await prodRef.get();
                 if (pDoc.exists) {
-                    const novoEstoque = pDoc.data().estoque - item.qtd;
+                    const estoqueAtual = Number(pDoc.data().estoque) || 0;
+                    const novoEstoque = estoqueAtual - item.qtd;
                     await prodRef.update({ estoque: novoEstoque });
                 }
             }
 
-            // Se for fiado, atualizar saldo devedor do cliente
             if (formaPagamento === 'Fiado' && clienteObj) {
-                const novoSaldo = (clienteObj.saldoDevedor || 0) + totalFinal;
+                const saldoAtual = Number(clienteObj.saldoDevedor) || 0;
+                const novoSaldo = saldoAtual + totalFinal;
                 await db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo });
             }
 
-            // Salvar pedido no histórico
             const docRef = await db.collection("vendas").add(vendaData);
 
             alert(`Venda finalizada com sucesso! Pedido nº ${numeroPedidoFormatado}`);
@@ -951,12 +958,13 @@
     }
 
     function registrarPagamentoFiado(clienteId, clienteNome, saldoAtual) {
-        const valorPagoStr = prompt(`Cliente: ${clienteNome}\nSaldo Devedor Atual: R$ ${Number(saldoAtual).toFixed(2)}\n\nDigite o valor que o cliente está pagando (baixa na dívida):`);
+        let saldoSeguro = Number(saldoAtual) || 0;
+        const valorPagoStr = prompt(`Cliente: ${clienteNome}\nSaldo Devedor Atual: R$ ${saldoSeguro.toFixed(2)}\n\nDigite o valor que o cliente está pagando (baixa na dívida):`);
         if (!valorPagoStr) return;
-        const valorPago = parseFloat(valorPagoStr);
-        if (isNaN(valorPago) || valorPago <= 0) return alert("Valor inválido.");
+        const valorPago = parseFloat(valorPagoStr) || 0;
+        if (valorPago <= 0) return alert("Valor inválido.");
 
-        const novoSaldo = saldoAtual - valorPago;
+        const novoSaldo = saldoSeguro - valorPago;
         db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo < 0 ? 0 : novoSaldo }).then(() => {
             alert("Pagamento registrado com sucesso!");
             carregarClientes();
@@ -978,6 +986,8 @@
                 const id = doc.id;
                 clientesCache.push({ id, ...c });
 
+                let saldoDevedorSeguro = Number(c.saldoDevedor) || 0;
+
                 let podeVenderParaEsteCliente = true;
                 if (usuarioLogado.perfil === 'vendedor') {
                     if (c.vendedor !== usuarioLogado.nome) {
@@ -994,10 +1004,10 @@
                         <td>${c.nome}</td>
                         <td>${c.telefone || '-'}</td>
                         <td>${c.vendedor || '-'}</td>
-                        <td style="color: ${c.saldoDevedor > 0 ? 'red' : 'green'}; font-weight: bold;">R$ ${Number(c.saldoDevedor || 0).toFixed(2)}</td>
+                        <td style="color: ${saldoDevedorSeguro > 0 ? 'red' : 'green'}; font-weight: bold;">R$ ${saldoDevedorSeguro.toFixed(2)}</td>
                         <td>
                             <button class="btn btn-edit" onclick="editarCliente('${id}', '${c.nome}', '${c.doc || ''}', '${c.telefone || ''}', '${c.vendedor || ''}', '${c.endereco || ''}')">Editar</button>
-                            <button class="btn btn-pagar" onclick="registrarPagamentoFiado('${id}', '${c.nome}', ${c.saldoDevedor || 0})">Abater Fiado</button>
+                            <button class="btn btn-pagar" onclick="registrarPagamentoFiado('${id}', '${c.nome}', ${saldoDevedorSeguro})">Abater Fiado</button>
                             ${usuarioLogado.perfil === 'admin' ? `<button class="btn btn-delete" onclick="excluirCliente('${id}')">Excluir</button>` : ''}
                         </td>
                     </tr>
@@ -1014,7 +1024,6 @@
             tbody.innerHTML = '';
 
             let fatTotal = 0;
-            let qtdTotal = 0;
             let listaTemporaria = [];
 
             snapshot.forEach((doc) => {
@@ -1023,13 +1032,13 @@
                 listaTemporaria.push({ id, ...v });
             });
 
-            // Atualiza a quantidade total de vendas para o gerador de número sequencial
             totalVendasRegistradas = listaTemporaria.length;
             document.getElementById('totalQtdVendas').innerText = totalVendasRegistradas;
 
-            // Inverte para mostrar da mais recente para a mais antiga na tabela
             listaTemporaria.reverse().forEach((v) => {
-                fatTotal += v.totalFinal;
+                let totalFinalSeguro = Number(v.totalFinal) || 0;
+                fatTotal += totalFinalSeguro;
+
                 const dataFmt = new Date(v.data).toLocaleString('pt-BR');
                 const numPedidoExibicao = v.numeroPedido || '0001';
 
@@ -1037,10 +1046,10 @@
                     <tr>
                         <td style="font-weight: bold; color: var(--primary);">${numPedidoExibicao}</td>
                         <td>${dataFmt}</td>
-                        <td>${v.clienteNome}</td>
-                        <td>${v.vendedor}</td>
-                        <td>${v.formaPagamento}</td>
-                        <td>R$ ${Number(v.totalFinal).toFixed(2)}</td>
+                        <td>${v.clienteNome || 'Cliente'}</td>
+                        <td>${v.vendedor || 'Geral'}</td>
+                        <td>${v.formaPagamento || 'À Vista'}</td>
+                        <td>R$ ${totalFinalSeguro.toFixed(2)}</td>
                         <td>
                             <button class="btn btn-print" onclick="reimprimirVenda('${v.id}')">📄 Recibo</button>
                         </td>
@@ -1064,26 +1073,34 @@
         const dataFmt = new Date(venda.data).toLocaleString('pt-BR');
         const numPedidoExibicao = venda.numeroPedido || '0001';
 
+        let totalBrutoSeguro = Number(venda.totalBruto) || 0;
+        let descontoSeguro = Number(venda.desconto) || 0;
+        let totalFinalSeguro = Number(venda.totalFinal) || 0;
+
         let itensHtml = '';
-        venda.itens.forEach(i => {
-            itensHtml += `<tr><td>${i.nome}</td><td>${i.qtd}x</td><td>R$ ${Number(i.subtotal).toFixed(2)}</td></tr>`;
-        });
+        if (venda.itens && Array.isArray(venda.itens)) {
+            venda.itens.forEach(i => {
+                let subtotalItem = Number(i.subtotal) || 0;
+                let precoItem = Number(i.preco) || 0;
+                itensHtml += `<tr><td>${i.nome}</td><td>${i.qtd}x</td><td>R$ ${subtotalItem.toFixed(2)}</td></tr>`;
+            });
+        }
 
         conteudo.innerHTML = `
             <p><strong>Pedido Nº:</strong> <span style="font-size:16px; color:#0056b3; font-weight:bold;">${numPedidoExibicao}</span></p>
             <p><strong>Data:</strong> ${dataFmt}</p>
-            <p><strong>Cliente:</strong> ${venda.clienteNome}</p>
-            <p><strong>Vendedor:</strong> ${venda.vendedor}</p>
-            <p><strong>Forma de Pagamento:</strong> ${venda.formaPagamento}</p>
+            <p><strong>Cliente:</strong> ${venda.clienteNome || 'Cliente'}</p>
+            <p><strong>Vendedor:</strong> ${venda.vendedor || 'Geral'}</p>
+            <p><strong>Forma de Pagamento:</strong> ${venda.formaPagamento || 'À Vista'}</p>
             <hr style="border: 0.5px dashed #ccc;">
             <table style="width:100%; font-size: 12px; margin-bottom: 10px;">
                 <thead><tr><th>Item</th><th>Qtd</th><th>Subtotal</th></tr></thead>
                 <tbody>${itensHtml}</tbody>
             </table>
             <hr style="border: 0.5px dashed #ccc;">
-            <p style="text-align: right; margin: 2px 0;">Subtotal: R$ ${Number(venda.totalBruto).toFixed(2)}</p>
-            <p style="text-align: right; margin: 2px 0;">Desconto: R$ ${Number(venda.desconto).toFixed(2)}</p>
-            <h3 style="text-align: right; margin: 5px 0; color: #0056b3;">Total Final: R$ ${Number(venda.totalFinal).toFixed(2)}</h3>
+            <p style="text-align: right; margin: 2px 0;">Subtotal: R$ ${totalBrutoSeguro.toFixed(2)}</p>
+            <p style="text-align: right; margin: 2px 0;">Desconto: R$ ${descontoSeguro.toFixed(2)}</p>
+            <h3 style="text-align: right; margin: 5px 0; color: #0056b3;">Total Final: R$ ${totalFinalSeguro.toFixed(2)}</h3>
         `;
 
         document.getElementById('modalImpressao').style.display = 'flex';

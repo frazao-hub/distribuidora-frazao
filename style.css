@@ -1,33 +1,33 @@
-/* Estilo de Impressão para Bobina Térmica 80mm via Bluetooth */
 @media print {
   @page {
     size: 80mm auto;
-    margin: 0;
+    margin: 0mm; /* Remove todas as margens do papel */
   }
 
   html, body {
     width: 100% !important;
-    max-width: 78mm !important; /* Deixa margem de segurança para não cortar texto */
-    margin: 0 auto !important;
-    padding: 2mm 0 !important;
-    font-size: 13px;
-    font-family: monospace;
-    color: #000;
-    background: #fff;
+    max-width: 78mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 12px !important; /* Fonte menor e bem legível */
+    line-height: 1.2 !important; /* Aproxima as linhas para encurtar o cupom */
+    font-family: monospace !important;
+    color: #000 !important;
+    font-weight: bold !important; /* Deixa o texto em negrito para escurecer a impressão */
   }
 
-  /* Oculta botões, links e menus do site no cupom */
+  /* Esconde tudo que não for o recibo */
   .no-print, button, nav, header, footer {
     display: none !important;
   }
 
-  /* Ajusta tabelas e imagens para não estourarem a largura */
+  /* Compacta tabelas e listas */
   table {
     width: 100% !important;
-    border-collapse: collapse;
+    border-collapse: collapse !important;
   }
 
-  img {
-    max-width: 100% !important;
+  td, th {
+    padding: 2px 0 !important; /* Minimiza o espaço vertical */
   }
 }

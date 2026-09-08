@@ -1,24 +1,29 @@
+/* Configuração para impressora ESC/POS 80mm via RawBT */
 @media print {
   @page {
     size: 80mm auto;
-    margin: 0mm; /* Zera margens do driver */
+    margin: 0;
   }
 
   html, body {
-    width: 78mm !important; /* Aproveita melhor a área útil de 80mm */
-    margin: 0 !important;
-    padding: 0 !important;
+    width: 100% !important;
+    max-width: 78mm !important; /* Aproveita a largura total do driver ESC/POS de 80mm */
+    margin: 0 auto !important;
+    padding: 2mm 0 !important;
     font-size: 13px;
     font-family: monospace;
     color: #000;
+    background: #fff;
   }
 
-  /* Evita que o Android crie quebras de página desnecessárias */
-  div, table, tr {
-    page-break-inside: avoid;
-  }
-
+  /* Oculta elementos de navegação e botões */
   .no-print, button, nav, header, footer {
     display: none !important;
+  }
+
+  /* Garante que tabelas e produtos ocupem toda a largura */
+  table {
+    width: 100% !important;
+    border-collapse: collapse;
   }
 }

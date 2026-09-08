@@ -313,7 +313,7 @@
                 <input type="number" step="0.01" id="descontoVenda" value="0" placeholder="0.00">
             </div>
 
-            <button type="submit" class="btn btn-save">Finalizar Venda (Permite Estoque Negativo)</button>
+            <button type="submit" class="btn btn-save">Finalizar Venda</button>
         </form>
     </div>
 
@@ -446,7 +446,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Nº</th>
+                        <th>Nº Pedido</th>
                         <th>Data / Hora</th>
                         <th>Cliente</th>
                         <th>Vendedor</th>
@@ -546,6 +546,7 @@
     let produtosCache = [];
     let clientesCache = [];
     let vendedoresCache = [];
+    let totalVendasRegistradas = 0; // Usado para gerar o número sequencial 0001, 0002...
 
     const listaTodasCategorias = [
         "Balas e Pirulitos",
@@ -797,8 +798,6 @@
         const produto = produtosCache.find(p => p.id === prodId);
         if (!produto) return alert("Produto não encontrado.");
 
-        // TRAVA DE ESTOQUE REMOVIDA: Permite adicionar ao carrinho mesmo sem estoque (estoque negativo)
-
         const existenteIndex = carrinho.findIndex(item => item.id === prodId);
         if (existenteIndex > -1) {
             const novaQtd = carrinho[existenteIndex].qtd + qtd;
@@ -864,8 +863,13 @@
 
         const clienteObj = clientesCache.find(c => c.id === clienteId);
 
+        // Gera o número do pedido baseado na quantidade atual de vendas + 1 (ex: 0001, 0002...)
+        const proximoNumeroInt = totalVendasRegistradas + 1;
+        const numeroPedidoFormatado = String(proximoNumeroInt).padStart(4, '0');
+
         const vendaData = {
             data: new Date().toISOString(),
+            numeroPedido: numeroPedidoFormatado,
             clienteId: clienteId,
             clienteNome: clienteObj ? clienteObj.nome : 'Cliente não identificado',
             vendedor: usuarioLogado.perfil === 'vendedor' ? usuarioLogado.nome : 'Administrador',
@@ -877,13 +881,13 @@
         };
 
         try {
-            // Dar baixa no estoque (agora permite ficar negativo)
+            // Dar baixa no estoque (permite ficar negativo)
             for (let item of carrinho) {
                 const prodRef = db.collection("produtos").doc(item.id);
                 const pDoc = await prodRef.get();
                 if (pDoc.exists) {
                     const novoEstoque = pDoc.data().estoque - item.qtd;
-                    await prodRef.update({ estoque: novoEstoque }); // Sem travar no zero
+                    await prodRef.update({ estoque: novoEstoque });
                 }
             }
 
@@ -896,7 +900,7 @@
             // Salvar pedido no histórico
             const docRef = await db.collection("vendas").add(vendaData);
 
-            alert("Venda finalizada com sucesso!");
+            alert(`Venda finalizada com sucesso! Pedido nº ${numeroPedidoFormatado}`);
             carrinho = [];
             renderizarCarrinho();
             document.getElementById('vendaForm').reset();
@@ -974,8 +978,6 @@
                 const id = doc.id;
                 clientesCache.push({ id, ...c });
 
-                // ALTERAÇÃO 1: Vendedor só vê e pode vender para clientes cadastrados em seu próprio nome.
-                // O Admin vê e pode vender para todos os clientes.
                 let podeVenderParaEsteCliente = true;
                 if (usuarioLogado.perfil === 'vendedor') {
                     if (c.vendedor !== usuarioLogado.nome) {
@@ -1006,39 +1008,47 @@
 
     // HISTÓRICO E VENDAS
     function carregarHistoricoVendas() {
-        db.collection("vendas").orderBy("data", "desc").onSnapshot((snapshot) => {
+        db.collection("vendas").orderBy("data", "asc").onSnapshot((snapshot) => {
             const tbody = document.getElementById('tabelaHistorico');
             if(!tbody) return;
             tbody.innerHTML = '';
 
             let fatTotal = 0;
             let qtdTotal = 0;
+            let listaTemporaria = [];
 
             snapshot.forEach((doc) => {
                 const v = doc.data();
                 const id = doc.id;
-                fatTotal += v.totalFinal;
-                qtdTotal++;
+                listaTemporaria.push({ id, ...v });
+            });
 
+            // Atualiza a quantidade total de vendas para o gerador de número sequencial
+            totalVendasRegistradas = listaTemporaria.length;
+            document.getElementById('totalQtdVendas').innerText = totalVendasRegistradas;
+
+            // Inverte para mostrar da mais recente para a mais antiga na tabela
+            listaTemporaria.reverse().forEach((v) => {
+                fatTotal += v.totalFinal;
                 const dataFmt = new Date(v.data).toLocaleString('pt-BR');
+                const numPedidoExibicao = v.numeroPedido || '0001';
 
                 tbody.innerHTML += `
                     <tr>
-                        <td>${id.substring(0, 6)}...</td>
+                        <td style="font-weight: bold; color: var(--primary);">${numPedidoExibicao}</td>
                         <td>${dataFmt}</td>
                         <td>${v.clienteNome}</td>
                         <td>${v.vendedor}</td>
                         <td>${v.formaPagamento}</td>
                         <td>R$ ${Number(v.totalFinal).toFixed(2)}</td>
                         <td>
-                            <button class="btn btn-print" onclick="reimprimirVenda('${id}')">📄 Recibo</button>
+                            <button class="btn btn-print" onclick="reimprimirVenda('${v.id}')">📄 Recibo</button>
                         </td>
                     </tr>
                 `;
             });
 
             document.getElementById('fatTotal').innerText = `R$ ${fatTotal.toFixed(2)}`;
-            document.getElementById('totalQtdVendas').innerText = qtdTotal;
         });
     }
 
@@ -1052,6 +1062,7 @@
     function abrirModalImpressao(id, venda) {
         const conteudo = document.getElementById('conteudoReciboImpresso');
         const dataFmt = new Date(venda.data).toLocaleString('pt-BR');
+        const numPedidoExibicao = venda.numeroPedido || '0001';
 
         let itensHtml = '';
         venda.itens.forEach(i => {
@@ -1059,7 +1070,7 @@
         });
 
         conteudo.innerHTML = `
-            <p><strong>Pedido ID:</strong> ${id}</p>
+            <p><strong>Pedido Nº:</strong> <span style="font-size:16px; color:#0056b3; font-weight:bold;">${numPedidoExibicao}</span></p>
             <p><strong>Data:</strong> ${dataFmt}</p>
             <p><strong>Cliente:</strong> ${venda.clienteNome}</p>
             <p><strong>Vendedor:</strong> ${venda.vendedor}</p>

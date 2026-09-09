@@ -34,7 +34,6 @@
             padding-bottom: 8px;
         }
         
-        /* Tela de Login Inicial */
         #tela-login {
             max-width: 400px;
             margin: 20px auto;
@@ -54,7 +53,6 @@
             box-sizing: border-box;
         }
 
-        /* Layout em Retângulos Clicáveis */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -178,25 +176,29 @@
             form { grid-template-columns: 1fr; }
             .form-group.full { grid-column: span 1; }
             .btn-save { grid-column: span 1; }
-            h1 { font-size: 20px; }
-            h2 { font-size: 18px; }
-            h3 { font-size: 16px; }
-            .dashboard-cards { grid-template-columns: 1fr; }
         }
 
+        /* CONFIGURAÇÃO DE IMPRESSÃO LIMPA (CUPOM ÚNICO) */
         @media print {
-            body * { visibility: hidden; }
-            #modalImpressao, #modalImpressao * { visibility: visible; }
-            #modalImpressao {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                margin: 0;
-                padding: 10px;
-                background: white;
+            body * {
+                visibility: hidden !important;
             }
-            .nao-imprimir { display: none !important; }
+            #modalImpressao, #modalImpressao *, #areaCupomImprimir, #areaCupomImprimir * {
+                visibility: visible !important;
+            }
+            #modalImpressao {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                background: white !important;
+                display: block !important;
+                z-index: 99999 !important;
+            }
+            .nao-imprimir {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -507,15 +509,15 @@
 
 <!-- MODAL DE IMPRESSÃO / WHATSAPP -->
 <div id="modalImpressao" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center; padding: 10px; box-sizing: border-box;">
-    <div style="background:white; width: 100%; max-width: 450px; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;">
-        <div style="text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 10px; margin-bottom: 15px;">
-            <h2 style="margin: 0; color: #0056b3; border:none; padding:0; font-size: 18px;">Distribuidora Frazão</h2>
-            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Comprovante de Pedido / Venda</p>
+    <div id="areaCupomImprimir" style="background:white; width: 100%; max-width: 380px; padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;">
+        <div style="text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 10px; margin-bottom: 10px;">
+            <h2 style="margin: 0; color: #0056b3; border:none; padding:0; font-size: 16px;">Distribuidora Frazão</h2>
+            <p style="margin: 5px 0 0 0; font-size: 11px; color: #666;">Comprovante de Pedido / Venda</p>
         </div>
         
-        <div id="conteudoReciboImpresso" style="font-size: 13px; line-height: 1.5;"></div>
+        <div id="conteudoReciboImpresso" style="font-size: 12px; line-height: 1.4;"></div>
 
-        <div class="nao-imprimir" style="margin-top: 20px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
+        <div class="nao-imprimir" style="margin-top: 15px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
             <button class="btn btn-whatsapp" onclick="enviarWhatsAppPedido()">📱 WhatsApp</button>
             <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir</button>
             <button class="btn btn-voltar" style="margin:0;" onclick="fecharModalImpressao()">Fechar</button>
@@ -549,16 +551,8 @@
     let pedidoAtualCache = null;
 
     const listaTodasCategorias = [
-        "Balas e Pirulitos",
-        "Bebidas",
-        "Biscoitos",
-        "Descartáveis",
-        "Doces",
-        "Drops e Chicletes",
-        "Higiene",
-        "Limpeza",
-        "Mercearia",
-        "Papelaria"
+        "Balas e Pirulitos", "Bebidas", "Biscoitos", "Descartáveis", 
+        "Doces", "Drops e Chicletes", "Higiene", "Limpeza", "Mercearia", "Papelaria"
     ];
 
     function alternarCampoLogin() {
@@ -703,7 +697,6 @@
         atualizarSelectCategoriasVenda();
     }
 
-    // VALIDADOR DE CPF / CNPJ REAL
     function validarCPFCNPJ(val) {
         const documento = val.replace(/\D/g, '');
         if (documento.length === 11) {
@@ -746,7 +739,6 @@
         return false;
     }
 
-    // CRUD PRODUTOS
     function salvarProduto() {
         if (usuarioLogado.perfil !== 'admin') return alert("Apenas o Administrador pode cadastrar/alterar produtos.");
         const id = document.getElementById('produtoId').value;
@@ -820,7 +812,6 @@
         });
     }
 
-    // CATEGORIAS E PDV
     function atualizarSelectCategoriasVenda() {
         const select = document.getElementById('selectCategoriaVenda');
         if(!select) return;
@@ -972,7 +963,6 @@
         }
     }
 
-    // CRUD CLIENTES & VALIDAÇÃO DE CPF/CNPJ
     function salvarCliente() {
         const id = document.getElementById('clienteIdInput').value;
         const nome = document.getElementById('nomeClienteCad').value;
@@ -1079,7 +1069,6 @@
         });
     }
 
-    // HISTÓRICO E VENDAS
     function carregarHistoricoVendas() {
         if (usuarioLogado.perfil !== 'admin') return;
 
@@ -1174,25 +1163,32 @@
         if (venda.itens && Array.isArray(venda.itens)) {
             venda.itens.forEach(i => {
                 let subtotalItem = Number(i.subtotal) || 0;
-                itensHtml += `<tr><td>${i.nome}</td><td>${i.qtd}x</td><td>R$ ${subtotalItem.toFixed(2)}</td></tr>`;
+                let precoUnit = Number(i.preco) || 0;
+                itensHtml += `<tr><td>${i.nome}</td><td>${i.qtd}x R$ ${precoUnit.toFixed(2)}</td><td style="text-align:right;">R$ ${subtotalItem.toFixed(2)}</td></tr>`;
             });
         }
 
         conteudo.innerHTML = `
-            <p><strong>Pedido Nº:</strong> <span style="font-size:16px; color:#0056b3; font-weight:bold;">${numPedidoExibicao}</span></p>
-            <p><strong>Data:</strong> ${dataFmt}</p>
-            <p><strong>Cliente:</strong> ${venda.clienteNome || 'Cliente'}</p>
-            <p><strong>Vendedor:</strong> ${venda.vendedor || 'Geral'}</p>
-            <p><strong>Forma de Pagamento:</strong> ${venda.formaPagamento || 'À Vista'}</p>
-            <hr style="border: 0.5px dashed #ccc;">
-            <table style="width:100%; font-size: 12px; margin-bottom: 10px;">
-                <thead><tr><th>Item</th><th>Qtd</th><th>Subtotal</th></tr></thead>
+            <p style="margin:2px 0;"><strong>Pedido Nº:</strong> <span style="font-size:14px; color:#0056b3; font-weight:bold;">${numPedidoExibicao}</span></p>
+            <p style="margin:2px 0;"><strong>Data:</strong> ${dataFmt}</p>
+            <p style="margin:2px 0;"><strong>Cliente:</strong> ${venda.clienteNome || 'Cliente'}</p>
+            <p style="margin:2px 0;"><strong>Vendedor:</strong> ${venda.vendedor || 'Geral'}</p>
+            <p style="margin:2px 0;"><strong>Pagamento:</strong> ${venda.formaPagamento || 'À Vista'}</p>
+            <hr style="border: 0.5px dashed #ccc; margin: 8px 0;">
+            <table style="width:100%; font-size: 11px; margin-bottom: 5px; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <th style="background:none; color:#333; padding:2px; text-align:left;">Item</th>
+                        <th style="background:none; color:#333; padding:2px; text-align:left;">Qtd/Un</th>
+                        <th style="background:none; color:#333; padding:2px; text-align:right;">Subtotal</th>
+                    </tr>
+                </thead>
                 <tbody>${itensHtml}</tbody>
             </table>
-            <hr style="border: 0.5px dashed #ccc;">
-            <p style="text-align: right; margin: 2px 0;">Subtotal: R$ ${totalBrutoSeguro.toFixed(2)}</p>
-            <p style="text-align: right; margin: 2px 0;">Desconto: R$ ${descontoSeguro.toFixed(2)}</p>
-            <h3 style="text-align: right; margin: 5px 0; color: #0056b3;">Total Final: R$ ${totalFinalSeguro.toFixed(2)}</h3>
+            <hr style="border: 0.5px dashed #ccc; margin: 8px 0;">
+            <p style="text-align: right; margin: 2px 0; font-size: 11px;">Subtotal: R$ ${totalBrutoSeguro.toFixed(2)}</p>
+            <p style="text-align: right; margin: 2px 0; font-size: 11px;">Desconto: R$ ${descontoSeguro.toFixed(2)}</p>
+            <h3 style="text-align: right; margin: 5px 0; color: #0056b3; font-size: 14px;">Total Final: R$ ${totalFinalSeguro.toFixed(2)}</h3>
         `;
 
         document.getElementById('modalImpressao').style.display = 'flex';
@@ -1208,19 +1204,22 @@
         texto += `Data: ${new Date(pedidoAtualCache.data).toLocaleString('pt-BR')}%0A`;
         texto += `Cliente: ${pedidoAtualCache.clienteNome}%0A`;
         texto += `Vendedor: ${pedidoAtualCache.vendedor}%0A`;
-        texto += `Pagamento: ${pedidoAtualCache.formaPagamento}%0A%0A*Itens:*%0A`;
+        texto += `Pagamento: ${pedidoAtualCache.formaPagamento}%0A%0A*Itens do Pedido:*%0A`;
         
         if (pedidoAtualCache.itens) {
             pedidoAtualCache.itens.forEach(i => {
-                texto += `- ${i.nome} (${i.qtd}x) - R$ ${Number(i.subtotal).toFixed(2)}%0A`;
+                texto += `- ${i.nome} (${i.qtd}x R$ ${Number(i.preco).toFixed(2)}) - R$ ${Number(i.subtotal).toFixed(2)}%0A`;
             });
         }
-        texto += `%0A*Total Final: R$ ${Number(pedidoAtualCache.totalFinal).toFixed(2)}*`;
+        texto += `%0A*Subtotal: R$ ${Number(pedidoAtualCache.totalBruto).toFixed(2)}*%0A`;
+        if(Number(pedidoAtualCache.desconto) > 0) {
+            texto += `Desconto: R$ ${Number(pedidoAtualCache.desconto).toFixed(2)}%0A`;
+        }
+        texto += `*Total Final: R$ ${Number(pedidoAtualCache.totalFinal).toFixed(2)}*`;
 
         window.open(`https://api.whatsapp.com/send?text=${texto}`, '_blank');
     }
 
-    // CRUD VENDEDORES
     function salvarVendedor() {
         if (usuarioLogado.perfil !== 'admin') return;
         const id = document.getElementById('vendedorIdInput').value;
@@ -1266,7 +1265,6 @@
             if(selectCad) selectCad.innerHTML = '<option value="">Selecione o vendedor...</option>';
             vendedoresCache = [];
 
-            snapshot.format = '';
             snapshot.forEach((doc) => {
                 const v = doc.data();
                 const id = doc.id;

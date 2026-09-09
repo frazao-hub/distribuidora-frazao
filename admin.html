@@ -27,7 +27,7 @@
                 <div id="divSelectVendedor" class="hidden">
                     <label class="block text-sm font-medium text-gray-700">Quem é você?</label>
                     <select id="loginNomeVendedor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
-                        <option value="">Selecione seu nome...</option>
+                        <option value="">Carregando vendedores...</option>
                     </select>
                 </div>
                 <div>
@@ -375,13 +375,14 @@
         let vendasCacheGlobal = [];
         let pedidoAtualCache = null;
 
-        // Inicialização de datas padrão
+        // Inicialização de datas padrão e carregamento de vendedores na tela de login
         document.addEventListener('DOMContentLoaded', () => {
             const dataAtual = new Date();
             const ano = dataAtual.getFullYear();
             const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
             const inputMes = document.getElementById('filtroMesAno');
             if(inputMes) inputMes.value = `${ano}-${mes}`;
+            
             carregarSelectVendedoresLogin();
         });
 
@@ -390,6 +391,7 @@
             const divVendedor = document.getElementById('divSelectVendedor');
             if (tipo === 'vendedor') {
                 divVendedor.classList.remove('hidden');
+                carregarSelectVendedoresLogin();
             } else {
                 divVendedor.classList.add('hidden');
             }
@@ -398,15 +400,21 @@
         async function carregarSelectVendedoresLogin() {
             const select = document.getElementById('loginNomeVendedor');
             if(!select) return;
-            select.innerHTML = '<option value="">Selecione seu nome...</option>';
+            select.innerHTML = '<option value="">Carregando vendedores...</option>';
             try {
                 const snapshot = await db.collection("vendedores").orderBy("nome").get();
+                if (snapshot.empty) {
+                    select.innerHTML = '<option value="">Nenhum vendedor cadastrado no sistema</option>';
+                    return;
+                }
+                select.innerHTML = '<option value="">Selecione seu nome...</option>';
                 snapshot.forEach(doc => {
                     const v = doc.data();
                     select.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
                 });
             } catch(e) {
-                console.log("Ainda sem vendedores cadastrados.");
+                select.innerHTML = '<option value="">Erro ao carregar vendedores</option>';
+                console.log("Erro ao carregar vendedores:", e);
             }
         }
 
@@ -419,24 +427,28 @@
                     usuarioLogado = { perfil: 'admin', nome: 'Administrador' };
                     entrarNoSistemaPainel();
                 } else {
-                    alert("Senha de Administrador incorreta!");
+                    alert("Senha de Administrador incorreta! Utilize a senha padrão: 123456");
                 }
             } else {
                 const nomeVend = document.getElementById('loginNomeVendedor').value;
-                if (!nomeVend) return alert("Selecione o seu nome.");
+                if (!nomeVend) return alert("Selecione o seu nome na lista.");
                 if (!senha) return alert("Digite a sua senha.");
 
-                const snapshot = await db.collection("vendedores").where("nome", "==", nomeVend).get();
-                if (snapshot.empty) return alert("Vendedor não encontrado.");
-                
-                let vendedorEncontrado = null;
-                snapshot.forEach(doc => { vendedorEncontrado = doc.data(); });
+                try {
+                    const snapshot = await db.collection("vendedores").where("nome", "==", nomeVend).get();
+                    if (snapshot.empty) return alert("Vendedor não encontrado.");
+                    
+                    let vendedorEncontrado = null;
+                    snapshot.forEach(doc => { vendedorEncontrado = doc.data(); });
 
-                if (vendedorEncontrado.senha === senha) {
-                    usuarioLogado = { perfil: 'vendedor', nome: vendedorEncontrado.nome };
-                    entrarNoSistemaPainel();
-                } else {
-                    alert("Senha incorreta!");
+                    if (vendedorEncontrado.senha === senha) {
+                        usuarioLogado = { perfil: 'vendedor', nome: vendedorEncontrado.nome };
+                        entrarNoSistemaPainel();
+                    } else {
+                        alert("Senha incorreta!");
+                    }
+                } catch(e) {
+                    alert("Erro ao validar login do vendedor: " + e.message);
                 }
             }
         }
@@ -475,6 +487,8 @@
             document.getElementById('sistemaPrincipal').classList.add('hidden');
             document.getElementById('telaLogin').classList.remove('hidden');
             document.getElementById('loginSenha').value = '';
+            document.getElementById('loginUsuario').value = 'admin';
+            verificarTipoLogin();
             carregarSelectVendedoresLogin();
         }
 

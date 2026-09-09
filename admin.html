@@ -174,7 +174,7 @@
 
         <!-- ABA 3: CLIENTES & FIADOS -->
         <div id="aba-clientes" class="tab-content bg-white p-6 rounded-lg shadow hidden">
-            <h2 class="text-lg font-bold text-gray-800 mb-4">Cadastro de Clientes & Controle de Fiado</h2>
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Cadastro de Clientes & Controle Geral de Fiado</h2>
             
             <form onsubmit="event.preventDefault(); salvarCliente();" class="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded border mb-6">
                 <input type="hidden" id="cliIdEdit">
@@ -208,7 +208,7 @@
                             <th class="px-4 py-2 text-left text-xs font-bold text-gray-600">CPF / CNPJ</th>
                             <th class="px-4 py-2 text-left text-xs font-bold text-gray-600">Telefone</th>
                             <th class="px-4 py-2 text-left text-xs font-bold text-gray-600">Saldo Devedor (Fiado)</th>
-                            <th class="px-4 py-2 text-center text-xs font-bold text-gray-600">Ações</th>
+                            <th class="px-4 py-2 text-center text-xs font-bold text-gray-600">Ações / Fiado</th>
                         </tr>
                     </thead>
                     <tbody id="tabelaClientes" class="divide-y divide-gray-200">
@@ -289,16 +289,16 @@
 
     <!-- MODAL DE RECIBO / COMPROVANTE -->
     <div id="modalComprovante" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-lg max-w-md w-full p-6 shadow-xl relative">
-            <h3 class="text-lg font-bold mb-2 text-gray-800 text-center">Distribuidora Frazão</h3>
+        <div class="bg-white rounded-lg max-w-sm w-full p-6 shadow-xl relative">
+            <h3 class="text-lg font-bold mb-1 text-gray-800 text-center">Distribuidora Frazão</h3>
             <p class="text-xs text-gray-500 text-center mb-4">Comprovante de Venda</p>
             
-            <div id="corpoReciboModal" class="bg-gray-50 p-3 rounded border text-xs mb-4 max-h-64 overflow-y-auto"></div>
+            <div id="corpoReciboModal" class="bg-gray-50 p-3 rounded border text-xs mb-4 max-h-64 overflow-y-auto font-mono"></div>
 
             <div class="flex flex-col gap-2">
-                <button onclick="imprimirCupomIsolado()" class="bg-blue-600 text-white font-bold p-2 rounded hover:bg-blue-700">🖨️ Imprimir / Salvar PDF</button>
-                <button onclick="compartilharWhatsApp()" class="bg-green-500 text-white font-bold p-2 rounded hover:bg-green-600">📱 Enviar por WhatsApp</button>
-                <button onclick="fecharModalComprovante()" class="bg-gray-300 text-gray-700 font-bold p-2 rounded hover:bg-gray-400">Fechar</button>
+                <button onclick="imprimirCupomIsolado()" class="bg-blue-600 text-white font-bold p-2 rounded hover:bg-blue-700 text-sm">🖨️ Imprimir Cupom 80mm</button>
+                <button onclick="compartilharWhatsApp()" class="bg-green-500 text-white font-bold p-2 rounded hover:bg-green-600 text-sm">📱 Compartilhar WhatsApp</button>
+                <button onclick="fecharModalComprovante()" class="bg-gray-300 text-gray-700 font-bold p-2 rounded hover:bg-gray-400 text-sm">Fechar</button>
             </div>
         </div>
     </div>
@@ -558,7 +558,7 @@
             }
         }
 
-        // CLIENTES & FIADOS
+        // CLIENTES & FIADOS (CONTROLE GERAL: ABATER E ACRESCENTAR)
         function ouvirClientes() {
             db.collection("clientes").orderBy("nome").onSnapshot(snapshot => {
                 clientesCache = [];
@@ -578,8 +578,9 @@
                             <td class="px-4 py-2 text-sm">${c.doc || '-'}</td>
                             <td class="px-4 py-2 text-sm">${c.tel || '-'}</td>
                             <td class="px-4 py-2 text-sm font-bold text-red-600">R$ ${Number(c.debito || 0).toFixed(2)}</td>
-                            <td class="px-4 py-2 text-center">
-                                <button onclick="quitarDebito('${c.id}', '${c.nome}', ${c.debito || 0})" class="bg-indigo-600 text-white px-2 py-1 rounded text-xs font-bold mr-1">Abater / Pagar Fiado</button>
+                            <td class="px-4 py-2 text-center space-x-1">
+                                <button onclick="gerenciarFiado('${c.id}', '${c.nome}', ${c.debito || 0}, 'abater')" class="bg-indigo-600 text-white px-2 py-1 rounded text-xs font-bold">Abater</button>
+                                <button onclick="gerenciarFiado('${c.id}', '${c.nome}', ${c.debito || 0}, 'acrescentar')" class="bg-orange-600 text-white px-2 py-1 rounded text-xs font-bold">Acrescentar</button>
                                 <button onclick="deletarCliente('${c.id}')" class="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">Excluir</button>
                             </td>
                         </tr>
@@ -606,7 +607,6 @@
             acao.then(() => {
                 alert("Cliente salvo com sucesso!");
                 document.getElementById('cliIdEdit').value = '';
-                // Limpa form
                 document.getElementById('cliNome').value = '';
                 document.getElementById('cliDoc').value = '';
                 document.getElementById('cliTel').value = '';
@@ -614,15 +614,17 @@
             });
         }
 
-        function quitarDebito(id, nome, debitoAtual) {
-            const valorStr = prompt(`Cliente: ${nome}\nSaldo Devedor Atual: R$ ${debitoAtual.toFixed(2)}\n\nDigite o valor que o cliente está pagando (ex: 50.00):`);
+        function gerenciarFiado(id, nome, debitoAtual, tipo) {
+            const acaoNome = tipo === 'abater' ? 'Abater Pagamento' : 'Acrescentar Dívida';
+            const msg = `Cliente: ${nome}\nSaldo Devedor Atual: R$ ${debitoAtual.toFixed(2)}\n\nDigite o valor a ${tipo === 'abater' ? 'pagar/abater' : 'acrescentar'} (ex: 50.00):`;
+            const valorStr = prompt(msg);
             if (!valorStr) return;
-            const valorPago = parseFloat(valorStr);
-            if (isNaN(valorPago) || valorPago <= 0) return alert("Valor inválido.");
+            const valor = parseFloat(valorStr);
+            if (isNaN(valor) || valor <= 0) return alert("Valor inválido.");
 
-            const novoDebito = Math.max(0, debitoAtual - valorPago);
+            let novoDebito = tipo === 'abater' ? Math.max(0, debitoAtual - valor) : debitoAtual + valor;
             db.collection("clientes").doc(id).update({ debito: novoDebito }).then(() => {
-                alert(`Pagamento registrado! Novo saldo devedor: R$ ${novoDebito.toFixed(2)}`);
+                alert(`Operação realizada! Novo saldo devedor: R$ ${novoDebito.toFixed(2)}`);
             });
         }
 
@@ -632,9 +634,8 @@
             }
         }
 
-        // CARRINHO & VENDAS MULTI-ITENS
+        // CARRINHO & VENDAS MULTI-ITENS COM NUMERAÇÃO SEQUENCIAL (0001)
         function preencherDadosProdutoVenda() {
-            // Apenas foca na quantidade
             document.getElementById('vendaQtdProduto').focus();
         }
 
@@ -699,7 +700,6 @@
             document.getElementById('vendaTotalGeral').innerText = totalFinal.toFixed(2);
         }
 
-        // Listener para recalcular desconto se admin digitar
         document.getElementById('vendaDesconto').addEventListener('input', renderizarCarrinho);
 
         async function finalizarVenda() {
@@ -714,19 +714,30 @@
             let subtotal = carrinhoVenda.reduce((acc, item) => acc + item.subtotal, 0);
             let totalFinal = Math.max(0, subtotal - desconto);
 
-            const dadosVenda = {
-                data: new Date().toISOString(),
-                clienteId: clienteId,
-                clienteNome: clienteObj ? clienteObj.nome : 'Cliente',
-                vendedor: usuarioLogado.nome,
-                itens: carrinhoVenda,
-                subtotal: subtotal,
-                desconto: desconto,
-                total: totalFinal,
-                formaPagamento: formaPgto
-            };
-
             try {
+                // Obter próximo número sequencial (0001, 0002...)
+                const counterRef = db.collection("configuracoes").doc("contador_pedidos");
+                const counterDoc = await counterRef.get();
+                let proximoNumero = 1;
+                if (counterDoc.exists) {
+                    proximoNumero = (counterDoc.data().ultimo || 0) + 1;
+                }
+                await counterRef.set({ ultimo: proximoNumero });
+                const numeroFormatado = String(proximoNumero).padStart(4, '0');
+
+                const dadosVenda = {
+                    numeroPedido: numeroFormatado,
+                    data: new Date().toISOString(),
+                    clienteId: clienteId,
+                    clienteNome: clienteObj ? clienteObj.nome : 'Cliente',
+                    vendedor: usuarioLogado.nome,
+                    itens: carrinhoVenda,
+                    subtotal: subtotal,
+                    desconto: desconto,
+                    total: totalFinal,
+                    formaPagamento: formaPgto
+                };
+
                 // Dar baixa no estoque
                 for (let item of carrinhoVenda) {
                     const prodRef = db.collection("produtos").doc(item.id);
@@ -737,7 +748,7 @@
                     }
                 }
 
-                // Se for fiado, atualizar saldo devedor do cliente
+                // Se for fiado, atualizar saldo devedor
                 if (formaPgto === 'Fiado' && clienteObj) {
                     const novoDebito = (Number(clienteObj.debito) || 0) + totalFinal;
                     await db.collection("clientes").doc(clienteId).update({ debito: novoDebito });
@@ -746,7 +757,7 @@
                 const docRef = await db.collection("vendas").add(dadosVenda);
                 pedidoAtualCache = { id: docRef.id, ...dadosVenda };
 
-                alert("Venda realizada com sucesso!");
+                alert(`Venda #${numeroFormatado} realizada com sucesso!`);
                 carrinhoVenda = [];
                 renderizarCarrinho();
                 document.getElementById('vendaDesconto').value = '0.00';
@@ -781,7 +792,7 @@
                     tbody.innerHTML += `
                         <tr>
                             <td class="px-4 py-2 text-sm">
-                                <strong>#${v.id.substring(0,6)}</strong><br>
+                                <strong>#${v.numeroPedido || '0000'}</strong><br>
                                 <span class="text-xs text-gray-500">${new Date(v.data).toLocaleString('pt-BR')}</span>
                             </td>
                             <td class="px-4 py-2 text-sm">${v.clienteNome}</td>
@@ -842,7 +853,7 @@
             }
         }
 
-        // MODAL E COMPROVANTE / IMPRESSÃO ISOLADA
+        // MODAL E COMPROVANTE TÉRMICO 80MM
         function abrirModalComprovante(pedido) {
             pedidoAtualCache = pedido;
             let itensHtml = '';
@@ -851,17 +862,19 @@
             });
 
             document.getElementById('corpoReciboModal').innerHTML = `
-                <p><strong>Pedido ID:</strong> #${pedido.id.substring(0,6)}</p>
-                <p><strong>Data:</strong> ${new Date(pedido.data).toLocaleString('pt-BR')}</p>
-                <p><strong>Cliente:</strong> ${pedido.clienteNome}</p>
-                <p><strong>Vendedor:</strong> ${pedido.vendedor}</p>
-                <p><strong>Pagamento:</strong> ${pedido.formaPagamento}</p>
-                <hr style="margin: 6px 0; border-top:1px dashed #ccc;">
+                <div style="text-align:center; font-weight:bold;">DISTRIBUIDORA FRAZÃO</div>
+                <div style="text-align:center; font-size:10px; margin-bottom:6px;">Comprovante de Venda</div>
+                <div><strong>Pedido:</strong> #${pedido.numeroPedido || '0000'}</div>
+                <div><strong>Data:</strong> ${new Date(pedido.data).toLocaleString('pt-BR')}</div>
+                <div><strong>Cliente:</strong> ${pedido.clienteNome}</div>
+                <div><strong>Vendedor:</strong> ${pedido.vendedor}</div>
+                <div><strong>Pagamento:</strong> ${pedido.formaPagamento}</div>
+                <hr style="border-top:1px dashed #000; margin:4px 0;">
                 <table style="width:100%; font-size:11px;">${itensHtml}</table>
-                <hr style="margin: 6px 0; border-top:1px dashed #ccc;">
-                <p style="text-align:right;"><strong>Subtotal:</strong> R$ ${pedido.subtotal.toFixed(2)}</p>
-                ${pedido.desconto > 0 ? `<p style="text-align:right;"><strong>Desconto:</strong> - R$ ${pedido.desconto.toFixed(2)}</p>` : ''}
-                <p style="text-align:right; font-size:13px;"><strong>TOTAL: R$ ${pedido.total.toFixed(2)}</strong></p>
+                <hr style="border-top:1px dashed #000; margin:4px 0;">
+                <div style="text-align:right;">Subtotal: R$ ${pedido.subtotal.toFixed(2)}</div>
+                ${pedido.desconto > 0 ? `<div style="text-align:right;">Desconto: - R$ ${pedido.desconto.toFixed(2)}</div>` : ''}
+                <div style="text-align:right; font-weight:bold; font-size:13px;">TOTAL: R$ ${pedido.total.toFixed(2)}</div>
             `;
             document.getElementById('modalComprovante').classList.remove('hidden');
         }
@@ -870,6 +883,7 @@
             document.getElementById('modalComprovante').classList.add('hidden');
         }
 
+        // IMPRESSÃO TÉRMICA 80MM (CUPOM OTIMIZADO)
         function imprimirCupomIsolado() {
             if (!pedidoAtualCache) return;
             let itensHtml = '';
@@ -877,41 +891,40 @@
                 itensHtml += `<tr><td>${i.nome}</td><td>${i.qtd}x R$${i.preco.toFixed(2)}</td><td style="text-align:right;">R$${i.subtotal.toFixed(2)}</td></tr>`;
             });
 
-            const janela = window.open('', '_blank', 'width=400,height=600');
+            const janela = window.open('', '_blank', 'width=320,height=600');
             janela.document.write(`
                 <html>
                     <head>
-                        <title>Comprovante - Distribuidora Frazão</title>
+                        <title>Cupom #${pedidoAtualCache.numeroPedido || '0000'}</title>
                         <style>
-                            body { font-family: Arial, sans-serif; font-size: 12px; color: #000; margin: 0; padding: 10px; background: #fff; }
-                            h2 { text-align: center; font-size: 16px; margin: 0 0 5px 0; color: #000; }
-                            p { margin: 3px 0; font-weight: bold; color: #000; }
-                            table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
-                            th, td { padding: 4px; text-align: left; border-bottom: 1px dashed #000; color: #000; font-weight: bold; }
+                            body { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #000; margin: 0; padding: 5px; width: 72mm; background: #fff; }
+                            h2 { text-align: center; font-size: 14px; margin: 0 0 2px 0; font-weight: bold; }
+                            p { margin: 2px 0; font-weight: bold; }
+                            table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 4px; }
+                            th, td { padding: 2px; text-align: left; border-bottom: 1px dotted #000; font-weight: bold; }
                             .text-right { text-align: right; }
-                            hr { border: none; border-top: 1px dashed #000; margin: 8px 0; }
+                            hr { border: none; border-top: 1px dashed #000; margin: 4px 0; }
                         </style>
                     </head>
                     <body>
-                        <div>
-                            <h2>Distribuidora Frazão</h2>
-                            <p style="text-align:center; font-size:11px;">Comprovante de Venda</p>
-                        </div>
+                        <h2>DISTRIBUIDORA FRAZÃO</h2>
+                        <p style="text-align:center; font-size:10px;">Cupom Não Fiscal</p>
                         <hr>
-                        <p><strong>Pedido ID:</strong> #${pedidoAtualCache.id.substring(0,6)}</p>
-                        <p><strong>Data:</strong> ${new Date(pedidoAtualCache.data).toLocaleString('pt-BR')}</p>
-                        <p><strong>Cliente:</strong> ${pedidoAtualCache.clienteNome}</p>
-                        <p><strong>Vendedor:</strong> ${pedidoAtualCache.vendedor}</p>
-                        <p><strong>Pagamento:</strong> ${pedidoAtualCache.formaPagamento}</p>
+                        <p>Pedido: #${pedidoAtualCache.numeroPedido || '0000'}</p>
+                        <p>Data: ${new Date(pedidoAtualCache.data).toLocaleString('pt-BR')}</p>
+                        <p>Cliente: ${pedidoAtualCache.clienteNome}</p>
+                        <p>Vendedor: ${pedidoAtualCache.vendedor}</p>
+                        <p>Pagamento: ${pedidoAtualCache.formaPagamento}</p>
                         <hr>
                         <table>
-                            <thead><tr><th>Produto</th><th>Qtd/Preço</th><th class="text-right">Subtotal</th></tr></thead>
+                            <thead><tr><th>Item</th><th>Q/P</th><th class="text-right">Sub</th></tr></thead>
                             <tbody>${itensHtml}</tbody>
                         </table>
                         <hr>
-                        <p class="text-right" style="font-size:14px; margin-top:5px;"><strong>TOTAL: R$ ${pedidoAtualCache.total.toFixed(2)}</strong></p>
+                        <p class="text-right" style="font-size: 12px; margin-top: 4px;">TOTAL: R$ ${pedidoAtualCache.total.toFixed(2)}</p>
+                        <p style="text-align:center; font-size:9px; margin-top:8px;">Obrigado pela preferência!</p>
                         <script>
-                            window.onload = function() { setTimeout(() => { window.print(); }, 400); }
+                            window.onload = function() { setTimeout(() => { window.print(); window.close(); }, 300); }
                         <\/script>
                     </body>
                 </html>
@@ -922,7 +935,7 @@
         function compartilharWhatsApp() {
             if (!pedidoAtualCache) return;
             let texto = `*Distribuidora Frazão*%0A`;
-            texto += `Pedido: #${pedidoAtualCache.id.substring(0,6)}%0A`;
+            texto += `Pedido: #${pedidoAtualCache.numeroPedido || '0000'}%0A`;
             texto += `Cliente: ${pedidoAtualCache.clienteNome}%0A`;
             texto += `Forma de Pagamento: ${pedidoAtualCache.formaPagamento}%0A----------------------------%0A`;
             pedidoAtualCache.itens.forEach(i => {

@@ -1,69 +1,21 @@
-/* ESTILOS GERAIS DA TELA */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  padding: 10px;
-  margin: 0;
-}
-
-.cupom {
-  max-width: 300px;
-  margin: 0 auto;
-  background: #fff;
-  padding: 10px;
-  border: 1px solid #ccc;
-}
-
-.center { text-align: center; }
-.right { text-align: right; }
-.bold { font-weight: bold; }
-.linha { border-bottom: 1px dashed #000; margin: 8px 0; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-}
-
-th, td {
-  padding: 3px 0;
-  text-align: left;
-}
-
-/* CONFIGURAÇÃO EXCLUSIVA DA IMPRESSORA TÉRMICA (80MM) */
 @media print {
-  @page {
-    size: 80mm auto;
-    margin: 0mm !important;
+  /* Esconde menus, botões, cabeçalhos do site e o próprio botão de imprimir */
+  header, footer, nav, .btn-imprimir, .no-print {
+    display: none !important;
   }
 
-  html, body {
+  /* Força o contêiner do pedido a usar 100% da largura da folha */
+  body, .pedido-container {
     width: 100% !important;
-    max-width: 78mm !important;
     margin: 0 !important;
     padding: 0 !important;
     background: #fff !important;
     color: #000 !important;
-    font-family: 'Courier New', Courier, monospace !important;
-    font-size: 12px !important;
-    font-weight: 900 !important;
-    -webkit-text-stroke: 0.3px #000;
   }
 
-  .cupom {
-    width: 100% !important;
-    border: none !important;
-    padding: 0 !important;
-  }
-
-  /* Esconde o botão de imprimir no papel */
-  .no-print {
-    display: none !important;
-  }
-
-  /* Impede a divisão em várias páginas no Android */
-  *, div, table, tr, td, p {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
+  /* Evita que as linhas do pedido ou itens sejam cortados no meio da página */
+  .item-pedido, tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
 }

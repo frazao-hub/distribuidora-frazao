@@ -140,7 +140,7 @@
             <!-- ABA PRODUTOS -->
             <section id="aba-produtos" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-lg shadow admin-only hidden">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4">Cadastrar / Editar Produto</h2>
+                    <h2 id="tituloFormProduto" class="text-lg font-bold text-gray-800 mb-4">Cadastrar / Editar Produto</h2>
                     <input type="hidden" id="prodIdEdit">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                         <div class="lg:col-span-2">
@@ -167,7 +167,7 @@
                             <input type="number" id="prodPreco" step="0.01" class="w-full border p-2 rounded text-sm">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-600">Estoque Inicial</label>
+                            <label class="block text-xs text-gray-600">Estoque</label>
                             <input type="number" id="prodEstoque" class="w-full border p-2 rounded text-sm">
                         </div>
                         <div class="lg:col-span-5">
@@ -175,7 +175,10 @@
                             <input type="text" id="prodFoto" class="w-full border p-2 rounded text-sm" placeholder="https://exemplo.com/foto.jpg">
                         </div>
                     </div>
-                    <button onclick="salvarProduto()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-bold">Salvar Produto</button>
+                    <div class="flex gap-2 mt-4">
+                        <button onclick="salvarProduto()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-bold">Salvar Produto</button>
+                        <button onclick="limparFormularioProduto()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded text-sm font-bold">Cancelar / Limpar</button>
+                    </div>
                 </div>
 
                 <div class="bg-white p-6 rounded-lg shadow space-y-4">
@@ -184,7 +187,7 @@
                         <div class="w-full sm:w-64">
                             <label class="block text-xs text-gray-600">Filtrar por Categoria</label>
                             <select id="filtroCatProdutos" class="w-full border p-2 rounded text-sm" onchange="renderizarTabelaProdutos()">
-                                <option value="TODAS">Todas as Categorias</option>
+                                <option value="TODAS">Todas as Categorias (10)</option>
                                 <option value="Balas e Pirulitos">Balas e Pirulitos</option>
                                 <option value="Bebidas">Bebidas</option>
                                 <option value="Biscoitos">Biscoitos</option>
@@ -448,7 +451,6 @@
                 });
             } catch(e) {
                 select.innerHTML = '<option value="">Erro ao carregar vendedores</option>';
-                console.log("Erro ao carregar vendedores:", e);
             }
         }
 
@@ -551,7 +553,7 @@
             if(!selectProd) return;
             selectProd.innerHTML = '<option value="">Selecione um produto...</option>';
             produtosCache.forEach(p => {
-                selectProd.innerHTML += `<option value="${p.id}">[${p.categoria || 'Geral'}] ${p.nome} - R$ ${parseFloat(p.preco).toFixed(2)} (Est: ${p.estoque})</option>`;
+                selectProd.innerHTML += `<option value="${p.id}">[${p.categoria || 'Mercearia'}] ${p.nome} - R$ ${parseFloat(p.preco).toFixed(2)} (Est: ${p.estoque})</option>`;
             });
         }
 
@@ -573,17 +575,23 @@
 
             produtosFiltrados.forEach(p => {
                 let fotoTag = p.foto ? `<img src="${p.foto}" class="w-10 h-10 object-cover rounded">` : `<span class="text-gray-400 text-xs">Sem foto</span>`;
+                
+                // Usando codificação segura para evitar erros de aspas ao passar strings na função de edição
+                let pNomeEscapado = p.nome.replace(/'/g, "\\'");
+                let pCatEscapada = (p.categoria || 'Mercearia').replace(/'/g, "\\'");
+                let pFotoEscapada = (p.foto || '').replace(/'/g, "\\'");
+
                 let acoesHtml = usuarioLogado.perfil === 'admin' ? 
-                    `<button onclick="prepararEdicaoProduto('${p.id}', '${p.nome}', '${p.categoria || 'Mercearia'}', ${p.preco}, ${p.estoque}, '${p.foto || ''}')" class="text-blue-600 hover:underline mr-2">Editar</button>
-                     <button onclick="excluirProduto('${p.id}')" class="text-red-600 hover:underline">Excluir</button>` : '';
+                    `<button onclick="prepararEdicaoProduto('${p.id}', '${pNomeEscapado}', '${pCatEscapada}', ${p.preco}, ${p.estoque}, '${pFotoEscapada}')" class="text-blue-600 hover:underline font-bold mr-3">Editar</button>
+                     <button onclick="excluirProduto('${p.id}')" class="text-red-600 hover:underline font-bold">Excluir</button>` : '';
 
                 tbody.innerHTML += `
                     <tr>
                         <td class="px-4 py-2">${fotoTag}</td>
                         <td class="px-4 py-2 font-medium text-gray-800">${p.nome}</td>
                         <td class="px-4 py-2"><span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">${p.categoria || 'Mercearia'}</span></td>
-                        <td class="px-4 py-2">R$ ${parseFloat(p.preco).toFixed(2)}</td>
-                        <td class="px-4 py-2">${p.estoque}</td>
+                        <td class="px-4 py-2 font-semibold text-gray-700">R$ ${parseFloat(p.preco).toFixed(2)}</td>
+                        <td class="px-4 py-2 font-semibold text-gray-700">${p.estoque}</td>
                         <td class="px-4 py-2 text-center">${acoesHtml}</td>
                     </tr>
                 `;
@@ -613,11 +621,7 @@
                     await db.collection("produtos").add(dados);
                     alert("Produto cadastrado com sucesso!");
                 }
-                document.getElementById('prodIdEdit').value = '';
-                document.getElementById('prodNome').value = '';
-                document.getElementById('prodPreco').value = '';
-                document.getElementById('prodEstoque').value = '';
-                document.getElementById('prodFoto').value = '';
+                limparFormularioProduto();
             } catch (e) {
                 alert("Erro ao salvar produto: " + e.message);
             }
@@ -630,11 +634,29 @@
             document.getElementById('prodPreco').value = preco;
             document.getElementById('prodEstoque').value = estoque;
             document.getElementById('prodFoto').value = foto;
+            
+            document.getElementById('tituloFormProduto').innerText = "Editando Produto: " + nome;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function limparFormularioProduto() {
+            document.getElementById('prodIdEdit').value = '';
+            document.getElementById('prodNome').value = '';
+            document.getElementById('prodPreco').value = '';
+            document.getElementById('prodEstoque').value = '';
+            document.getElementById('prodFoto').value = '';
+            document.getElementById('prodCategoria').value = 'Balas e Pirulitos';
+            document.getElementById('tituloFormProduto').innerText = "Cadastrar / Editar Produto";
         }
 
         async function excluirProduto(id) {
             if (confirm("Deseja realmente excluir este produto?")) {
-                await db.collection("produtos").doc(id).delete();
+                try {
+                    await db.collection("produtos").doc(id).delete();
+                    alert("Produto excluído com sucesso!");
+                } catch (e) {
+                    alert("Erro ao excluir: " + e.message);
+                }
             }
         }
 
@@ -971,7 +993,7 @@
         function copiarTextoParaAppPrinter() {
             const conteudo = document.getElementById('corpoReciboModal').innerText;
             navigator.clipboard.writeText(conteudo).then(() => {
-                alert("Texto copiado para a área de transferência! Cole no seu aplicativo de impressora térmica.");
+                alert("Texto copiado para a área de transferência!");
             });
         }
 

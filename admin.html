@@ -51,7 +51,8 @@
                 <button onclick="mudarAba('vendas')" class="bg-blue-600 text-white px-3 py-2 rounded text-sm font-bold hover:bg-blue-700">🛒 Vender / PDV</button>
                 <button onclick="mudarAba('produtos')" class="bg-indigo-600 text-white px-3 py-2 rounded text-sm font-bold hover:bg-indigo-700">📋 Produtos & Estoque</button>
                 <button onclick="mudarAba('clientes')" class="bg-green-600 text-white px-3 py-2 rounded text-sm font-bold hover:bg-green-700">👥 Clientes & Fiados</button>
-                <button id="btnTabHistorico" onclick="mudarAba('historico')" class="bg-purple-600 text-white px-3 py-2 rounded text-sm font-bold hover:bg-purple-700 hidden">📊 Relatório Vendas</button>
+                <button onclick="mudarAba('historico')" class="bg-purple-600 text-white px-3 py-2 rounded text-sm font-bold hover:bg-purple-700">📊 Minhas Vendas / Histórico</button>
+                <button id="btnTabRelatorioMensal" onclick="mudarAba('relatorioMensal')" class="bg-teal-600 text-white px-3 py-2 rounded text-sm font-bold hover:bg-teal-700 hidden">📅 Relatório Mensal Fechamento</button>
                 <button id="btnTabVendedores" onclick="mudarAba('vendedores')" class="bg-yellow-600 text-white px-3 py-2 rounded text-sm font-bold hover:bg-yellow-700 hidden">💼 Vendedores</button>
                 <button onclick="sairDoSistema()" class="bg-red-500 text-white px-3 py-2 rounded text-sm font-bold hover:bg-red-600">Sair</button>
             </div>
@@ -74,7 +75,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 p-4 bg-gray-50 rounded border">
                 <div>
                     <label class="block text-sm font-bold mb-1">Selecionar Produto:</label>
-                    <select id="vendaSelectProduto" class="w-full p-2 border rounded" onchange="preencherDadosProdutoVenda()"></select>
+                    <select id="vendaSelectProduto" class="w-full p-2 border rounded"></select>
                 </div>
                 <div>
                     <label class="block text-sm font-bold mb-1">Quantidade:</label>
@@ -115,7 +116,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-bold mb-1">Desconto (R$):</label>
-                    <input type="number" step="0.01" id="vendaDesconto" value="0.00" class="w-full p-2 border rounded" placeholder="0.00">
+                    <input type="number" step="0.01" id="vendaDesconto" value="0.00" class="w-full p-2 border rounded" placeholder="0.00" oninput="calcularTotalCarrinho()">
                     <span id="avisoDescontoVendedor" class="text-xs text-red-500 hidden">Vendedores externos não podem alterar preços ou dar descontos.</span>
                 </div>
                 <div class="text-right">
@@ -176,7 +177,7 @@
         <div id="aba-clientes" class="tab-content bg-white p-6 rounded-lg shadow hidden">
             <h2 class="text-lg font-bold text-gray-800 mb-4">Cadastro de Clientes & Controle Geral de Fiado</h2>
             
-            <form onsubmit="event.preventDefault(); salvarCliente();" class="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded border mb-6">
+            <form onsubmit="event.preventDefault(); salvarCliente();" class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded border mb-6">
                 <input type="hidden" id="cliIdEdit">
                 <div>
                     <label class="block text-sm font-bold mb-1">Nome / Razão Social:</label>
@@ -195,7 +196,13 @@
                     <label class="block text-sm font-bold mb-1">Endereço:</label>
                     <input type="text" id="cliEndereco" class="w-full p-2 border rounded" placeholder="Rua, Bairro, Nº">
                 </div>
-                <div class="md:col-span-4 flex justify-end">
+                <div>
+                    <label class="block text-sm font-bold mb-1">Vendedor Responsável:</label>
+                    <select id="cliVendedor" class="w-full p-2 border rounded">
+                        <option value="Geral / Empresa">Geral / Empresa</option>
+                    </select>
+                </div>
+                <div class="md:col-span-3 flex justify-end gap-2">
                     <button type="submit" class="bg-green-600 text-white font-bold px-6 py-2 rounded hover:bg-green-700">Salvar Cliente</button>
                 </div>
             </form>
@@ -207,28 +214,29 @@
                             <th class="px-4 py-2 text-left text-xs font-bold text-gray-600">Cliente</th>
                             <th class="px-4 py-2 text-left text-xs font-bold text-gray-600">CPF / CNPJ</th>
                             <th class="px-4 py-2 text-left text-xs font-bold text-gray-600">Telefone</th>
+                            <th class="px-4 py-2 text-left text-xs font-bold text-gray-600">Vendedor</th>
                             <th class="px-4 py-2 text-left text-xs font-bold text-gray-600">Saldo Devedor (Fiado)</th>
                             <th class="px-4 py-2 text-center text-xs font-bold text-gray-600">Ações / Fiado</th>
                         </tr>
                     </thead>
                     <tbody id="tabelaClientes" class="divide-y divide-gray-200">
-                        <tr><td colspan="5" class="text-center py-4 text-gray-400">Carregando clientes...</td></tr>
+                        <tr><td colspan="6" class="text-center py-4 text-gray-400">Carregando clientes...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- ABA 4: HISTÓRICO & RELATÓRIOS (ADMIN) -->
+        <!-- ABA 4: HISTÓRICO DE VENDAS -->
         <div id="aba-historico" class="tab-content bg-white p-6 rounded-lg shadow hidden">
-            <h2 class="text-lg font-bold text-gray-800 mb-4">Relatório Geral de Vendas & Faturamento</h2>
+            <h2 id="tituloHistorico" class="text-lg font-bold text-gray-800 mb-4">Minhas Vendas Realizadas</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <h4 class="text-sm font-bold text-blue-600">Faturamento Total Acumulado</h4>
+                    <h4 id="labelTotalFiltro" class="text-sm font-bold text-blue-600">Faturamento Exibido</h4>
                     <p id="relFaturamentoTotal" class="text-3xl font-bold text-blue-800">R$ 0,00</p>
                 </div>
                 <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                    <h4 class="text-sm font-bold text-green-600">Total de Pedidos Realizados</h4>
+                    <h4 class="text-sm font-bold text-green-600">Total de Pedidos</h4>
                     <p id="relQtdPedidos" class="text-3xl font-bold text-green-800">0</p>
                 </div>
             </div>
@@ -252,7 +260,55 @@
             </div>
         </div>
 
-        <!-- ABA 5: GESTÃO DE VENDEDORES (ADMIN) -->
+        <!-- ABA 5: RELATÓRIO MENSAL DE FECHAMENTO (ADMIN) -->
+        <div id="aba-relatorioMensal" class="tab-content bg-white p-6 rounded-lg shadow hidden">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Relatório Mensal de Fechamento</h2>
+            
+            <div class="flex flex-wrap gap-4 items-center bg-gray-50 p-4 rounded border mb-6">
+                <div>
+                    <label class="block text-sm font-bold mb-1">Selecione o Mês / Ano:</label>
+                    <input type="month" id="filtroMesAno" class="p-2 border rounded" onchange="carregarRelatorioMensal()">
+                </div>
+                <div class="flex items-end">
+                    <button onclick="carregarRelatorioMensal()" class="bg-teal-600 text-white font-bold px-4 py-2 rounded hover:bg-teal-700">Atualizar Fechamento</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-teal-50 p-4 rounded-lg border border-teal-200">
+                    <h4 class="text-sm font-bold text-teal-600">Faturamento do Mês</h4>
+                    <p id="mesFaturamentoTotal" class="text-3xl font-bold text-teal-800">R$ 0,00</p>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <h4 class="text-sm font-bold text-blue-600">Total de Pedidos no Mês</h4>
+                    <p id="mesQtdPedidos" class="text-3xl font-bold text-blue-800">0</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                    <h4 class="text-sm font-bold text-purple-600">Ticket Médio</h4>
+                    <p id="mesTicketMedio" class="text-3xl font-bold text-purple-800">R$ 0,00</p>
+                </div>
+            </div>
+
+            <h3 class="text-md font-bold text-gray-700 mb-2">Vendas do Mês Selecionado</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 border">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-xs font-bold text-gray-600">Data</th>
+                            <th class="px-4 py-2 text-left text-xs font-bold text-gray-600">Cliente</th>
+                            <th class="px-4 py-2 text-left text-xs font-bold text-gray-600">Vendedor</th>
+                            <th class="px-4 py-2 text-left text-xs font-bold text-gray-600">Forma Pgto</th>
+                            <th class="px-4 py-2 text-left text-xs font-bold text-gray-600">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaRelatorioMensal" class="divide-y divide-gray-200">
+                        <tr><td colspan="5" class="text-center py-4 text-gray-400">Selecione o mês para gerar o relatório.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ABA 6: GESTÃO DE VENDEDORES (ADMIN) -->
         <div id="aba-vendedores" class="tab-content bg-white p-6 rounded-lg shadow hidden">
             <h2 class="text-lg font-bold text-gray-800 mb-4">Gestão de Vendedores</h2>
             
@@ -325,9 +381,11 @@
         let carrinhoVenda = [];
         let produtosCache = [];
         let clientesCache = [];
+        let vendedoresCache = [];
+        let vendasCacheGlobal = [];
         let pedidoAtualCache = null;
 
-        // Validação rigorosa de CPF e CNPJ reais
+        // Validação de CPF e CNPJ
         function validarCPF(cpf) {
             cpf = cpf.replace(/[^\d]/g, '');
             if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
@@ -386,7 +444,16 @@
         window.onload = function() {
             carregarVendedoresSelect();
             ouvirProdutos();
+            ouvirVendedoresCache();
             ouvirClientes();
+            ouvirVendasGerais();
+            
+            // Definir mês atual no input de relatório mensal
+            const dataHoje = new Date();
+            const ano = dataHoje.getFullYear();
+            const mes = String(dataHoje.getMonth() + 1).padStart(2, '0');
+            const inputMes = document.getElementById('filtroMesAno');
+            if(inputMes) inputMes.value = `${ano}-${mes}`;
         };
 
         function alternarCampoVendedor() {
@@ -406,6 +473,23 @@
                 snapshot.forEach(doc => {
                     const v = doc.data();
                     selectLogin.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
+                });
+            });
+        }
+
+        function ouvirVendedoresCache() {
+            db.collection("vendedores").orderBy("nome").onSnapshot(snapshot => {
+                vendedoresCache = [];
+                const selectCliVendedor = document.getElementById('cliVendedor');
+                if(selectCliVendedor) {
+                    selectCliVendedor.innerHTML = '<option value="Geral / Empresa">Geral / Empresa</option>';
+                }
+                snapshot.forEach(doc => {
+                    const v = doc.data();
+                    vendedoresCache.push(v);
+                    if(selectCliVendedor) {
+                        selectCliVendedor.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
+                    }
                 });
             });
         }
@@ -453,24 +537,28 @@
             document.getElementById('vendaVendedorExibicao').value = usuarioLogado.nome;
 
             if (usuarioLogado.perfil === 'admin') {
-                document.getElementById('btnTabHistorico').classList.remove('hidden');
+                document.getElementById('btnTabRelatorioMensal').classList.remove('hidden');
                 document.getElementById('btnTabVendedores').classList.remove('hidden');
                 document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
                 document.querySelectorAll('.th-acoes-prod').forEach(el => el.classList.remove('hidden'));
                 document.getElementById('vendaDesconto').removeAttribute('readonly');
                 document.getElementById('avisoDescontoVendedor').classList.add('hidden');
-                carregarHistoricoAdmin();
+                document.getElementById('tituloHistorico').innerText = 'Histórico Geral de Vendas da Empresa';
+                document.getElementById('labelTotalFiltro').innerText = 'Faturamento Total da Empresa';
                 carregarTabelaVendedores();
             } else {
-                document.getElementById('btnTabHistorico').classList.add('hidden');
+                document.getElementById('btnTabRelatorioMensal').classList.add('hidden');
                 document.getElementById('btnTabVendedores').classList.add('hidden');
                 document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
                 document.querySelectorAll('.th-acoes-prod').forEach(el => el.classList.add('hidden'));
                 document.getElementById('vendaDesconto').value = '0.00';
                 document.getElementById('vendaDesconto').setAttribute('readonly', true);
                 document.getElementById('avisoDescontoVendedor').classList.remove('hidden');
+                document.getElementById('tituloHistorico').innerText = 'Minhas Vendas Realizadas';
+                document.getElementById('labelTotalFiltro').innerText = 'Meu Faturamento Pessoal';
             }
             mudarAba('vendas');
+            renderizarHistoricoVendas();
         }
 
         function sairDoSistema() {
@@ -484,6 +572,9 @@
         function mudarAba(abaId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(`aba-${abaId}`).classList.remove('hidden');
+            if (abaId === 'relatorioMensal' && usuarioLogado.perfil === 'admin') {
+                carregarRelatorioMensal();
+            }
         }
 
         // PRODUTOS & ESTOQUE
@@ -564,24 +655,31 @@
             db.collection("clientes").orderBy("nome").onSnapshot(snapshot => {
                 clientesCache = [];
                 const selectCli = document.getElementById('vendaCliente');
-                const tbody = document.getElementById('tabelaClientes');
+                const tbodyCli = document.getElementById('tabelaClientes');
                 selectCli.innerHTML = '<option value="">Selecione o cliente...</option>';
-                tbody.innerHTML = '';
+                tbodyCli.innerHTML = '';
+
+                if (snapshot.empty) {
+                    tbodyCli.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-400">Nenhum cliente cadastrado.</td></tr>`;
+                    return;
+                }
 
                 snapshot.forEach(doc => {
                     const c = { id: doc.id, ...doc.data() };
                     clientesCache.push(c);
-                    selectCli.innerHTML += `<option value="${c.id}">${c.nome} (${c.doc || 'Sem Doc'})</option>`;
+                    const saldoDevedor = Number(c.saldoDevedor || 0);
 
-                    tbody.innerHTML += `
+                    selectCli.innerHTML += `<option value="${c.id}">${c.nome} (Doc: ${c.doc || 'N/I'})</option>`;
+
+                    tbodyCli.innerHTML += `
                         <tr>
-                            <td class="px-4 py-2 text-sm font-semibold">${c.nome}</td>
-                            <td class="px-4 py-2 text-sm">${c.doc || '-'}</td>
-                            <td class="px-4 py-2 text-sm">${c.tel || '-'}</td>
-                            <td class="px-4 py-2 text-sm font-bold text-red-600">R$ ${Number(c.debito || 0).toFixed(2)}</td>
-                            <td class="px-4 py-2 text-center space-x-1">
-                                <button onclick="gerenciarFiado('${c.id}', '${c.nome}', ${c.debito || 0}, 'abater')" class="bg-indigo-600 text-white px-2 py-1 rounded text-xs font-bold">Abater</button>
-                                <button onclick="gerenciarFiado('${c.id}', '${c.nome}', ${c.debito || 0}, 'acrescentar')" class="bg-orange-600 text-white px-2 py-1 rounded text-xs font-bold">Acrescentar</button>
+                            <td class="px-4 py-2 text-sm text-gray-800 font-semibold">${c.nome}</td>
+                            <td class="px-4 py-2 text-sm text-gray-600">${c.doc || '-'}</td>
+                            <td class="px-4 py-2 text-sm text-gray-600">${c.tel || '-'}</td>
+                            <td class="px-4 py-2 text-sm text-blue-600 font-medium">${c.vendedor || 'Geral / Empresa'}</td>
+                            <td class="px-4 py-2 text-sm font-bold ${saldoDevedor > 0 ? 'text-red-600' : 'text-green-600'}">R$ ${saldoDevedor.toFixed(2)}</td>
+                            <td class="px-4 py-2 text-center">
+                                <button onclick="quitarFiado('${c.id}', ${saldoDevedor})" class="bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold mr-1">Baixar Fiado</button>
                                 <button onclick="deletarCliente('${c.id}')" class="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">Excluir</button>
                             </td>
                         </tr>
@@ -593,38 +691,18 @@
         function salvarCliente() {
             const id = document.getElementById('cliIdEdit').value;
             const nome = document.getElementById('cliNome').value;
-            const doc = document.getElementById('cliDoc').value.trim();
+            const doc = document.getElementById('cliDoc').value;
             const tel = document.getElementById('cliTel').value;
             const endereco = document.getElementById('cliEndereco').value;
+            const vendedor = document.getElementById('cliVendedor').value;
 
-            const limpo = doc.replace(/[^\d]/g, '');
-            if (limpo.length === 11 && !validarCPF(limpo)) return alert("CPF inválido! Corrija antes de salvar.");
-            if (limpo.length === 14 && !validarCNPJ(limpo)) return alert("CNPJ inválido! Corrija antes de salvar.");
-            if (limpo.length !== 11 && limpo.length !== 14) return alert("O documento precisa ter 11 dígitos (CPF) ou 14 dígitos (CNPJ).");
-
-            const dados = { nome, doc, tel, endereco };
-            const acao = id ? db.collection("clientes").doc(id).update(dados) : db.collection("clientes").add({ ...dados, debito: 0 });
+            const dados = { nome, doc, tel, endereco, vendedor };
+            const acao = id ? db.collection("clientes").doc(id).update(dados) : db.collection("clientes").add({ ...dados, saldoDevedor: 0 });
 
             acao.then(() => {
                 alert("Cliente salvo com sucesso!");
+                document.querySelector('#aba-clientes form').reset();
                 document.getElementById('cliIdEdit').value = '';
-                document.getElementById('cliNome').value = '';
-                document.getElementById('cliDoc').value = '';
-                document.getElementById('cliTel').value = '';
-                document.getElementById('cliEndereco').value = '';
-            });
-        }
-
-        function gerenciarFiado(id, nome, debitoAtual, tipo) {
-            const msg = `Cliente: ${nome}\nSaldo Devedor Atual: R$ ${debitoAtual.toFixed(2)}\n\nDigite o valor a ${tipo === 'abater' ? 'pagar/abater' : 'acrescentar'} (ex: 50.00):`;
-            const valorStr = prompt(msg);
-            if (!valorStr) return;
-            const valor = parseFloat(valorStr);
-            if (isNaN(valor) || valor <= 0) return alert("Valor inválido.");
-
-            let novoDebito = tipo === 'abater' ? Math.max(0, debitoAtual - valor) : debitoAtual + valor;
-            db.collection("clientes").doc(id).update({ debito: novoDebito }).then(() => {
-                alert(`Operação realizada! Novo saldo devedor: R$ ${novoDebito.toFixed(2)}`);
             });
         }
 
@@ -634,37 +712,46 @@
             }
         }
 
-        // CARRINHO & VENDAS MULTI-ITENS
-        function preencherDadosProdutoVenda() {
-            document.getElementById('vendaQtdProduto').focus();
+        function quitarFiado(clienteId, saldoAtual) {
+            if (saldoAtual <= 0) return alert("Este cliente não possui saldo devedor em aberto.");
+            const valorPago = prompt(`Saldo devedor atual: R$ ${saldoAtual.toFixed(2)}\nDigite o valor que o cliente está pagando (Baixa):`);
+            if (!valorPago) return;
+            const valorNum = parseFloat(valorPago.replace(',', '.')) || 0;
+            if (valorNum <= 0) return alert("Valor inválido.");
+
+            const novoSaldo = Math.max(0, saldoAtual - valorNum);
+            db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo }).then(() => {
+                alert(`Baixa efetuada com sucesso! Novo saldo devedor: R$ ${novoSaldo.toFixed(2)}`);
+            });
         }
 
+        // CARRINHO & VENDAS PDV
         function adicionarItemCarrinho() {
             const prodId = document.getElementById('vendaSelectProduto').value;
             const qtd = parseInt(document.getElementById('vendaQtdProduto').value) || 0;
+
             if (!prodId) return alert("Selecione um produto.");
             if (qtd <= 0) return alert("Quantidade inválida.");
 
             const produto = produtosCache.find(p => p.id === prodId);
-            if (!produto) return alert("Produto não encontrado.");
-            if (produto.estoque < qtd) return alert(`Estoque insuficiente! Disponível: ${produto.estoque}`);
+            if (!produto) return alert("Produto não encontrado no cache.");
 
-            const itemExistente = carrinhoVenda.find(i => i.id === prodId);
-            if (itemExistente) {
-                if (produto.estoque < (itemExistente.qtd + qtd)) return alert("Estoque insuficiente para adicionar mais.");
-                itemExistente.qtd += qtd;
-                itemExistente.subtotal = itemExistente.qtd * itemExistente.preco;
-            } else {
-                carrinhoVenda.push({
-                    id: produto.id,
-                    nome: produto.nome,
-                    preco: produto.preco,
-                    qtd: qtd,
-                    subtotal: produto.preco * qtd
-                });
+            if (produto.estoque < qtd) {
+                return alert(`Estoque insuficiente! Disponível em estoque: ${produto.estoque}`);
             }
+
+            const subtotal = produto.preco * qtd;
+            carrinhoVenda.push({
+                produtoId: produto.id,
+                nome: produto.nome,
+                precoUnit: produto.preco,
+                qtd: qtd,
+                subtotal: subtotal
+            });
+
             renderizarCarrinho();
             document.getElementById('vendaQtdProduto').value = 1;
+            document.getElementById('vendaSelectProduto').value = '';
         }
 
         function removerItemCarrinho(index) {
@@ -675,154 +762,280 @@
         function renderizarCarrinho() {
             const tbody = document.getElementById('tabelaCarrinho');
             tbody.innerHTML = '';
+
             if (carrinhoVenda.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-400">Carrinho vazio</td></tr>`;
-                document.getElementById('vendaTotalGeral').innerText = '0,00';
+                calcularTotalCarrinho();
                 return;
             }
 
-            let total = 0;
-            carrinhoVenda.forEach((item, idx) => {
-                total += item.subtotal;
+            carrinhoVenda.forEach((item, index) => {
                 tbody.innerHTML += `
                     <tr>
-                        <td class="px-4 py-2 text-sm">${item.nome}</td>
-                        <td class="px-4 py-2 text-sm">R$ ${item.preco.toFixed(2)}</td>
-                        <td class="px-4 py-2 text-sm">${item.qtd}</td>
-                        <td class="px-4 py-2 text-sm font-bold">R$ ${item.subtotal.toFixed(2)}</td>
-                        <td class="px-4 py-2 text-center"><button onclick="removerItemCarrinho(${idx})" class="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">X</button></td>
+                        <td class="px-4 py-2 text-sm text-gray-800">${item.nome}</td>
+                        <td class="px-4 py-2 text-sm text-gray-600">R$ ${item.precoUnit.toFixed(2)}</td>
+                        <td class="px-4 py-2 text-sm text-gray-600">${item.qtd}</td>
+                        <td class="px-4 py-2 text-sm text-gray-800 font-semibold">R$ ${item.subtotal.toFixed(2)}</td>
+                        <td class="px-4 py-2 text-center">
+                            <button onclick="removerItemCarrinho(${index})" class="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">Remover</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            calcularTotalCarrinho();
+        }
+
+        function calcularTotalCarrinho() {
+            let somaSubtotais = carrinhoVenda.reduce((acc, item) => acc + item.subtotal, 0);
+            let desconto = parseFloat(document.getElementById('vendaDesconto').value) || 0;
+            let totalGeral = Math.max(0, somaSubtotais - desconto);
+
+            document.getElementById('vendaTotalGeral').innerText = totalGeral.toFixed(2);
+        }
+
+        async function finalizarVenda() {
+            const clienteId = document.getElementById('vendaCliente').value;
+            if (!clienteId) return alert("Selecione o cliente para o pedido.");
+            if (carrinhoVenda.length === 0) return alert("O carrinho está vazio.");
+
+            const cliente = clientesCache.find(c => c.id === clienteId);
+            const formaPgto = document.getElementById('vendaFormaPgto').value;
+            const desconto = parseFloat(document.getElementById('vendaDesconto').value) || 0;
+            let somaSubtotais = carrinhoVenda.reduce((acc, item) => acc + item.subtotal, 0);
+            let totalGeral = Math.max(0, somaSubtotais - desconto);
+
+            for (let item of carrinhoVenda) {
+                const p = produtosCache.find(prod => prod.id === item.produtoId);
+                if (!p || p.estoque < item.qtd) {
+                    return alert(`Erro: O produto ${item.nome} ficou sem estoque suficiente.`);
+                }
+            }
+
+            for (let item of carrinhoVenda) {
+                const p = produtosCache.find(prod => prod.id === item.produtoId);
+                const novoEstoque = p.estoque - item.qtd;
+                await db.collection("produtos").doc(item.produtoId).update({ estoque: novoEstoque });
+            }
+
+            if (formaPgto === 'Fiado') {
+                const saldoAtual = Number(cliente.saldoDevedor || 0);
+                const novoSaldo = saldoAtual + totalGeral;
+                await db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo });
+            }
+
+            const dadosPedido = {
+                data: new Date().toISOString(),
+                clienteNome: cliente.nome,
+                clienteDoc: cliente.doc || '',
+                vendedor: usuarioLogado.nome,
+                itens: carrinhoVenda,
+                subtotal: somaSubtotais,
+                desconto: desconto,
+                total: totalGeral,
+                formaPgto: formaPgto
+            };
+
+            const docRef = await db.collection("vendas").add(dadosPedido);
+            pedidoAtualCache = { id: docRef.id, ...dadosPedido };
+
+            alert("Venda realizada com sucesso!");
+            carrinhoVenda = [];
+            renderizarCarrinho();
+            document.getElementById('vendaDesconto').value = '0.00';
+
+            abrirModalComprovante(pedidoAtualCache);
+        }
+
+        // COMPROVANTE & RECIBO
+        function abrirModalComprovante(pedido) {
+            const corpo = document.getElementById('corpoReciboModal');
+            let htmlItens = '';
+            pedido.itens.forEach(i => {
+                htmlItens += `${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}\n`;
+            });
+
+            corpo.innerText = `--------------------------------\n` +
+                              `     DISTRIBUIDORA FRAZÃO       \n` +
+                              `--------------------------------\n` +
+                              `Pedido ID: ${pedido.id.substring(0,8)}\n` +
+                              `Data: ${new Date(pedido.data).toLocaleString()}\n` +
+                              `Cliente: ${pedido.clienteNome}\n` +
+                              `Vendedor: ${pedido.vendedor}\n` +
+                              `--------------------------------\n` +
+                              `ITENS:\n${htmlItens}` +
+                              `--------------------------------\n` +
+                              `Subtotal: R$ ${pedido.subtotal.toFixed(2)}\n` +
+                              `Desconto: R$ ${pedido.desconto.toFixed(2)}\n` +
+                              `TOTAL: R$ ${pedido.total.toFixed(2)}\n` +
+                              `Forma Pgto: ${pedido.formaPgto}\n` +
+                              `--------------------------------\n` +
+                              `   Obrigado pela preferência!   `;
+
+            document.getElementById('modalComprovante').classList.remove('hidden');
+        }
+
+        function fecharModalComprovante() {
+            document.getElementById('modalComprovante').classList.add('hidden');
+        }
+
+        function imprimirCupomIsolado() {
+            window.print();
+        }
+
+        function copiarTextoParaAppPrinter() {
+            const texto = document.getElementById('corpoReciboModal').innerText;
+            navigator.clipboard.writeText(texto).then(() => {
+                alert("Cupom copiado para a área de transferência! Cole no seu aplicativo de impressora térmica Bluetooth.");
+            });
+        }
+
+        function compartilharWhatsApp() {
+            const texto = document.getElementById('corpoReciboModal').innerText;
+            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
+            window.open(url, '_blank');
+        }
+
+        // HISTÓRICO DE VENDAS
+        function ouvirVendasGerais() {
+            db.collection("vendas").orderBy("data", "desc").onSnapshot(snapshot => {
+                vendasCacheGlobal = [];
+                snapshot.forEach(doc => {
+                    vendasCacheGlobal.push({ id: doc.id, ...doc.data() });
+                });
+                renderizarHistoricoVendas();
+                if(usuarioLogado.perfil === 'admin') {
+                    carregarRelatorioMensal();
+                }
+            });
+        }
+
+        function renderizarHistoricoVendas() {
+            const tbody = document.getElementById('tabelaHistorico');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+
+            let vendasFiltradas = vendasCacheGlobal;
+            if (usuarioLogado.perfil === 'vendedor') {
+                vendasFiltradas = vendasCacheGlobal.filter(v => v.vendedor === usuarioLogado.nome);
+            }
+
+            let faturamentoTotal = 0;
+            let qtdPedidos = 0;
+
+            if (vendasFiltradas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-400">Nenhuma venda registrada.</td></tr>`;
+                document.getElementById('relFaturamentoTotal').innerText = 'R$ 0,00';
+                document.getElementById('relQtdPedidos').innerText = '0';
+                return;
+            }
+
+            vendasFiltradas.forEach(v => {
+                faturamentoTotal += Number(v.total || 0);
+                qtdPedidos++;
+
+                const acoesAdmin = usuarioLogado.perfil === 'admin' ? `
+                    <button onclick="deletarVenda('${v.id}')" class="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">Excluir</button>
+                ` : '';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="px-4 py-2 text-sm text-gray-800">#${v.id.substring(0,6)}<br><span class="text-xs text-gray-500">${new Date(v.data).toLocaleString()}</span></td>
+                        <td class="px-4 py-2 text-sm text-gray-800">${v.clienteNome}</td>
+                        <td class="px-4 py-2 text-sm text-gray-600">${v.vendedor}</td>
+                        <td class="px-4 py-2 text-sm text-gray-600">${v.formaPgto}</td>
+                        <td class="px-4 py-2 text-sm text-green-600 font-bold">R$ ${Number(v.total).toFixed(2)}</td>
+                        <td class="px-4 py-2 text-center">
+                            <button onclick='abrirModalComprovante(${JSON.stringify(v)})' class="bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold mr-1">Ver Recibo</button>
+                            ${acoesAdmin}
+                        </td>
                     </tr>
                 `;
             });
 
-            const desconto = usuarioLogado.perfil === 'admin' ? (parseFloat(document.getElementById('vendaDesconto').value) || 0) : 0;
-            const totalFinal = Math.max(0, total - desconto);
-            document.getElementById('vendaTotalGeral').innerText = totalFinal.toFixed(2);
+            document.getElementById('relFaturamentoTotal').innerText = `R$ ${faturamentoTotal.toFixed(2)}`;
+            document.getElementById('relQtdPedidos').innerText = qtdPedidos;
         }
 
-        document.getElementById('vendaDesconto').addEventListener('input', renderizarCarrinho);
-
-        async function finalizarVenda() {
-            if (carrinhoVenda.length === 0) return alert("O carrinho está vazio.");
-            const clienteId = document.getElementById('vendaCliente').value;
-            if (!clienteId) return alert("Selecione o cliente.");
-
-            const clienteObj = clientesCache.find(c => c.id === clienteId);
-            const formaPgto = document.getElementById('vendaFormaPgto').value;
-            const desconto = usuarioLogado.perfil === 'admin' ? (parseFloat(document.getElementById('vendaDesconto').value) || 0) : 0;
-            
-            let subtotal = carrinhoVenda.reduce((acc, item) => acc + item.subtotal, 0);
-            let totalFinal = Math.max(0, subtotal - desconto);
-
-            try {
-                const counterRef = db.collection("configuracoes").doc("contador_pedidos");
-                const counterDoc = await counterRef.get();
-                let proximoNumero = 1;
-                if (counterDoc.exists) {
-                    proximoNumero = (counterDoc.data().ultimo || 0) + 1;
-                }
-                await counterRef.set({ ultimo: proximoNumero });
-                const numeroFormatado = String(proximoNumero).padStart(4, '0');
-
-                const dadosVenda = {
-                    numeroPedido: numeroFormatado,
-                    data: new Date().toISOString(),
-                    clienteId: clienteId,
-                    clienteNome: clienteObj ? clienteObj.nome : 'Cliente',
-                    vendedor: usuarioLogado.nome,
-                    itens: carrinhoVenda,
-                    subtotal: subtotal,
-                    desconto: desconto,
-                    total: totalFinal,
-                    formaPagamento: formaPgto
-                };
-
-                for (let item of carrinhoVenda) {
-                    const prodRef = db.collection("produtos").doc(item.id);
-                    const snap = await prodRef.get();
-                    if (snap.exists) {
-                        const novoEstoque = Math.max(0, snap.data().estoque - item.qtd);
-                        await prodRef.update({ estoque: novoEstoque });
-                    }
-                }
-
-                if (formaPgto === 'Fiado' && clienteObj) {
-                    const novoDebito = (Number(clienteObj.debito) || 0) + totalFinal;
-                    await db.collection("clientes").doc(clienteId).update({ debito: novoDebito });
-                }
-
-                const docRef = await db.collection("vendas").add(dadosVenda);
-                pedidoAtualCache = { id: docRef.id, ...dadosVenda };
-
-                alert(`Venda #${numeroFormatado} realizada com sucesso!`);
-                carrinhoVenda = [];
-                renderizarCarrinho();
-                document.getElementById('vendaDesconto').value = '0.00';
-                
-                abrirModalComprovantePorObjeto(pedidoAtualCache);
-                if (usuarioLogado.perfil === 'admin') carregarHistoricoAdmin();
-            } catch (err) {
-                alert("Erro ao finalizar venda: " + err.message);
+        function deletarVenda(id) {
+            if (usuarioLogado.perfil !== 'admin') return alert("Apenas o administrador master pode excluir vendas.");
+            if (confirm("Deseja realmente excluir este registro de venda?")) {
+                db.collection("vendas").doc(id).delete();
             }
         }
 
-        // HISTÓRICO & RELATÓRIOS (ADMIN)
-        function carregarHistoricoAdmin() {
-            db.collection("vendas").orderBy("data", "desc").onSnapshot(snapshot => {
-                const tbody = document.getElementById('tabelaHistorico');
-                tbody.innerHTML = '';
-                let fatTotal = 0;
-                let qtdPedidos = 0;
+        // RELATÓRIO MENSAL DE FECHAMENTO (ADMIN)
+        function carregarRelatorioMensal() {
+            if (usuarioLogado.perfil !== 'admin') return;
+            const inputMes = document.getElementById('filtroMesAno').value;
+            if (!inputMes) return;
 
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-400">Nenhuma venda registrada.</td></tr>`;
-                    document.getElementById('relFaturamentoTotal').innerText = 'R$ 0,00';
-                    document.getElementById('relQtdPedidos').innerText = '0';
-                    return;
-                }
+            const tbody = document.getElementById('tabelaRelatorioMensal');
+            tbody.innerHTML = '';
 
-                snapshot.forEach(doc => {
-                    const v = { id: doc.id, ...doc.data() };
-                    fatTotal += Number(v.total || 0);
-                    qtdPedidos++;
+            // inputMes vem no formato "YYYY-MM"
+            const vendasDoMes = vendasCacheGlobal.filter(v => {
+                if(!v.data) return false;
+                return v.data.startsWith(inputMes);
+            });
 
-                    tbody.innerHTML += `
-                        <tr>
-                            <td class="px-4 py-2 text-sm">
-                                <strong>#${v.numeroPedido || '0000'}</strong><br>
-                                <span class="text-xs text-gray-500">${new Date(v.data).toLocaleString('pt-BR')}</span>
-                            </td>
-                            <td class="px-4 py-2 text-sm">${v.clienteNome}</td>
-                            <td class="px-4 py-2 text-sm">${v.vendedor}</td>
-                            <td class="px-4 py-2 text-sm">${v.formaPagamento}</td>
-                            <td class="px-4 py-2 text-sm font-bold text-green-600">R$ ${Number(v.total).toFixed(2)}</td>
-                            <td class="px-4 py-2 text-center">
-                                <button onclick="abrirModalComprovantePorId('${v.id}')" class="bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold">Ver Comprovante</button>
-                            </td>
-                        </tr>
-                    `;
-                });
+            let faturamentoMes = 0;
+            let qtdMes = vendasDoMes.length;
 
-                document.getElementById('relFaturamentoTotal').innerText = `R$ ${fatTotal.toFixed(2)}`;
-                document.getElementById('relQtdPedidos').innerText = qtdPedidos;
+            if (vendasDoMes.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-400">Nenhuma venda encontrada para este mês.</td></tr>`;
+                document.getElementById('mesFaturamentoTotal').innerText = 'R$ 0,00';
+                document.getElementById('mesQtdPedidos').innerText = '0';
+                document.getElementById('mesTicketMedio').innerText = 'R$ 0,00';
+                return;
+            }
+
+            vendasDoMes.forEach(v => {
+                faturamentoMes += Number(v.total || 0);
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="px-4 py-2 text-sm text-gray-800">${new Date(v.data).toLocaleDateString()}</td>
+                        <td class="px-4 py-2 text-sm text-gray-800">${v.clienteNome}</td>
+                        <td class="px-4 py-2 text-sm text-gray-600">${v.vendedor}</td>
+                        <td class="px-4 py-2 text-sm text-gray-600">${v.formaPgto}</td>
+                        <td class="px-4 py-2 text-sm text-teal-700 font-bold">R$ ${Number(v.total).toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+            let ticketMedio = qtdMes > 0 ? faturamentoMes / qtdMes : 0;
+
+            document.getElementById('mesFaturamentoTotal').innerText = `R$ ${faturamentoMes.toFixed(2)}`;
+            document.getElementById('mesQtdPedidos').innerText = qtdMes;
+            document.getElementById('mesTicketMedio').innerText = `R$ ${ticketMedio.toFixed(2)}`;
+        }
+
+        // GESTÃO DE VENDEDORES (ADMIN)
+        function salvarVendedor() {
+            const nome = document.getElementById('vendNome').value;
+            const senha = document.getElementById('vendSenha').value;
+
+            db.collection("vendedores").add({ nome, senha }).then(() => {
+                alert("Vendedor cadastrado com sucesso!");
+                document.querySelector('#aba-vendedores form').reset();
             });
         }
 
-        // GESTÃO DE VENDEDORES
         function carregarTabelaVendedores() {
             db.collection("vendedores").orderBy("nome").onSnapshot(snapshot => {
                 const tbody = document.getElementById('tabelaVendedores');
                 tbody.innerHTML = '';
+
                 if (snapshot.empty) {
                     tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-gray-400">Nenhum vendedor cadastrado.</td></tr>`;
                     return;
                 }
+
                 snapshot.forEach(doc => {
                     const v = { id: doc.id, ...doc.data() };
                     tbody.innerHTML += `
                         <tr>
-                            <td class="px-4 py-2 text-sm font-semibold">${v.nome}</td>
-                            <td class="px-4 py-2 text-sm">••••</td>
+                            <td class="px-4 py-2 text-sm text-gray-800 font-semibold">${v.nome}</td>
+                            <td class="px-4 py-2 text-sm text-gray-600">••••••</td>
                             <td class="px-4 py-2 text-center">
                                 <button onclick="deletarVendedor('${v.id}')" class="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">Excluir</button>
                             </td>
@@ -832,178 +1045,10 @@
             });
         }
 
-        function salvarVendedor() {
-            if (usuarioLogado.perfil !== 'admin') return alert("Apenas administradores.");
-            const nome = document.getElementById('vendNome').value;
-            const senha = document.getElementById('vendSenha').value;
-
-            db.collection("vendedores").add({ nome, senha }).then(() => {
-                alert("Vendedor cadastrado com sucesso!");
-                document.getElementById('vendNome').value = '';
-                document.getElementById('vendSenha').value = '';
-            });
-        }
-
         function deletarVendedor(id) {
-            if (confirm("Excluir vendedor?")) {
+            if (confirm("Deseja excluir este vendedor?")) {
                 db.collection("vendedores").doc(id).delete();
             }
-        }
-
-        // MODAL E COMPROVANTE TÉRMICO
-        async function abrirModalComprovantePorId(vendaId) {
-            try {
-                const docSnap = await db.collection("vendas").doc(vendaId).get();
-                if (!docSnap.exists) return alert("Pedido não encontrado.");
-                const pedido = { id: docSnap.id, ...docSnap.data() };
-                abrirModalComprovantePorObjeto(pedido);
-            } catch (err) {
-                alert("Erro ao carregar comprovante: " + err.message);
-            }
-        }
-
-        function abrirModalComprovantePorObjeto(pedido) {
-            pedidoAtualCache = pedido;
-            let itensHtml = '';
-            if (pedido.itens && Array.isArray(pedido.itens)) {
-                pedido.itens.forEach(i => {
-                    itensHtml += `<tr><td>${i.nome}</td><td>${i.qtd}x R$${i.preco.toFixed(2)}</td><td style="text-align:right;">R$${i.subtotal.toFixed(2)}</td></tr>`;
-                });
-            }
-
-            document.getElementById('corpoReciboModal').innerHTML = `
-                <div style="text-align:center; font-weight:bold;">DISTRIBUIDORA FRAZÃO</div>
-                <div style="text-align:center; font-size:10px; margin-bottom:6px;">Comprovante de Venda</div>
-                <div><strong>Pedido:</strong> #${pedido.numeroPedido || '0000'}</div>
-                <div><strong>Data:</strong> ${new Date(pedido.data).toLocaleString('pt-BR')}</div>
-                <div><strong>Cliente:</strong> ${pedido.clienteNome}</div>
-                <div><strong>Vendedor:</strong> ${pedido.vendedor}</div>
-                <div><strong>Pagamento:</strong> ${pedido.formaPagamento}</div>
-                <hr style="border-top:1px dashed #000; margin:4px 0;">
-                <table style="width:100%; font-size:11px;">${itensHtml}</table>
-                <hr style="border-top:1px dashed #000; margin:4px 0;">
-                <div style="text-align:right;">Subtotal: R$ ${Number(pedido.subtotal || 0).toFixed(2)}</div>
-                ${pedido.desconto > 0 ? `<div style="text-align:right;">Desconto: - R$ ${Number(pedido.desconto).toFixed(2)}</div>` : ''}
-                <div style="text-align:right; font-weight:bold; font-size:13px;">TOTAL: R$ ${Number(pedido.total || 0).toFixed(2)}</div>
-            `;
-            document.getElementById('modalComprovante').classList.remove('hidden');
-        }
-
-        function fecharModalComprovante() {
-            document.getElementById('modalComprovante').classList.add('hidden');
-        }
-
-        // IMPRESSÃO TÉRMICA COMPUTADOR
-        function imprimirCupomIsolado() {
-            if (!pedidoAtualCache) return;
-            let itensHtml = '';
-            if (pedidoAtualCache.itens && Array.isArray(pedidoAtualCache.itens)) {
-                pedidoAtualCache.itens.forEach(i => {
-                    itensHtml += `<tr><td>${i.nome}</td><td>${i.qtd}x R$${i.preco.toFixed(2)}</td><td class="text-right">R$${i.subtotal.toFixed(2)}</td></tr>`;
-                });
-            }
-
-            const janela = window.open('', '_blank', 'width=340,height=600');
-            janela.document.write(`
-                <html>
-                    <head>
-                        <title>Cupom #${pedidoAtualCache.numeroPedido || '0000'}</title>
-                        <style>
-                            @page { size: 80mm auto; margin: 0; }
-                            body { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #000; margin: 0; padding: 4px; width: 72mm; background: #fff; }
-                            h2 { text-align: center; font-size: 15px; margin: 0 0 2px 0; font-weight: bold; }
-                            p { margin: 2px 0; font-weight: bold; }
-                            table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 4px; }
-                            th, td { padding: 2px; text-align: left; border-bottom: 1px dotted #000; font-weight: bold; }
-                            .text-right { text-align: right; }
-                            hr { border: none; border-top: 1px dashed #000; margin: 5px 0; }
-                        </style>
-                    </head>
-                    <body>
-                        <h2>DISTRIBUIDORA FRAZÃO</h2>
-                        <p style="text-align:center; font-size:10px;">Cupom Não Fiscal - 80mm</p>
-                        <hr>
-                        <p>Pedido: #${pedidoAtualCache.numeroPedido || '0000'}</p>
-                        <p>Data: ${new Date(pedidoAtualCache.data).toLocaleString('pt-BR')}</p>
-                        <p>Cliente: ${pedidoAtualCache.clienteNome}</p>
-                        <p>Vendedor: ${pedidoAtualCache.vendedor}</p>
-                        <p>Pagamento: ${pedidoAtualCache.formaPagamento}</p>
-                        <hr>
-                        <table>
-                            <thead><tr><th>Item</th><th>Q/P</th><th class="text-right">Sub</th></tr></thead>
-                            <tbody>${itensHtml}</tbody>
-                        </table>
-                        <hr>
-                        <p class="text-right" style="font-size: 13px; margin-top: 4px;">TOTAL: R$ ${Number(pedidoAtualCache.total || 0).toFixed(2)}</p>
-                        <p style="text-align:center; font-size:10px; margin-top:10px;">Obrigado pela preferência!</p>
-                        <script>
-                            window.onload = function() { setTimeout(() => { window.print(); window.close(); }, 350); }
-                        <\/script>
-                    </body>
-                </html>
-            `);
-            janela.document.write('<div style="height: 20mm;"></div>');
-            janela.document.close();
-        }
-
-        // COPIAR TEXTO FORMATADO PARA COLAR NO RT PRINTER SYSTEM (BLUETOOTH)
-        function copiarTextoParaAppPrinter() {
-            if (!pedidoAtualCache) return;
-            let texto = `*DISTRIBUIDORA FRAZAO*\n`;
-            texto += `Pedido: #${pedidoAtualCache.numeroPedido || '0000'}\n`;
-            texto += `Data: ${new Date(pedidoAtualCache.data).toLocaleString('pt-BR')}\n`;
-            texto += `Cliente: ${pedidoAtualCache.clienteNome}\n`;
-            texto += `Vendedor: ${pedidoAtualCache.vendedor}\n`;
-            texto += `Pagamento: ${pedidoAtualCache.formaPagamento}\n`;
-            texto += `--------------------------------\n`;
-            if (pedidoAtualCache.itens && Array.isArray(pedidoAtualCache.itens)) {
-                pedidoAtualCache.itens.forEach(i => {
-                    texto += `${i.qtd}x ${i.nome} - R$${Number(i.subtotal || 0).toFixed(2)}\n`;
-                });
-            }
-            texto += `--------------------------------\n`;
-            texto += `TOTAL: R$ ${Number(pedidoAtualCache.total || 0).toFixed(2)}\n`;
-            texto += `Obrigado pela preferencia!`;
-
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(texto).then(() => {
-                    alert("Cupom copiado para a memória do celular! Agora abra o seu aplicativo RT Printer System, cole o texto na área de impressão e envie para a impressora via Bluetooth.");
-                }).catch(() => {
-                    fallbackCopiarTexto(texto);
-                });
-            } else {
-                fallbackCopiarTexto(texto);
-            }
-        }
-
-        function fallbackCopiarTexto(texto) {
-            const textarea = document.createElement("textarea");
-            textarea.value = texto;
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                alert("Cupom copiado! Cole no aplicativo RT Printer System.");
-            } catch (err) {
-                alert("Não foi possível copiar automaticamente. Selecione e copie o texto manualmente no modal.");
-            }
-            document.body.removeChild(textarea);
-        }
-
-        function compartilharWhatsApp() {
-            if (!pedidoAtualCache) return;
-            let texto = `*Distribuidora Frazão*%0A`;
-            texto += `Pedido: #${pedidoAtualCache.numeroPedido || '0000'}%0A`;
-            texto += `Cliente: ${pedidoAtualCache.clienteNome}%0A`;
-            texto += `Forma de Pagamento: ${pedidoAtualCache.formaPagamento}%0A----------------------------%0A`;
-            if (pedidoAtualCache.itens && Array.isArray(pedidoAtualCache.itens)) {
-                pedidoAtualCache.itens.forEach(i => {
-                    texto += `${i.qtd}x ${i.nome} - R$${Number(i.subtotal || 0).toFixed(2)}%0A`;
-                });
-            }
-            texto += `----------------------------%0A`;
-            texto += `*TOTAL: R$ ${Number(pedidoAtualCache.total || 0).toFixed(2)}*`;
-            window.open(`https://api.whatsapp.com/send?text=${texto}`, '_blank');
         }
     </script>
 </body>

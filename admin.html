@@ -495,8 +495,8 @@
                     select.appendChild(opt);
                 });
             } catch (error) {
-                console.error("Erro ao carregar vendedores:", error);
-                select.innerHTML = '<option value="">Erro ao carregar</option>';
+                console.error("Erro ao carregar vendedores no login:", error);
+                select.innerHTML = '<option value="">Erro ao carregar vendedores</option>';
             }
         }
 
@@ -505,7 +505,6 @@
             const senha = document.getElementById('loginSenha').value;
 
             if (perfil === 'admin') {
-                // Senha padrão Master da Distribuidora Frazão (ajuste se preferir)
                 if (senha === 'admin123' || senha === 'frazão26' || senha === '123456') {
                     usuarioLogado = { perfil: 'admin', nome: 'Administrador Master' };
                     entrarNoSistema();
@@ -515,7 +514,7 @@
             } else {
                 const nomeVendedor = document.getElementById('loginNomeVendedor').value;
                 if (!nomeVendedor) {
-                    alert('Selecione um vendedor válido.');
+                    alert('Selecione um vendedor válido. Caso não haja nenhum cadastrado, entre como Administrador e cadastre na aba Equipe / Vendedores.');
                     return;
                 }
                 try {
@@ -568,6 +567,7 @@
             document.getElementById('loginSenha').value = '';
             document.getElementById('sistemaPrincipal').classList.add('hidden');
             document.getElementById('telaLogin').classList.remove('hidden');
+            carregarSelectVendedoresLogin();
         }
 
         // --- NAVEGAÇÃO POR ABAS ---
@@ -969,11 +969,9 @@
             };
 
             try {
-                // Salvar pedido no Firestore
                 const docRef = await db.collection('vendas').add(pedidoObj);
                 pedidoObj.id = docRef.id;
 
-                // Baixar estoque dos produtos
                 for (let item of carrinhoVenda) {
                     const prodRef = db.collection('produtos').doc(item.prodId);
                     const prodDoc = await prodRef.get();
@@ -983,7 +981,6 @@
                     }
                 }
 
-                // Se for fiado, atualizar fiado do cliente
                 if (formaPgto === 'Fiado' && clienteId !== 'CLIENTE_AVULSO') {
                     const cliRef = db.collection('clientes').doc(clienteId);
                     const cliDoc = await cliRef.get();
@@ -1001,7 +998,6 @@
                 await carregarClientesCache();
                 await carregarHistoricoVendas();
 
-                // Abrir comprovante
                 abrirModalComprovante(pedidoObj);
 
             } catch (e) {
@@ -1188,13 +1184,17 @@
                     tbody.appendChild(tr);
                 });
             } catch (e) {
-                console.error("Erro vendedores:", e);
+                console.error("Erro ao carregar vendedores na tabela:", e);
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-red-500">Erro ao carregar do Firestore</td></tr>';
             }
         }
 
         async function salvarVendedor() {
-            const nome = document.getElementById('vendNome').value.trim();
-            const senha = document.getElementById('vendSenha').value.trim();
+            const nomeInput = document.getElementById('vendNome');
+            const senhaInput = document.getElementById('vendSenha');
+            
+            const nome = nomeInput.value.trim();
+            const senha = senhaInput.value.trim();
 
             if (!nome || !senha) {
                 alert('Preencha o nome e a senha do vendedor.');
@@ -1202,15 +1202,26 @@
             }
 
             try {
-                await db.collection('vendedores').add({ nome, senha });
+                // Adiciona ao Firestore na coleção 'vendedores'
+                await db.collection('vendedores').add({ 
+                    nome: nome, 
+                    senha: senha,
+                    criadoEm: new Date().toISOString()
+                });
+
                 alert('Vendedor cadastrado com sucesso!');
-                document.getElementById('vendNome').value = '';
-                document.getElementById('vendSenha').value = '';
+                
+                // Limpa os campos
+                nomeInput.value = '';
+                senhaInput.value = '';
+
+                // Recarrega imediatamente a tabela da aba e o select da tela de login
                 await carregarVendedoresCache();
                 await carregarSelectVendedoresLogin();
+
             } catch (e) {
                 console.error("Erro ao salvar vendedor:", e);
-                alert('Erro ao cadastrar vendedor.');
+                alert('Erro ao cadastrar vendedor. Verifique suas regras de segurança do Firestore.');
             }
         }
 
@@ -1218,10 +1229,12 @@
             if (confirm('Deseja realmente remover este vendedor?')) {
                 try {
                     await db.collection('vendedores').doc(id).delete();
+                    alert('Vendedor removido com sucesso!');
                     await carregarVendedoresCache();
                     await carregarSelectVendedoresLogin();
                 } catch (e) {
                     console.error("Erro ao excluir vendedor:", e);
+                    alert('Erro ao excluir vendedor.');
                 }
             }
         }

@@ -142,10 +142,25 @@
                 <div class="bg-white p-6 rounded-lg shadow admin-only hidden">
                     <h2 class="text-lg font-bold text-gray-800 mb-4">Cadastrar / Editar Produto</h2>
                     <input type="hidden" id="prodIdEdit">
-                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                        <div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <div class="lg:col-span-2">
                             <label class="block text-xs text-gray-600">Nome do Produto</label>
                             <input type="text" id="prodNome" class="w-full border p-2 rounded text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-600">Categoria</label>
+                            <select id="prodCategoria" class="w-full border p-2 rounded text-sm">
+                                <option value="Balas e Pirulitos">Balas e Pirulitos</option>
+                                <option value="Bebidas">Bebidas</option>
+                                <option value="Biscoitos">Biscoitos</option>
+                                <option value="Descartáveis">Descartáveis</option>
+                                <option value="Doces">Doces</option>
+                                <option value="Drops e Chicletes">Drops e Chicletes</option>
+                                <option value="Higiene">Higiene</option>
+                                <option value="Limpeza">Limpeza</option>
+                                <option value="Mercearia">Mercearia</option>
+                                <option value="Papelaria">Papelaria</option>
+                            </select>
                         </div>
                         <div>
                             <label class="block text-xs text-gray-600">Preço (R$)</label>
@@ -155,22 +170,41 @@
                             <label class="block text-xs text-gray-600">Estoque Inicial</label>
                             <input type="number" id="prodEstoque" class="w-full border p-2 rounded text-sm">
                         </div>
-                        <div>
+                        <div class="lg:col-span-5">
                             <label class="block text-xs text-gray-600">URL da Foto (Opcional)</label>
-                            <input type="text" id="prodFoto" class="w-full border p-2 rounded text-sm" placeholder="https://...">
+                            <input type="text" id="prodFoto" class="w-full border p-2 rounded text-sm" placeholder="https://exemplo.com/foto.jpg">
                         </div>
                     </div>
                     <button onclick="salvarProduto()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-bold">Salvar Produto</button>
                 </div>
 
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4">Produtos Cadastrados (Em ordem alfabética)</h2>
+                <div class="bg-white p-6 rounded-lg shadow space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <h2 class="text-lg font-bold text-gray-800">Produtos Cadastrados</h2>
+                        <div class="w-full sm:w-64">
+                            <label class="block text-xs text-gray-600">Filtrar por Categoria</label>
+                            <select id="filtroCatProdutos" class="w-full border p-2 rounded text-sm" onchange="renderizarTabelaProdutos()">
+                                <option value="TODAS">Todas as Categorias</option>
+                                <option value="Balas e Pirulitos">Balas e Pirulitos</option>
+                                <option value="Bebidas">Bebidas</option>
+                                <option value="Biscoitos">Biscoitos</option>
+                                <option value="Descartáveis">Descartáveis</option>
+                                <option value="Doces">Doces</option>
+                                <option value="Drops e Chicletes">Drops e Chicletes</option>
+                                <option value="Higiene">Higiene</option>
+                                <option value="Limpeza">Limpeza</option>
+                                <option value="Mercearia">Mercearia</option>
+                                <option value="Papelaria">Papelaria</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="overflow-x-auto border rounded">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Foto</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nome</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Categoria</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Preço</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Estoque</th>
                                     <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase th-acoes-prod">Ações</th>
@@ -504,41 +538,55 @@
         function ouvirProdutos() {
             db.collection("produtos").orderBy("nome").onSnapshot(snapshot => {
                 produtosCache = [];
-                const tbody = document.getElementById('tabelaProdutos');
-                const selectProd = document.getElementById('vendaSelectProduto');
-                if(tbody) tbody.innerHTML = '';
-                if(selectProd) selectProd.innerHTML = '<option value="">Selecione um produto...</option>';
-
-                if (snapshot.empty) {
-                    if(tbody) tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-400">Nenhum produto cadastrado.</td></tr>';
-                    return;
-                }
-
                 snapshot.forEach(doc => {
-                    const p = { id: doc.id, ...doc.data() };
-                    produtosCache.push(p);
-
-                    if(selectProd) {
-                        selectProd.innerHTML += `<option value="${p.id}">${p.nome} - R$ ${parseFloat(p.preco).toFixed(2)} (Est: ${p.estoque})</option>`;
-                    }
-
-                    if(tbody) {
-                        let fotoTag = p.foto ? `<img src="${p.foto}" class="w-10 h-10 object-cover rounded">` : `<span class="text-gray-400 text-xs">Sem foto</span>`;
-                        let acoesHtml = usuarioLogado.perfil === 'admin' ? 
-                            `<button onclick="prepararEdicaoProduto('${p.id}', '${p.nome}', ${p.preco}, ${p.estoque}, '${p.foto || ''}')" class="text-blue-600 hover:underline mr-2">Editar</button>
-                             <button onclick="excluirProduto('${p.id}')" class="text-red-600 hover:underline">Excluir</button>` : '';
-
-                        tbody.innerHTML += `
-                            <tr>
-                                <td class="px-4 py-2">${fotoTag}</td>
-                                <td class="px-4 py-2 font-medium text-gray-800">${p.nome}</td>
-                                <td class="px-4 py-2">R$ ${parseFloat(p.preco).toFixed(2)}</td>
-                                <td class="px-4 py-2">${p.estoque}</td>
-                                <td class="px-4 py-2 text-center">${acoesHtml}</td>
-                            </tr>
-                        `;
-                    }
+                    produtosCache.push({ id: doc.id, ...doc.data() });
                 });
+                renderizarSelectPDVProdutos();
+                renderizarTabelaProdutos();
+            });
+        }
+
+        function renderizarSelectPDVProdutos() {
+            const selectProd = document.getElementById('vendaSelectProduto');
+            if(!selectProd) return;
+            selectProd.innerHTML = '<option value="">Selecione um produto...</option>';
+            produtosCache.forEach(p => {
+                selectProd.innerHTML += `<option value="${p.id}">[${p.categoria || 'Geral'}] ${p.nome} - R$ ${parseFloat(p.preco).toFixed(2)} (Est: ${p.estoque})</option>`;
+            });
+        }
+
+        function renderizarTabelaProdutos() {
+            const tbody = document.getElementById('tabelaProdutos');
+            const filtroCat = document.getElementById('filtroCatProdutos').value;
+            if(!tbody) return;
+            tbody.innerHTML = '';
+
+            let produtosFiltrados = produtosCache;
+            if (filtroCat !== 'TODAS') {
+                produtosFiltrados = produtosCache.filter(p => p.categoria === filtroCat);
+            }
+
+            if (produtosFiltrados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-400">Nenhum produto encontrado nesta categoria.</td></tr>';
+                return;
+            }
+
+            produtosFiltrados.forEach(p => {
+                let fotoTag = p.foto ? `<img src="${p.foto}" class="w-10 h-10 object-cover rounded">` : `<span class="text-gray-400 text-xs">Sem foto</span>`;
+                let acoesHtml = usuarioLogado.perfil === 'admin' ? 
+                    `<button onclick="prepararEdicaoProduto('${p.id}', '${p.nome}', '${p.categoria || 'Mercearia'}', ${p.preco}, ${p.estoque}, '${p.foto || ''}')" class="text-blue-600 hover:underline mr-2">Editar</button>
+                     <button onclick="excluirProduto('${p.id}')" class="text-red-600 hover:underline">Excluir</button>` : '';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="px-4 py-2">${fotoTag}</td>
+                        <td class="px-4 py-2 font-medium text-gray-800">${p.nome}</td>
+                        <td class="px-4 py-2"><span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">${p.categoria || 'Mercearia'}</span></td>
+                        <td class="px-4 py-2">R$ ${parseFloat(p.preco).toFixed(2)}</td>
+                        <td class="px-4 py-2">${p.estoque}</td>
+                        <td class="px-4 py-2 text-center">${acoesHtml}</td>
+                    </tr>
+                `;
             });
         }
 
@@ -546,6 +594,7 @@
             if (usuarioLogado.perfil !== 'admin') return alert("Apenas administradores podem gerenciar produtos.");
             const id = document.getElementById('prodIdEdit').value;
             const nome = document.getElementById('prodNome').value.trim();
+            const categoria = document.getElementById('prodCategoria').value;
             const preco = parseFloat(document.getElementById('prodPreco').value);
             const estoque = parseInt(document.getElementById('prodEstoque').value);
             const foto = document.getElementById('prodFoto').value.trim();
@@ -554,7 +603,7 @@
                 return alert("Preencha os campos obrigatórios corretamente.");
             }
 
-            const dados = { nome, preco, estoque, foto };
+            const dados = { nome, categoria, preco, estoque, foto };
 
             try {
                 if (id) {
@@ -574,9 +623,10 @@
             }
         }
 
-        function prepararEdicaoProduto(id, nome, preco, estoque, foto) {
+        function prepararEdicaoProduto(id, nome, categoria, preco, estoque, foto) {
             document.getElementById('prodIdEdit').value = id;
             document.getElementById('prodNome').value = nome;
+            document.getElementById('prodCategoria').value = categoria;
             document.getElementById('prodPreco').value = preco;
             document.getElementById('prodEstoque').value = estoque;
             document.getElementById('prodFoto').value = foto;

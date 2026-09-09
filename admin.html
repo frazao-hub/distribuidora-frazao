@@ -177,29 +177,6 @@
             .form-group.full { grid-column: span 1; }
             .btn-save { grid-column: span 1; }
         }
-
-        /* CONFIGURAÇÃO DE IMPRESSÃO LIMPA (CUPOM ÚNICO) */
-        @media print {
-            body * {
-                visibility: hidden !important;
-            }
-            #modalImpressao, #modalImpressao *, #areaCupomImprimir, #areaCupomImprimir * {
-                visibility: visible !important;
-            }
-            #modalImpressao {
-                position: absolute !important;
-                left: 0 !important;
-                top: 0 !important;
-                width: 100% !important;
-                height: auto !important;
-                background: white !important;
-                display: block !important;
-                z-index: 99999 !important;
-            }
-            .nao-imprimir {
-                display: none !important;
-            }
-        }
     </style>
 </head>
 <body>
@@ -507,7 +484,7 @@
     </div>
 </div>
 
-<!-- MODAL DE IMPRESSÃO / WHATSAPP -->
+<!-- MODAL DE RECIBO / WHATSAPP -->
 <div id="modalImpressao" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center; padding: 10px; box-sizing: border-box;">
     <div id="areaCupomImprimir" style="background:white; width: 100%; max-width: 380px; padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;">
         <div style="text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 10px; margin-bottom: 10px;">
@@ -517,9 +494,9 @@
         
         <div id="conteudoReciboImpresso" style="font-size: 12px; line-height: 1.4;"></div>
 
-        <div class="nao-imprimir" style="margin-top: 15px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
+        <div style="margin-top: 15px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
             <button class="btn btn-whatsapp" onclick="enviarWhatsAppPedido()">📱 WhatsApp</button>
-            <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir</button>
+            <button class="btn btn-primary" onclick="imprimirCupomIsolado()">🖨️ Imprimir</button>
             <button class="btn btn-voltar" style="margin:0;" onclick="fecharModalImpressao()">Fechar</button>
         </div>
     </div>
@@ -1196,6 +1173,50 @@
 
     function fecharModalImpressao() {
         document.getElementById('modalImpressao').style.display = 'none';
+    }
+
+    // IMPRESSÃO ISOLADA PERFEITA (ABRE NOVA JANELA SÓ COM O CUPOM)
+    function imprimirCupomIsolado() {
+        if (!pedidoAtualCache) return;
+        
+        const conteudoHtml = document.getElementById('conteudoReciboImpresso').innerHTML;
+        
+        const janelaImpressao = window.open('', '_blank', 'width=400,height=600');
+        janelaImpressao.document.write(`
+            <html>
+                <head>
+                    <title>Cupom - Distribuidora Frazão</title>
+                    <style>
+                        body {
+                            font-family: monospace, Arial, sans-serif;
+                            font-size: 12px;
+                            width: 300px;
+                            margin: 0 auto;
+                            padding: 10px;
+                            color: #000;
+                        }
+                        h2, h3 { text-align: center; margin: 5px 0; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+                        th, td { padding: 2px; font-size: 11px; text-align: left; }
+                        th { border-bottom: 1px solid #000; }
+                    </style>
+                </head>
+                <body>
+                    <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 5px; margin-bottom: 5px;">
+                        <h2 style="font-size: 14px;">Distribuidora Frazão</h2>
+                        <p style="margin: 2px 0; font-size: 10px;">Comprovante de Venda</p>
+                    </div>
+                    ${conteudoHtml}
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                            window.close();
+                        }
+                    <\/script>
+                </body>
+            </html>
+        `);
+        janelaImpressao.document.close();
     }
 
     function enviarWhatsAppPedido() {

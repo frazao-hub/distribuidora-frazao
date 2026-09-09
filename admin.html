@@ -273,10 +273,10 @@
             <section id="aba-historico" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-lg shadow space-y-4">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <h2 id="tituloHistorico" class="text-lg font-bold text-gray-800">Histórico Geral de Vendas</h2>
+                        <h2 id="tituloHistorico" class="text-lg font-bold text-gray-800">Histórico de Vendas</h2>
                         <div class="bg-gray-50 p-3 rounded border flex gap-6 text-sm">
                             <div><span class="text-gray-500">Pedidos:</span> <strong id="relQtdPedidos">0</strong></div>
-                            <div><span class="text-gray-500" id="labelTotalFiltro">Faturamento Total:</span> <strong id="relFaturamentoTotal" class="text-green-600">R$ 0.00</strong></div>
+                            <div><span class="text-gray-500" id="labelTotalFiltro">Faturamento:</span> <strong id="relFaturamentoTotal" class="text-green-600">R$ 0.00</strong></div>
                         </div>
                     </div>
                     <div class="overflow-x-auto border rounded">
@@ -505,14 +505,14 @@
                 document.getElementById('vendaDesconto').removeAttribute('readonly');
                 document.getElementById('avisoDescontoVendedor').classList.add('hidden');
                 document.getElementById('tituloHistorico').innerText = 'Histórico Geral de Vendas';
-                document.getElementById('labelTotalFiltro').innerText = 'Faturamento Total:';
+                document.getElementById('labelTotalFiltro').innerText = 'Faturamento Geral:';
             } else {
                 document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
                 document.querySelectorAll('.th-acoes-prod').forEach(el => el.classList.add('hidden'));
                 document.getElementById('vendaDesconto').setAttribute('readonly', true);
                 document.getElementById('avisoDescontoVendedor').classList.remove('hidden');
                 document.getElementById('tituloHistorico').innerText = 'Minhas Vendas Realizadas';
-                document.getElementById('labelTotalFiltro').innerText = 'Meu Faturamento Exibido:';
+                document.getElementById('labelTotalFiltro').innerText = 'Meu Faturamento:';
             }
 
             mudarAba('vendas');
@@ -576,7 +576,6 @@
             produtosFiltrados.forEach(p => {
                 let fotoTag = p.foto ? `<img src="${p.foto}" class="w-10 h-10 object-cover rounded">` : `<span class="text-gray-400 text-xs">Sem foto</span>`;
                 
-                // Usando codificação segura para evitar erros de aspas ao passar strings na função de edição
                 let pNomeEscapado = p.nome.replace(/'/g, "\\'");
                 let pCatEscapada = (p.categoria || 'Mercearia').replace(/'/g, "\\'");
                 let pFotoEscapada = (p.foto || '').replace(/'/g, "\\'");
@@ -1050,6 +1049,12 @@
             if (!nome || !senha) return alert("Preencha o nome e a senha do vendedor.");
 
             try {
+                // Verificação para evitar duplicidade de nomes
+                const check = await db.collection("vendedores").where("nome", "==", nome).get();
+                if (!check.empty) {
+                    return alert("Já existe um vendedor cadastrado com este nome!");
+                }
+
                 await db.collection("vendedores").add({ nome, senha });
                 alert("Vendedor cadastrado com sucesso!");
                 document.getElementById('vendNome').value = '';

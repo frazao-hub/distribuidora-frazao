@@ -296,7 +296,8 @@
             <div id="corpoReciboModal" class="bg-gray-50 p-3 rounded border text-xs mb-4 max-h-64 overflow-y-auto font-mono"></div>
 
             <div class="flex flex-col gap-2">
-                <button onclick="imprimirCupomIsolado()" class="bg-blue-600 text-white font-bold p-2 rounded hover:bg-blue-700 text-sm">🖨️ Imprimir Cupom 80mm</button>
+                <button onclick="imprimirCupomIsolado()" class="bg-blue-600 text-white font-bold p-2 rounded hover:bg-blue-700 text-sm">🖨️ Imprimir no PC (Navegador)</button>
+                <button onclick="copiarTextoParaAppPrinter()" class="bg-indigo-600 text-white font-bold p-2 rounded hover:bg-indigo-700 text-sm">📋 Copiar Cupom p/ App Bluetooth</button>
                 <button onclick="compartilharWhatsApp()" class="bg-green-500 text-white font-bold p-2 rounded hover:bg-green-600 text-sm">📱 Compartilhar WhatsApp</button>
                 <button onclick="fecharModalComprovante()" class="bg-gray-300 text-gray-700 font-bold p-2 rounded hover:bg-gray-400 text-sm">Fechar</button>
             </div>
@@ -892,7 +893,7 @@
             document.getElementById('modalComprovante').classList.add('hidden');
         }
 
-        // IMPRESSÃO TÉRMICA 80MM OTIMIZADA PARA GOOJPRT JP80H (72mm largura de impressão exata)
+        // IMPRESSÃO TÉRMICA COMPUTADOR
         function imprimirCupomIsolado() {
             if (!pedidoAtualCache) return;
             let itensHtml = '';
@@ -941,8 +942,52 @@
                     </body>
                 </html>
             `);
-            janela.document.write('<div style="height: 20mm;"></div>'); // Avanço extra de papel para corte da guilhotina
+            janela.document.write('<div style="height: 20mm;"></div>');
             janela.document.close();
+        }
+
+        // COPIAR TEXTO FORMATADO PARA COLAR NO RT PRINTER SYSTEM (BLUETOOTH)
+        function copiarTextoParaAppPrinter() {
+            if (!pedidoAtualCache) return;
+            let texto = `*DISTRIBUIDORA FRAZAO*\n`;
+            texto += `Pedido: #${pedidoAtualCache.numeroPedido || '0000'}\n`;
+            texto += `Data: ${new Date(pedidoAtualCache.data).toLocaleString('pt-BR')}\n`;
+            texto += `Cliente: ${pedidoAtualCache.clienteNome}\n`;
+            texto += `Vendedor: ${pedidoAtualCache.vendedor}\n`;
+            texto += `Pagamento: ${pedidoAtualCache.formaPagamento}\n`;
+            texto += `--------------------------------\n`;
+            if (pedidoAtualCache.itens && Array.isArray(pedidoAtualCache.itens)) {
+                pedidoAtualCache.itens.forEach(i => {
+                    texto += `${i.qtd}x ${i.nome} - R$${Number(i.subtotal || 0).toFixed(2)}\n`;
+                });
+            }
+            texto += `--------------------------------\n`;
+            texto += `TOTAL: R$ ${Number(pedidoAtualCache.total || 0).toFixed(2)}\n`;
+            texto += `Obrigado pela preferencia!`;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(texto).then(() => {
+                    alert("Cupom copiado para a memória do celular! Agora abra o seu aplicativo RT Printer System, cole o texto na área de impressão e envie para a impressora via Bluetooth.");
+                }).catch(() => {
+                    fallbackCopiarTexto(texto);
+                });
+            } else {
+                fallbackCopiarTexto(texto);
+            }
+        }
+
+        function fallbackCopiarTexto(texto) {
+            const textarea = document.createElement("textarea");
+            textarea.value = texto;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                alert("Cupom copiado! Cole no aplicativo RT Printer System.");
+            } catch (err) {
+                alert("Não foi possível copiar automaticamente. Selecione e copie o texto manualmente no modal.");
+            }
+            document.body.removeChild(textarea);
         }
 
         function compartilharWhatsApp() {

@@ -1,135 +1,39 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Histórico de Vendas</title>
-  
-  <!-- Importa o seu arquivo de estilo principal -->
-  <link rel="stylesheet" href="style.css">
+// HISTÓRICO DE VENDAS
+function carregarHistoricoVendas() {
+    db.collection("historico_vendas").orderBy("numPedido", "desc").onSnapshot((snapshot) => {
+        const tbody = document.getElementById('tabelaHistorico');
+        if (!tbody) return;
 
-  <style>
-    /* Estilos simples para os botões no sistema */
-    .tabela-historico {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    .tabela-historico th, .tabela-historico td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: left;
-    }
-    .btn-acao {
-      padding: 6px 12px;
-      margin-right: 5px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .btn-imprimir {
-      background-color: #2196F3;
-      color: white;
-    }
-    .btn-compartilhar {
-      background-color: #25D366;
-      color: white;
-    }
+        tbody.innerHTML = '';
+        historicoVendasCache = [];
+        let faturamento = 0;
+        let totalPedidos = 0;
 
-    /* Regra de Impressão: Esconde os botões e ajusta a tela para o papel */
-    @media print {
-      .btn-acao, .no-print {
-        display: none !important;
-      }
-      body {
-        background: #fff;
-        color: #000;
-      }
-      .tabela-historico {
-        border: none;
-      }
-      tr {
-        page-break-inside: avoid;
-        break-inside: avoid;
-      }
-    }
-  </style>
-</head>
-<body>
+        snapshot.forEach((doc) => {
+            const p = doc.data();
+            const id = doc.id;
+            historicoVendasCache.push({ id, ...p });
 
-  <div class="container">
-    <h2>Histórico de Vendas</h2>
+            faturamento += Number(p.total) || 0;
+            totalPedidos++;
 
-    <table class="tabela-historico">
-      <thead>
-        <tr>
-          <th>Pedido</th>
-          <th>Data</th>
-          <th>Total</th>
-          <th class="no-print">Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Exemplo de Pedido 1 -->
-        <tr id="pedido-1001">
-          <td>#1001</td>
-          <td>08/09/2026</td>
-          <td>R$ 150,00</td>
-          <td class="no-print">
-            <button type="button" class="btn-acao btn-imprimir" onclick="imprimirPedido('1001')">
-              🖨️ Imprimir
-            </button>
-            <button type="button" class="btn-acao btn-compartilhar" onclick="compartilharPedido('1001')">
-              📲 Compartilhar
-            </button>
-          </td>
-        </tr>
+            tbody.innerHTML += `
+                <tr>
+                    <td>#${p.numPedido}</td>
+                    <td>${p.data}</td>
+                    <td>${p.clienteNome}</td>
+                    <td>${p.vendedor}</td>
+                    <td>${p.formaPagamento}</td>
+                    <td>R$ ${Number(p.total).toFixed(2)}</td>
+                    <td class="nao-imprimir">
+                        <button class="btn btn-print" onclick="abrirComprovanteImpressao('${id}')">🖨️ Imprimir</button>
+                        <button class="btn btn-share" onclick="compartilharPedidoWhatsApp('${id}')">📲 Compartilhar</button>
+                    </td>
+                </tr>
+            `;
+        });
 
-        <!-- Exemplo de Pedido 2 -->
-        <tr id="pedido-1002">
-          <td>#1002</td>
-          <td>08/09/2026</td>
-          <td>R$ 89,90</td>
-          <td class="no-print">
-            <button type="button" class="btn-acao btn-imprimir" onclick="imprimirPedido('1002')">
-              🖨️ Imprimir
-            </button>
-            <button type="button" class="btn-acao btn-compartilhar" onclick="compartilharPedido('1002')">
-              📲 Compartilhar
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <script>
-    // Função para acionar a impressão
-    function imprimirPedido(idPedido) {
-      // Abre a janela do navegador para imprimir
-      window.print();
-    }
-
-    // Função para compartilhar no WhatsApp ou suporte nativo do celular
-    function compartilharPedido(idPedido) {
-      const linkPedido = window.location.origin + '/historico.html#pedido-' + idPedido;
-      const texto = `Comprovante do Pedido #${idPedido}: ${linkPedido}`;
-
-      // Se estiver no celular e o navegador aceitar compartilhamento nativo
-      if (navigator.share) {
-        navigator.share({
-          title: 'Pedido #' + idPedido,
-          text: 'Comprovante de venda do Pedido #' + idPedido,
-          url: linkPedido
-        }).catch((err) => console.log('Cancelado ou erro:', err));
-      } else {
-        // Se estiver no PC ou navegador tradicional, abre o WhatsApp
-        const urlWhatsapp = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
-        window.open(urlWhatsapp, '_blank');
-      }
-    }
-  </script>
-
-</body>
-</html>
+        document.getElementById('fatTotal').innerText = `R$ ${faturamento.toFixed(2)}`;
+        document.getElementById('totalQtdVendas').innerText = totalPedidos;
+    });
+}

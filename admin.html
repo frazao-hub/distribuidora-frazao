@@ -1,277 +1,714 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distribuidora Frazão - Sistema de Gestão</title>
-    <style>
-        :root {
-            --primary: #0056b3;
-            --success: #28a745;
-            --danger: #dc3545;
-            --warning: #ffc107;
-            --light: #f8f9fa;
-            --dark: #333;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 10px;
-            color: var(--dark);
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        h1, h2, h3 {
-            color: var(--primary);
-            border-bottom: 2px solid #eee;
-            padding-bottom: 8px;
-        }
-        
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Distribuidora Frazão - Admin / Vendas</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .btn-voltar {
-            background-color: #6c757d;
-            color: white;
-            margin-bottom: 15px;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      padding: 15px;
+      color: #333;
+    }
 
-        /* GRID DO MENU PRINCIPAL */
-        .grid-menu {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .menu-card {
-            background: #fff;
-            border: 1px solid #e0e0e0;
-            border-left: 5px solid var(--primary);
-            border-radius: 8px;
-            padding: 15px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .menu-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .menu-card h3 { border: none; margin: 0 0 5px 0; font-size: 16px; }
-        .menu-card p { margin: 0; color: #666; font-size: 12px; }
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
 
-        /* TABELAS */
-        .table-responsive { width: 100%; overflow-x: auto; margin-top: 10px; }
-        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-        th, td { border: 1px solid #dee2e6; padding: 8px; text-align: left; font-size: 13px; }
-        th { background-color: var(--primary); color: white; }
+    .header-titulo {
+      text-align: center;
+      color: #1e824c;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #27ae60;
+      padding-bottom: 10px;
+    }
 
-        /* BOTÕES DE AÇÃO DO HISTÓRICO */
-        button.btn { padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
-        .btn-print { background-color: #6c757d; color: white; margin-right: 4px; }
-        .btn-share { background-color: #25D366; color: white; }
+    .header-titulo h1 {
+      font-size: 22px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-        @media print {
-            body * { visibility: hidden; }
-            #modalImpressao, #modalImpressao * { visibility: visible; }
-            #modalImpressao { position: absolute; left: 0; top: 0; width: 100%; }
-            .nao-imprimir { display: none !important; }
-        }
-    </style>
+    .header-titulo p {
+      font-size: 13px;
+      color: #666;
+    }
+
+    /* CONTROLE DE VISIBILIDADE DAS ABAS */
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    .btn-voltar {
+      background: #7f8c8d;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+    .btn-voltar:hover { background: #6c7a7d; }
+
+    /* MENU PRINCIPAL DA PRIMEIRA PÁGINA */
+    .grid-menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .card-menu {
+      background: #fafafa;
+      border: 1px solid #e0e0e0;
+      border-left: 6px solid #27ae60;
+      border-radius: 8px;
+      padding: 15px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card-menu:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .card-menu h3 {
+      font-size: 16px;
+      color: #2c3e50;
+      margin-bottom: 5px;
+    }
+
+    .card-menu p {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    .secao {
+      background: #fafafa;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      margin-bottom: 15px;
+    }
+
+    .secao-titulo {
+      font-size: 14px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .campo {
+      margin-bottom: 10px;
+    }
+
+    .campo label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 4px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .campo input, .campo select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      background-color: #fff;
+    }
+
+    .linha-dupla {
+      display: flex;
+      gap: 10px;
+    }
+
+    .linha-dupla .campo {
+      flex: 1;
+    }
+
+    /* ADICIONAR PRODUTO AO CARRINHO */
+    .grid-adicionar {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    .grid-adicionar .campo-prod { flex: 3; }
+    .grid-adicionar .campo-qtd { flex: 1; }
+    .grid-adicionar .campo-preco { flex: 1.5; }
+
+    .btn-add {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      height: 40px;
+    }
+
+    .btn-add:hover { background: #219150; }
+
+    /* TABELA DE ITENS */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th {
+      background: #27ae60;
+      color: #fff;
+      padding: 8px;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+      font-size: 13px;
+    }
+
+    .btn-remover {
+      color: #e74c3c;
+      background: none;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    /* RODAPÉ DO CAIXA */
+    .total-caixa {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #2c3e50;
+      color: #fff;
+      padding: 15px;
+      border-radius: 6px;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+
+    .total-caixa .valor {
+      color: #2ecc71;
+      font-size: 22px;
+    }
+
+    .btn-finalizar {
+      width: 100%;
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 15px;
+      font-size: 17px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+
+    .btn-finalizar:hover { background: #219150; }
+
+    /* BOTÕES DA TABELA DE HISTÓRICO */
+    .btn-acao-hist {
+      padding: 5px 8px;
+      border: none;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      margin-right: 3px;
+    }
+    .btn-hist-print { background-color: #27ae60; }
+    .btn-hist-share { background-color: #25D366; }
+
+    /* MODAL DE CONFIRMAÇÃO DA VENDA */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.65);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 15px;
+    }
+
+    .modal-conteudo {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    }
+
+    .modal-conteudo h2 {
+      color: #27ae60;
+      margin-bottom: 8px;
+      font-size: 20px;
+    }
+
+    .modal-conteudo p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .modal-botoes {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn-modal {
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-imprimir { background-color: #27ae60; }
+    .btn-whatsapp { background-color: #25D366; }
+    .btn-nova-venda { background-color: #7f8c8d; }
+
+    .btn-modal:hover { opacity: 0.92; }
+  </style>
 </head>
 <body>
 
-<div class="container">
+  <div class="container">
+    <div class="header-titulo">
+      <h1>Distribuidora Frazão</h1>
+      <p>Painel do Administrador & Vendas</p>
+    </div>
 
-    <!-- 1. TELA INICIAL (MENU COM RETÂNGULOS) -->
+    <!-- 1. PÁGINA PRINCIPAL: MENU DE OPÇÕES (TELA INICIAL) -->
     <div id="aba-inicio" class="tab-content active">
-        <h2>Distribuidora Frazão - Menu Principal</h2>
-        <div class="grid-menu" id="gridMenuPrincipal">
-            <div class="menu-card" onclick="mudarAba('vendas')">
-                <h3>🛒 Vender</h3>
-                <p>Realize novas vendas e emita comprovantes.</p>
-            </div>
-            <div class="menu-card" onclick="mudarAba('produtos')">
-                <h3>📦 Produtos</h3>
-                <p>Consulte e gerencie o estoque e catálogo.</p>
-            </div>
-            <div class="menu-card" onclick="mudarAba('clientes')">
-                <h3>👥 Clientes</h3>
-                <p>Cadastre e consulte seus clientes.</p>
-            </div>
-            <div class="menu-card" style="border-left-color: #28a745;" onclick="mudarAba('historico')">
-                <h3>📊 Histórico de Vendas</h3>
-                <p>Visualize vendas, reimprima e compartilhe recibos.</p>
-            </div>
+      <div class="secao-titulo">Menu Principal</div>
+      <div class="grid-menu">
+        <div class="card-menu" onclick="mudarAba('vendas')">
+          <h3>🛒 Vender</h3>
+          <p>Realize novas vendas, adicione produtos ao carrinho e emita comprovantes.</p>
         </div>
-    </div>
-
-    <!-- 2. ABA: VENDAS -->
-    <div id="aba-vendas" class="tab-content">
-        <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Menu</button>
-        <h2>🛒 Tela de Vendas</h2>
-        <p>Área de PDV / Lançamento de Pedidos...</p>
-    </div>
-
-    <!-- 3. ABA: PRODUTOS -->
-    <div id="aba-produtos" class="tab-content">
-        <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Menu</button>
-        <h2>📦 Cadastro / Consulta de Produtos</h2>
-        <p>Catálogo de Produtos...</p>
-    </div>
-
-    <!-- 4. ABA: CLIENTES -->
-    <div id="aba-clientes" class="tab-content">
-        <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Menu</button>
-        <h2>👥 Cadastro de Clientes</h2>
-        <p>Lista de Clientes...</p>
-    </div>
-
-    <!-- 5. ABA: HISTÓRICO DE VENDAS -->
-    <div id="aba-historico" class="tab-content">
-        <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Menu</button>
-        <h2>📊 Histórico de Vendas</h2>
-
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nº Pedido</th>
-                        <th>Data</th>
-                        <th>Cliente</th>
-                        <th>Vendedor</th>
-                        <th>Pgto</th>
-                        <th>Total</th>
-                        <th class="nao-imprimir">Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="tabelaHistorico">
-                    <tr><td colspan="7" style="text-align: center;">Carregando histórico...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-</div>
-
-<!-- MODAL DE IMPRESSÃO / RECIBO -->
-<div id="modalImpressao" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center;">
-    <div style="background:white; width: 90%; max-width: 400px; padding: 20px; border-radius: 8px;">
-        <h3 style="margin-top:0;">Distribuidora Frazão</h3>
-        <div id="conteudoReciboImpresso"></div>
-        <div class="nao-imprimir" style="margin-top: 15px; text-align: right;">
-            <button class="btn btn-print" onclick="window.print()">🖨️ Imprimir</button>
-            <button class="btn-voltar" style="margin:0;" onclick="fecharModalImpressao()">Fechar</button>
-        </div>
-    </div>
-</div>
-
-<!-- Firebase Scripts -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyD8SnMWXagUVz4uVM87bc2dAakZyGGW3nM",
-        authDomain: "distribuidora-frazao.firebaseapp.com",
-        projectId: "distribuidora-frazao",
-        storageBucket: "distribuidora-frazao.firebasestorage.app",
-        messagingSenderId: "642540059204",
-        appId: "1:642540059204:web:c113fa6966fd97fc20da11"
-    };
-
-    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-    const db = firebase.firestore();
-
-    let historicoVendasCache = [];
-
-    // NAVEGAÇÃO ENTRE ABAS DENTRO DA MESMA PÁGINA
-    function mudarAba(aba) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.getElementById(`aba-${aba}`).classList.add('active');
         
-        if (aba === 'historico') {
-            carregarHistoricoVendas();
+        <div class="card-menu" onclick="mudarAba('produtos')">
+          <h3>📦 Produtos</h3>
+          <p>Consulte e gerencie o catálogo de produtos e estoques.</p>
+        </div>
+        
+        <div class="card-menu" onclick="mudarAba('clientes')">
+          <h3>👥 Clientes</h3>
+          <p>Cadastre clientes, consulte dados de contato e contas a receber.</p>
+        </div>
+        
+        <div class="card-menu" style="border-left-color: #1e824c;" onclick="mudarAba('historico')">
+          <h3>📊 Histórico de Vendas</h3>
+          <p>Acesse o registro de vendas, reimprima e compartilhe recibos.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. PÁGINA DE VENDAS (PDV ORIGINAL) -->
+    <div id="aba-vendas" class="tab-content">
+      <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Menu Principal</button>
+      
+      <!-- DADOS DO CLIENTE E ATENDIMENTO -->
+      <div class="secao">
+        <div class="secao-titulo">1. Dados da Venda</div>
+        <div class="campo">
+          <label>Cliente:</label>
+          <input type="text" id="cliente" placeholder="Nome do cliente" value="ALCENIR PESSANHA SILVA">
+        </div>
+        <div class="linha-dupla">
+          <div class="campo">
+            <label>Vendedor:</label>
+            <input type="text" id="vendedor" placeholder="Nome do vendedor" value="Angelo">
+          </div>
+          <div class="campo">
+            <label>Pagamento:</label>
+            <select id="pagamento">
+              <option value="Dinheiro">Dinheiro</option>
+              <option value="Pix">Pix</option>
+              <option value="Cartão de Crédito">Cartão de Crédito</option>
+              <option value="Cartão de Débito">Cartão de Débito</option>
+              <option value="Fiado" selected>Fiado</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- INSERÇÃO DE PRODUTOS -->
+      <div class="secao">
+        <div class="secao-titulo">2. Itens do Pedido</div>
+        <div class="grid-adicionar">
+          <div class="campo campo-prod">
+            <label>Produto:</label>
+            <input type="text" id="prod-nome" placeholder="Ex: Bala Bolete 500g">
+          </div>
+          <div class="campo campo-qtd">
+            <label>Qtd:</label>
+            <input type="number" id="prod-qtd" value="1" min="1">
+          </div>
+          <div class="campo campo-preco">
+            <label>Preço (R$):</label>
+            <input type="number" id="prod-preco" step="0.01" placeholder="0.00">
+          </div>
+          <button class="btn-add" onclick="adicionarItem()">+</button>
+        </div>
+
+        <table id="tabela-itens">
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th style="text-align: center;">Qtd</th>
+              <th style="text-align: right;">Subtotal</th>
+              <th style="width: 30px;"></th>
+            </tr>
+          </thead>
+          <tbody id="corpo-tabela">
+            <tr>
+              <td>Bala bolete 500g</td>
+              <td style="text-align: center;">3</td>
+              <td style="text-align: right;">35.40</td>
+              <td><button class="btn-remover" onclick="removerItem(this)">×</button></td>
+            </tr>
+            <tr>
+              <td>Bala Sortida Erlan 500g</td>
+              <td style="text-align: center;">2</td>
+              <td style="text-align: right;">19.80</td>
+              <td><button class="btn-remover" onclick="removerItem(this)">×</button></td>
+            </tr>
+            <tr>
+              <td>Bala Toffee chocolate 400g</td>
+              <td style="text-align: center;">1</td>
+              <td style="text-align: right;">19.50</td>
+              <td><button class="btn-remover" onclick="removerItem(this)">×</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- TOTAL E BOTÃO DE FINALIZAR -->
+      <div class="total-caixa">
+        <span>TOTAL</span>
+        <span class="valor" id="exibir-total">R$ 74,70</span>
+      </div>
+
+      <button class="btn-finalizar" onclick="finalizarVenda()">✅ Finalizar Venda</button>
+    </div>
+
+    <!-- 3. PÁGINA DE PRODUTOS -->
+    <div id="aba-produtos" class="tab-content">
+      <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Menu Principal</button>
+      <div class="secao">
+        <div class="secao-titulo">📦 Cadastro / Consulta de Produtos</div>
+        <p style="font-size: 13px; color: #666;">Módulo de produtos em integração...</p>
+      </div>
+    </div>
+
+    <!-- 4. PÁGINA DE CLIENTES -->
+    <div id="aba-clientes" class="tab-content">
+      <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Menu Principal</button>
+      <div class="secao">
+        <div class="secao-titulo">👥 Cadastro de Clientes</div>
+        <p style="font-size: 13px; color: #666;">Módulo de clientes em integração...</p>
+      </div>
+    </div>
+
+    <!-- 5. PÁGINA DE HISTÓRICO DE VENDAS -->
+    <div id="aba-historico" class="tab-content">
+      <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Menu Principal</button>
+      <div class="secao">
+        <div class="secao-titulo">📊 Histórico de Vendas Registradas</div>
+        
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Nº Pedido</th>
+                <th>Cliente</th>
+                <th>Total</th>
+                <th style="text-align: center;">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="corpo-historico">
+              <!-- As vendas registradas serão inseridas aqui dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- POPUP DE CONFIRMAÇÃO COM OPÇÕES DE IMPRESSÃO / WHATSAPP -->
+  <div class="modal-overlay" id="modalSucesso">
+    <div class="modal-conteudo">
+      <h2>🎉 Venda Finalizada!</h2>
+      <p>Escolha como deseja emitir o comprovante:</p>
+
+      <div class="modal-botoes">
+        <button class="btn-modal btn-imprimir" onclick="imprimirCupom()">
+          🖨️ Imprimir 80mm
+        </button>
+        <button class="btn-modal btn-whatsapp" onclick="enviarWhatsApp()">
+          📲 Enviar via WhatsApp
+        </button>
+        <button class="btn-modal btn-nova-venda" onclick="fecharModal()">
+          🔄 Nova Venda
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let vendaAtual = {};
+    let historicoVendas = [];
+
+    // Alterna visualização das abas sem trocar de página
+    function mudarAba(abaId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.getElementById('aba-' + abaId).classList.add('active');
+    }
+
+    // Atualiza o cálculo do total na tela
+    function calcularTotal() {
+      let total = 0;
+      const linhas = document.querySelectorAll('#corpo-tabela tr');
+      linhas.forEach(tr => {
+        const subtotalTd = tr.children[2];
+        if (subtotalTd) {
+          total += parseFloat(subtotalTd.innerText) || 0;
         }
+      });
+      document.getElementById('exibir-total').innerText = 'R$ ' + total.toFixed(2).replace('.', ',');
+      return total;
     }
 
-    // CARREGAR HISTÓRICO DE VENDAS
-    function carregarHistoricoVendas() {
-        db.collection("historico_vendas").orderBy("numPedido", "desc").onSnapshot((snapshot) => {
-            const tbody = document.getElementById('tabelaHistorico');
-            if (!tbody) return;
+    // Adiciona produto ao carrinho
+    function adicionarItem() {
+      const nomeInput = document.getElementById('prod-nome');
+      const qtdInput = document.getElementById('prod-qtd');
+      const precoInput = document.getElementById('prod-preco');
 
-            tbody.innerHTML = '';
-            historicoVendasCache = [];
+      const nome = nomeInput.value.trim();
+      const qtd = parseInt(qtdInput.value) || 1;
+      const preco = parseFloat(precoInput.value) || 0;
 
-            if (snapshot.empty) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhuma venda registrada.</td></tr>';
-                return;
-            }
+      if (!nome || preco <= 0) {
+        alert('Por favor, informe o nome do produto e o preço válido.');
+        return;
+      }
 
-            snapshot.forEach((doc) => {
-                const p = doc.data();
-                const id = doc.id;
-                historicoVendasCache.push({ id, ...p });
+      const subtotal = (qtd * preco).toFixed(2);
+      const corpoTabela = document.getElementById('corpo-tabela');
 
-                tbody.innerHTML += `
-                    <tr>
-                        <td>#${p.numPedido || 'N/A'}</td>
-                        <td>${p.data || '-'}</td>
-                        <td>${p.clienteNome || 'Cliente'}</td>
-                        <td>${p.vendedor || 'Geral'}</td>
-                        <td>${p.formaPagamento || '-'}</td>
-                        <td><strong>R$ ${Number(p.total || 0).toFixed(2)}</strong></td>
-                        <td class="nao-imprimir">
-                            <button class="btn btn-print" onclick="abrirComprovanteImpressao('${id}')">🖨️ Imprimir</button>
-                            <button class="btn btn-share" onclick="compartilharPedidoWhatsApp('${id}')">📲 Compartilhar</button>
-                        </td>
-                    </tr>
-                `;
-            });
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${nome}</td>
+        <td style="text-align: center;">${qtd}</td>
+        <td style="text-align: right;">${subtotal}</td>
+        <td><button class="btn-remover" onclick="removerItem(this)">×</button></td>
+      `;
+
+      corpoTabela.appendChild(tr);
+
+      nomeInput.value = '';
+      qtdInput.value = '1';
+      precoInput.value = '';
+      nomeInput.focus();
+
+      calcularTotal();
+    }
+
+    // Remove item da tabela
+    function removerItem(botao) {
+      botao.closest('tr').remove();
+      calcularTotal();
+    }
+
+    // Finaliza venda, salva no histórico e exibe o popup
+    function finalizarVenda() {
+      const linhas = document.querySelectorAll('#corpo-tabela tr');
+      if (linhas.length === 0) {
+        alert('Adicione pelo menos um produto para finalizar a venda.');
+        return;
+      }
+
+      const cliente = document.getElementById('cliente').value || 'Cliente Geral';
+      const vendedor = document.getElementById('vendedor').value || 'Atendimento';
+      const pagamento = document.getElementById('pagamento').value;
+      const totalTexto = document.getElementById('exibir-total').innerText;
+      const dataHora = new Date().toLocaleString('pt-BR');
+      const numPedido = Math.floor(1000 + Math.random() * 9000);
+
+      let itens = [];
+      linhas.forEach(tr => {
+        const tds = tr.children;
+        itens.push({
+          nome: tds[0].innerText.trim(),
+          qtd: tds[1].innerText.trim(),
+          subtotal: tds[2].innerText.trim()
         });
+      });
+
+      vendaAtual = { numPedido, dataHora, cliente, vendedor, pagamento, total: totalTexto, itens };
+      
+      // Adiciona ao histórico interno
+      historicoVendas.unshift(vendaAtual);
+      atualizarTabelaHistorico();
+
+      document.getElementById('modalSucesso').style.display = 'flex';
     }
 
-    function abrirComprovanteImpressao(pedidoId) {
-        const p = historicoVendasCache.find(item => item.id === pedidoId);
-        if (!p) return;
+    // Renderiza a tabela do Histórico com os botões de ação
+    function atualizarTabelaHistorico() {
+      const tbody = document.getElementById('corpo-historico');
+      tbody.innerHTML = '';
 
-        document.getElementById('conteudoReciboImpresso').innerHTML = `
-            <p><strong>Pedido:</strong> #${p.numPedido}</p>
-            <p><strong>Cliente:</strong> ${p.clienteNome}</p>
-            <p><strong>Total:</strong> R$ ${Number(p.total || 0).toFixed(2)}</p>
+      if (historicoVendas.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhuma venda gravada neste acesso.</td></tr>';
+        return;
+      }
+
+      historicoVendas.forEach((v, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>#${v.numPedido}</td>
+          <td>${v.cliente}</td>
+          <td>${v.total}</td>
+          <td style="text-align: center;">
+            <button class="btn-acao-hist btn-hist-print" onclick="reimprimirVenda(${index})">🖨️ Imprimir</button>
+            <button class="btn-acao-hist btn-hist-share" onclick="compartilharVenda(${index})">📲 Compartilhar</button>
+          </td>
         `;
-        document.getElementById('modalImpressao').style.display = 'flex';
+        tbody.appendChild(tr);
+      });
     }
 
-    function fecharModalImpressao() {
-        document.getElementById('modalImpressao').style.display = 'none';
+    // Ações do Histórico
+    function reimprimirVenda(index) {
+      vendaAtual = historicoVendas[index];
+      imprimirCupom();
     }
 
-    function compartilharPedidoWhatsApp(pedidoId) {
-        const p = historicoVendasCache.find(item => item.id === pedidoId);
-        if (!p) return;
-
-        let mensagem = `*Distribuidora Frazão*\n` +
-            `*Pedido #${p.numPedido}*\n` +
-            `*Cliente:* ${p.clienteNome}\n` +
-            `*Total:* R$ ${Number(p.total || 0).toFixed(2)}`;
-
-        const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`;
-        window.open(url, '_blank');
+    function compartilharVenda(index) {
+      vendaAtual = historicoVendas[index];
+      enviarWhatsApp();
     }
-</script>
 
+    // Impressão Térmica 80mm via RawBT
+    function imprimirCupom() {
+      if (!vendaAtual.numPedido) return;
+
+      let texto = "DISTRIBUIDORA FRAZAO\n";
+      texto += "Comprovante de Pedido / Venda\n";
+      texto += "--------------------------------\n";
+      texto += "Pedido No: " + vendaAtual.numPedido + "\n";
+      texto += "Data: " + vendaAtual.dataHora + "\n";
+      texto += "Cliente: " + vendaAtual.cliente + "\n";
+      texto += "Vendedor: " + vendaAtual.vendedor + "\n";
+      texto += "Pagamento: " + vendaAtual.pagamento + "\n";
+      texto += "--------------------------------\n";
+      texto += "ITENS:\n";
+
+      vendaAtual.itens.forEach(item => {
+        texto += `${item.qtd}x ${item.nome} - R$ ${item.subtotal}\n`;
+      });
+
+      texto += "--------------------------------\n";
+      texto += "TOTAL FINAL: " + vendaAtual.total + "\n";
+      texto += "--------------------------------\n";
+      texto += "Obrigado pela preferencia!\n\n\n";
+
+      const intentUrl = "intent:#Intent;scheme=rawbt;package=ru.a404m.rawbt;S.text=" + encodeURIComponent(texto) + ";end;";
+
+      try {
+        window.location.href = intentUrl;
+      } catch (e) {
+        window.print();
+      }
+    }
+
+    // Envio Formatado para o WhatsApp
+    function enviarWhatsApp() {
+      if (!vendaAtual.numPedido) return;
+
+      let mensagem = "*DISTRIBUIDORA FRAZÃO*\n";
+      mensagem += "*Comprovante de Pedido / Venda*\n";
+      mensagem += "-----------------------------------\n";
+      mensagem += "*Pedido Nº:* " + vendaAtual.numPedido + "\n";
+      mensagem += "*Data:* " + vendaAtual.dataHora + "\n";
+      mensagem += "*Cliente:* " + vendaAtual.cliente + "\n";
+      mensagem += "*Vendedor:* " + vendaAtual.vendedor + "\n";
+      mensagem += "*Forma de Pagamento:* " + vendaAtual.pagamento + "\n";
+      mensagem += "-----------------------------------\n";
+      mensagem += "*ITENS:*\n";
+
+      vendaAtual.itens.forEach(item => {
+        mensagem += `• ${item.qtd}x ${item.nome} - R$ ${item.subtotal}\n`;
+      });
+
+      mensagem += "-----------------------------------\n";
+      mensagem += "*TOTAL FINAL:* " + vendaAtual.total + "\n";
+      mensagem += "-----------------------------------\n";
+      mensagem += "Obrigado pela preferência!";
+
+      const url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(mensagem);
+      window.open(url, "_blank");
+    }
+
+    // Reinicia campos para nova venda
+    function fecharModal() {
+      document.getElementById('modalSucesso').style.display = 'none';
+      document.getElementById('corpo-tabela').innerHTML = '';
+      document.getElementById('prod-nome').value = '';
+      document.getElementById('prod-qtd').value = '1';
+      document.getElementById('prod-preco').value = '';
+      calcularTotal();
+    }
+
+    calcularTotal();
+    atualizarTabelaHistorico();
+  </script>
 </body>
 </html>

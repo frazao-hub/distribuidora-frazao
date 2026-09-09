@@ -1,21 +1,27 @@
 @media print {
-  /* Esconde menus, botões, cabeçalhos do site e o próprio botão de imprimir */
-  header, footer, nav, .btn-imprimir, .no-print {
+  /* Oculta tudo na página por padrão */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Torna visível apenas a área do recibo/cupom e seus filhos */
+  #modalRecibo, #modalRecibo *, #areaCupom, #areaCupom * {
+    visibility: visible;
+  }
+  
+  /* Posiciona o cupom no topo esquerdo da folha impressa */
+  #areaCupom, #modalRecibo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+  
+  /* Esconde botões de ação na hora da impressão */
+  .nao-imprimir, button {
     display: none !important;
-  }
-
-  /* Força o contêiner do pedido a usar 100% da largura da folha */
-  body, .pedido-container {
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: #fff !important;
-    color: #000 !important;
-  }
-
-  /* Evita que as linhas do pedido ou itens sejam cortados no meio da página */
-  .item-pedido, tr {
-    page-break-inside: avoid;
-    break-inside: avoid;
   }
 }

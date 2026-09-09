@@ -558,7 +558,7 @@
             }
         }
 
-        // CLIENTES & FIADOS (CONTROLE GERAL: ABATER E ACRESCENTAR)
+        // CLIENTES & FIADOS
         function ouvirClientes() {
             db.collection("clientes").orderBy("nome").onSnapshot(snapshot => {
                 clientesCache = [];
@@ -615,7 +615,6 @@
         }
 
         function gerenciarFiado(id, nome, debitoAtual, tipo) {
-            const acaoNome = tipo === 'abater' ? 'Abater Pagamento' : 'Acrescentar Dívida';
             const msg = `Cliente: ${nome}\nSaldo Devedor Atual: R$ ${debitoAtual.toFixed(2)}\n\nDigite o valor a ${tipo === 'abater' ? 'pagar/abater' : 'acrescentar'} (ex: 50.00):`;
             const valorStr = prompt(msg);
             if (!valorStr) return;
@@ -634,7 +633,7 @@
             }
         }
 
-        // CARRINHO & VENDAS MULTI-ITENS COM NUMERAÇÃO SEQUENCIAL (0001)
+        // CARRINHO & VENDAS MULTI-ITENS
         function preencherDadosProdutoVenda() {
             document.getElementById('vendaQtdProduto').focus();
         }
@@ -715,7 +714,6 @@
             let totalFinal = Math.max(0, subtotal - desconto);
 
             try {
-                // Obter próximo número sequencial (0001, 0002...)
                 const counterRef = db.collection("configuracoes").doc("contador_pedidos");
                 const counterDoc = await counterRef.get();
                 let proximoNumero = 1;
@@ -738,7 +736,6 @@
                     formaPagamento: formaPgto
                 };
 
-                // Dar baixa no estoque
                 for (let item of carrinhoVenda) {
                     const prodRef = db.collection("produtos").doc(item.id);
                     const snap = await prodRef.get();
@@ -748,7 +745,6 @@
                     }
                 }
 
-                // Se for fiado, atualizar saldo devedor
                 if (formaPgto === 'Fiado' && clienteObj) {
                     const novoDebito = (Number(clienteObj.debito) || 0) + totalFinal;
                     await db.collection("clientes").doc(clienteId).update({ debito: novoDebito });
@@ -762,7 +758,7 @@
                 renderizarCarrinho();
                 document.getElementById('vendaDesconto').value = '0.00';
                 
-                abrirModalComprovante(pedidoAtualCache);
+                abrirModalComprovantePorObjeto(pedidoAtualCache);
                 if (usuarioLogado.perfil === 'admin') carregarHistoricoAdmin();
             } catch (err) {
                 alert("Erro ao finalizar venda: " + err.message);
@@ -800,7 +796,7 @@
                             <td class="px-4 py-2 text-sm">${v.formaPagamento}</td>
                             <td class="px-4 py-2 text-sm font-bold text-green-600">R$ ${Number(v.total).toFixed(2)}</td>
                             <td class="px-4 py-2 text-center">
-                                <button onclick='abrirModalComprovante(${JSON.stringify(v)})' class="bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold">Ver Comprovante</button>
+                                <button onclick="abrirModalComprovantePorId('${v.id}')" class="bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold">Ver Comprovante</button>
                             </td>
                         </tr>
                     `;
@@ -853,13 +849,26 @@
             }
         }
 
-        // MODAL E COMPROVANTE TÉRMICO 80MM
-        function abrirModalComprovante(pedido) {
+        // MODAL E COMPROVANTE TÉRMICO
+        async function abrirModalComprovantePorId(vendaId) {
+            try {
+                const docSnap = await db.collection("vendas").doc(vendaId).get();
+                if (!docSnap.exists) return alert("Pedido não encontrado.");
+                const pedido = { id: docSnap.id, ...docSnap.data() };
+                abrirModalComprovantePorObjeto(pedido);
+            } catch (err) {
+                alert("Erro ao carregar comprovante: " + err.message);
+            }
+        }
+
+        function abrirModalComprovantePorObjeto(pedido) {
             pedidoAtualCache = pedido;
             let itensHtml = '';
-            pedido.itens.forEach(i => {
-                itensHtml += `<tr><td>${i.nome}</td><td>${i.qtd}x R$${i.preco.toFixed(2)}</td><td style="text-align:right;">R$${i.subtotal.toFixed(2)}</td></tr>`;
-            });
+            if (pedido.itens && Array.isArray(pedido.itens)) {
+                pedido.itens.forEach(i => {
+                    itensHtml += `<tr><td>${i.nome}</td><td>${i.qtd}x R$${i.preco.toFixed(2)}</td><td style="text-align:right;">R$${i.subtotal.toFixed(2)}</td></tr>`;
+                });
+            }
 
             document.getElementById('corpoReciboModal').innerHTML = `
                 <div style="text-align:center; font-weight:bold;">DISTRIBUIDORA FRAZÃO</div>
@@ -872,9 +881,9 @@
                 <hr style="border-top:1px dashed #000; margin:4px 0;">
                 <table style="width:100%; font-size:11px;">${itensHtml}</table>
                 <hr style="border-top:1px dashed #000; margin:4px 0;">
-                <div style="text-align:right;">Subtotal: R$ ${pedido.subtotal.toFixed(2)}</div>
-                ${pedido.desconto > 0 ? `<div style="text-align:right;">Desconto: - R$ ${pedido.desconto.toFixed(2)}</div>` : ''}
-                <div style="text-align:right; font-weight:bold; font-size:13px;">TOTAL: R$ ${pedido.total.toFixed(2)}</div>
+                <div style="text-align:right;">Subtotal: R$ ${Number(pedido.subtotal || 0).toFixed(2)}</div>
+                ${pedido.desconto > 0 ? `<div style="text-align:right;">Desconto: - R$ ${Number(pedido.desconto).toFixed(2)}</div>` : ''}
+                <div style="text-align:right; font-weight:bold; font-size:13px;">TOTAL: R$ ${Number(pedido.total || 0).toFixed(2)}</div>
             `;
             document.getElementById('modalComprovante').classList.remove('hidden');
         }
@@ -883,32 +892,35 @@
             document.getElementById('modalComprovante').classList.add('hidden');
         }
 
-        // IMPRESSÃO TÉRMICA 80MM (CUPOM OTIMIZADO)
+        // IMPRESSÃO TÉRMICA 80MM OTIMIZADA PARA GOOJPRT JP80H (72mm largura de impressão exata)
         function imprimirCupomIsolado() {
             if (!pedidoAtualCache) return;
             let itensHtml = '';
-            pedidoAtualCache.itens.forEach(i => {
-                itensHtml += `<tr><td>${i.nome}</td><td>${i.qtd}x R$${i.preco.toFixed(2)}</td><td style="text-align:right;">R$${i.subtotal.toFixed(2)}</td></tr>`;
-            });
+            if (pedidoAtualCache.itens && Array.isArray(pedidoAtualCache.itens)) {
+                pedidoAtualCache.itens.forEach(i => {
+                    itensHtml += `<tr><td>${i.nome}</td><td>${i.qtd}x R$${i.preco.toFixed(2)}</td><td class="text-right">R$${i.subtotal.toFixed(2)}</td></tr>`;
+                });
+            }
 
-            const janela = window.open('', '_blank', 'width=320,height=600');
+            const janela = window.open('', '_blank', 'width=340,height=600');
             janela.document.write(`
                 <html>
                     <head>
                         <title>Cupom #${pedidoAtualCache.numeroPedido || '0000'}</title>
                         <style>
-                            body { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #000; margin: 0; padding: 5px; width: 72mm; background: #fff; }
-                            h2 { text-align: center; font-size: 14px; margin: 0 0 2px 0; font-weight: bold; }
+                            @page { size: 80mm auto; margin: 0; }
+                            body { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #000; margin: 0; padding: 4px; width: 72mm; background: #fff; }
+                            h2 { text-align: center; font-size: 15px; margin: 0 0 2px 0; font-weight: bold; }
                             p { margin: 2px 0; font-weight: bold; }
-                            table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 4px; }
+                            table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 4px; }
                             th, td { padding: 2px; text-align: left; border-bottom: 1px dotted #000; font-weight: bold; }
                             .text-right { text-align: right; }
-                            hr { border: none; border-top: 1px dashed #000; margin: 4px 0; }
+                            hr { border: none; border-top: 1px dashed #000; margin: 5px 0; }
                         </style>
                     </head>
                     <body>
                         <h2>DISTRIBUIDORA FRAZÃO</h2>
-                        <p style="text-align:center; font-size:10px;">Cupom Não Fiscal</p>
+                        <p style="text-align:center; font-size:10px;">Cupom Não Fiscal - 80mm</p>
                         <hr>
                         <p>Pedido: #${pedidoAtualCache.numeroPedido || '0000'}</p>
                         <p>Data: ${new Date(pedidoAtualCache.data).toLocaleString('pt-BR')}</p>
@@ -921,14 +933,15 @@
                             <tbody>${itensHtml}</tbody>
                         </table>
                         <hr>
-                        <p class="text-right" style="font-size: 12px; margin-top: 4px;">TOTAL: R$ ${pedidoAtualCache.total.toFixed(2)}</p>
-                        <p style="text-align:center; font-size:9px; margin-top:8px;">Obrigado pela preferência!</p>
+                        <p class="text-right" style="font-size: 13px; margin-top: 4px;">TOTAL: R$ ${Number(pedidoAtualCache.total || 0).toFixed(2)}</p>
+                        <p style="text-align:center; font-size:10px; margin-top:10px;">Obrigado pela preferência!</p>
                         <script>
-                            window.onload = function() { setTimeout(() => { window.print(); window.close(); }, 300); }
+                            window.onload = function() { setTimeout(() => { window.print(); window.close(); }, 350); }
                         <\/script>
                     </body>
                 </html>
             `);
+            janela.document.write('<div style="height: 20mm;"></div>'); // Avanço extra de papel para corte da guilhotina
             janela.document.close();
         }
 
@@ -938,11 +951,13 @@
             texto += `Pedido: #${pedidoAtualCache.numeroPedido || '0000'}%0A`;
             texto += `Cliente: ${pedidoAtualCache.clienteNome}%0A`;
             texto += `Forma de Pagamento: ${pedidoAtualCache.formaPagamento}%0A----------------------------%0A`;
-            pedidoAtualCache.itens.forEach(i => {
-                texto += `${i.qtd}x ${i.nome} - R$${i.subtotal.toFixed(2)}%0A`;
-            });
+            if (pedidoAtualCache.itens && Array.isArray(pedidoAtualCache.itens)) {
+                pedidoAtualCache.itens.forEach(i => {
+                    texto += `${i.qtd}x ${i.nome} - R$${Number(i.subtotal || 0).toFixed(2)}%0A`;
+                });
+            }
             texto += `----------------------------%0A`;
-            texto += `*TOTAL: R$ ${pedidoAtualCache.total.toFixed(2)}*`;
+            texto += `*TOTAL: R$ ${Number(pedidoAtualCache.total || 0).toFixed(2)}*`;
             window.open(`https://api.whatsapp.com/send?text=${texto}`, '_blank');
         }
     </script>

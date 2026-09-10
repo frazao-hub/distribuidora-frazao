@@ -135,6 +135,9 @@
         </div>
     </footer>
 
+    <!-- Carrega o script principal do Firebase/Sistema -->
+    <script type="module" src="script.js"></script>
+
     <!-- Script de Validação Matemática de CPF e CNPJ -->
     <script>
         function validarCPF(cpf) {
@@ -178,7 +181,6 @@
             return resultado == digitos.charAt(1);
         }
 
-        // Função universal para testar qualquer campo de documento no seu site
         function verificarDocumentoNoEnvio(documentoDigitado) {
             let limpo = documentoDigitado.replace(/[^\d]+/g,'');
             if (limpo.length === 11) {
@@ -186,7 +188,7 @@
             } else if (limpo.length === 14) {
                 return validarCNPJ(documentoDigitado);
             }
-            return false; // Retorna falso se não tiver 11 ou 14 dígitos
+            return false;
         }
     </script>
 </body>

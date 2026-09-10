@@ -116,6 +116,9 @@
       color: #2c3e50;
       margin-bottom: 10px;
       text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .campo {
@@ -251,6 +254,15 @@
     }
     .btn-hist-print { background-color: #27ae60; }
     .btn-hist-share { background-color: #25D366; }
+    .btn-limpar-hist {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      font-size: 11px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 
     /* MODAL DE CONFIRMAÇÃO DA VENDA */
     .modal-overlay {
@@ -354,9 +366,15 @@
       <!-- DADOS DO CLIENTE E ATENDIMENTO -->
       <div class="secao">
         <div class="secao-titulo">1. Dados da Venda</div>
-        <div class="campo">
-          <label>Cliente:</label>
-          <input type="text" id="cliente" placeholder="Nome do cliente" value="ALCENIR PESSANHA SILVA">
+        <div class="linha-dupla">
+          <div class="campo">
+            <label>Cliente:</label>
+            <input type="text" id="cliente" placeholder="Nome do cliente" value="ALCENIR PESSANHA SILVA">
+          </div>
+          <div class="campo">
+            <label>WhatsApp do Cliente (opcional):</label>
+            <input type="tel" id="cliente-fone" placeholder="Ex: 21999999999">
+          </div>
         </div>
         <div class="linha-dupla">
           <div class="campo">
@@ -390,7 +408,7 @@
           </div>
           <div class="campo campo-preco">
             <label>Preço (R$):</label>
-            <input type="number" id="prod-preco" step="0.01" placeholder="0.00">
+            <input type="text" id="prod-preco" placeholder="0,00">
           </div>
           <button class="btn-add" onclick="adicionarItem()">+</button>
         </div>
@@ -458,7 +476,10 @@
     <div id="aba-historico" class="tab-content">
       <button class="btn-voltar" onclick="mudarAba('inicio')">← Voltar ao Menu Principal</button>
       <div class="secao">
-        <div class="secao-titulo">📊 Histórico de Vendas Registradas</div>
+        <div class="secao-titulo">
+          <span>📊 Histórico de Vendas Registradas</span>
+          <button class="btn-limpar-hist" onclick="limparHistorico()">🗑️ Limpar</button>
+        </div>
         
         <div style="overflow-x: auto;">
           <table>
@@ -502,7 +523,8 @@
 
   <script>
     let vendaAtual = {};
-    let historicoVendas = [];
+    // Carrega o histórico salvo no navegador
+    let historicoVendas = JSON.parse(localStorage.getItem('historico_frazao')) || [];
 
     // Alterna visualização das abas sem trocar de página
     function mudarAba(abaId) {
@@ -532,10 +554,13 @@
 
       const nome = nomeInput.value.trim();
       const qtd = parseInt(qtdInput.value) || 1;
-      const preco = parseFloat(precoInput.value) || 0;
+      
+      // Trata vírgula informada no teclado numérico mobile
+      const precoTratado = precoInput.value.replace(',', '.');
+      const preco = parseFloat(precoTratado) || 0;
 
       if (!nome || preco <= 0) {
-        alert('Por favor, informe o nome do produto e o preço válido.');
+        alert('Por favor, informe o nome do produto e um preço válido.');
         return;
       }
 
@@ -566,7 +591,7 @@
       calcularTotal();
     }
 
-    // Finaliza venda, salva no histórico e exibe o popup
+    // Finaliza venda, salva no histórico (localStorage) e exibe o popup
     function finalizarVenda() {
       const linhas = document.querySelectorAll('#corpo-tabela tr');
       if (linhas.length === 0) {
@@ -575,6 +600,7 @@
       }
 
       const cliente = document.getElementById('cliente').value || 'Cliente Geral';
+      const clienteFone = document.getElementById('cliente-fone').value.replace(/\D/g, '');
       const vendedor = document.getElementById('vendedor').value || 'Atendimento';
       const pagamento = document.getElementById('pagamento').value;
       const totalTexto = document.getElementById('exibir-total').innerText;
@@ -591,10 +617,11 @@
         });
       });
 
-      vendaAtual = { numPedido, dataHora, cliente, vendedor, pagamento, total: totalTexto, itens };
+      vendaAtual = { numPedido, dataHora, cliente, clienteFone, vendedor, pagamento, total: totalTexto, itens };
       
-      // Adiciona ao histórico interno
+      // Adiciona ao histórico e salva no navegador
       historicoVendas.unshift(vendaAtual);
+      localStorage.setItem('historico_frazao', JSON.stringify(historicoVendas));
       atualizarTabelaHistorico();
 
       document.getElementById('modalSucesso').style.display = 'flex';
@@ -606,7 +633,7 @@
       tbody.innerHTML = '';
 
       if (historicoVendas.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhuma venda gravada neste acesso.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhuma venda gravada.</td></tr>';
         return;
       }
 
@@ -623,6 +650,14 @@
         `;
         tbody.appendChild(tr);
       });
+    }
+
+    function limparHistorico() {
+      if (confirm('Deseja realmente apagar todo o histórico de vendas salvo?')) {
+        historicoVendas = [];
+        localStorage.removeItem('historico_frazao');
+        atualizarTabelaHistorico();
+      }
     }
 
     // Ações do Histórico
@@ -693,7 +728,11 @@
       mensagem += "-----------------------------------\n";
       mensagem += "Obrigado pela preferência!";
 
-      const url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(mensagem);
+      const fone = vendaAtual.clienteFone ? vendaAtual.clienteFone : '';
+      const url = fone 
+        ? `https://api.whatsapp.com/send?phone=55${fone}&text=${encodeURIComponent(mensagem)}`
+        : `https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`;
+
       window.open(url, "_blank");
     }
 
@@ -704,9 +743,11 @@
       document.getElementById('prod-nome').value = '';
       document.getElementById('prod-qtd').value = '1';
       document.getElementById('prod-preco').value = '';
+      document.getElementById('cliente-fone').value = '';
       calcularTotal();
     }
 
+    // Inicialização
     calcularTotal();
     atualizarTabelaHistorico();
   </script>

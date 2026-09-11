@@ -25,6 +25,14 @@
         .btn-categoria { background: #3498db; color: white; text-align: center; padding: 15px; border-radius: 6px; text-decoration: none; font-weight: bold; transition: background 0.2s; display: flex; align-items: center; justify-content: center; height: 50px; box-sizing: border-box; }
         .btn-categoria:hover { background: #2980b9; }
 
+        /* Estilização do Formulário de Cadastro */
+        .form-grupo { margin-bottom: 15px; }
+        .form-grupo label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #444; }
+        .form-grupo input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 14px; }
+        .form-grupo input:focus { border-color: #27ae60; outline: none; }
+        .btn-salvar { background: #27ae60; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: background 0.2s; }
+        .btn-salvar:hover { background: #219150; }
+
         p, li { line-height: 1.6; font-size: 14px; color: #555; }
 
         /* Rodapé com Políticas */
@@ -58,7 +66,7 @@
             }
 
             /* Esconde elementos de navegação e rodapé ao imprimir */
-            header, footer, .btn-categoria, .no-print, button, nav {
+            header, footer, .btn-categoria, .no-print, button, nav, #card-cadastro {
                 display: none !important;
             }
 
@@ -88,6 +96,30 @@
     </header>
 
     <div class="container">
+
+        <!-- Cadastro de Cliente no Firebase -->
+        <div class="card-secao no-print" id="card-cadastro">
+            <h2>Cadastro de Cliente</h2>
+            <form id="formCliente">
+                <div class="form-grupo">
+                    <label for="nome">Nome Completo / Razão Social:</label>
+                    <input type="text" id="nome" required placeholder="Ex: Mercado Silva">
+                </div>
+                <div class="form-grupo">
+                    <label for="documento">CPF ou CNPJ:</label>
+                    <input type="text" id="documento" required placeholder="Digite apenas números">
+                </div>
+                <div class="form-grupo">
+                    <label for="telefone">WhatsApp / Telefone:</label>
+                    <input type="tel" id="telefone" required placeholder="(21) 99999-9999">
+                </div>
+                <div class="form-grupo">
+                    <label for="endereco">Endereço de Entrega:</label>
+                    <input type="text" id="endereco" placeholder="Rua, número, bairro e cidade">
+                </div>
+                <button type="submit" class="btn-salvar">Cadastrar Cliente</button>
+            </form>
+        </div>
 
         <!-- 10 Categorias em Ordem Alfabética -->
         <div class="card-secao">
@@ -138,31 +170,32 @@
         </div>
     </footer>
 
-    <!-- Carrega o script principal do Firebase/Sistema -->
-    <script type="module" src="script.js"></script>
+    <!-- Script com validação de CPF/CNPJ e envio ao Firebase -->
+    <script type="module">
+        import { salvarCliente } from './firebase.js';
 
-    <!-- Script de Validação Matemática de CPF e CNPJ -->
-    <script>
+        // Validação Matemática de CPF
         function validarCPF(cpf) {
             cpf = cpf.replace(/[^\d]+/g,'');
             if(cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
             let add = 0;
-            for (let i=0; i < 9; i ++) add += parseInt(cpf.charAt(i)) * (10 - i);
+            for (let i=0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
             let rev = 11 - (add % 11);
             if (rev === 10 || rev === 11) rev = 0;
             if (rev !== parseInt(cpf.charAt(9))) return false;
             add = 0;
-            for (let i = 0; i < 10; i ++) add += parseInt(cpf.charAt(i)) * (11 - i);
+            for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
             rev = 11 - (add % 11);
             if (rev === 10 || rev === 11) rev = 0;
             return rev === parseInt(cpf.charAt(10));
         }
 
+        // Validação Matemática de CNPJ
         function validarCNPJ(cnpj) {
             cnpj = cnpj.replace(/[^\d]+/g,'');
             if(cnpj.length !== 14 || /^(\d)\1+$/.test(cnpj)) return false;
             let tamanho = cnpj.length - 2;
-            let numeros = cnpj.substring(0,tamanho);
+            let numeros = cnpj.substring(0, tamanho);
             let digitos = cnpj.substring(tamanho);
             let soma = 0;
             let pos = tamanho - 7;
@@ -173,7 +206,7 @@
             let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
             if (resultado != digitos.charAt(0)) return false;
             tamanho = tamanho + 1;
-            numeros = cnpj.substring(0,tamanho);
+            numeros = cnpj.substring(0, tamanho);
             soma = 0;
             pos = tamanho - 7;
             for (let i = tamanho; i >= 1; i--) {
@@ -184,15 +217,36 @@
             return resultado == digitos.charAt(1);
         }
 
-        function verificarDocumentoNoEnvio(documentoDigitado) {
-            let limpo = documentoDigitado.replace(/[^\d]+/g,'');
-            if (limpo.length === 11) {
-                return validarCPF(documentoDigitado);
-            } else if (limpo.length === 14) {
-                return validarCNPJ(documentoDigitado);
-            }
+        function verificarDocumento(doc) {
+            let limpo = doc.replace(/[^\d]+/g,'');
+            if (limpo.length === 11) return validarCPF(limpo);
+            if (limpo.length === 14) return validarCNPJ(limpo);
             return false;
         }
+
+        // Captura o evento de envio do formulário
+        const form = document.getElementById('formCliente');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const docInput = document.getElementById('documento').value;
+
+            if (!verificarDocumento(docInput)) {
+                alert('CPF ou CNPJ inválido! Por favor, confira os números digitados.');
+                return;
+            }
+
+            const novoCliente = {
+                nome: document.getElementById('nome').value,
+                documento: docInput.replace(/[^\d]+/g,''),
+                telefone: document.getElementById('telefone').value,
+                endereco: document.getElementById('endereco').value,
+                criadoEm: new Date().toISOString()
+            };
+
+            await salvarCliente(novoCliente);
+            form.reset();
+        });
     </script>
 </body>
 </html>

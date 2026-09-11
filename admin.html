@@ -75,7 +75,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDocs, where, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Substitua pelas credenciais reais do seu Firebase Console
+        // Insira aqui suas credenciais do Firebase
         const firebaseConfig = {
             apiKey: "SUA_API_KEY",
             authDomain: "seu-projeto.firebaseapp.com",
@@ -92,8 +92,9 @@
         window.usuarioLogado = null;
         window.carrinho = [];
         window.listaProdutosMemoria = [];
+        window.textoReciboAtual = "";
 
-        // FUNÇÃO DE CRIPTOGRAFIA (SHA-256 Nativo do Navegador)
+        // FUNÇÃO DE CRIPTOGRAFIA (SHA-256)
         async function gerarHash(texto) {
             if (!texto) return "";
             const encoder = new TextEncoder();
@@ -133,7 +134,7 @@
                         }
                     } else {
                         autenticarSucesso({ nome: "Administrador Master", perfil: "admin" });
-                        alert("Bem-vindo! Você acessou sem senha. Acesse a aba 'Cadastrar Vendedores e Senha Admin' para cadastrar sua nova senha.");
+                        alert("Bem-vindo! Acesse a aba 'Cadastrar Vendedores e Senha Admin' para definir uma nova senha.");
                         return;
                     }
                 } catch (err) {
@@ -153,10 +154,10 @@
                     const vendData = snap.docs[0].data();
                     autenticarSucesso({ nome: vendData.nome, perfil: "vendedor" });
                 } else {
-                    alert("Usuário ou senha de vendedor incorretos!");
+                    alert("Usuário ou senha incorreções!");
                 }
             } catch (err) {
-                alert("Erro ao consultar vendedor no banco de dados: " + err.message);
+                alert("Erro ao consultar vendedor: " + err.message);
             }
         };
 
@@ -186,7 +187,7 @@
             }
 
             if (novaSenha !== confirmaSenha) {
-                alert("A nova senha e a confirmação não conferem!");
+                alert("As senhas não conferem!");
                 return;
             }
 
@@ -195,13 +196,13 @@
                 const adminRef = doc(db, "configuracoes", "adminMaster");
                 await setDoc(adminRef, { usuario: "admin", hashSenha: novoHash, ultimaAlteracao: new Date().toISOString() });
                 document.getElementById("formAlterarSenhaMaster").reset();
-                alert("Senha do Administrador cadastrada e criptografada com sucesso!");
+                alert("Senha do Administrador atualizada com sucesso!");
             } catch (err) {
-                alert("Erro ao atualizar senha no banco: " + err.message);
+                alert("Erro ao atualizar senha: " + err.message);
             }
         };
 
-        // --- GESTÃO DE VENDEDORES (COM TRATAMENTO DE ERROS) ---
+        // --- GESTÃO DE VENDEDORES ---
         window.cadastrarVendedor = async (e) => {
             e.preventDefault();
             const nomeVend = document.getElementById("nomeVendedorCad").value.trim();
@@ -209,12 +210,12 @@
             const senhaPur = document.getElementById("passVendedorCad").value;
 
             if (userVend === "admin") {
-                alert("O nome de usuário 'admin' é reservado ao Administrador Master.");
+                alert("O nome 'admin' é reservado.");
                 return;
             }
 
             if (senhaPur.length < 4) {
-                alert("A senha do vendedor deve ter pelo menos 4 caracteres.");
+                alert("A senha deve ter pelo menos 4 caracteres.");
                 return;
             }
 
@@ -229,9 +230,9 @@
 
                 await addDoc(collection(db, "vendedores"), vend);
                 document.getElementById("formVendedor").reset();
-                alert(`Vendedor ${nomeVend} cadastrado e salvo com sucesso no banco de dados!`);
+                alert(`Vendedor ${nomeVend} cadastrado com sucesso!`);
             } catch (err) {
-                alert("Erro ao salvar vendedor no banco de dados: " + err.message + "\n\nVerifique se as Regras do Firestore permitem gravação (allow read, write: if true).");
+                alert("Erro ao salvar vendedor: " + err.message);
             }
         };
 
@@ -256,21 +257,19 @@
                     </tr>
                 `;
             });
-        }, (err) => {
-            console.error("Erro ao listar vendedores do banco:", err);
         });
 
         window.excluirVendedor = async (id) => {
-            if(confirm("Remover este vendedor e revogar acesso?")) {
+            if(confirm("Remover este vendedor?")) {
                 try {
-                    await deleteDoc(doc(doc(db, "vendedores", id)));
+                    await deleteDoc(doc(db, "vendedores", id));
                 } catch(err) {
                     alert("Erro ao excluir vendedor: " + err.message);
                 }
             }
         };
 
-        // --- VALIDAÇÕES DE DOCUMENTOS ---
+        // --- VALIDAÇÕES ---
         window.validarCPF = (cpf) => {
             cpf = cpf.replace(/[^\d]+/g,'');
             if(cpf == '' || cpf.length != 11 || /^(\d)\1{10}$/.test(cpf)) return false;
@@ -288,7 +287,7 @@
 
         window.validarCNPJ = (cnpj) => {
             cnpj = cnpj.replace(/[^\d]+/g,'');
-            if(cnpj == '' || cnpj.length != 14 || /^(\d)\13$/.test(cnpj)) return false;
+            if(cnpj == '' || cnpj.length != 14 || /^(\d)\1{13}$/.test(cnpj)) return false;
             let tamanho = cnpj.length - 2;
             let numeros = cnpj.substring(0,tamanho);
             let digitos = cnpj.substring(tamanho);
@@ -311,12 +310,15 @@
         };
 
         // --- NAVEGAÇÃO ---
-        window.mudarAba = (abaId) => {
+        window.mudarAba = (abaId, evt) => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById('tab-' + abaId).classList.add('active');
-            if (event && event.target && event.target.classList.contains('tab-btn')) {
-                event.target.classList.add('active');
+            
+            const targetTab = document.getElementById('tab-' + abaId);
+            if(targetTab) targetTab.classList.add('active');
+
+            if (evt && evt.target) {
+                evt.target.classList.add('active');
             }
         };
 
@@ -389,7 +391,7 @@
             }
         };
 
-        // --- PRODUTOS & CATEGORIAS ---
+        // --- PRODUTOS ---
         window.cadastrarProduto = async (e) => {
             e.preventDefault();
             const prod = {
@@ -460,7 +462,7 @@
             if(confirm("Excluir produto do catálogo?")) await deleteDoc(doc(db, "produtos", id));
         };
 
-        // --- FRENTE DE CAIXA (PDV) ---
+        // --- PDV ---
         window.adicionarItemVenda = () => {
             const sel = document.getElementById("prodVendaSelect");
             const opt = sel.options[sel.selectedIndex];
@@ -514,7 +516,7 @@
             const vendaObj = {
                 numeroPedido: numSequencial,
                 data: new Date().toISOString(),
-                vendedor: window.usuarioLogado.nome,
+                vendedor: window.usuarioLogado ? window.usuarioLogado.nome : "Vendedor",
                 clienteId: clienteId || "Consumidor",
                 itens: window.carrinho,
                 total: total,
@@ -524,13 +526,12 @@
             await addDoc(collection(db, "vendas"), vendaObj);
 
             if (formaPagto === "fiado" && clienteId) {
-                const cliSnap = await getDocs(collection(db, "clientes"));
-                cliSnap.forEach(async (cDoc) => {
-                    if (cDoc.id === clienteId) {
-                        const saldoAnt = cDoc.data().saldoFiado || 0;
-                        await updateDoc(doc(db, "clientes", clienteId), { saldoFiado: saldoAnt + total });
-                    }
-                });
+                const cliRef = doc(db, "clientes", clienteId);
+                const cliSnap = await getDoc(cliRef);
+                if(cliSnap.exists()) {
+                    const saldoAnt = cliSnap.data().saldoFiado || 0;
+                    await updateDoc(cliRef, { saldoFiado: saldoAnt + total });
+                }
             }
 
             prepararCupom(vendaObj);
@@ -631,6 +632,7 @@
         </div>
     </div>
 
+    <!-- CABEÇALHO PRINCIPAL -->
     <header>
         <h1>Distribuidora Frazão — Gestão ERP</h1>
         <div>
@@ -644,11 +646,11 @@
 
         <!-- Navegação de Abas -->
         <div class="nav-tabs">
-            <button class="tab-btn active" onclick="mudarAba('venda')">Frente de Caixa (PDV)</button>
-            <button class="tab-btn" onclick="mudarAba('clientes')">Clientes & Fiado</button>
-            <button class="tab-btn" onclick="mudarAba('produtos')">Produtos & Estoque</button>
-            <button class="tab-btn somente-admin" onclick="mudarAba('vendedores')">Cadastrar Vendedores e Senha Admin</button>
-            <button class="tab-btn somente-admin" onclick="mudarAba('historico')">Histórico & Fechamento</button>
+            <button class="tab-btn active" onclick="mudarAba('venda', event)">Frente de Caixa (PDV)</button>
+            <button class="tab-btn" onclick="mudarAba('clientes', event)">Clientes & Fiado</button>
+            <button class="tab-btn" onclick="mudarAba('produtos', event)">Produtos & Estoque</button>
+            <button class="tab-btn somente-admin" onclick="mudarAba('vendedores', event)">Cadastrar Vendedores e Senha Admin</button>
+            <button class="tab-btn somente-admin" onclick="mudarAba('historico', event)">Histórico & Fechamento</button>
         </div>
 
         <!-- ABA 1: PDV -->
@@ -662,36 +664,33 @@
                         <option value="Balas e Pirulitos">Balas e Pirulitos</option>
                         <option value="Bebidas">Bebidas</option>
                         <option value="Biscoitos">Biscoitos</option>
-                        <option value="Descartáveis">Descartáveis</option>
-                        <option value="Doces">Doces</option>
-                        <option value="Drops e Chicletes">Drops e Chicletes</option>
-                        <option value="Higiene">Higiene</option>
-                        <option value="Limpeza">Limpeza</option>
                         <option value="Mercearia">Mercearia</option>
                         <option value="Papelaria">Papelaria</option>
+                        <option value="Limpeza">Limpeza</option>
+                        <option value="Descartáveis">Descartáveis</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Produto</label>
-                    <select id="prodVendaSelect"><option value="">Selecione...</option></select>
+                    <label>Selecionar Produto</label>
+                    <select id="prodVendaSelect"></select>
                 </div>
-                <div class="form-group" style="max-width: 90px;">
-                    <label>Qtd</label>
+                <div class="form-group">
+                    <label>Quantidade</label>
                     <input type="number" id="qtdVendaInput" value="1" min="1">
                 </div>
-                <div class="form-group" style="align-self: flex-end;">
-                    <button class="btn" onclick="adicionarItemVenda()">+ Item</button>
+                <div class="form-group" style="justify-content: flex-end;">
+                    <button class="btn" onclick="adicionarItemVenda()">Adicionar Item</button>
                 </div>
             </div>
 
-            <!-- Carrinho de Compras -->
+            <h3>Itens no Carrinho</h3>
             <div class="tabela-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>Item</th>
+                            <th>Produto</th>
                             <th>Qtd</th>
-                            <th>Unitário</th>
+                            <th>Preço Un.</th>
                             <th>Subtotal</th>
                             <th>Ação</th>
                         </tr>
@@ -700,74 +699,70 @@
                 </table>
             </div>
 
-            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; background: #eef9f1; padding: 15px; border-radius: 6px;">
-                <div>
-                    <h3 style="margin:0;">Total: R$ <span id="totalVendaDisplay">0.00</span></h3>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <div class="form-group" style="margin:0;">
-                        <select id="clienteVenda">
-                            <option value="">Cliente Avulso / Consumidor</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="margin:0;">
+            <div style="margin-top: 15px; background: #eef9f1; padding: 15px; border-radius: 6px;">
+                <h3>Total da Venda: R$ <span id="totalVendaDisplay">0.00</span></h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Forma de Pagamento</label>
                         <select id="formaPagto">
                             <option value="dinheiro">Dinheiro</option>
                             <option value="pix">PIX</option>
-                            <option value="cartao">Cartão</option>
-                            <option value="fiado">Fiado</option>
+                            <option value="cartao">Cartão de Crédito/Débito</option>
+                            <option value="fiado">Fiado / Conta Corrente</option>
                         </select>
                     </div>
-                    <button class="btn" onclick="finalizarVenda()">Concluir Venda</button>
+                    <div class="form-group">
+                        <label>Cliente / Comprador</label>
+                        <select id="clienteVenda"></select>
+                    </div>
                 </div>
-            </div>
-
-            <div style="margin-top: 15px; display: flex; gap: 10px;">
-                <button class="btn btn-info" onclick="imprimirCupom()">Imprimir Recibo (80mm)</button>
-                <button class="btn btn-warning" onclick="compartilharWhatsApp()">Enviar por WhatsApp</button>
+                <div style="margin-top: 10px; display: flex; gap: 10px;">
+                    <button class="btn" onclick="finalizarVenda()">Finalizar Venda</button>
+                    <button class="btn btn-warning" onclick="imprimirCupom()">Imprimir Cupom</button>
+                    <button class="btn btn-info" onclick="compartilharWhatsApp()">Enviar WhatsApp</button>
+                </div>
             </div>
         </div>
 
-        <!-- ABA 2: CLIENTES & FIADO -->
+        <!-- ABA 2: CLIENTES -->
         <div id="tab-clientes" class="tab-content">
-            <h2>Cadastro de Clientes</h2>
-            <form id="formCliente" onsubmit="cadastrarCliente(event)">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Nome Completo / Razão Social</label>
-                        <input type="text" id="nomeCliente" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Telefone / WhatsApp</label>
-                        <input type="text" id="telefoneCliente" required>
-                    </div>
-                    <div class="form-group">
-                        <label>CPF ou CNPJ (Opcional)</label>
-                        <input type="text" id="docCliente">
-                    </div>
-                    <div class="form-group">
-                        <label>Vendedor Responsável</label>
-                        <input type="text" id="vendedorResp" placeholder="Ex: João">
-                    </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Endereço de Entrega</label>
-                        <input type="text" id="enderecoCliente">
-                    </div>
+            <h2>Cadastro e Gestão de Clientes (Fiado)</h2>
+            <form id="formCliente" onsubmit="cadastrarCliente(event)" class="form-grid">
+                <div class="form-group">
+                    <label>Nome Completo / Razão Social</label>
+                    <input type="text" id="nomeCliente" required>
                 </div>
-                <button type="submit" class="btn">Cadastrar Cliente</button>
+                <div class="form-group">
+                    <label>Telefone / WhatsApp</label>
+                    <input type="text" id="telefoneCliente" placeholder="(21) 90000-0000" required>
+                </div>
+                <div class="form-group">
+                    <label>CPF ou CNPJ</label>
+                    <input type="text" id="docCliente" placeholder="Apenas números">
+                </div>
+                <div class="form-group">
+                    <label>Endereço</label>
+                    <input type="text" id="enderecoCliente">
+                </div>
+                <div class="form-group">
+                    <label>Vendedor Responsável</label>
+                    <input type="text" id="vendedorResp" placeholder="Ex: João">
+                </div>
+                <div class="form-group" style="justify-content: flex-end;">
+                    <button type="submit" class="btn">Cadastrar Cliente</button>
+                </div>
             </form>
 
-            <h3 style="margin-top: 30px;">Clientes & Caderneta (Fiado)</h3>
             <div class="tabela-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>Nome</th>
+                            <th>Cliente</th>
                             <th>Telefone</th>
                             <th>CPF/CNPJ</th>
                             <th>Vendedor</th>
-                            <th>Débito Fiado</th>
-                            <th>Ações</th>
+                            <th>Saldo Devedor</th>
+                            <th>Ações Fiado</th>
                         </tr>
                     </thead>
                     <tbody id="listaClientes"></tbody>
@@ -775,53 +770,49 @@
             </div>
         </div>
 
-        <!-- ABA 3: PRODUTOS & ESTOQUE -->
+        <!-- ABA 3: PRODUTOS -->
         <div id="tab-produtos" class="tab-content">
             <h2>Cadastro de Produtos</h2>
-            <form id="formProduto" onsubmit="cadastrarProduto(event)">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Nome do Produto</label>
-                        <input type="text" id="nomeProd" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Categoria</label>
-                        <select id="categoriaProd" required>
-                            <option value="Balas e Pirulitos">Balas e Pirulitos</option>
-                            <option value="Bebidas">Bebidas</option>
-                            <option value="Biscoitos">Biscoitos</option>
-                            <option value="Descartáveis">Descartáveis</option>
-                            <option value="Doces">Doces</option>
-                            <option value="Drops e Chicletes">Drops e Chicletes</option>
-                            <option value="Higiene">Higiene</option>
-                            <option value="Limpeza">Limpeza</option>
-                            <option value="Mercearia">Mercearia</option>
-                            <option value="Papelaria">Papelaria</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Preço de Venda (R$)</label>
-                        <input type="number" id="precoProd" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Estoque Inicial</label>
-                        <input type="number" id="estoqueProd" required>
-                    </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>URL da Foto do Produto (Opcional)</label>
-                        <input type="url" id="fotoProd" placeholder="https://exemplo.com/imagem.jpg">
-                    </div>
+            <form id="formProduto" onsubmit="cadastrarProduto(event)" class="form-grid">
+                <div class="form-group">
+                    <label>Nome do Produto</label>
+                    <input type="text" id="nomeProd" required>
                 </div>
-                <button type="submit" class="btn">Cadastrar Produto</button>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="categoriaProd" required>
+                        <option value="Balas e Pirulitos">Balas e Pirulitos</option>
+                        <option value="Bebidas">Bebidas</option>
+                        <option value="Biscoitos">Biscoitos</option>
+                        <option value="Mercearia">Mercearia</option>
+                        <option value="Papelaria">Papelaria</option>
+                        <option value="Limpeza">Limpeza</option>
+                        <option value="Descartáveis">Descartáveis</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Preço de Venda (R$)</label>
+                    <input type="number" step="0.01" id="precoProd" required>
+                </div>
+                <div class="form-group">
+                    <label>Estoque Inicial</label>
+                    <input type="number" id="estoqueProd" required>
+                </div>
+                <div class="form-group">
+                    <label>URL da Imagem (Opcional)</label>
+                    <input type="url" id="fotoProd" placeholder="https://...">
+                </div>
+                <div class="form-group" style="justify-content: flex-end;">
+                    <button type="submit" class="btn">Salvar Produto</button>
+                </div>
             </form>
 
-            <h3 style="margin-top: 30px;">Catálogo de Produtos</h3>
             <div class="tabela-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Foto</th>
-                            <th>Nome</th>
+                            <th>Produto</th>
                             <th>Categoria</th>
                             <th>Preço</th>
                             <th>Estoque</th>
@@ -833,26 +824,45 @@
             </div>
         </div>
 
-        <!-- ABA 4: CADASTRAR VENDEDORES & DEFINIR SENHA ADMIN -->
-        <div id="tab-vendedores" class="tab-content somente-admin">
-            <h2>Cadastrar Novo Vendedor</h2>
-            <form id="formVendedor" onsubmit="cadastrarVendedor(event)">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Nome do Vendedor</label>
-                        <input type="text" id="nomeVendedorCad" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Usuário de Acesso</label>
-                        <input type="text" id="userVendedorCad" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Senha de Acesso</label>
-                        <input type="password" id="passVendedorCad" required>
-                    </div>
+        <!-- ABA 4: VENDEDORES & SENHA ADMIN -->
+        <div id="tab-vendedores" class="tab-content">
+            <h2>Segurança & Acessos</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h3>Cadastrar Novo Vendedor</h3>
+                    <form id="formVendedor" onsubmit="cadastrarVendedor(event)">
+                        <div class="form-group" style="margin-bottom:10px;">
+                            <label>Nome do Vendedor</label>
+                            <input type="text" id="nomeVendedorCad" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom:10px;">
+                            <label>Usuário de Acesso</label>
+                            <input type="text" id="userVendedorCad" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label>Senha</label>
+                            <input type="password" id="passVendedorCad" required>
+                        </div>
+                        <button type="submit" class="btn">Cadastrar Vendedor</button>
+                    </form>
                 </div>
-                <button type="submit" class="btn">Salvar Vendedor</button>
-            </form>
+
+                <div>
+                    <h3>Alterar Senha do Administrador Master</h3>
+                    <form id="formAlterarSenhaMaster" onsubmit="alterarSenhaMaster(event)">
+                        <div class="form-group" style="margin-bottom:10px;">
+                            <label>Nova Senha Master</label>
+                            <input type="password" id="novaSenhaMaster" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label>Confirmar Nova Senha</label>
+                            <input type="password" id="confirmaSenhaMaster" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning">Atualizar Senha Admin</button>
+                    </form>
+                </div>
+            </div>
 
             <h3 style="margin-top: 30px;">Vendedores Ativos</h3>
             <div class="tabela-container">
@@ -867,32 +877,16 @@
                     <tbody id="listaVendedores"></tbody>
                 </table>
             </div>
-
-            <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
-
-            <h2>Segurança Master — Cadastrar / Alterar Senha do Admin</h2>
-            <p style="font-size: 13px; color: #666;">Defina abaixo a senha para o usuário <b>admin</b>. Após salvar, essa senha passará a ser exigida em todos os novos acessos.</p>
-            <form id="formAlterarSenhaMaster" onsubmit="alterarSenhaMaster(event)">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Nova Senha do Administrador</label>
-                        <input type="password" id="novaSenhaMaster" minlength="4" required placeholder="Digite a nova senha">
-                    </div>
-                    <div class="form-group">
-                        <label>Confirme a Nova Senha</label>
-                        <input type="password" id="confirmaSenhaMaster" minlength="4" required placeholder="Repita a senha">
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-warning">Salvar Senha Master</button>
-            </form>
         </div>
 
-        <!-- ABA 5: HISTÓRICO & FECHAMENTO (SOMENTE ADMIN) -->
-        <div id="tab-historico" class="tab-content somente-admin">
-            <h2>Histórico de Vendas</h2>
-            <div style="background: #eef9f1; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                <h3 style="margin:0;">Faturamento do Mês Atual: R$ <span id="fechamentoMensalDisplay">0.00</span></h3>
+        <!-- ABA 5: HISTÓRICO -->
+        <div id="tab-historico" class="tab-content">
+            <h2>Histórico de Vendas & Fechamento</h2>
+            
+            <div style="background: #eef9f1; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                <h3>Faturamento Acumulado (Mês Atual): R$ <span id="fechamentoMensalDisplay">0.00</span></h3>
             </div>
+
             <div class="tabela-container">
                 <table>
                     <thead>
@@ -900,7 +894,7 @@
                             <th>Pedido</th>
                             <th>Data/Hora</th>
                             <th>Vendedor</th>
-                            <th>Forma Pagto</th>
+                            <th>Pagamento</th>
                             <th>Total</th>
                         </tr>
                     </thead>
@@ -911,7 +905,7 @@
 
     </div>
 
-    <!-- ÁREA DE IMPRESSÃO TÉRMICA (CUPOM) -->
+    <!-- ÁREA DE IMPRESSÃO DO COMPROVANTE (TÉRMICA 80mm) -->
     <div id="comprovante-print"></div>
 
 </body>

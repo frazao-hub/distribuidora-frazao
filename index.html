@@ -33,6 +33,11 @@
         .btn-salvar { background: #27ae60; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: background 0.2s; }
         .btn-salvar:hover { background: #219150; }
 
+        /* Estilização da Lista de Clientes Cadastrados em Tempo Real */
+        .item-cliente { background: #f8f9fa; border-left: 4px solid #27ae60; padding: 12px 15px; margin-bottom: 10px; border-radius: 0 5px 5px 0; }
+        .item-cliente strong { color: #2c3e50; font-size: 15px; display: block; margin-bottom: 4px; }
+        .item-cliente span { color: #666; font-size: 13px; display: block; }
+
         p, li { line-height: 1.6; font-size: 14px; color: #555; }
 
         /* Rodapé com Políticas */
@@ -65,8 +70,8 @@
                 overflow: hidden !important;
             }
 
-            /* Esconde elementos de navegação e rodapé ao imprimir */
-            header, footer, .btn-categoria, .no-print, button, nav, #card-cadastro {
+            /* Esconde elementos de navegação e formulários ao imprimir */
+            header, footer, .btn-categoria, .no-print, button, nav, #card-cadastro, #card-lista-clientes {
                 display: none !important;
             }
 
@@ -97,7 +102,7 @@
 
     <div class="container">
 
-        <!-- Cadastro de Cliente no Firebase -->
+        <!-- Formulário de Cadastro de Cliente -->
         <div class="card-secao no-print" id="card-cadastro">
             <h2>Cadastro de Cliente</h2>
             <form id="formCliente">
@@ -119,6 +124,14 @@
                 </div>
                 <button type="submit" class="btn-salvar">Cadastrar Cliente</button>
             </form>
+        </div>
+
+        <!-- Lista de Clientes Sincronizada na Nuvem em Tempo Real -->
+        <div class="card-secao no-print" id="card-lista-clientes">
+            <h2>Clientes Cadastrados (Sincronizado)</h2>
+            <div id="listaClientes">
+                <p>Carregando clientes...</p>
+            </div>
         </div>
 
         <!-- 10 Categorias em Ordem Alfabética -->
@@ -170,9 +183,9 @@
         </div>
     </footer>
 
-    <!-- Script com validação de CPF/CNPJ e envio ao Firebase -->
+    <!-- Script com lógica de cadastro e atualização em tempo real -->
     <script type="module">
-        import { salvarCliente } from './firebase.js';
+        import { salvarCliente, ouvirClientes } from './firebase.js';
 
         // Validação Matemática de CPF
         function validarCPF(cpf) {
@@ -224,7 +237,7 @@
             return false;
         }
 
-        // Captura o evento de envio do formulário
+        // 1. Cadastrar Cliente no Firebase
         const form = document.getElementById('formCliente');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -246,6 +259,28 @@
 
             await salvarCliente(novoCliente);
             form.reset();
+        });
+
+        // 2. Ouvir atualizações da Nuvem em Tempo Real
+        const divLista = document.getElementById('listaClientes');
+
+        ouvirClientes((clientes) => {
+            if (clientes.length === 0) {
+                divLista.innerHTML = '<p>Nenhum cliente cadastrado ainda.</p>';
+                return;
+            }
+
+            divLista.innerHTML = '';
+            clientes.forEach((c) => {
+                const item = document.createElement('div');
+                item.className = 'item-cliente';
+                item.innerHTML = `
+                    <strong>${c.nome || 'Sem nome'}</strong>
+                    <span>Doc: ${c.documento || 'N/A'} | Tel: ${c.telefone || 'N/A'}</span>
+                    <span>Endereço: ${c.endereco || 'Não informado'}</span>
+                `;
+                divLista.appendChild(item);
+            });
         });
     </script>
 </body>

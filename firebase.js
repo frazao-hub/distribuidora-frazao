@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Vendedores</title>
+    <title>Cadastro de Vendedor</title>
     <style>
         * {
             box-sizing: border-box;
@@ -21,7 +21,7 @@
 
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
             background: #ffffff;
             padding: 25px;
             border-radius: 8px;
@@ -62,7 +62,7 @@
         button {
             width: 100%;
             padding: 12px;
-            background-color: #007bff;
+            background-color: #28a745;
             color: white;
             border: none;
             border-radius: 4px;
@@ -72,7 +72,7 @@
         }
 
         button:hover {
-            background-color: #0056b3;
+            background-color: #218838;
         }
 
         .lista-vendedores {
@@ -101,6 +101,10 @@
             padding: 5px 10px;
             font-size: 12px;
             width: auto;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
         .btn-excluir:hover {
@@ -111,46 +115,40 @@
 <body>
 
 <div class="container">
-    <h2>Cadastrar Novo Vendedor</h2>
+    <h2>Cadastrar Vendedor</h2>
     
     <form id="formVendedor">
         <div class="form-group">
-            <label for="nome">Nome Completo:</label>
-            <input type="text" id="nome" placeholder="Ex: João Silva" required>
-        </div>
-
-        <div class="form-group">
-            <label for="usuario">Usuário / Login:</label>
-            <input type="text" id="usuario" placeholder="Ex: joaosilva" required>
+            <label for="nome">Nome do Vendedor:</label>
+            <input type="text" id="nome" placeholder="Digite o nome completo" required>
         </div>
 
         <div class="form-group">
             <label for="senha">Senha de Acesso:</label>
-            <input type="password" id="senha" placeholder="Digite uma senha inicial" required>
+            <input type="password" id="senha" placeholder="Digite a senha do vendedor" required>
         </div>
 
-        <button type="submit">Salvar Vendedor</button>
+        <button type="submit">Cadastrar Vendedor</button>
     </form>
 
     <div class="lista-vendedores">
-        <h2>Vendedores Cadastrados</h2>
+        <h2>Vendedores Salvos</h2>
         <table>
             <thead>
                 <tr>
                     <th>Nome</th>
-                    <th>Usuário / Login</th>
-                    <th>Ações</th>
+                    <th>Senha</th>
+                    <th>Ação</th>
                 </tr>
             </thead>
             <tbody id="tabelaVendedores">
-                <!-- Vendedores cadastrados vão aparecer aqui -->
+                <!-- Os dados aparecem aqui -->
             </tbody>
         </table>
     </div>
 </div>
 
 <script>
-    // Carregar vendedores salvos ao abrir a página
     document.addEventListener('DOMContentLoaded', carregarVendedores);
 
     const form = document.getElementById('formVendedor');
@@ -160,35 +158,31 @@
         e.preventDefault();
 
         const nome = document.getElementById('nome').value.trim();
-        const usuario = document.getElementById('usuario').value.trim();
-        const senha = document.getElementById('senha').value;
+        const senha = document.getElementById('senha').value.trim();
 
-        // Criar objeto do vendedor
         const novoVendedor = {
             id: Date.now(),
             nome: nome,
-            usuario: usuario,
             senha: senha
         };
 
-        // Salvar os dados
         salvarVendedor(novoVendedor);
     });
 
     function salvarVendedor(vendedor) {
         let vendedores = JSON.parse(localStorage.getItem('vendedores_db')) || [];
         
-        // Verifica se o login de usuário já existe
-        const existe = vendedores.some(v => v.usuario.toLowerCase() === vendedor.usuario.toLowerCase());
+        // Evita cadastrar o mesmo nome duas vezes
+        const existe = vendedores.some(v => v.nome.toLowerCase() === vendedor.nome.toLowerCase());
         if (existe) {
-            alert('Este usuário de login já está cadastrado para outro vendedor!');
+            alert('Já existe um vendedor cadastrado com esse nome!');
             return;
         }
 
         vendedores.push(vendedor);
         localStorage.setItem('vendedores_db', JSON.stringify(vendedores));
         
-        alert('Vendedor cadastrado com sucesso!');
+        alert('Vendedor cadastrado e gravado com sucesso!');
         form.reset();
         carregarVendedores();
     }
@@ -206,7 +200,7 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${vendedor.nome}</td>
-                <td>${vendedor.usuario}</td>
+                <td>${vendedor.senha}</td>
                 <td><button class="btn-excluir" onclick="removerVendedor(${vendedor.id})">Excluir</button></td>
             `;
             tabela.appendChild(tr);
@@ -214,7 +208,7 @@
     }
 
     function removerVendedor(id) {
-        if (confirm('Tem certeza que deseja remover este vendedor?')) {
+        if (confirm('Deseja excluir este vendedor?')) {
             let vendedores = JSON.parse(localStorage.getItem('vendedores_db')) || [];
             vendedores = vendedores.filter(v => v.id !== id);
             localStorage.setItem('vendedores_db', JSON.stringify(vendedores));

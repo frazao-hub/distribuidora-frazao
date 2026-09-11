@@ -65,21 +65,14 @@
 </div>
 
 <script>
-    // ---apiKey: "AIzaSyD8SnMWXagUVz4uVM87bc2dAakZyGGW3nM",
-  authDomain: "distribuidora-frazao.firebaseapp.com",
-  projectId: "distribuidora-frazao",
-  storageBucket: "distribuidora-frazao.firebasestorage.app",
-  messagingSenderId: "642540059204",
-  appId: "1:642540059204:web:c113fa6966fd97fc20da11"----------------------------------------------------------
-    // ATENÇÃO: Substitua os dados abaixo pelas chaves do SEU Firebase
-    // -------------------------------------------------------------
+    // Configurações do Firebase da Distribuidora Frazão
     const firebaseConfig = {
-        apiKey: "SUA_API_KEY_AQUI",
-        authDomain: "SEU_PROJETO.firebaseapp.com",
-        projectId: "SEU_PROJETO_ID",
-        storageBucket: "SEU_PROJETO.appspot.com",
-        messagingSenderId: "SEU_SENDER_ID",
-        appId: "SEU_APP_ID"
+        apiKey: "AIzaSyD8SnMWXagUVz4uVM87bc2dAakZyGGW3nM",
+        authDomain: "distribuidora-frazao.firebaseapp.com",
+        projectId: "distribuidora-frazao",
+        storageBucket: "distribuidora-frazao.firebasestorage.app",
+        messagingSenderId: "642540059204",
+        appId: "1:642540059204:web:c113fa6966fd97fc20da11"
     };
 
     // Inicializar o Firebase
@@ -108,6 +101,9 @@
             `;
             tabela.appendChild(tr);
         });
+    }, (error) => {
+        console.error("Erro ao carregar dados:", error);
+        tabela.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">Erro ao carregar os dados. Verifique as regras no Firebase.</td></tr>';
     });
 
     // Salvar novo vendedor no Firebase

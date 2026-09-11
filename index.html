@@ -1,286 +1,147 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distribuidora Frazão - Catálogo de Produtos</title>
-    <style>
-        /* Estilos Gerais */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 15px;
-            background-color: #f4f4f9;
-            color: #333;
-        }
+.btn-categoria { background: #3498db; color: white; text-align: center; padding: 15px; border-radius: 6px; text-decoration: none; font-weight: bold; transition: background 0.2s; display: flex; align-items: center; justify-content: center; height: 50px; box-sizing: border-box; }
+.btn-categoria:hover { background: #2980b9; }
 
-        header {
-            text-align: center;
-            padding: 15px 0;
-            background-color: #004085;
-            color: white;
-            border-radius: 6px;
-            margin-bottom: 20px;
-        }
+        /* Estilização do Formulário de Cadastro */
+        .form-grupo { margin-bottom: 15px; }
+        .form-grupo label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #444; }
+        .form-grupo input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 14px; }
+        .form-grupo input:focus { border-color: #27ae60; outline: none; }
+        .btn-salvar { background: #27ae60; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: background 0.2s; }
+        .btn-salvar:hover { background: #219150; }
 
-        h1 {
-            margin: 0;
-            font-size: 24px;
-        }
+p, li { line-height: 1.6; font-size: 14px; color: #555; }
 
-        h2 {
-            font-size: 18px;
-            color: #004085;
-            border-bottom: 2px solid #004085;
-            padding-bottom: 5px;
-            margin-top: 25px;
-        }
+/* Rodapé com Políticas */
+@@ -58,7 +66,7 @@
+}
 
-        /* Categorias em Navegação Estilizada */
-        .categorias-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 10px;
-            margin-bottom: 25px;
-        }
+/* Esconde elementos de navegação e rodapé ao imprimir */
+            header, footer, .btn-categoria, .no-print, button, nav {
+            header, footer, .btn-categoria, .no-print, button, nav, #card-cadastro {
+display: none !important;
+}
 
-        .cat-btn {
-            background-color: #ffffff;
-            border: 1px solid #b8daff;
-            color: #004085;
-            padding: 12px;
-            text-align: center;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: background 0.2s;
-        }
+@@ -89,6 +97,30 @@ <h1>Distribuidora Frazão</h1>
 
-        .cat-btn:hover {
-            background-color: #e2e3e5;
-        }
+<div class="container">
 
-        /* Estilo do Formulário de Cadastro */
-        .card {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 4px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-
-        .btn-salvar {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .btn-salvar:hover {
-            background-color: #218838;
-        }
-
-        /* Lista Sincronizada em Tempo Real */
-        .cliente-item {
-            background: #fff;
-            padding: 12px;
-            border-left: 4px solid #004085;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        }
-
-        .cliente-nome {
-            font-weight: bold;
-            font-size: 16px;
-            color: #111;
-        }
-
-        .cliente-doc {
-            font-size: 13px;
-            color: #666;
-            margin-top: 3px;
-        }
-
-        /* Regras de Impressão Térmica (Bobina 80mm) */
-        @media print {
-            body {
-                width: 80mm;
-                padding: 0;
-                background: white;
-            }
-            .categorias-grid, .card, header {
-                box-shadow: none;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1>Distribuidora Frazão</h1>
-    </header>
-
-    <!-- Navegação por Categorias -->
-    <h2>Categorias de Produtos</h2>
-    <div class="categorias-grid">
-        <a href="#artigos-festa" class="cat-btn">Artigos de Festa</a>
-        <a href="#bebidas" class="cat-btn">Bebidas</a>
-        <a href="#biscoitos" class="cat-btn">Biscoitos</a>
-        <a href="#bomboniere" class="cat-btn">Bomboniere</a>
-        <a href="#descartaveis" class="cat-btn">Descartáveis</a>
-        <a href="#doces" class="cat-btn">Doces</a>
-        <a href="#embalagens" class="cat-btn">Embalagens</a>
-        <a href="#higiene" class="cat-btn">Higiene e Limpeza</a>
-        <a href="#mercearia" class="cat-btn">Mercearia</a>
-        <a href="#papelaria" class="cat-btn">Papelaria</a>
-    </div>
-
-    <!-- Formulário de Cadastro de Clientes -->
-    <div class="card">
-        <h2>Cadastro de Cliente</h2>
-        <form id="formCliente">
-            <div class="form-group">
-                <label for="nome">Nome Completo / Razão Social:</label>
-                <input type="text" id="nome" required placeholder="Digite o nome do cliente">
-            </div>
-
-            <div class="form-group">
-                <label for="doc">CPF ou CNPJ:</label>
-                <input type="text" id="doc" required placeholder="Apenas números">
-            </div>
-
-            <div class="form-group">
-                <label for="whats">WhatsApp / Telefone:</label>
-                <input type="text" id="whats" placeholder="(21) 99999-9999">
-            </div>
-
-            <div class="form-group">
-                <label for="endereco">Endereço de Entrega:</label>
-                <input type="text" id="endereco" placeholder="Rua, Número, Bairro">
-            </div>
-
-            <button type="submit" class="btn-salvar">Cadastrar Cliente</button>
-        </form>
-    </div>
-
-    <!-- Lista com Sincronização em Tempo Real -->
-    <h2>Clientes Cadastrados (Sincronizado)</h2>
-    <div id="listaClientes">
-        <p style="color: #666; font-style: italic;">Carregando clientes...</p>
-    </div>
-
-    <!-- Integração do Firebase (Certifique-se de ter o arquivo firebase.js na mesma pasta) -->
-    <script type="module">
-        import { salvarCliente, ouvirClientes } from './firebase.js';
-
-        // Validação Real de CPF/CNPJ
-        function validarCPFCNPJ(val) {
-            val = val.replace(/\D/g, '');
-            if (val.length === 11) return validarCPF(val);
-            if (val.length === 14) return validarCNPJ(val);
-            return false;
-        }
-
-        function validarCPF(cpf) {
-            if (/^(\d)\1+$/.test(cpf)) return false;
-            let soma = 0, resto;
-            for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i-1, i)) * (11 - i);
-            resto = (soma * 10) % 11;
-            if (resto === 10 || resto === 11) resto = 0;
-            if (resto !== parseInt(cpf.substring(9, 10))) return false;
-            soma = 0;
-            for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i-1, i)) * (12 - i);
-            resto = (soma * 10) % 11;
-            if (resto === 10 || resto === 11) resto = 0;
-            return resto === parseInt(cpf.substring(10, 11));
-        }
-
-        function validarCNPJ(cnpj) {
-            if (/^(\d)\1+$/.test(cnpj)) return false;
-            let t = cnpj.length - 2, d = cnpj.substring(t), d1 = parseInt(d.charAt(0)), d2 = parseInt(d.charAt(1));
-            let calc = x => {
-                let n = cnpj.substring(0, x), r = 0, pos = x - 7;
-                for (let i = x; i >= 1; i--) {
-                    r += parseInt(n.charAt(x - i)) * pos--;
-                    if (pos < 2) pos = 9;
-                }
-                return r % 11 < 2 ? 0 : 11 - (r % 11);
-            };
-            return calc(t) === d1 && calc(t + 1) === d2;
-        }
-
-        // Submissão do Formulário
-        document.getElementById('formCliente').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const nome = document.getElementById('nome').value.trim();
-            const doc = document.getElementById('doc').value.trim();
-            const whats = document.getElementById('whats').value.trim();
-            const endereco = document.getElementById('endereco').value.trim();
-
-            if (!validarCPFCNPJ(doc)) {
-                alert('CPF ou CNPJ inválido! Verifique os números digitados.');
-                return;
-            }
-
-            try {
-                await salvarCliente({ nome, doc, whats, endereco, dataCadastro: new Date().toISOString() });
-                alert('Cliente cadastrado com sucesso!');
-                document.getElementById('formCliente').reset();
-            } catch (err) {
-                console.error(err);
-                alert('Erro ao cadastrar cliente. Verifique o console.');
-            }
-        });
-
-        // Atualização Dinâmica da Lista
-        const divLista = document.getElementById('listaClientes');
-        
-        ouvirClientes((clientes) => {
-            if (clientes.length === 0) {
-                divLista.innerHTML = '<p style="color: #666;">Nenhum cliente cadastrado ainda.</p>';
-                return;
-            }
-
-            // Ordena os clientes por Nome
-            clientes.sort((a, b) => a.nome.localeCompare(b.nome));
-
-            divLista.innerHTML = clientes.map(c => `
-                <div class="cliente-item">
-                    <div class="cliente-nome">${c.nome}</div>
-                    <div class="cliente-doc">CPF/CNPJ: ${c.doc} | Tel: ${c.whats || 'Não informado'}</div>
-                    <div class="cliente-doc">Endereço: ${c.endereco || 'Não informado'}</div>
+        <!-- Cadastro de Cliente no Firebase -->
+        <div class="card-secao no-print" id="card-cadastro">
+            <h2>Cadastro de Cliente</h2>
+            <form id="formCliente">
+                <div class="form-grupo">
+                    <label for="nome">Nome Completo / Razão Social:</label>
+                    <input type="text" id="nome" required placeholder="Ex: Mercado Silva">
                 </div>
-            `).join('');
+                <div class="form-grupo">
+                    <label for="documento">CPF ou CNPJ:</label>
+                    <input type="text" id="documento" required placeholder="Digite apenas números">
+                </div>
+                <div class="form-grupo">
+                    <label for="telefone">WhatsApp / Telefone:</label>
+                    <input type="tel" id="telefone" required placeholder="(21) 99999-9999">
+                </div>
+                <div class="form-grupo">
+                    <label for="endereco">Endereço de Entrega:</label>
+                    <input type="text" id="endereco" placeholder="Rua, número, bairro e cidade">
+                </div>
+                <button type="submit" class="btn-salvar">Cadastrar Cliente</button>
+            </form>
+        </div>
+
+<!-- 10 Categorias em Ordem Alfabética -->
+<div class="card-secao">
+<h2>Nossos Catálogos e Categorias</h2>
+@@ -138,31 +170,32 @@ <h3>Política de Devolução</h3>
+</div>
+</footer>
+
+    <!-- Carrega o script principal do Firebase/Sistema -->
+    <script type="module" src="script.js"></script>
+    <!-- Script com validação de CPF/CNPJ e envio ao Firebase -->
+    <script type="module">
+        import { salvarCliente } from './firebase.js';
+
+    <!-- Script de Validação Matemática de CPF e CNPJ -->
+    <script>
+        // Validação Matemática de CPF
+function validarCPF(cpf) {
+cpf = cpf.replace(/[^\d]+/g,'');
+if(cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+let add = 0;
+            for (let i=0; i < 9; i ++) add += parseInt(cpf.charAt(i)) * (10 - i);
+            for (let i=0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
+let rev = 11 - (add % 11);
+if (rev === 10 || rev === 11) rev = 0;
+if (rev !== parseInt(cpf.charAt(9))) return false;
+add = 0;
+            for (let i = 0; i < 10; i ++) add += parseInt(cpf.charAt(i)) * (11 - i);
+            for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
+rev = 11 - (add % 11);
+if (rev === 10 || rev === 11) rev = 0;
+return rev === parseInt(cpf.charAt(10));
+}
+
+        // Validação Matemática de CNPJ
+function validarCNPJ(cnpj) {
+cnpj = cnpj.replace(/[^\d]+/g,'');
+if(cnpj.length !== 14 || /^(\d)\1+$/.test(cnpj)) return false;
+let tamanho = cnpj.length - 2;
+            let numeros = cnpj.substring(0,tamanho);
+            let numeros = cnpj.substring(0, tamanho);
+let digitos = cnpj.substring(tamanho);
+let soma = 0;
+let pos = tamanho - 7;
+@@ -173,7 +206,7 @@ <h3>Política de Devolução</h3>
+let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+if (resultado != digitos.charAt(0)) return false;
+tamanho = tamanho + 1;
+            numeros = cnpj.substring(0,tamanho);
+            numeros = cnpj.substring(0, tamanho);
+soma = 0;
+pos = tamanho - 7;
+for (let i = tamanho; i >= 1; i--) {
+@@ -184,15 +217,36 @@ <h3>Política de Devolução</h3>
+return resultado == digitos.charAt(1);
+}
+
+        function verificarDocumentoNoEnvio(documentoDigitado) {
+            let limpo = documentoDigitado.replace(/[^\d]+/g,'');
+            if (limpo.length === 11) {
+                return validarCPF(documentoDigitado);
+            } else if (limpo.length === 14) {
+                return validarCNPJ(documentoDigitado);
+            }
+        function verificarDocumento(doc) {
+            let limpo = doc.replace(/[^\d]+/g,'');
+            if (limpo.length === 11) return validarCPF(limpo);
+            if (limpo.length === 14) return validarCNPJ(limpo);
+return false;
+}
+
+        // Captura o evento de envio do formulário
+        const form = document.getElementById('formCliente');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const docInput = document.getElementById('documento').value;
+
+            if (!verificarDocumento(docInput)) {
+                alert('CPF ou CNPJ inválido! Por favor, confira os números digitados.');
+                return;
+            }
+
+            const novoCliente = {
+                nome: document.getElementById('nome').value,
+                documento: docInput.replace(/[^\d]+/g,''),
+                telefone: document.getElementById('telefone').value,
+                endereco: document.getElementById('endereco').value,
+                criadoEm: new Date().toISOString()
+            };
+
+            await salvarCliente(novoCliente);
+            form.reset();
         });
-    </script>
+</script>
 </body>
 </html>

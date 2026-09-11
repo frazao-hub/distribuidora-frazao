@@ -120,7 +120,6 @@
                     const adminRef = doc(db, "configuracoes", "adminMaster");
                     const adminSnap = await getDoc(adminRef);
 
-                    // Se já existe uma senha cadastrada no banco para o admin:
                     if (adminSnap.exists() && adminSnap.data().hashSenha) {
                         const hashSalvo = adminSnap.data().hashSenha;
                         const hashSenhaDigitada = await gerarHash(passIn);
@@ -133,13 +132,11 @@
                             return;
                         }
                     } else {
-                        // Nenhuma senha cadastrada ainda: Acesso direto permitido
                         autenticarSucesso({ nome: "Administrador Master", perfil: "admin" });
                         alert("Bem-vindo! Você acessou sem senha. Acesse a aba 'Cadastrar Vendedores e Senha Admin' para cadastrar sua nova senha.");
                         return;
                     }
                 } catch (err) {
-                    // Caso ocorra erro de conexão/offline, libera acesso local para o admin não ficar bloqueado
                     console.warn("Aviso ao conectar ao Firebase:", err.message);
                     autenticarSucesso({ nome: "Administrador Master", perfil: "admin" });
                     return;
@@ -156,10 +153,10 @@
                     const vendData = snap.docs[0].data();
                     autenticarSucesso({ nome: vendData.nome, perfil: "vendedor" });
                 } else {
-                    alert("Usuário ou senha incorretos!");
+                    alert("Usuário ou senha de vendedor incorretos!");
                 }
             } catch (err) {
-                alert("Erro ao conectar ao banco de dados: " + err.message);
+                alert("Erro ao consultar vendedor no banco de dados: " + err.message);
             }
         };
 
@@ -177,7 +174,7 @@
 
         window.logout = () => { location.reload(); };
 
-        // --- ALTERAÇÃO / DEFINIÇÃO DA SENHA DO ADMIN MASTER ---
+        // --- ALTERAÇÃO DA SENHA DO ADMIN ---
         window.alterarSenhaMaster = async (e) => {
             e.preventDefault();
             const novaSenha = document.getElementById("novaSenhaMaster").value;
@@ -198,9 +195,78 @@
                 const adminRef = doc(db, "configuracoes", "adminMaster");
                 await setDoc(adminRef, { usuario: "admin", hashSenha: novoHash, ultimaAlteracao: new Date().toISOString() });
                 document.getElementById("formAlterarSenhaMaster").reset();
-                alert("Senha do Administrador cadastrada e criptografada com sucesso! Ela será exigida nos próximos logins.");
+                alert("Senha do Administrador cadastrada e criptografada com sucesso!");
             } catch (err) {
                 alert("Erro ao atualizar senha no banco: " + err.message);
+            }
+        };
+
+        // --- GESTÃO DE VENDEDORES (COM TRATAMENTO DE ERROS) ---
+        window.cadastrarVendedor = async (e) => {
+            e.preventDefault();
+            const nomeVend = document.getElementById("nomeVendedorCad").value.trim();
+            const userVend = document.getElementById("userVendedorCad").value.trim().toLowerCase();
+            const senhaPur = document.getElementById("passVendedorCad").value;
+
+            if (userVend === "admin") {
+                alert("O nome de usuário 'admin' é reservado ao Administrador Master.");
+                return;
+            }
+
+            if (senhaPur.length < 4) {
+                alert("A senha do vendedor deve ter pelo menos 4 caracteres.");
+                return;
+            }
+
+            try {
+                const hashSenha = await gerarHash(senhaPur);
+                const vend = {
+                    nome: nomeVend,
+                    usuario: userVend,
+                    hashSenha: hashSenha,
+                    dataCadastro: new Date().toISOString()
+                };
+
+                await addDoc(collection(db, "vendedores"), vend);
+                document.getElementById("formVendedor").reset();
+                alert(`Vendedor ${nomeVend} cadastrado e salvo com sucesso no banco de dados!`);
+            } catch (err) {
+                alert("Erro ao salvar vendedor no banco de dados: " + err.message + "\n\nVerifique se as Regras do Firestore permitem gravação (allow read, write: if true).");
+            }
+        };
+
+        onSnapshot(collection(db, "vendedores"), (snapshot) => {
+            const lista = document.getElementById("listaVendedores");
+            if (!lista) return;
+            lista.innerHTML = "";
+
+            if (snapshot.empty) {
+                lista.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#888;">Nenhum vendedor cadastrado.</td></tr>`;
+                return;
+            }
+
+            snapshot.forEach(docSnap => {
+                const v = docSnap.data();
+                const id = docSnap.id;
+                lista.innerHTML += `
+                    <tr>
+                        <td><strong>${v.nome}</strong></td>
+                        <td>${v.usuario}</td>
+                        <td><button class="btn btn-sm btn-danger" onclick="excluirVendedor('${id}')">Remover</button></td>
+                    </tr>
+                `;
+            });
+        }, (err) => {
+            console.error("Erro ao listar vendedores do banco:", err);
+        });
+
+        window.excluirVendedor = async (id) => {
+            if(confirm("Remover este vendedor e revogar acesso?")) {
+                try {
+                    await deleteDoc(doc(doc(db, "vendedores", id)));
+                } catch(err) {
+                    alert("Erro ao excluir vendedor: " + err.message);
+                }
             }
         };
 
@@ -254,49 +320,7 @@
             }
         };
 
-        // --- GESTÃO DE VENDEDORES ---
-        window.cadastrarVendedor = async (e) => {
-            e.preventDefault();
-            const senhaPur = document.getElementById("passVendedorCad").value;
-            if (senhaPur.length < 4) {
-                alert("A senha do vendedor deve ter pelo menos 4 caracteres.");
-                return;
-            }
-
-            const hashSenha = await gerarHash(senhaPur);
-            const vend = {
-                nome: document.getElementById("nomeVendedorCad").value,
-                usuario: document.getElementById("userVendedorCad").value.trim().toLowerCase(),
-                hashSenha: hashSenha
-            };
-
-            await addDoc(collection(db, "vendedores"), vend);
-            document.getElementById("formVendedor").reset();
-            alert("Vendedor cadastrado com sucesso!");
-        };
-
-        onSnapshot(collection(db, "vendedores"), (snapshot) => {
-            const lista = document.getElementById("listaVendedores");
-            if (!lista) return;
-            lista.innerHTML = "";
-            snapshot.forEach(docSnap => {
-                const v = docSnap.data();
-                const id = docSnap.id;
-                lista.innerHTML += `
-                    <tr>
-                        <td><strong>${v.nome}</strong></td>
-                        <td>${v.usuario}</td>
-                        <td><button class="btn btn-sm btn-danger" onclick="excluirVendedor('${id}')">Remover</button></td>
-                    </tr>
-                `;
-            });
-        });
-
-        window.excluirVendedor = async (id) => {
-            if(confirm("Remover este vendedor e revogar acesso?")) await deleteDoc(doc(db, "vendedores", id));
-        };
-
-        // --- GESTÃO DE CLIENTES & FIADO ---
+        // --- CLIENTES & FIADO ---
         window.cadastrarCliente = async (e) => {
             e.preventDefault();
             const docNum = document.getElementById("docCliente").value.trim();
@@ -365,7 +389,7 @@
             }
         };
 
-        // --- GESTÃO DE PRODUTOS & CATEGORIAS ---
+        // --- PRODUTOS & CATEGORIAS ---
         window.cadastrarProduto = async (e) => {
             e.preventDefault();
             const prod = {
@@ -600,7 +624,7 @@
                     <input type="text" id="loginUser" placeholder="Usuário (ex: admin)" required autocomplete="username">
                 </div>
                 <div class="form-group" style="margin-bottom: 15px;">
-                    <input type="password" id="loginPass" placeholder="Senha (deixe em branco se for admin sem senha)" autocomplete="current-password">
+                    <input type="password" id="loginPass" placeholder="Senha" autocomplete="current-password">
                 </div>
                 <button type="submit" class="btn" style="width: 100%;">Entrar no Sistema</button>
             </form>

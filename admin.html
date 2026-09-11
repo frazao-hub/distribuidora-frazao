@@ -56,7 +56,7 @@
     <!-- Firebase SDK (Modular v10) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, query, orderBy, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // Configuração do Firebase
         const firebaseConfig = {
@@ -107,10 +107,10 @@
                     }
                 } else {
                     autenticarAdminSucesso();
-                    alert("Acesso inicial concedido. Por favor, cadastre uma nova senha de Administrador no painel.");
+                    alert("Acesso inicial concedido. Por favor, altere a senha de Administrador caso queira.");
                 }
             } catch (err) {
-                console.warn("Aviso ao conectar com o banco de dados:", err.message);
+                console.warn("Aviso de conexão:", err.message);
                 autenticarAdminSucesso();
             }
         };
@@ -156,13 +156,7 @@
             const nomeVend = document.getElementById("nomeVendedorCad").value.trim();
             const senhaPur = document.getElementById("passVendedorCad").value;
 
-            // Gera o usuário automaticamente a partir do nome (ex: "João Silva" -> "joaosilva")
             const userVend = nomeVend.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
-
-            if (userVend === "admin") {
-                alert("O nome 'admin' é reservado.");
-                return;
-            }
 
             try {
                 const hashSenha = await gerarHash(senhaPur);
@@ -194,11 +188,13 @@
                 const id = docSnap.id;
                 lista.innerHTML += `
                     <tr>
-                        <td><strong>${v.nome}</strong></td>
+                        <td><strong>${v.nome || 'Sem Nome'}</strong></td>
                         <td><button class="btn btn-sm btn-danger" onclick="window.excluirVendedor('${id}')">Remover</button></td>
                     </tr>
                 `;
             });
+        }, (error) => {
+            console.error("Erro na busca de vendedores:", error);
         });
 
         window.excluirVendedor = async (id) => {
@@ -208,33 +204,48 @@
         };
 
         // --- RELATÓRIOS E HISTÓRICO DE VENDAS ---
-        onSnapshot(query(collection(db, "vendas"), orderBy("data", "desc")), (snapshot) => {
+        onSnapshot(collection(db, "vendas"), (snapshot) => {
             const lista = document.getElementById("listaHistoricoVendas");
             if (!lista) return;
             lista.innerHTML = "";
             let totalMes = 0;
             const mesAtual = new Date().getMonth();
 
+            if (snapshot.empty) {
+                lista.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#888;">Nenhuma venda registrada até o momento.</td></tr>`;
+                document.getElementById("fechamentoMensalDisplay").innerText = "0.00";
+                return;
+            }
+
             snapshot.forEach(docSnap => {
                 const v = docSnap.data();
-                const dataVenda = new Date(v.data);
+                let dataVendaTexto = "-";
+                let dataVendaObj = null;
 
-                if (dataVenda.getMonth() === mesAtual) {
-                    totalMes += (v.total || 0);
+                if (v.data) {
+                    dataVendaObj = new Date(v.data);
+                    if (!isNaN(dataVendaObj)) {
+                        dataVendaTexto = dataVendaObj.toLocaleString();
+                        if (dataVendaObj.getMonth() === mesAtual) {
+                            totalMes += parseFloat(v.total || 0);
+                        }
+                    }
                 }
 
                 lista.innerHTML += `
                     <tr>
-                        <td><strong>#${v.numeroPedido || '-'}</strong></td>
-                        <td>${dataVenda.toLocaleString()}</td>
-                        <td>${v.vendedor || '-'}</td>
-                        <td>${(v.formaPagto || '').toUpperCase()}</td>
+                        <td><strong>#${v.numeroPedido || v.id || '-'}</strong></td>
+                        <td>${dataVendaTexto}</td>
+                        <td>${v.vendedor || v.nomeVendedor || '-'}</td>
+                        <td>${(v.formaPagto || v.pagamento || '').toUpperCase()}</td>
                         <td>R$ ${parseFloat(v.total || 0).toFixed(2)}</td>
                     </tr>
                 `;
             });
 
             document.getElementById("fechamentoMensalDisplay").innerText = totalMes.toFixed(2);
+        }, (error) => {
+            console.error("Erro na busca de vendas:", error);
         });
 
         // --- MUDANÇA DE ABAS ---

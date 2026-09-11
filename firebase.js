@@ -9,12 +9,12 @@ import {
 
 // Credenciais do Console Firebase
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY_AQUI",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  projectId: "SEU_PROJETO",
-  storageBucket: "SEU_PROJETO.firebasestorage.app",
-  messagingSenderId: "SEU_SENDER_ID",
-  appId: "SEU_APP_ID"
+  apiKey: "AIzaSyD8SnMWXagUVz4uVM87bc2dAakZyGGW3nM",
+  authDomain: "distribuidora-frazao.firebaseapp.com",
+  projectId: "distribuidora-frazao",
+  storageBucket: "distribuidora-frazao.firebasestorage.app",
+  messagingSenderId: "642540059204",
+  appId: "1:642540059204:web:c113fa6966fd97fc20da11"
 };
 
 // Inicialização do Firebase

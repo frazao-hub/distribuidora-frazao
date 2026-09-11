@@ -56,7 +56,7 @@
     <!-- Firebase SDK (Modular v10) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, query, orderBy, getDocs, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, query, orderBy, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // Configuração do Firebase
         const firebaseConfig = {
@@ -154,11 +154,13 @@
         window.cadastrarVendedor = async (e) => {
             if (e) e.preventDefault();
             const nomeVend = document.getElementById("nomeVendedorCad").value.trim();
-            const userVend = document.getElementById("userVendedorCad").value.trim().toLowerCase();
             const senhaPur = document.getElementById("passVendedorCad").value;
 
+            // Gera o usuário automaticamente a partir do nome (ex: "João Silva" -> "joaosilva")
+            const userVend = nomeVend.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
+
             if (userVend === "admin") {
-                alert("O usuário 'admin' é reservado.");
+                alert("O nome 'admin' é reservado.");
                 return;
             }
 
@@ -171,7 +173,7 @@
                     dataCadastro: new Date().toISOString()
                 });
                 document.getElementById("formVendedor").reset();
-                alert(`Vendedor ${nomeVend} cadastrado!`);
+                alert(`Vendedor "${nomeVend}" cadastrado com sucesso!`);
             } catch (err) {
                 alert("Erro ao cadastrar vendedor: " + err.message);
             }
@@ -183,7 +185,7 @@
             lista.innerHTML = "";
 
             if (snapshot.empty) {
-                lista.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#888;">Nenhum vendedor cadastrado.</td></tr>`;
+                lista.innerHTML = `<tr><td colspan="2" style="text-align:center; color:#888;">Nenhum vendedor cadastrado.</td></tr>`;
                 return;
             }
 
@@ -193,7 +195,6 @@
                 lista.innerHTML += `
                     <tr>
                         <td><strong>${v.nome}</strong></td>
-                        <td>${v.usuario}</td>
                         <td><button class="btn btn-sm btn-danger" onclick="window.excluirVendedor('${id}')">Remover</button></td>
                     </tr>
                 `;
@@ -302,16 +303,12 @@
             <form id="formVendedor">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Nome Completo</label>
-                        <input type="text" id="nomeVendedorCad" required>
+                        <label>Nome do Vendedor</label>
+                        <input type="text" id="nomeVendedorCad" placeholder="Ex: João Silva" required>
                     </div>
                     <div class="form-group">
-                        <label>Usuário de Acesso</label>
-                        <input type="text" id="userVendedorCad" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Senha</label>
-                        <input type="password" id="passVendedorCad" required>
+                        <label>Senha de Acesso</label>
+                        <input type="password" id="passVendedorCad" placeholder="Senha do vendedor" required>
                     </div>
                 </div>
                 <button type="submit" class="btn">Salvar Vendedor</button>
@@ -322,8 +319,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Nome</th>
-                            <th>Usuário</th>
+                            <th>Vendedor</th>
                             <th>Ação</th>
                         </tr>
                     </thead>

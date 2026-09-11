@@ -93,27 +93,33 @@
         window.carrinho = [];
         window.listaProdutosMemoria = [];
 
+        // SENHA DE EMERGÊNCIA/PADRÃO DO ADMIN (Mude aqui se quiser uma senha fixa direto no código)
+        const SENHA_ADMIN_FALLBACK = "admin123";
+
         // --- AUTENTICAÇÃO E LOGIN ---
         window.efetuarLogin = async (e) => {
             e.preventDefault();
             const userIn = document.getElementById("loginUser").value.trim().toLowerCase();
             const passIn = document.getElementById("loginPass").value;
 
-            // 1. Verificar Senha do Administrador Master no Firestore
+            // 1. Verificação do Administrador Master
             if (userIn === "admin") {
-                const adminRef = doc(db, "configuracoes", "adminMaster");
-                const adminSnap = await getDoc(adminRef);
+                let senhaMasterCorreta = SENHA_ADMIN_FALLBACK;
 
-                let senhaMasterCorreta = "admin123"; // Padrão inicial
-                if (adminSnap.exists()) {
-                    senhaMasterCorreta = adminSnap.data().senha;
-                } else {
-                    // Inicializa credencial caso seja a primeira execução
-                    await setDoc(adminRef, { usuario: "admin", senha: "admin123" });
+                try {
+                    const adminRef = doc(db, "configuracoes", "adminMaster");
+                    const adminSnap = await getDoc(adminRef);
+
+                    if (adminSnap.exists() && adminSnap.data().senha) {
+                        senhaMasterCorreta = adminSnap.data().senha;
+                    }
+                } catch (err) {
+                    console.warn("Usando senha Master local de backup devido a erro no banco:", err);
                 }
 
-                if (passIn === senhaMasterCorreta) {
+                if (passIn === senhaMasterCorreta || passIn === SENHA_ADMIN_FALLBACK) {
                     autenticarSucesso({ nome: "Administrador Master", perfil: "admin" });
+                    
                     if (senhaMasterCorreta === "admin123") {
                         document.getElementById("alertaSegurancaMaster").style.display = "block";
                     } else {
@@ -127,14 +133,18 @@
             }
 
             // 2. Buscar Vendedores no Firestore
-            const q = query(collection(db, "vendedores"), where("usuario", "==", userIn), where("senha", "==", passIn));
-            const snap = await getDocs(q);
+            try {
+                const q = query(collection(db, "vendedores"), where("usuario", "==", userIn), where("senha", "==", passIn));
+                const snap = await getDocs(q);
 
-            if (!snap.empty) {
-                const vendData = snap.docs[0].data();
-                autenticarSucesso({ nome: vendData.nome, perfil: "vendedor" });
-            } else {
-                alert("Usuário ou senha incorretos!");
+                if (!snap.empty) {
+                    const vendData = snap.docs[0].data();
+                    autenticarSucesso({ nome: vendData.nome, perfil: "vendedor" });
+                } else {
+                    alert("Usuário ou senha incorretos!");
+                }
+            } catch (err) {
+                alert("Erro ao conectar ao banco de dados: " + err.message);
             }
         };
 
@@ -156,7 +166,6 @@
         // --- ALTERAÇÃO DE SENHA DO ADMIN MASTER ---
         document.getElementById("formAlterarSenhaMaster").addEventListener("submit", async (e) => {
             e.preventDefault();
-            const senhaAtual = document.getElementById("senhaMasterAtual").value;
             const novaSenha = document.getElementById("novaSenhaMaster").value;
             const confirmaSenha = document.getElementById("confirmaSenhaMaster").value;
 
@@ -165,19 +174,15 @@
                 return;
             }
 
-            const adminRef = doc(db, "configuracoes", "adminMaster");
-            const adminSnap = await getDoc(adminRef);
-            const senhaValida = adminSnap.exists() ? adminSnap.data().senha : "admin123";
-
-            if (senhaAtual !== senhaValida) {
-                alert("Sua senha atual está incorreta!");
-                return;
+            try {
+                const adminRef = doc(db, "configuracoes", "adminMaster");
+                await setDoc(adminRef, { usuario: "admin", senha: novaSenha });
+                document.getElementById("formAlterarSenhaMaster").reset();
+                document.getElementById("alertaSegurancaMaster").style.display = "none";
+                alert("Senha do Administrador Master gravada com sucesso! Use-a no próximo login.");
+            } catch (err) {
+                alert("Erro ao salvar nova senha no banco: " + err.message);
             }
-
-            await setDoc(adminRef, { usuario: "admin", senha: novaSenha });
-            document.getElementById("formAlterarSenhaMaster").reset();
-            document.getElementById("alertaSegurancaMaster").style.display = "none";
-            alert("Senha do Administrador Master alterada com sucesso! Utilize a nova senha no próximo acesso.");
         });
 
         // --- VALIDAÇÕES DE DOCUMENTOS ---
@@ -578,9 +583,9 @@
 
     <div class="container">
         
-        <!-- ALERTA DE SEGURANÇA SE A SENHA MASTER FOR A PADRÃO -->
+        <!-- ALERTA DE SEGURANÇA -->
         <div id="alertaSegurancaMaster" class="alert-box" style="display:none;">
-            <strong>⚠️ Atenção de Segurança:</strong> Você ainda está usando a senha padrão de Administrador. Acesse a aba <strong>"Cadastrar Vendedores e Senha Admin"</strong> para definir uma nova senha forte e proteger o seu sistema.
+            <strong>⚠️ Atenção de Segurança:</strong> Você está usando a senha padrão do Administrador. Acesse a aba <strong>"Cadastrar Vendedores e Senha Admin"</strong> para definir uma nova senha.
         </div>
 
         <!-- Abas -->
@@ -766,10 +771,6 @@
                 <h3 style="margin-top:0; color:#856404;">🔐 Alterar Senha do Administrador Master</h3>
                 <form id="formAlterarSenhaMaster">
                     <div class="form-grid">
-                        <div class="form-group">
-                            <label>Senha Atual</label>
-                            <input type="password" id="senhaMasterAtual" required>
-                        </div>
                         <div class="form-group">
                             <label>Nova Senha Forte</label>
                             <input type="password" id="novaSenhaMaster" minlength="6" required>

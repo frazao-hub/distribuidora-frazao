@@ -90,46 +90,60 @@
         window.carrinho = [];
         window.listaProdutosMemoria = [];
 
-        // SENHA PADRÃO / FALLBACK PERMANENTE DO ADMIN
-        const SENHA_ADMIN_PADRAO = "admin123";
+        // FUNÇÃO DE CRIPTOGRAFIA (SHA-256 Nativo do Navegador)
+        async function gerarHash(texto) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(texto);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
-        // --- AUTENTICAÇÃO E LOGIN ---
+        // --- AUTENTICAÇÃO SEGURA ---
         window.efetuarLogin = async (e) => {
             e.preventDefault();
             const userIn = document.getElementById("loginUser").value.trim().toLowerCase();
             const passIn = document.getElementById("loginPass").value;
 
+            if (!userIn || !passIn) {
+                alert("Preencha o usuário e a senha.");
+                return;
+            }
+
+            const hashSenhaDigitada = await gerarHash(passIn);
+
             // 1. Verificação do Administrador Master
             if (userIn === "admin") {
-                // A senha padrão admin123 sempre concede acesso imediato
-                if (passIn === SENHA_ADMIN_PADRAO) {
-                    autenticarSucesso({ nome: "Administrador Master", perfil: "admin" });
-                    return;
-                }
-
-                // Tenta validar contra uma nova senha salva no Firestore
                 try {
                     const adminRef = doc(db, "configuracoes", "adminMaster");
                     const adminSnap = await getDoc(adminRef);
 
-                    if (adminSnap.exists() && adminSnap.data().senha) {
-                        const senhaBanco = adminSnap.data().senha;
-                        if (passIn === senhaBanco) {
+                    if (adminSnap.exists() && adminSnap.data().hashSenha) {
+                        const hashSalvo = adminSnap.data().hashSenha;
+                        if (hashSenhaDigitada === hashSalvo) {
                             autenticarSucesso({ nome: "Administrador Master", perfil: "admin" });
                             return;
+                        } else {
+                            alert("Senha de Administrador incorreta!");
+                            return;
                         }
+                    } else {
+                        // Primeiro acesso: Criação da senha master do sistema caso não exista registro
+                        alert("Primeiro acesso detectado! Definindo sua senha master de segurança...");
+                        await setDoc(adminRef, { usuario: "admin", hashSenha: hashSenhaDigitada, dataCriacao: new Date().toISOString() });
+                        autenticarSucesso({ nome: "Administrador Master", perfil: "admin" });
+                        alert("Sua senha de administrador foi criptografada e salva com sucesso!");
+                        return;
                     }
                 } catch (err) {
-                    console.warn("Erro ao verificar senha alterada no banco de dados:", err);
+                    alert("Erro de conexão ao validar credenciais: " + err.message);
+                    return;
                 }
-
-                alert("Senha de Administrador incorreta!");
-                return;
             }
 
-            // 2. Buscar Vendedores no Firestore
+            // 2. Buscar Vendedores no Firestore (por Hash da Senha)
             try {
-                const q = query(collection(db, "vendedores"), where("usuario", "==", userIn), where("senha", "==", passIn));
+                const q = query(collection(db, "vendedores"), where("usuario", "==", userIn), where("hashSenha", "==", hashSenhaDigitada));
                 const snap = await getDocs(q);
 
                 if (!snap.empty) {
@@ -158,11 +172,16 @@
 
         window.logout = () => { location.reload(); };
 
-        // --- ALTERAÇÃO DE SENHA DO ADMIN MASTER ---
+        // --- ALTERAÇÃO SEGURA DE SENHA DO ADMIN MASTER ---
         window.alterarSenhaMaster = async (e) => {
             e.preventDefault();
             const novaSenha = document.getElementById("novaSenhaMaster").value;
             const confirmaSenha = document.getElementById("confirmaSenhaMaster").value;
+
+            if (novaSenha.length < 6) {
+                alert("A nova senha deve ter no mínimo 6 caracteres por razões de segurança.");
+                return;
+            }
 
             if (novaSenha !== confirmaSenha) {
                 alert("A nova senha e a confirmação não conferem!");
@@ -170,12 +189,13 @@
             }
 
             try {
+                const novoHash = await gerarHash(novaSenha);
                 const adminRef = doc(db, "configuracoes", "adminMaster");
-                await setDoc(adminRef, { usuario: "admin", senha: novaSenha });
+                await setDoc(adminRef, { usuario: "admin", hashSenha: novoHash, ultimaAlteracao: new Date().toISOString() });
                 document.getElementById("formAlterarSenhaMaster").reset();
-                alert("Nova senha salva com sucesso no banco de dados! Você poderá usar tanto a nova senha quanto 'admin123' para acessar.");
+                alert("Senha de Administrador alterada e criptografada com sucesso!");
             } catch (err) {
-                alert("Erro ao salvar nova senha no banco: " + err.message);
+                alert("Erro ao atualizar senha no banco: " + err.message);
             }
         };
 
@@ -227,18 +247,25 @@
             if (event && event.target) event.target.classList.add('active');
         };
 
-        // --- GESTÃO DE VENDEDORES ---
+        // --- GESTÃO DE VENDEDORES COM CRIPTOGRAFIA ---
         window.cadastrarVendedor = async (e) => {
             e.preventDefault();
+            const senhaPur = document.getElementById("passVendedorCad").value;
+            if (senhaPur.length < 4) {
+                alert("A senha do vendedor deve ter pelo menos 4 caracteres.");
+                return;
+            }
+
+            const hashSenha = await gerarHash(senhaPur);
             const vend = {
                 nome: document.getElementById("nomeVendedorCad").value,
                 usuario: document.getElementById("userVendedorCad").value.trim().toLowerCase(),
-                senha: document.getElementById("passVendedorCad").value
+                hashSenha: hashSenha
             };
 
             await addDoc(collection(db, "vendedores"), vend);
             document.getElementById("formVendedor").reset();
-            alert("Vendedor cadastrado com sucesso!");
+            alert("Vendedor cadastrado com sucesso e credenciais protegidas!");
         };
 
         onSnapshot(collection(db, "vendedores"), (snapshot) => {
@@ -560,15 +587,15 @@
     <div id="modal-login">
         <div class="login-box">
             <h2>Distribuidora Frazão</h2>
-            <p>Acesso ao Sistema de Vendas ERP</p>
+            <p>Acesso Protegido ao ERP</p>
             <form onsubmit="efetuarLogin(event)">
                 <div class="form-group" style="margin-bottom: 10px;">
-                    <input type="text" id="loginUser" placeholder="Usuário (ex: admin)" required>
+                    <input type="text" id="loginUser" placeholder="Usuário (ex: admin)" required autocomplete="username">
                 </div>
                 <div class="form-group" style="margin-bottom: 15px;">
-                    <input type="password" id="loginPass" placeholder="Senha" required>
+                    <input type="password" id="loginPass" placeholder="Senha" required autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn" style="width: 100%;">Entrar no Sistema</button>
+                <button type="submit" class="btn" style="width: 100%;">Entrar com Segurança</button>
             </form>
         </div>
     </div>
@@ -762,29 +789,29 @@
         <!-- ABA 4: GESTÃO DE SEGURANÇA E VENDEDORES (SOMENTE ADMIN MASTER) -->
         <div id="tab-vendedores" class="tab-content somente-admin">
             
-            <!-- Alteração de Senha do Admin -->
+            <!-- Alteração Criptografada de Senha -->
             <div style="background:#e8f8f5; border: 1px solid #a3e4d7; padding: 20px; border-radius: 6px; margin-bottom: 30px;">
-                <h3 style="margin-top:0; color:#1e8449;">🔑 Alterar/Adicionar Senha Secundária do Admin</h3>
-                <p style="font-size:12px; color:#555;">Caso deseje definir uma senha personalizada sem desativar a senha padrão de garantia.</p>
+                <h3 style="margin-top:0; color:#1e8449;">🔒 Alterar Senha Exclusiva do Administrador Master</h3>
+                <p style="font-size:12px; color:#555;">A nova senha será salva de forma criptografada (Hash SHA-256) no Firebase.</p>
                 <form id="formAlterarSenhaMaster" onsubmit="alterarSenhaMaster(event)">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>Nova Senha Personalizada</label>
-                            <input type="password" id="novaSenhaMaster" minlength="4" required>
+                            <label>Nova Senha Exclusiva (mínimo 6 dígitos)</label>
+                            <input type="password" id="novaSenhaMaster" minlength="6" required>
                         </div>
                         <div class="form-group">
                             <label>Confirmar Nova Senha</label>
-                            <input type="password" id="confirmaSenhaMaster" minlength="4" required>
+                            <input type="password" id="confirmaSenhaMaster" minlength="6" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-warning">Salvar Nova Senha no Banco</button>
+                    <button type="submit" class="btn btn-warning">Criptografar e Salvar Nova Senha</button>
                 </form>
             </div>
 
             <hr style="margin: 25px 0;">
 
             <!-- Cadastro de Vendedor -->
-            <h2>Cadastrar Novo Vendedor com Senha Própria</h2>
+            <h2>Cadastrar Novo Vendedor (Com Criptografia de Senha)</h2>
             <form id="formVendedor" onsubmit="cadastrarVendedor(event)">
                 <div class="form-grid">
                     <div class="form-group">
@@ -796,7 +823,7 @@
                         <input type="text" id="userVendedorCad" placeholder="Ex: joao" required>
                     </div>
                     <div class="form-group">
-                        <label>Senha Exclusiva</label>
+                        <label>Senha Exclusiva (mínimo 4 dígitos)</label>
                         <input type="password" id="passVendedorCad" minlength="4" required>
                     </div>
                 </div>

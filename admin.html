@@ -154,7 +154,7 @@
                     const vendData = snap.docs[0].data();
                     autenticarSucesso({ nome: vendData.nome, perfil: "vendedor" });
                 } else {
-                    alert("Usuário ou senha incorreções!");
+                    alert("Usuário ou senha incorretos!");
                 }
             } catch (err) {
                 alert("Erro ao consultar vendedor: " + err.message);
@@ -609,7 +609,8 @@
                 `;
             });
 
-            document.getElementById("fechamentoMensalDisplay").innerText = totalMes.toFixed(2);
+            const fechamentoElem = document.getElementById("fechamentoMensalDisplay");
+            if (fechamentoElem) fechamentoElem.innerText = totalMes.toFixed(2);
         });
     </script>
 </head>
@@ -712,57 +713,58 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Cliente / Comprador</label>
+                        <label>Vincular Cliente</label>
                         <select id="clienteVenda"></select>
                     </div>
                 </div>
                 <div style="margin-top: 10px; display: flex; gap: 10px;">
-                    <button class="btn" onclick="finalizarVenda()">Finalizar Venda</button>
-                    <button class="btn btn-warning" onclick="imprimirCupom()">Imprimir Cupom</button>
-                    <button class="btn btn-info" onclick="compartilharWhatsApp()">Enviar WhatsApp</button>
+                    <button class="btn" onclick="finalizarVenda()">Concluir Venda</button>
+                    <button class="btn btn-info" onclick="imprimirCupom()">Imprimir Cupom</button>
+                    <button class="btn btn-warning" onclick="compartilharWhatsApp()">Enviar WhatsApp</button>
                 </div>
             </div>
         </div>
 
-        <!-- ABA 2: CLIENTES -->
+        <!-- ABA 2: CLIENTES & FIADO -->
         <div id="tab-clientes" class="tab-content">
-            <h2>Cadastro e Gestão de Clientes (Fiado)</h2>
-            <form id="formCliente" onsubmit="cadastrarCliente(event)" class="form-grid">
-                <div class="form-group">
-                    <label>Nome Completo / Razão Social</label>
-                    <input type="text" id="nomeCliente" required>
+            <h2>Cadastro de Clientes</h2>
+            <form id="formCliente" onsubmit="cadastrarCliente(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome Completo / Razão Social</label>
+                        <input type="text" id="nomeCliente" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Endereço</label>
+                        <input type="text" id="enderecoCliente" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone / WhatsApp</label>
+                        <input type="text" id="telefoneCliente" required>
+                    </div>
+                    <div class="form-group">
+                        <label>CPF ou CNPJ (Opcional)</label>
+                        <input type="text" id="docCliente">
+                    </div>
+                    <div class="form-group">
+                        <label>Vendedor Responsável</label>
+                        <input type="text" id="vendedorResp" required>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Telefone / WhatsApp</label>
-                    <input type="text" id="telefoneCliente" placeholder="(21) 90000-0000" required>
-                </div>
-                <div class="form-group">
-                    <label>CPF ou CNPJ</label>
-                    <input type="text" id="docCliente" placeholder="Apenas números">
-                </div>
-                <div class="form-group">
-                    <label>Endereço</label>
-                    <input type="text" id="enderecoCliente">
-                </div>
-                <div class="form-group">
-                    <label>Vendedor Responsável</label>
-                    <input type="text" id="vendedorResp" placeholder="Ex: João">
-                </div>
-                <div class="form-group" style="justify-content: flex-end;">
-                    <button type="submit" class="btn">Cadastrar Cliente</button>
-                </div>
+                <button type="submit" class="btn">Cadastrar Cliente</button>
             </form>
 
+            <h3 style="margin-top: 25px;">Lista de Clientes & Saldo Fiado</h3>
             <div class="tabela-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>Cliente</th>
+                            <th>Nome</th>
                             <th>Telefone</th>
-                            <th>CPF/CNPJ</th>
+                            <th>Documento</th>
                             <th>Vendedor</th>
-                            <th>Saldo Devedor</th>
-                            <th>Ações Fiado</th>
+                            <th>Débito (Fiado)</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody id="listaClientes"></tbody>
@@ -770,49 +772,50 @@
             </div>
         </div>
 
-        <!-- ABA 3: PRODUTOS -->
+        <!-- ABA 3: PRODUTOS & ESTOQUE -->
         <div id="tab-produtos" class="tab-content">
             <h2>Cadastro de Produtos</h2>
-            <form id="formProduto" onsubmit="cadastrarProduto(event)" class="form-grid">
-                <div class="form-group">
-                    <label>Nome do Produto</label>
-                    <input type="text" id="nomeProd" required>
+            <form id="formProduto" onsubmit="cadastrarProduto(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome do Produto</label>
+                        <input type="text" id="nomeProd" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="categoriaProd" required>
+                            <option value="Balas e Pirulitos">Balas e Pirulitos</option>
+                            <option value="Bebidas">Bebidas</option>
+                            <option value="Biscoitos">Biscoitos</option>
+                            <option value="Mercearia">Mercearia</option>
+                            <option value="Papelaria">Papelaria</option>
+                            <option value="Limpeza">Limpeza</option>
+                            <option value="Descartáveis">Descartáveis</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Preço de Venda (R$)</label>
+                        <input type="number" id="precoProd" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Estoque Inicial</label>
+                        <input type="number" id="estoqueProd" required>
+                    </div>
+                    <div class="form-group">
+                        <label>URL da Imagem (Opcional)</label>
+                        <input type="url" id="fotoProd" placeholder="https://...">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Categoria</label>
-                    <select id="categoriaProd" required>
-                        <option value="Balas e Pirulitos">Balas e Pirulitos</option>
-                        <option value="Bebidas">Bebidas</option>
-                        <option value="Biscoitos">Biscoitos</option>
-                        <option value="Mercearia">Mercearia</option>
-                        <option value="Papelaria">Papelaria</option>
-                        <option value="Limpeza">Limpeza</option>
-                        <option value="Descartáveis">Descartáveis</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Preço de Venda (R$)</label>
-                    <input type="number" step="0.01" id="precoProd" required>
-                </div>
-                <div class="form-group">
-                    <label>Estoque Inicial</label>
-                    <input type="number" id="estoqueProd" required>
-                </div>
-                <div class="form-group">
-                    <label>URL da Imagem (Opcional)</label>
-                    <input type="url" id="fotoProd" placeholder="https://...">
-                </div>
-                <div class="form-group" style="justify-content: flex-end;">
-                    <button type="submit" class="btn">Salvar Produto</button>
-                </div>
+                <button type="submit" class="btn">Salvar Produto</button>
             </form>
 
+            <h3 style="margin-top: 25px;">Catálogo em Estoque</h3>
             <div class="tabela-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Foto</th>
-                            <th>Produto</th>
+                            <th>Nome</th>
                             <th>Categoria</th>
                             <th>Preço</th>
                             <th>Estoque</th>
@@ -824,47 +827,28 @@
             </div>
         </div>
 
-        <!-- ABA 4: VENDEDORES & SENHA ADMIN -->
-        <div id="tab-vendedores" class="tab-content">
-            <h2>Segurança & Acessos</h2>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div>
-                    <h3>Cadastrar Novo Vendedor</h3>
-                    <form id="formVendedor" onsubmit="cadastrarVendedor(event)">
-                        <div class="form-group" style="margin-bottom:10px;">
-                            <label>Nome do Vendedor</label>
-                            <input type="text" id="nomeVendedorCad" required>
-                        </div>
-                        <div class="form-group" style="margin-bottom:10px;">
-                            <label>Usuário de Acesso</label>
-                            <input type="text" id="userVendedorCad" required>
-                        </div>
-                        <div class="form-group" style="margin-bottom:15px;">
-                            <label>Senha</label>
-                            <input type="password" id="passVendedorCad" required>
-                        </div>
-                        <button type="submit" class="btn">Cadastrar Vendedor</button>
-                    </form>
+        <!-- ABA 4: VENDEDORES & ADMIN -->
+        <div id="tab-vendedores" class="tab-content somente-admin">
+            <h2>Cadastrar Novo Vendedor</h2>
+            <form id="formVendedor" onsubmit="cadastrarVendedor(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="nomeVendedorCad" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nome de Usuário (Login)</label>
+                        <input type="text" id="userVendedorCad" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Senha de Acesso</label>
+                        <input type="password" id="passVendedorCad" required>
+                    </div>
                 </div>
+                <button type="submit" class="btn">Cadastrar Vendedor</button>
+            </form>
 
-                <div>
-                    <h3>Alterar Senha do Administrador Master</h3>
-                    <form id="formAlterarSenhaMaster" onsubmit="alterarSenhaMaster(event)">
-                        <div class="form-group" style="margin-bottom:10px;">
-                            <label>Nova Senha Master</label>
-                            <input type="password" id="novaSenhaMaster" required>
-                        </div>
-                        <div class="form-group" style="margin-bottom:15px;">
-                            <label>Confirmar Nova Senha</label>
-                            <input type="password" id="confirmaSenhaMaster" required>
-                        </div>
-                        <button type="submit" class="btn btn-warning">Atualizar Senha Admin</button>
-                    </form>
-                </div>
-            </div>
-
-            <h3 style="margin-top: 30px;">Vendedores Ativos</h3>
+            <h3 style="margin-top: 25px;">Vendedores Cadastrados</h3>
             <div class="tabela-container">
                 <table>
                     <thead>
@@ -877,14 +861,30 @@
                     <tbody id="listaVendedores"></tbody>
                 </table>
             </div>
+
+            <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
+
+            <h2>Alterar Senha do Administrador Master</h2>
+            <form id="formAlterarSenhaMaster" onsubmit="alterarSenhaMaster(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nova Senha Master</label>
+                        <input type="password" id="novaSenhaMaster" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmar Nova Senha</label>
+                        <input type="password" id="confirmaSenhaMaster" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-warning">Atualizar Senha Admin</button>
+            </form>
         </div>
 
-        <!-- ABA 5: HISTÓRICO -->
-        <div id="tab-historico" class="tab-content">
-            <h2>Histórico de Vendas & Fechamento</h2>
-            
-            <div style="background: #eef9f1; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
-                <h3>Faturamento Acumulado (Mês Atual): R$ <span id="fechamentoMensalDisplay">0.00</span></h3>
+        <!-- ABA 5: HISTÓRICO & FECHAMENTO -->
+        <div id="tab-historico" class="tab-content somente-admin">
+            <h2>Histórico de Vendas</h2>
+            <div style="background: #eef9f1; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                <h3>Total de Vendas no Mês Atual: R$ <span id="fechamentoMensalDisplay">0.00</span></h3>
             </div>
 
             <div class="tabela-container">
@@ -894,7 +894,7 @@
                             <th>Pedido</th>
                             <th>Data/Hora</th>
                             <th>Vendedor</th>
-                            <th>Pagamento</th>
+                            <th>Forma Pagto</th>
                             <th>Total</th>
                         </tr>
                     </thead>
@@ -905,7 +905,7 @@
 
     </div>
 
-    <!-- ÁREA DE IMPRESSÃO DO COMPROVANTE (TÉRMICA 80mm) -->
+    <!-- ÁREA DE IMPRESSÃO TÉRMICA -->
     <div id="comprovante-print"></div>
 
 </body>

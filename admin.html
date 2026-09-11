@@ -13,10 +13,11 @@
         /* Tela de Login Modal */
         #modal-login {
             position: fixed; top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 9999;
+            background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 9999;
         }
-        .login-box { background: white; padding: 30px; border-radius: 8px; width: 100%; max-width: 360px; text-align: center; }
-        .login-box h2 { color: #27ae60; margin-top: 0; }
+        .login-box { background: white; padding: 30px; border-radius: 8px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .login-box h2 { color: #27ae60; margin-top: 0; margin-bottom: 5px; }
+        .login-box p { color: #666; font-size: 13px; margin-bottom: 20px; }
         
         header { background: #27ae60; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
         header h1 { margin: 0; font-size: 20px; text-transform: uppercase; }
@@ -44,6 +45,9 @@
         .btn-warning { background: #f39c12; }
         .btn-info { background: #2980b9; }
 
+        /* Alerta de Segurança */
+        .alert-box { background: #fce4e4; border: 1px solid #f5c6cb; color: #721c24; padding: 12px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 13px; }
+
         /* Tabelas */
         .tabela-container { overflow-x: auto; margin-top: 15px; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -69,7 +73,7 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDocs, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDocs, where, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // Configuração do Firebase
         const firebaseConfig = {
@@ -85,7 +89,7 @@
         const db = getFirestore(app);
 
         // Estado Global
-        window.usuarioLogado = null; // { nome, perfil, usuario }
+        window.usuarioLogado = null;
         window.carrinho = [];
         window.listaProdutosMemoria = [];
 
@@ -95,13 +99,34 @@
             const userIn = document.getElementById("loginUser").value.trim().toLowerCase();
             const passIn = document.getElementById("loginPass").value;
 
-            // Admin Master Padrão
-            if (userIn === "admin" && passIn === "admin123") {
-                autenticarSucesso({ nome: "Administrador Master", perfil: "admin" });
-                return;
+            // 1. Verificar Senha do Administrador Master no Firestore
+            if (userIn === "admin") {
+                const adminRef = doc(db, "configuracoes", "adminMaster");
+                const adminSnap = await getDoc(adminRef);
+
+                let senhaMasterCorreta = "admin123"; // Padrão inicial
+                if (adminSnap.exists()) {
+                    senhaMasterCorreta = adminSnap.data().senha;
+                } else {
+                    // Inicializa credencial caso seja a primeira execução
+                    await setDoc(adminRef, { usuario: "admin", senha: "admin123" });
+                }
+
+                if (passIn === senhaMasterCorreta) {
+                    autenticarSucesso({ nome: "Administrador Master", perfil: "admin" });
+                    if (senhaMasterCorreta === "admin123") {
+                        document.getElementById("alertaSegurancaMaster").style.display = "block";
+                    } else {
+                        document.getElementById("alertaSegurancaMaster").style.display = "none";
+                    }
+                    return;
+                } else {
+                    alert("Senha de Administrador incorreta!");
+                    return;
+                }
             }
 
-            // Buscar Vendedores no Firestore
+            // 2. Buscar Vendedores no Firestore
             const q = query(collection(db, "vendedores"), where("usuario", "==", userIn), where("senha", "==", passIn));
             const snap = await getDocs(q);
 
@@ -119,18 +144,43 @@
             document.getElementById("nomeUsuarioHeader").innerText = usuario.nome;
             document.getElementById("badgePerfil").innerText = usuario.perfil.toUpperCase();
 
-            // Configurar visibilidade de permissões
+            // Configurar visibilidade das abas administrativas
             const abasAdmin = document.querySelectorAll('.somente-admin');
             abasAdmin.forEach(el => el.style.display = (usuario.perfil === 'admin') ? 'inline-block' : 'none');
 
             if (usuario.perfil !== 'admin') window.mudarAba('venda');
         }
 
-        window.logout = () => {
-            location.reload();
-        };
+        window.logout = () => { location.reload(); };
 
-        // --- VALIDAÇÕES ---
+        // --- ALTERAÇÃO DE SENHA DO ADMIN MASTER ---
+        document.getElementById("formAlterarSenhaMaster").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const senhaAtual = document.getElementById("senhaMasterAtual").value;
+            const novaSenha = document.getElementById("novaSenhaMaster").value;
+            const confirmaSenha = document.getElementById("confirmaSenhaMaster").value;
+
+            if (novaSenha !== confirmaSenha) {
+                alert("A nova senha e a confirmação não conferem!");
+                return;
+            }
+
+            const adminRef = doc(db, "configuracoes", "adminMaster");
+            const adminSnap = await getDoc(adminRef);
+            const senhaValida = adminSnap.exists() ? adminSnap.data().senha : "admin123";
+
+            if (senhaAtual !== senhaValida) {
+                alert("Sua senha atual está incorreta!");
+                return;
+            }
+
+            await setDoc(adminRef, { usuario: "admin", senha: novaSenha });
+            document.getElementById("formAlterarSenhaMaster").reset();
+            document.getElementById("alertaSegurancaMaster").style.display = "none";
+            alert("Senha do Administrador Master alterada com sucesso! Utilize a nova senha no próximo acesso.");
+        });
+
+        // --- VALIDAÇÕES DE DOCUMENTOS ---
         window.validarCPF = (cpf) => {
             cpf = cpf.replace(/[^\d]+/g,'');
             if(cpf == '' || cpf.length != 11 || /^(\d)\1{10}$/.test(cpf)) return false;
@@ -189,7 +239,7 @@
 
             await addDoc(collection(db, "vendedores"), vend);
             document.getElementById("formVendedor").reset();
-            alert("Vendedor cadastrado com sucesso!");
+            alert("Vendedor cadastrado com senha própria!");
         });
 
         onSnapshot(collection(db, "vendedores"), (snapshot) => {
@@ -209,10 +259,10 @@
         });
 
         window.excluirVendedor = async (id) => {
-            if(confirm("Remover este vendedor?")) await deleteDoc(doc(db, "vendedores", id));
+            if(confirm("Remover este vendedor e revogar acesso?")) await deleteDoc(doc(db, "vendedores", id));
         };
 
-        // --- GESTÃO DE CLIENTES ---
+        // --- GESTÃO DE CLIENTES & FIADO ---
         document.getElementById("formCliente").addEventListener("submit", async (e) => {
             e.preventDefault();
             const docNum = document.getElementById("docCliente").value.trim();
@@ -504,10 +554,10 @@
     <div id="modal-login">
         <div class="login-box">
             <h2>Distribuidora Frazão</h2>
-            <p>Acesso ao Sistema de Vendas</p>
+            <p>Acesso ao Sistema de Vendas ERP</p>
             <form onsubmit="efetuarLogin(event)">
                 <div class="form-group" style="margin-bottom: 10px;">
-                    <input type="text" id="loginUser" placeholder="Usuário" required>
+                    <input type="text" id="loginUser" placeholder="Usuário (ex: admin)" required>
                 </div>
                 <div class="form-group" style="margin-bottom: 15px;">
                     <input type="password" id="loginPass" placeholder="Senha" required>
@@ -528,12 +578,17 @@
 
     <div class="container">
         
+        <!-- ALERTA DE SEGURANÇA SE A SENHA MASTER FOR A PADRÃO -->
+        <div id="alertaSegurancaMaster" class="alert-box" style="display:none;">
+            <strong>⚠️ Atenção de Segurança:</strong> Você ainda está usando a senha padrão de Administrador. Acesse a aba <strong>"Cadastrar Vendedores e Senha Admin"</strong> para definir uma nova senha forte e proteger o seu sistema.
+        </div>
+
         <!-- Abas -->
         <div class="nav-tabs">
             <button class="tab-btn active" onclick="mudarAba('venda')">Frente de Caixa (PDV)</button>
             <button class="tab-btn" onclick="mudarAba('clientes')">Clientes & Fiado</button>
             <button class="tab-btn" onclick="mudarAba('produtos')">Produtos & Estoque</button>
-            <button class="tab-btn somente-admin" onclick="mudarAba('vendedores')">Cadastrar Vendedores</button>
+            <button class="tab-btn somente-admin" onclick="mudarAba('vendedores')">Cadastrar Vendedores e Senha Admin</button>
             <button class="tab-btn somente-admin" onclick="mudarAba('historico')">Histórico & Fechamento</button>
         </div>
 
@@ -703,22 +758,48 @@
             </div>
         </div>
 
-        <!-- ABA 4: GESTÃO DE VENDEDORES (SOMENTE ADMIN MASTER) -->
+        <!-- ABA 4: GESTÃO DE SEGURANÇA E VENDEDORES (SOMENTE ADMIN MASTER) -->
         <div id="tab-vendedores" class="tab-content somente-admin">
-            <h2>Cadastrar Novo Vendedor</h2>
+            
+            <!-- Alteração de Senha do Admin -->
+            <div style="background:#fff3cd; border: 1px solid #ffeeba; padding: 20px; border-radius: 6px; margin-bottom: 30px;">
+                <h3 style="margin-top:0; color:#856404;">🔐 Alterar Senha do Administrador Master</h3>
+                <form id="formAlterarSenhaMaster">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Senha Atual</label>
+                            <input type="password" id="senhaMasterAtual" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nova Senha Forte</label>
+                            <input type="password" id="novaSenhaMaster" minlength="6" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirmar Nova Senha</label>
+                            <input type="password" id="confirmaSenhaMaster" minlength="6" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-warning">Salvar Nova Senha Administrador</button>
+                </form>
+            </div>
+
+            <hr style="margin: 25px 0;">
+
+            <!-- Cadastro de Vendedor -->
+            <h2>Cadastrar Novo Vendedor com Senha Própria</h2>
             <form id="formVendedor">
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Nome do Vendedor</label>
-                        <input type="text" id="nomeVendedorCad" required>
+                        <input type="text" id="nomeVendedorCad" placeholder="Ex: João Silva" required>
                     </div>
                     <div class="form-group">
                         <label>Usuário de Acesso</label>
-                        <input type="text" id="userVendedorCad" required>
+                        <input type="text" id="userVendedorCad" placeholder="Ex: joao" required>
                     </div>
                     <div class="form-group">
-                        <label>Senha</label>
-                        <input type="password" id="passVendedorCad" required>
+                        <label>Senha Exclusiva</label>
+                        <input type="password" id="passVendedorCad" minlength="4" required>
                     </div>
                 </div>
                 <button type="submit" class="btn">Cadastrar Vendedor</button>

@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema ERP & Gestão - Distribuidora Frazão</title>
+    <title>Painel Administrativo - Distribuidora Frazão</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
     <style>
         * { box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 0; color: #333; }
         
-        /* Tela de Login Modal */
+        /* Modal de Login */
         #modal-login {
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 9999;
@@ -19,21 +19,21 @@
         .login-box h2 { color: #27ae60; margin-top: 0; margin-bottom: 5px; }
         .login-box p { color: #666; font-size: 13px; margin-bottom: 20px; }
         
-        header { background: #27ae60; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        header { background: #1e8449; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
         header h1 { margin: 0; font-size: 20px; text-transform: uppercase; }
-        .perfil-badge { background: #1e8449; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; }
+        .perfil-badge { background: #27ae60; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; }
 
         .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
         
         /* Navegação por Abas */
         .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab-btn { background: #e0e0e0; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #555; }
-        .tab-btn.active { background: #27ae60; color: white; }
+        .tab-btn.active { background: #1e8449; color: white; }
         
         .tab-content { display: none; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
         .tab-content.active { display: block; }
 
-        /* Formulários */
+        /* Formulários e UI */
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 15px; }
         .form-group { display: flex; flex-direction: column; }
         .form-group label { font-size: 12px; font-weight: bold; margin-bottom: 4px; color: #555; }
@@ -45,67 +45,31 @@
         .btn-danger:hover { background: #c0392b; }
         .btn-warning { background: #f39c12; }
         .btn-warning:hover { background: #d68910; }
-        .btn-info { background: #2980b9; }
-        .btn-info:hover { background: #1f618d; }
 
-        /* Tabelas */
         .tabela-container { overflow-x: auto; margin-top: 15px; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #f8f9fa; color: #27ae60; }
-
-        .fiado-acoes { display: flex; gap: 5px; align-items: center; }
+        th { background-color: #f8f9fa; color: #1e8449; }
         .btn-sm { padding: 4px 8px; font-size: 11px; }
-
-        /* Impressão Térmica 80mm */
-        #comprovante-print { display: none; }
-        @media print {
-            body * { visibility: hidden; }
-            #comprovante-print, #comprovante-print * { visibility: visible; }
-            #comprovante-print {
-                position: absolute; left: 0; top: 0; width: 78mm; padding: 2mm;
-                font-family: monospace; font-size: 9pt; display: block !important;
-            }
-            .no-print { display: none !important; }
-        }
     </style>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK (Modular v10) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, getDocs, where, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Insira aqui suas credenciais do Firebase
         const firebaseConfig = {
-            // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyD8SnMWXagUVz4uVM87bc2dAakZyGGW3nM",
-  authDomain: "distribuidora-frazao.firebaseapp.com",
-  projectId: "distribuidora-frazao",
-  storageBucket: "distribuidora-frazao.firebasestorage.app",
-  messagingSenderId: "642540059204",
-  appId: "1:642540059204:web:c113fa6966fd97fc20da11"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+            apiKey: "AIzaSyD8SnMWXagUVz4uVM87bc2dAakZyGGW3nM",
+            authDomain: "distribuidora-frazao.firebaseapp.com",
+            projectId: "distribuidora-frazao",
+            storageBucket: "distribuidora-frazao.firebasestorage.app",
+            messagingSenderId: "642540059204",
+            appId: "1:642540059204:web:c113fa6966fd97fc20da11"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Estado Global
-        window.usuarioLogado = null;
-        window.carrinho = [];
-        window.listaProdutosMemoria = [];
-        window.textoReciboAtual = "";
-
-        // FUNÇÃO DE CRIPTOGRAFIA (SHA-256)
         async function gerarHash(texto) {
             if (!texto) return "";
             const encoder = new TextEncoder();
@@ -115,90 +79,61 @@ const app = initializeApp(firebaseConfig);
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // --- AUTENTICAÇÃO ---
-        window.efetuarLogin = async (e) => {
+        // --- AUTENTICAÇÃO PAINEL ADMIN ---
+        window.efetuarLoginAdmin = async (e) => {
             e.preventDefault();
             const userIn = document.getElementById("loginUser").value.trim().toLowerCase();
             const passIn = document.getElementById("loginPass").value;
 
-            if (!userIn) {
-                alert("Preencha o nome de usuário.");
+            if (userIn !== "admin") {
+                alert("Acesso negado: Este painel é de uso exclusivo do Administrador.");
                 return;
             }
 
-            // 1. Verificação do Administrador
-            if (userIn === "admin") {
-                try {
-                    const adminRef = doc(db, "configuracoes", "adminMaster");
-                    const adminSnap = await getDoc(adminRef);
-
-                    if (adminSnap.exists() && adminSnap.data().hashSenha) {
-                        const hashSalvo = adminSnap.data().hashSenha;
-                        const hashSenhaDigitada = await gerarHash(passIn);
-
-                        if (hashSenhaDigitada === hashSalvo) {
-                            autenticarSucesso({ nome: "Administrador Master", perfil: "admin" });
-                            return;
-                        } else {
-                            alert("Senha incorreta para o usuário admin!");
-                            return;
-                        }
-                    } else {
-                        autenticarSucesso({ nome: "Administrador Master", perfil: "admin" });
-                        alert("Bem-vindo! Acesse a aba 'Cadastrar Vendedores e Senha Admin' para definir uma nova senha.");
-                        return;
-                    }
-                } catch (err) {
-                    console.warn("Aviso ao conectar ao Firebase:", err.message);
-                    autenticarSucesso({ nome: "Administrador Master", perfil: "admin" });
-                    return;
-                }
-            }
-
-            // 2. Buscar Vendedores no Firestore
             try {
-                const hashSenhaDigitada = await gerarHash(passIn);
-                const q = query(collection(db, "vendedores"), where("usuario", "==", userIn), where("hashSenha", "==", hashSenhaDigitada));
-                const snap = await getDocs(q);
+                const adminRef = doc(db, "configuracoes", "adminMaster");
+                const adminSnap = await getDoc(adminRef);
 
-                if (!snap.empty) {
-                    const vendData = snap.docs[0].data();
-                    autenticarSucesso({ nome: vendData.nome, perfil: "vendedor" });
+                if (adminSnap.exists() && adminSnap.data().hashSenha) {
+                    const hashSalvo = adminSnap.data().hashSenha;
+                    const hashSenhaDigitada = await gerarHash(passIn);
+
+                    if (hashSenhaDigitada === hashSalvo) {
+                        autenticarAdminSucesso();
+                    } else {
+                        alert("Senha incorreta para o perfil de administrador!");
+                    }
                 } else {
-                    alert("Usuário ou senha incorretos!");
+                    autenticarAdminSucesso();
+                    alert("Acesso inicial concedido. Por favor, redefina a senha de Administrador no painel.");
                 }
             } catch (err) {
-                alert("Erro ao consultar vendedor: " + err.message);
+                console.warn("Aviso ao validar com o banco de dados:", err.message);
+                autenticarAdminSucesso();
             }
         };
 
-        function autenticarSucesso(usuario) {
-            window.usuarioLogado = usuario;
+        function autenticarAdminSucesso() {
             document.getElementById("modal-login").style.display = "none";
-            document.getElementById("nomeUsuarioHeader").innerText = usuario.nome;
-            document.getElementById("badgePerfil").innerText = usuario.perfil.toUpperCase();
-
-            const abasAdmin = document.querySelectorAll('.somente-admin');
-            abasAdmin.forEach(el => el.style.display = (usuario.perfil === 'admin') ? 'inline-block' : 'none');
-
-            if (usuario.perfil !== 'admin') window.mudarAba('venda');
+            document.getElementById("nomeUsuarioHeader").innerText = "Administrador Master";
+            document.getElementById("badgePerfil").innerText = "ADMIN";
         }
 
         window.logout = () => { location.reload(); };
 
-        // --- ALTERAÇÃO DA SENHA DO ADMIN ---
+        // --- MANUTENÇÃO DE SENHA MASTER ---
         window.alterarSenhaMaster = async (e) => {
             e.preventDefault();
             const novaSenha = document.getElementById("novaSenhaMaster").value;
             const confirmaSenha = document.getElementById("confirmaSenhaMaster").value;
 
             if (novaSenha.length < 4) {
-                alert("A senha deve ter pelo menos 4 caracteres.");
+                alert("A senha deve ter no mínimo 4 caracteres.");
                 return;
             }
 
             if (novaSenha !== confirmaSenha) {
-                alert("As senhas não conferem!");
+                alert("As senhas informadas não coincidem!");
                 return;
             }
 
@@ -209,7 +144,7 @@ const app = initializeApp(firebaseConfig);
                 document.getElementById("formAlterarSenhaMaster").reset();
                 alert("Senha do Administrador atualizada com sucesso!");
             } catch (err) {
-                alert("Erro ao atualizar senha: " + err.message);
+                alert("Erro ao alterar senha: " + err.message);
             }
         };
 
@@ -221,29 +156,22 @@ const app = initializeApp(firebaseConfig);
             const senhaPur = document.getElementById("passVendedorCad").value;
 
             if (userVend === "admin") {
-                alert("O nome 'admin' é reservado.");
-                return;
-            }
-
-            if (senhaPur.length < 4) {
-                alert("A senha deve ter pelo menos 4 caracteres.");
+                alert("O usuário 'admin' é reservado.");
                 return;
             }
 
             try {
                 const hashSenha = await gerarHash(senhaPur);
-                const vend = {
+                await addDoc(collection(db, "vendedores"), {
                     nome: nomeVend,
                     usuario: userVend,
                     hashSenha: hashSenha,
                     dataCadastro: new Date().toISOString()
-                };
-
-                await addDoc(collection(db, "vendedores"), vend);
+                });
                 document.getElementById("formVendedor").reset();
-                alert(`Vendedor ${nomeVend} cadastrado com sucesso!`);
+                alert(`Vendedor ${nomeVend} cadastrado!`);
             } catch (err) {
-                alert("Erro ao salvar vendedor: " + err.message);
+                alert("Erro ao cadastrar vendedor: " + err.message);
             }
         };
 
@@ -271,329 +199,12 @@ const app = initializeApp(firebaseConfig);
         });
 
         window.excluirVendedor = async (id) => {
-            if(confirm("Remover este vendedor?")) {
-                try {
-                    await deleteDoc(doc(db, "vendedores", id));
-                } catch(err) {
-                    alert("Erro ao excluir vendedor: " + err.message);
-                }
+            if(confirm("Deseja excluir este vendedor do sistema?")) {
+                await deleteDoc(doc(db, "vendedores", id));
             }
         };
 
-        // --- VALIDAÇÕES ---
-        window.validarCPF = (cpf) => {
-            cpf = cpf.replace(/[^\d]+/g,'');
-            if(cpf == '' || cpf.length != 11 || /^(\d)\1{10}$/.test(cpf)) return false;
-            let add = 0;
-            for (let i = 0; i < 9; i ++) add += parseInt(cpf.charAt(i)) * (10 - i);
-            let rev = 11 - (add % 11);
-            if (rev == 10 || rev == 11) rev = 0;
-            if (rev != parseInt(cpf.charAt(9))) return false;
-            add = 0;
-            for (let i = 0; i < 10; i ++) add += parseInt(cpf.charAt(i)) * (11 - i);
-            rev = 11 - (add % 11);
-            if (rev == 10 || rev == 11) rev = 0;
-            return rev == parseInt(cpf.charAt(10));
-        };
-
-        window.validarCNPJ = (cnpj) => {
-            cnpj = cnpj.replace(/[^\d]+/g,'');
-            if(cnpj == '' || cnpj.length != 14 || /^(\d)\1{13}$/.test(cnpj)) return false;
-            let tamanho = cnpj.length - 2;
-            let numeros = cnpj.substring(0,tamanho);
-            let digitos = cnpj.substring(tamanho);
-            let soma = 0, pos = tamanho - 7;
-            for (let i = tamanho; i >= 1; i--) {
-                soma += numeros.charAt(tamanho - i) * pos--;
-                if (pos < 2) pos = 9;
-            }
-            let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-            if (resultado != digitos.charAt(0)) return false;
-            tamanho = tamanho + 1;
-            numeros = cnpj.substring(0,tamanho);
-            soma = 0; pos = tamanho - 7;
-            for (let i = tamanho; i >= 1; i--) {
-                soma += numeros.charAt(tamanho - i) * pos--;
-                if (pos < 2) pos = 9;
-            }
-            resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-            return resultado == digitos.charAt(1);
-        };
-
-        // --- NAVEGAÇÃO ---
-        window.mudarAba = (abaId, evt) => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
-            const targetTab = document.getElementById('tab-' + abaId);
-            if(targetTab) targetTab.classList.add('active');
-
-            if (evt && evt.target) {
-                evt.target.classList.add('active');
-            }
-        };
-
-        // --- CLIENTES & FIADO ---
-        window.cadastrarCliente = async (e) => {
-            e.preventDefault();
-            const docNum = document.getElementById("docCliente").value.trim();
-            
-            if (docNum !== "") {
-                if (!window.validarCPF(docNum) && !window.validarCNPJ(docNum)) {
-                    alert("CPF ou CNPJ inválido!");
-                    return;
-                }
-            }
-
-            const cliente = {
-                nome: document.getElementById("nomeCliente").value,
-                endereco: document.getElementById("enderecoCliente").value,
-                telefone: document.getElementById("telefoneCliente").value,
-                documento: docNum,
-                vendedorResp: document.getElementById("vendedorResp").value,
-                saldoFiado: 0
-            };
-
-            await addDoc(collection(db, "clientes"), cliente);
-            document.getElementById("formCliente").reset();
-            alert("Cliente cadastrado com sucesso!");
-        };
-
-        onSnapshot(collection(db, "clientes"), (snapshot) => {
-            const lista = document.getElementById("listaClientes");
-            const selectVenda = document.getElementById("clienteVenda");
-            if (!lista || !selectVenda) return;
-            
-            lista.innerHTML = "";
-            selectVenda.innerHTML = `<option value="">Cliente Avulso / Consumidor</option>`;
-
-            snapshot.forEach(docSnap => {
-                const c = docSnap.data();
-                const id = docSnap.id;
-                selectVenda.innerHTML += `<option value="${id}">${c.nome}</option>`;
-
-                const acoesFiado = (window.usuarioLogado && window.usuarioLogado.perfil === 'admin') ? `
-                    <button class="btn btn-sm btn-warning" onclick="alterarFiado('${id}', ${c.saldoFiado || 0}, 10)">+ R$10</button>
-                    <button class="btn btn-sm btn-info" onclick="alterarFiado('${id}', ${c.saldoFiado || 0}, -10)">- R$10</button>
-                    <button class="btn btn-sm btn-danger" onclick="quitarFiado('${id}')">Quitar</button>
-                ` : `<span style="font-size:11px; color:#888;">Restrito ao Admin</span>`;
-
-                lista.innerHTML += `
-                    <tr>
-                        <td><strong>${c.nome}</strong></td>
-                        <td>${c.telefone}</td>
-                        <td>${c.documento || '-'}</td>
-                        <td>${c.vendedorResp}</td>
-                        <td>R$ ${parseFloat(c.saldoFiado || 0).toFixed(2)}</td>
-                        <td><div class="fiado-acoes">${acoesFiado}</div></td>
-                    </tr>
-                `;
-            });
-        });
-
-        window.alterarFiado = async (id, valorAtual, delta) => {
-            const novoValor = Math.max(0, valorAtual + delta);
-            await updateDoc(doc(db, "clientes", id), { saldoFiado: novoValor });
-        };
-
-        window.quitarFiado = async (id) => {
-            if (confirm("Confirmar quitação total do débito?")) {
-                await updateDoc(doc(db, "clientes", id), { saldoFiado: 0 });
-            }
-        };
-
-        // --- PRODUTOS ---
-        window.cadastrarProduto = async (e) => {
-            e.preventDefault();
-            const prod = {
-                nome: document.getElementById("nomeProd").value,
-                categoria: document.getElementById("categoriaProd").value,
-                preco: parseFloat(document.getElementById("precoProd").value),
-                estoque: parseInt(document.getElementById("estoqueProd").value),
-                fotoUrl: document.getElementById("fotoProd").value || "https://via.placeholder.com/100"
-            };
-            await addDoc(collection(db, "produtos"), prod);
-            document.getElementById("formProduto").reset();
-            alert("Produto cadastrado com sucesso!");
-        };
-
-        onSnapshot(collection(db, "produtos"), (snapshot) => {
-            const lista = document.getElementById("listaProdutos");
-            if (!lista) return;
-            lista.innerHTML = "";
-            window.listaProdutosMemoria = [];
-
-            snapshot.forEach(docSnap => {
-                const p = docSnap.data();
-                p.id = docSnap.id;
-                window.listaProdutosMemoria.push(p);
-
-                lista.innerHTML += `
-                    <tr>
-                        <td><img src="${p.fotoUrl}" width="40" height="40" style="object-fit:cover; border-radius:4px;"></td>
-                        <td><strong>${p.nome}</strong></td>
-                        <td><span class="perfil-badge" style="background:#7f8c8d;">${p.categoria}</span></td>
-                        <td>R$ ${p.preco.toFixed(2)}</td>
-                        <td>${p.estoque} un</td>
-                        <td>
-                            <button class="btn btn-sm btn-warning" onclick="editarEstoque('${p.id}', ${p.preco}, ${p.estoque})">Editar</button>
-                            <button class="btn btn-sm btn-danger" onclick="excluirProd('${p.id}')">Excluir</button>
-                        </td>
-                    </tr>
-                `;
-            });
-            filtrarProdutosPDV();
-        });
-
-        window.filtrarProdutosPDV = () => {
-            const catFiltro = document.getElementById("filtroCategoriaPDV").value;
-            const selectVendaProd = document.getElementById("prodVendaSelect");
-            if (!selectVendaProd) return;
-            selectVendaProd.innerHTML = `<option value="">Selecione um produto...</option>`;
-
-            window.listaProdutosMemoria.forEach(p => {
-                if (catFiltro === "" || p.categoria === catFiltro) {
-                    selectVendaProd.innerHTML += `<option value="${p.id}" data-preco="${p.preco}" data-nome="${p.nome}">${p.nome} - R$ ${p.preco.toFixed(2)} (Estq: ${p.estoque})</option>`;
-                }
-            });
-        };
-
-        window.editarEstoque = async (id, precoAtual, estoqueAtual) => {
-            const novoPreco = prompt("Editar Preço (R$):", precoAtual);
-            const novoEstoque = prompt("Editar Estoque:", estoqueAtual);
-            if (novoPreco !== null && novoEstoque !== null) {
-                await updateDoc(doc(db, "produtos", id), { 
-                    preco: parseFloat(novoPreco), 
-                    estoque: parseInt(novoEstoque) 
-                });
-            }
-        };
-
-        window.excluirProd = async (id) => {
-            if(confirm("Excluir produto do catálogo?")) await deleteDoc(doc(db, "produtos", id));
-        };
-
-        // --- PDV ---
-        window.adicionarItemVenda = () => {
-            const sel = document.getElementById("prodVendaSelect");
-            const opt = sel.options[sel.selectedIndex];
-            if (!sel.value) return;
-
-            const id = sel.value;
-            const nome = opt.getAttribute("data-nome");
-            const preco = parseFloat(opt.getAttribute("data-preco"));
-            const qtd = parseInt(document.getElementById("qtdVendaInput").value) || 1;
-
-            window.carrinho.push({ id, nome, preco, qtd, subtotal: preco * qtd });
-            atualizarCarrinhoUI();
-        };
-
-        function atualizarCarrinhoUI() {
-            const tabela = document.getElementById("tabelaCarrinho");
-            if (!tabela) return;
-            tabela.innerHTML = "";
-            let total = 0;
-
-            window.carrinho.forEach((item, idx) => {
-                total += item.subtotal;
-                tabela.innerHTML += `
-                    <tr>
-                        <td>${item.nome}</td>
-                        <td>${item.qtd}</td>
-                        <td>R$ ${item.preco.toFixed(2)}</td>
-                        <td>R$ ${item.subtotal.toFixed(2)}</td>
-                        <td><button class="btn btn-sm btn-danger" onclick="removerCarrinho(${idx})">X</button></td>
-                    </tr>
-                `;
-            });
-            document.getElementById("totalVendaDisplay").innerText = total.toFixed(2);
-        }
-
-        window.removerCarrinho = (idx) => {
-            window.carrinho.splice(idx, 1);
-            atualizarCarrinhoUI();
-        };
-
-        window.finalizarVenda = async () => {
-            if (window.carrinho.length === 0) { alert("Carrinho vazio!"); return; }
-
-            const formaPagto = document.getElementById("formaPagto").value;
-            const clienteId = document.getElementById("clienteVenda").value;
-            const total = parseFloat(document.getElementById("totalVendaDisplay").innerText);
-
-            const vendasSnap = await getDocs(collection(db, "vendas"));
-            const numSequencial = String(vendasSnap.size + 1).padStart(4, '0');
-
-            const vendaObj = {
-                numeroPedido: numSequencial,
-                data: new Date().toISOString(),
-                vendedor: window.usuarioLogado ? window.usuarioLogado.nome : "Vendedor",
-                clienteId: clienteId || "Consumidor",
-                itens: window.carrinho,
-                total: total,
-                formaPagto: formaPagto
-            };
-
-            await addDoc(collection(db, "vendas"), vendaObj);
-
-            if (formaPagto === "fiado" && clienteId) {
-                const cliRef = doc(db, "clientes", clienteId);
-                const cliSnap = await getDoc(cliRef);
-                if(cliSnap.exists()) {
-                    const saldoAnt = cliSnap.data().saldoFiado || 0;
-                    await updateDoc(cliRef, { saldoFiado: saldoAnt + total });
-                }
-            }
-
-            prepararCupom(vendaObj);
-            window.carrinho = [];
-            atualizarCarrinhoUI();
-            alert(`Venda #${numSequencial} concluída!`);
-        };
-
-        function prepararCupom(venda) {
-            let texto = `*DISTRIBUIDORA FRAZÃO*\n`;
-            texto += `Pedido #${venda.numeroPedido} - ${new Date().toLocaleDateString()}\n`;
-            texto += `Vendedor: ${venda.vendedor}\n`;
-            texto += `--------------------------------\n`;
-            venda.itens.forEach(i => {
-                texto += `${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}\n`;
-            });
-            texto += `--------------------------------\n`;
-            texto += `TOTAL: R$ ${venda.total.toFixed(2)}\n`;
-            texto += `Pagamento: ${venda.formaPagto.toUpperCase()}\n`;
-
-            window.textoReciboAtual = texto;
-
-            document.getElementById("comprovante-print").innerHTML = `
-                <center>
-                    <h3>DISTRIBUIDORA FRAZÃO</h3>
-                    <p>Seu Atacadista Delivery</p>
-                    <p>--------------------------------</p>
-                    <b>PEDIDO #${venda.numeroPedido}</b><br>
-                    Data: ${new Date().toLocaleString()}<br>
-                    Vendedor: ${venda.vendedor}
-                </center>
-                <p>--------------------------------</p>
-                ${venda.itens.map(i => `<div>${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}</div>`).join('')}
-                <p>--------------------------------</p>
-                <b>TOTAL: R$ ${venda.total.toFixed(2)}</b><br>
-                Forma: ${venda.formaPagto.toUpperCase()}
-            `;
-        }
-
-        window.imprimirCupom = () => {
-            if (!window.textoReciboAtual) { alert("Realize uma venda primeiro."); return; }
-            window.print();
-        };
-
-        window.compartilharWhatsApp = () => {
-            if (!window.textoReciboAtual) { alert("Realize uma venda primeiro."); return; }
-            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(window.textoReciboAtual)}`;
-            window.open(url, '_blank');
-        };
-
-        // --- HISTÓRICO DE VENDAS ---
+        // --- HISTÓRICO E RELATÓRIOS ---
         onSnapshot(query(collection(db, "vendas"), orderBy("data", "desc")), (snapshot) => {
             const lista = document.getElementById("listaHistoricoVendas");
             if (!lista) return;
@@ -611,42 +222,50 @@ const app = initializeApp(firebaseConfig);
 
                 lista.innerHTML += `
                     <tr>
-                        <td><strong>#${v.numeroPedido}</strong></td>
+                        <td><strong>#${v.numeroPedido || '-'}</strong></td>
                         <td>${dataVenda.toLocaleString()}</td>
-                        <td>${v.vendedor}</td>
-                        <td>${v.formaPagto.toUpperCase()}</td>
-                        <td>R$ ${v.total.toFixed(2)}</td>
+                        <td>${v.vendedor || '-'}</td>
+                        <td>${(v.formaPagto || '').toUpperCase()}</td>
+                        <td>R$ ${parseFloat(v.total || 0).toFixed(2)}</td>
                     </tr>
                 `;
             });
 
-            const fechamentoElem = document.getElementById("fechamentoMensalDisplay");
-            if (fechamentoElem) fechamentoElem.innerText = totalMes.toFixed(2);
+            document.getElementById("fechamentoMensalDisplay").innerText = totalMes.toFixed(2);
         });
+
+        // --- NAVEGAÇÃO ---
+        window.mudarAba = (abaId, evt) => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            document.getElementById('tab-' + abaId).classList.add('active');
+            if (evt && evt.target) evt.target.classList.add('active');
+        };
     </script>
 </head>
 <body>
 
-    <!-- MODAL DE LOGIN -->
+    <!-- MODAL DE LOGIN ADMIN -->
     <div id="modal-login">
         <div class="login-box">
-            <h2>Distribuidora Frazão</h2>
-            <p>Acesso ao Sistema ERP</p>
-            <form onsubmit="efetuarLogin(event)">
+            <h2>Painel Admin</h2>
+            <p>Distribuidora Frazão</p>
+            <form onsubmit="efetuarLoginAdmin(event)">
                 <div class="form-group" style="margin-bottom: 10px;">
-                    <input type="text" id="loginUser" placeholder="Usuário (ex: admin)" required autocomplete="username">
+                    <input type="text" id="loginUser" value="admin" placeholder="Usuário Admin" required readonly style="background:#e9ecef;">
                 </div>
                 <div class="form-group" style="margin-bottom: 15px;">
-                    <input type="password" id="loginPass" placeholder="Senha" autocomplete="current-password">
+                    <input type="password" id="loginPass" placeholder="Senha do Administrador" required autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn" style="width: 100%;">Entrar no Sistema</button>
+                <button type="submit" class="btn" style="width: 100%; background: #1e8449;">Acessar Painel Admin</button>
             </form>
         </div>
     </div>
 
-    <!-- CABEÇALHO PRINCIPAL -->
+    <!-- CABEÇALHO -->
     <header>
-        <h1>Distribuidora Frazão — Gestão ERP</h1>
+        <h1>Distribuidora Frazão — Administração</h1>
         <div>
             <span id="nomeUsuarioHeader" style="margin-right:10px; font-weight:bold;"></span>
             <span class="perfil-badge" id="badgePerfil">...</span>
@@ -656,190 +275,14 @@ const app = initializeApp(firebaseConfig);
 
     <div class="container">
 
-        <!-- Navegação de Abas -->
+        <!-- NAVEGAÇÃO -->
         <div class="nav-tabs">
-            <button class="tab-btn active" onclick="mudarAba('venda', event)">Frente de Caixa (PDV)</button>
-            <button class="tab-btn" onclick="mudarAba('clientes', event)">Clientes & Fiado</button>
-            <button class="tab-btn" onclick="mudarAba('produtos', event)">Produtos & Estoque</button>
-            <button class="tab-btn somente-admin" onclick="mudarAba('vendedores', event)">Cadastrar Vendedores e Senha Admin</button>
-            <button class="tab-btn somente-admin" onclick="mudarAba('historico', event)">Histórico & Fechamento</button>
+            <button class="tab-btn active" onclick="mudarAba('vendedores', event)">Gestão de Vendedores & Senha</button>
+            <button class="tab-btn" onclick="mudarAba('historico', event)">Relatório & Fechamento de Vendas</button>
         </div>
 
-        <!-- ABA 1: PDV -->
-        <div id="tab-venda" class="tab-content active">
-            <h2>Nova Venda</h2>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Filtrar por Categoria</label>
-                    <select id="filtroCategoriaPDV" onchange="filtrarProdutosPDV()">
-                        <option value="">Todas as Categorias</option>
-                        <option value="Balas e Pirulitos">Balas e Pirulitos</option>
-                        <option value="Bebidas">Bebidas</option>
-                        <option value="Biscoitos">Biscoitos</option>
-                        <option value="Mercearia">Mercearia</option>
-                        <option value="Papelaria">Papelaria</option>
-                        <option value="Limpeza">Limpeza</option>
-                        <option value="Descartáveis">Descartáveis</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Selecionar Produto</label>
-                    <select id="prodVendaSelect"></select>
-                </div>
-                <div class="form-group">
-                    <label>Quantidade</label>
-                    <input type="number" id="qtdVendaInput" value="1" min="1">
-                </div>
-                <div class="form-group" style="justify-content: flex-end;">
-                    <button class="btn" onclick="adicionarItemVenda()">Adicionar Item</button>
-                </div>
-            </div>
-
-            <h3>Itens no Carrinho</h3>
-            <div class="tabela-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Produto</th>
-                            <th>Qtd</th>
-                            <th>Preço Un.</th>
-                            <th>Subtotal</th>
-                            <th>Ação</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaCarrinho"></tbody>
-                </table>
-            </div>
-
-            <div style="margin-top: 15px; background: #eef9f1; padding: 15px; border-radius: 6px;">
-                <h3>Total da Venda: R$ <span id="totalVendaDisplay">0.00</span></h3>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Forma de Pagamento</label>
-                        <select id="formaPagto">
-                            <option value="dinheiro">Dinheiro</option>
-                            <option value="pix">PIX</option>
-                            <option value="cartao">Cartão de Crédito/Débito</option>
-                            <option value="fiado">Fiado / Conta Corrente</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Vincular Cliente</label>
-                        <select id="clienteVenda"></select>
-                    </div>
-                </div>
-                <div style="margin-top: 10px; display: flex; gap: 10px;">
-                    <button class="btn" onclick="finalizarVenda()">Concluir Venda</button>
-                    <button class="btn btn-info" onclick="imprimirCupom()">Imprimir Cupom</button>
-                    <button class="btn btn-warning" onclick="compartilharWhatsApp()">Enviar WhatsApp</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ABA 2: CLIENTES & FIADO -->
-        <div id="tab-clientes" class="tab-content">
-            <h2>Cadastro de Clientes</h2>
-            <form id="formCliente" onsubmit="cadastrarCliente(event)">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Nome Completo / Razão Social</label>
-                        <input type="text" id="nomeCliente" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Endereço</label>
-                        <input type="text" id="enderecoCliente" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Telefone / WhatsApp</label>
-                        <input type="text" id="telefoneCliente" required>
-                    </div>
-                    <div class="form-group">
-                        <label>CPF ou CNPJ (Opcional)</label>
-                        <input type="text" id="docCliente">
-                    </div>
-                    <div class="form-group">
-                        <label>Vendedor Responsável</label>
-                        <input type="text" id="vendedorResp" required>
-                    </div>
-                </div>
-                <button type="submit" class="btn">Cadastrar Cliente</button>
-            </form>
-
-            <h3 style="margin-top: 25px;">Lista de Clientes & Saldo Fiado</h3>
-            <div class="tabela-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Telefone</th>
-                            <th>Documento</th>
-                            <th>Vendedor</th>
-                            <th>Débito (Fiado)</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="listaClientes"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- ABA 3: PRODUTOS & ESTOQUE -->
-        <div id="tab-produtos" class="tab-content">
-            <h2>Cadastro de Produtos</h2>
-            <form id="formProduto" onsubmit="cadastrarProduto(event)">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Nome do Produto</label>
-                        <input type="text" id="nomeProd" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Categoria</label>
-                        <select id="categoriaProd" required>
-                            <option value="Balas e Pirulitos">Balas e Pirulitos</option>
-                            <option value="Bebidas">Bebidas</option>
-                            <option value="Biscoitos">Biscoitos</option>
-                            <option value="Mercearia">Mercearia</option>
-                            <option value="Papelaria">Papelaria</option>
-                            <option value="Limpeza">Limpeza</option>
-                            <option value="Descartáveis">Descartáveis</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Preço de Venda (R$)</label>
-                        <input type="number" id="precoProd" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Estoque Inicial</label>
-                        <input type="number" id="estoqueProd" required>
-                    </div>
-                    <div class="form-group">
-                        <label>URL da Imagem (Opcional)</label>
-                        <input type="url" id="fotoProd" placeholder="https://...">
-                    </div>
-                </div>
-                <button type="submit" class="btn">Salvar Produto</button>
-            </form>
-
-            <h3 style="margin-top: 25px;">Catálogo em Estoque</h3>
-            <div class="tabela-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Foto</th>
-                            <th>Nome</th>
-                            <th>Categoria</th>
-                            <th>Preço</th>
-                            <th>Estoque</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="listaProdutos"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- ABA 4: VENDEDORES & ADMIN -->
-        <div id="tab-vendedores" class="tab-content somente-admin">
+        <!-- ABA 1: VENDEDORES & CONFIGURAÇÃO -->
+        <div id="tab-vendedores" class="tab-content active">
             <h2>Cadastrar Novo Vendedor</h2>
             <form id="formVendedor" onsubmit="cadastrarVendedor(event)">
                 <div class="form-grid">
@@ -848,18 +291,18 @@ const app = initializeApp(firebaseConfig);
                         <input type="text" id="nomeVendedorCad" required>
                     </div>
                     <div class="form-group">
-                        <label>Nome de Usuário (Login)</label>
+                        <label>Usuário de Acesso</label>
                         <input type="text" id="userVendedorCad" required>
                     </div>
                     <div class="form-group">
-                        <label>Senha de Acesso</label>
+                        <label>Senha</label>
                         <input type="password" id="passVendedorCad" required>
                     </div>
                 </div>
-                <button type="submit" class="btn">Cadastrar Vendedor</button>
+                <button type="submit" class="btn">Salvar Vendedor</button>
             </form>
 
-            <h3 style="margin-top: 25px;">Vendedores Cadastrados</h3>
+            <h3 style="margin-top:25px;">Vendedores Registrados</h3>
             <div class="tabela-container">
                 <table>
                     <thead>
@@ -873,13 +316,13 @@ const app = initializeApp(firebaseConfig);
                 </table>
             </div>
 
-            <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
+            <hr style="margin: 30px 0;">
 
-            <h2>Alterar Senha do Administrador Master</h2>
+            <h2>Segurança: Alterar Senha Admin Master</h2>
             <form id="formAlterarSenhaMaster" onsubmit="alterarSenhaMaster(event)">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Nova Senha Master</label>
+                        <label>Nova Senha Admin</label>
                         <input type="password" id="novaSenhaMaster" required>
                     </div>
                     <div class="form-group">
@@ -887,17 +330,16 @@ const app = initializeApp(firebaseConfig);
                         <input type="password" id="confirmaSenhaMaster" required>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-warning">Atualizar Senha Admin</button>
+                <button type="submit" class="btn btn-warning">Atualizar Senha Principal</button>
             </form>
         </div>
 
-        <!-- ABA 5: HISTÓRICO & FECHAMENTO -->
-        <div id="tab-historico" class="tab-content somente-admin">
-            <h2>Histórico de Vendas</h2>
-            <div style="background: #eef9f1; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                <h3>Total de Vendas no Mês Atual: R$ <span id="fechamentoMensalDisplay">0.00</span></h3>
+        <!-- ABA 2: HISTÓRICO -->
+        <div id="tab-historico" class="tab-content">
+            <h2>Relatório de Vendas</h2>
+            <div style="background: #eef9f1; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                <h3 style="margin:0;">Faturamento do Mês: R$ <span id="fechamentoMensalDisplay">0.00</span></h3>
             </div>
-
             <div class="tabela-container">
                 <table>
                     <thead>
@@ -905,7 +347,7 @@ const app = initializeApp(firebaseConfig);
                             <th>Pedido</th>
                             <th>Data/Hora</th>
                             <th>Vendedor</th>
-                            <th>Forma Pagto</th>
+                            <th>Pagamento</th>
                             <th>Total</th>
                         </tr>
                     </thead>
@@ -915,9 +357,6 @@ const app = initializeApp(firebaseConfig);
         </div>
 
     </div>
-
-    <!-- ÁREA DE IMPRESSÃO TÉRMICA -->
-    <div id="comprovante-print"></div>
 
 </body>
 </html>

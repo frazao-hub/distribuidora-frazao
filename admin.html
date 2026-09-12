@@ -86,6 +86,7 @@
     <button class="nav-btn active" onclick="switchTab('vendasTab')">Ponto de Venda (PDV)</button>
     <button class="nav-btn" onclick="switchTab('produtosTab')">Estoque & Catálogo</button>
     <button class="nav-btn" onclick="switchTab('clientesTab')">Clientes & Fiado</button>
+    <button class="nav-btn admin-only" onclick="switchTab('vendedoresTab')">Cadastrar Vendedor</button>
     <button class="nav-btn admin-only" onclick="switchTab('relatoriosTab')">Faturamento & Relatórios</button>
   </nav>
 
@@ -100,7 +101,8 @@
         </div>
         <div class="form-group">
           <label for="vendaVendedor">Vendedor Responsável:</label>
-          <input type="text" id="vendaVendedor" value="Administrador" readonly>
+          <select id="vendaVendedorSelect"></select>
+          <input type="text" id="vendaVendedorAdmin" value="Administrador Master" readonly style="display:none;">
         </div>
       </div>
 
@@ -263,7 +265,43 @@
     </div>
   </div>
 
-  <!-- ABA 4: RELATÓRIOS (EXCLUSIVO ADMIN) -->
+  <!-- ABA 4: CADASTRAR VENDEDOR (ADMIN) -->
+  <div id="vendedoresTab" class="tab-content">
+    <div class="card admin-only">
+      <h2>Cadastrar Novo Vendedor</h2>
+      <form id="formVendedor">
+        <div class="form-group">
+          <label for="vendNome">Nome do Vendedor:</label>
+          <input type="text" id="vendNome" placeholder="Ex: Carlos Silva" required>
+        </div>
+        <div class="form-group">
+          <label for="vendSenha">Senha de Acesso:</label>
+          <input type="password" id="vendSenha" placeholder="Senha do vendedor" required>
+        </div>
+        <div class="form-group full-width">
+          <button type="button" class="btn btn-primary" onclick="cadastrarVendedor()">Salvar Vendedor</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card admin-only">
+      <h2>Vendedores Cadastrados</h2>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Senha Cadastrada</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaVendedores"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABA 5: RELATÓRIOS (EXCLUSIVO ADMIN) -->
   <div id="relatoriosTab" class="tab-content">
     <div class="card admin-only">
       <h2>Resumo de Faturamento e Vendas</h2>
@@ -311,6 +349,10 @@
       { id: 1, nome: "Mercado do João", documento: "11144477735", tipo: "CPF", telefone: "21988887777", saldoDevedor: 0.00 }
     ];
 
+    let vendedores = JSON.parse(localStorage.getItem('df_vendedores')) || [
+      { id: 1, nome: "Carlos Vendedor", senha: "123" }
+    ];
+
     let vendas = JSON.parse(localStorage.getItem('df_vendas')) || [];
     let carrinho = [];
 
@@ -328,19 +370,46 @@
       const role = document.getElementById('currentRole').value;
       const adminElements = document.querySelectorAll('.admin-only');
       const inputPrecoCarrinho = document.getElementById('carrinhoPreco');
+      const selectVend = document.getElementById('vendaVendedorSelect');
+      const inputVendAdmin = document.getElementById('vendaVendedorAdmin');
 
       if (role === 'vendedor') {
         adminElements.forEach(el => el.style.display = 'none');
-        document.getElementById('vendaVendedor').value = "Vendedor Externo";
+        selectVend.style.display = 'block';
+        inputVendAdmin.style.display = 'none';
         if(inputPrecoCarrinho) inputPrecoCarrinho.readOnly = true; 
         switchTab('vendasTab');
       } else {
         adminElements.forEach(el => el.style.display = 'block');
-        document.getElementById('vendaVendedor').value = "Administrador Master";
+        selectVend.style.display = 'none';
+        inputVendAdmin.style.display = 'block';
         if(inputPrecoCarrinho) inputPrecoCarrinho.readOnly = false;
       }
       renderizarProdutos();
       renderizarHistorico();
+    }
+
+    // CADASTRO DE VENDEDOR
+    function cadastrarVendedor() {
+      const nome = document.getElementById('vendNome').value.trim();
+      const senha = document.getElementById('vendSenha').value.trim();
+
+      if (!nome || !senha) {
+        alert("Preencha o nome e a senha do vendedor!");
+        return;
+      }
+
+      vendedores.push({ id: Date.now(), nome, senha });
+      salvarEAtualizar();
+      document.getElementById('formVendedor').reset();
+      alert("Vendedor cadastrado com sucesso!");
+    }
+
+    function excluirVendedor(id) {
+      if (confirm("Deseja realmente excluir este vendedor?")) {
+        vendedores = vendedores.filter(v => v.id !== id);
+        salvarEAtualizar();
+      }
     }
 
     // VALIDAÇÕES MATEMÁTICAS RIGOROSAS (CPF / CNPJ)
@@ -591,7 +660,16 @@
         return;
       }
 
-      const vendedor = document.getElementById('vendaVendedor').value;
+      const role = document.getElementById('currentRole').value;
+      let vendedor = "Administrador Master";
+      if (role === 'vendedor') {
+        vendedor = document.getElementById('vendaVendedorSelect').value;
+        if (!vendedor) {
+          alert("Selecione o vendedor responsável.");
+          return;
+        }
+      }
+
       const formaPagto = document.getElementById('vendaFormaPagamento').value;
       const total = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
 
@@ -756,6 +834,28 @@
       });
     }
 
+    function renderizarVendedores() {
+      const tbody = document.getElementById('tabelaVendedores');
+      const selectVend = document.getElementById('vendaVendedorSelect');
+
+      tbody.innerHTML = '';
+      selectVend.innerHTML = '';
+
+      vendedores.forEach(v => {
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${v.nome}</strong></td>
+            <td>••••••</td>
+            <td>
+              <button class="btn btn-danger btn-sm" onclick="excluirVendedor(${v.id})">Excluir</button>
+            </td>
+          </tr>
+        `;
+
+        selectVend.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
+      });
+    }
+
     function renderizarHistorico() {
       const tbody = document.getElementById('tabelaHistoricoVendas');
       const role = document.getElementById('currentRole').value;
@@ -789,10 +889,12 @@
     function salvarEAtualizar() {
       localStorage.setItem('df_produtos', JSON.stringify(produtos));
       localStorage.setItem('df_clientes', JSON.stringify(clientes));
+      localStorage.setItem('df_vendedores', JSON.stringify(vendedores));
       localStorage.setItem('df_vendas', JSON.stringify(vendas));
 
       renderizarProdutos();
       renderizarClientes();
+      renderizarVendedores();
       renderizarHistorico();
     }
 

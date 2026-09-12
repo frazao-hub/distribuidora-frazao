@@ -270,7 +270,11 @@
             <label for="cliTelefone">Telefone / WhatsApp:</label>
             <input type="text" id="cliTelefone" placeholder="Ex: 21999998888" required>
           </div>
-          <div class="form-group">
+          <div class="form-group full-width">
+            <label for="cliEndereco">Endereço Completo (Rua, Nº, Bairro, Cidade):</label>
+            <input type="text" id="cliEndereco" placeholder="Ex: Rua Exemplo, 123 - Rocha, São Gonçalo" required>
+          </div>
+          <div class="form-group full-width">
             <label for="cliVendedor">Vendedor Responsável:</label>
             <select id="cliVendedor"></select>
           </div>
@@ -289,7 +293,8 @@
                 <th>Cliente</th>
                 <th>Documento</th>
                 <th>Telefone</th>
-                <th>Vendedor Responsável</th>
+                <th>Endereço</th>
+                <th>Vendedor Resp.</th>
                 <th>Saldo Devedor</th>
                 <th>Ações</th>
               </tr>
@@ -381,7 +386,7 @@
     ];
 
     let clientes = JSON.parse(localStorage.getItem('df_clientes')) || [
-      { id: 1, nome: "Mercado do João", documento: "11144477735", tipo: "CPF", telefone: "21988887777", vendedorResp: "Carlos Vendedor", saldoDevedor: 0.00 }
+      { id: 1, nome: "Mercado do João", documento: "11144477735", tipo: "CPF", telefone: "21988887777", endereco: "Rua Principal, 100 - Rocha, São Gonçalo", vendedorResp: "Carlos Vendedor", saldoDevedor: 0.00 }
     ];
 
     let vendedores = JSON.parse(localStorage.getItem('df_vendedores')) || [
@@ -552,10 +557,11 @@
       const tipo = document.getElementById('cliDocTipo').value;
       let docVal = document.getElementById('cliDocumento').value.trim().replace(/[^\d]+/g, '');
       const telefone = document.getElementById('cliTelefone').value.trim();
+      const endereco = document.getElementById('cliEndereco').value.trim();
       const vendedorResp = document.getElementById('cliVendedor').value;
 
-      if (!nome || !telefone) {
-        alert("Preencha ao menos o nome completo e o telefone do cliente!");
+      if (!nome || !telefone || !endereco) {
+        alert("Preencha o nome, o telefone e o endereço do cliente!");
         return;
       }
 
@@ -570,6 +576,7 @@
         documento: docVal || 'Não informado', 
         tipo, 
         telefone, 
+        endereco, 
         vendedorResp, 
         saldoDevedor: 0.00 
       });
@@ -876,6 +883,7 @@
             <td><strong>${c.nome}</strong></td>
             <td>${c.documento} (${c.tipo})</td>
             <td>${c.telefone}</td>
+            <td>${c.endereco || 'Não informado'}</td>
             <td>${c.vendedorResp}</td>
             <td style="color: ${c.saldoDevedor > 0 ? 'var(--danger-color)' : 'var(--success-color)'}; font-weight: bold;">
               R$ ${c.saldoDevedor.toFixed(2)}

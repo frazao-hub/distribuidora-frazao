@@ -396,7 +396,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Arrays em tempo real do Firebase
     let produtos = [];
     let clientes = [];
     let vendedores = [];
@@ -406,9 +405,7 @@
     let adminSenha = localStorage.getItem('df_admin_senha') || "admin123";
     let usuarioLogado = null;
 
-    // Inicializar listeners do Firestore
     function iniciarFirestore() {
-      // Produtos
       db.collection("produtos").onSnapshot((snapshot) => {
         produtos = [];
         snapshot.forEach((doc) => {
@@ -418,7 +415,6 @@
         carregarSelectProdutos();
       });
 
-      // Clientes
       db.collection("clientes").onSnapshot((snapshot) => {
         clientes = [];
         snapshot.forEach((doc) => {
@@ -428,7 +424,6 @@
         carregarSelectClientes();
       });
 
-      // Vendedores
       db.collection("vendedores").onSnapshot((snapshot) => {
         vendedores = [];
         snapshot.forEach((doc) => {
@@ -439,7 +434,6 @@
         preencherSelectVendedorCliente();
       });
 
-      // Vendas
       db.collection("vendas").orderBy("criadoEm", "desc").onSnapshot((snapshot) => {
         vendas = [];
         snapshot.forEach((doc) => {
@@ -461,6 +455,7 @@
 
     function atualizarSelectVendedoresLogin() {
       const select = document.getElementById('loginVendedorSelect');
+      if (!select) return;
       select.innerHTML = '';
       if (vendedores.length === 0) {
         select.innerHTML = `<option value="">Nenhum vendedor cadastrado</option>`;
@@ -528,6 +523,8 @@
       }
 
       preencherSelectVendedorCliente();
+      renderizarClientes();
+      carregarSelectClientes();
     }
 
     function fazerLogout() {
@@ -618,7 +615,7 @@
       }
     }
 
-    // --- CLIENTES ---
+    // --- CLIENTES (COM FILTRO POR VENDEDOR) ---
     function cadastrarCliente() {
       const nome = document.getElementById('cliNome').value.trim();
       const tipo = document.getElementById('cliDocTipo').value;
@@ -642,6 +639,7 @@
         saldoDevedor: 0.00
       }).then(() => {
         document.getElementById('formCliente').reset();
+        preencherSelectVendedorCliente();
         alert("Cliente cadastrado com sucesso!");
       }).catch(err => alert("Erro: " + err.message));
     }
@@ -650,7 +648,12 @@
       const tbody = document.getElementById('tabelaClientes');
       if (!tbody) return;
       tbody.innerHTML = '';
-      clientes.forEach(c => {
+
+      const listaClientes = (usuarioLogado && usuarioLogado.tipo === 'vendedor')
+        ? clientes.filter(c => c.vendedorResp === usuarioLogado.nome)
+        : clientes;
+
+      listaClientes.forEach(c => {
         tbody.innerHTML += `
           <tr>
             <td>${c.nome}</td>
@@ -672,7 +675,17 @@
       const select = document.getElementById('vendaCliente');
       if (!select) return;
       select.innerHTML = '';
-      clientes.forEach(c => {
+
+      const listaClientes = (usuarioLogado && usuarioLogado.tipo === 'vendedor')
+        ? clientes.filter(c => c.vendedorResp === usuarioLogado.nome)
+        : clientes;
+
+      if (listaClientes.length === 0) {
+        select.innerHTML = '<option value="">Nenhum cliente disponível</option>';
+        return;
+      }
+
+      listaClientes.forEach(c => {
         select.innerHTML += `<option value="${c.id}">${c.nome} (Saldo Fiado: R$ ${(c.saldoDevedor || 0).toFixed(2)})</option>`;
       });
     }
@@ -798,26 +811,54 @@
       const precoUn = parseFloat(document.getElementById('carrinhoPreco').value);
 
       const prod = produtos.find(p => p.id === prodId);
-      if (!prod) return;
+      if (!prod) {
+        alert("Selecione um produto válido.");
+        return;
+      }
+
+      if (isNaN(qtd) || qtd <= 0) {
+        alert("Informe uma quantidade válida.");
+        return;
+      }
 
       if (qtd > prod.estoque) {
         alert(`Estoque insuficiente! Disponível: ${prod.estoque}`);
         return;
       }
 
-      const itemExistente = carrinho.find(item => item.produtoId === prodId);
-      if (itemExistente) {
-        if (itemExistente.qtd + qtd > prod.estoque) {
-          alert("Quantidade ultrapassa o estoque disponível.");
-          return;
-        }
-        itemExistente.qtd += qtd;
-        itemExistente.subtotal = itemExistente.qtd * itemExistente.precoUn;
-      } else {
-        carrinho.push({ produtoId: prod.id, nome: prod.nome, precoUn, qtd, subtotal: qtd * precoUn });
-      }
+      carrinho.push({
+        id: prod.id,
+        nome: prod.nome,
+        qtd: qtd,
+        precoUn: precoUn,
+        subtotal: qtd * precoUn
+      });
 
       renderizarCarrinho();
+    }
+
+    function renderizarCarrinho() {
+      const tbody = document.getElementById('tabelaCarrinho');
+      const totalSpan = document.getElementById('carrinhoTotal');
+      tbody.innerHTML = '';
+      let totalGeral = 0;
+
+      carrinho.forEach((item, index) => {
+        totalGeral += item.subtotal;
+        tbody.innerHTML += `
+          <tr>
+            <td>${item.nome}</td>
+            <td>${item.qtd}</td>
+            <td>R$ ${item.precoUn.toFixed(2)}</td>
+            <td>R$ ${item.subtotal.toFixed(2)}</td>
+            <td>
+              <button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.7rem;" onclick="removerDoCarrinho(${index})">Remover</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      totalSpan.innerText = `R$ ${totalGeral.toFixed(2)}`;
     }
 
     function removerDoCarrinho(index) {
@@ -825,160 +866,108 @@
       renderizarCarrinho();
     }
 
-    function renderizarCarrinho() {
-      const tbody = document.getElementById('tabelaCarrinho');
-      tbody.innerHTML = '';
-      let total = 0;
-
-      carrinho.forEach((item, index) => {
-        total += item.subtotal;
-        tbody.innerHTML += `
-          <tr>
-            <td>${item.nome}</td>
-            <td>${item.qtd}</td>
-            <td>R$ ${item.precoUn.toFixed(2)}</td>
-            <td>R$ ${item.subtotal.toFixed(2)}</td>
-            <td><button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removerDoCarrinho(${index})">X</button></td>
-          </tr>
-        `;
-      });
-
-      document.getElementById('carrinhoTotal').innerText = `R$ ${total.toFixed(2)}`;
-    }
-
-    async function finalizarPedido() {
-      if (carrinho.length === 0) {
-        alert("O carrinho está vazio.");
-        return;
-      }
-
+    function finalizarPedido() {
       const clienteId = document.getElementById('vendaCliente').value;
-      const cliente = clientes.find(c => c.id === clienteId);
-      if (!cliente) {
-        alert("Selecione um cliente válido.");
+      const vendedorResp = document.getElementById('vendaVendedorResponsavel').value;
+      const formaPagamento = document.getElementById('vendaFormaPagamento').value;
+
+      if (!clienteId) {
+        alert("Selecione um cliente para o pedido.");
         return;
       }
 
-      const formaPagto = document.getElementById('vendaFormaPagamento').value;
-      const total = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
-
-      const dataAtual = new Date();
-      const numPedido = `PED-${dataAtual.toISOString().slice(0,10).replace(/-/g,"")}-${Math.floor(1000 + Math.random() * 9000)}`;
-
-      // Atualizar estoque de cada produto no Firebase
-      for (const item of carrinho) {
-        const prod = produtos.find(p => p.id === item.produtoId);
-        if (prod) {
-          const novoEstoque = Math.max(0, prod.estoque - item.qtd);
-          await db.collection("produtos").doc(prod.id).update({ estoque: novoEstoque });
-        }
+      if (carrinho.length === 0) {
+        alert("Adicione produtos ao carrinho antes de finalizar.");
+        return;
       }
 
-      // Se for fiado, atualizar saldo do cliente
-      if (formaPagto === 'Fiado') {
-        const novoSaldoDevedor = (Number(cliente.saldoDevedor) || 0) + total;
-        await db.collection("clientes").doc(cliente.id).update({ saldoDevedor: novoSaldoDevedor });
+      const clienteObj = clientes.find(c => c.id === clienteId);
+      const totalPedido = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
+
+      const batch = db.batch();
+
+      // Atualiza estoque de cada produto
+      carrinho.forEach(item => {
+        const prodRef = db.collection("produtos").doc(item.id);
+        const prodAtual = produtos.find(p => p.id === item.id);
+        const novoEstoque = (prodAtual.estoque || 0) - item.qtd;
+        batch.update(prodRef, { estoque: novoEstoque });
+      });
+
+      // Se for Fiado, atualiza o saldo devedor do cliente
+      if (formaPagamento === 'Fiado') {
+        const cliRef = db.collection("clientes").doc(clienteId);
+        const novoSaldo = (clienteObj.saldoDevedor || 0) + totalPedido;
+        batch.update(cliRef, { saldoDevedor: novoSaldo });
       }
 
-      const novaVenda = {
-        numeroPedido: numPedido,
-        data: dataAtual.toLocaleString('pt-BR'),
-        cliente: cliente.nome,
-        clienteTelefone: cliente.telefone,
-        vendedor: usuarioLogado.nome,
-        formaPagto: formaPagto,
+      // Salva a venda
+      const vendaRef = db.collection("vendas").doc();
+      batch.set(vendaRef, {
+        clienteId: clienteId,
+        clienteNome: clienteObj ? clienteObj.nome : 'Cliente não identificado',
+        vendedorResp: vendedorResp,
         itens: [...carrinho],
-        total: total,
+        total: totalPedido,
+        formaPagamento: formaPagamento,
         criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      await db.collection("vendas").add(novaVenda);
-
-      carrinho = [];
-      renderizarCarrinho();
-
-      alert(`Pedido ${numPedido} gerado com sucesso!`);
-      imprimirComprovante(novaVenda);
-    }
-
-    function imprimirComprovante(venda) {
-      const areaImpressao = document.getElementById('print-area');
-      let itensHTML = '';
-      venda.itens.forEach(i => {
-        itensHTML += `${i.nome} x${i.qtd} = R$ ${i.subtotal.toFixed(2)}<br>`;
       });
 
-      areaImpressao.innerHTML = `
-        <center>
-          <strong>DISTRIBUIDORA FRAZÃO</strong><br>
-          Comprovante de Venda<br>
-          --------------------------------<br>
-        </center>
-        <b>Pedido:</b> ${venda.numeroPedido}<br>
-        <b>Data:</b> ${venda.data}<br>
-        <b>Cliente:</b> ${venda.cliente}<br>
-        <b>Vendedor:</b> ${venda.vendedor}<br>
-        <b>Pagamento:</b> ${venda.formaPagto}<br>
-        --------------------------------<br>
-        <b>ITENS:</b><br>
-        ${itensHTML}
-        --------------------------------<br>
-        <b>TOTAL: R$ ${venda.total.toFixed(2)}</b><br>
-        --------------------------------<br>
-        Obrigado pela preferência!
-      `;
-
-      window.print();
-    }
-
-    function enviarWhatsapp(numPedidoId) {
-      const venda = vendas.find(v => v.id === numPedidoId);
-      if (!venda) return;
-
-      let msg = `*DISTRIBUIDORA FRAZÃO - COMPROVANTE*\n`;
-      msg += `*Pedido:* ${venda.numeroPedido}\n`;
-      msg += `*Cliente:* ${venda.cliente}\n\n`;
-      venda.itens.forEach(i => {
-        msg += `- ${i.nome} (x${i.qtd}): R$ ${i.subtotal.toFixed(2)}\n`;
+      batch.commit().then(() => {
+        alert("Pedido finalizado com sucesso!");
+        carrinho = [];
+        renderizarCarrinho();
+      }).catch(err => {
+        alert("Erro ao finalizar pedido: " + err.message);
       });
-      msg += `\n*TOTAL:* R$ ${venda.total.toFixed(2)}`;
-
-      const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
-      window.open(url, '_blank');
     }
 
     function renderizarRelatorios() {
       const tbody = document.getElementById('tabelaHistoricoVendas');
+      const fatTotalEl = document.getElementById('fatTotal');
+      const fatFiadoEl = document.getElementById('fatFiado');
       if (!tbody) return;
-      tbody.innerHTML = '';
 
-      let faturamentoTotal = 0;
+      tbody.innerHTML = '';
+      let faturamentoGeral = 0;
+      let totalFiados = 0;
+
       vendas.forEach(v => {
-        faturamentoTotal += Number(v.total) || 0;
+        faturamentoGeral += (v.total || 0);
+        if (v.formaPagamento === 'Fiado') {
+          totalFiados += (v.total || 0);
+        }
+
+        const dataFormatada = v.criadoEm && v.criadoEm.toDate ? v.criadoEm.toDate().toLocaleString('pt-BR') : 'Data recente';
+
         tbody.innerHTML += `
           <tr>
-            <td>${v.numeroPedido}<br><small style="color:#64748b">${v.data}</small></td>
-            <td>${v.cliente}</td>
-            <td>${v.vendedor}</td>
-            <td>${v.formaPagto}</td>
-            <td style="font-weight: bold;">R$ ${(Number(v.total) || 0).toFixed(2)}</td>
+            <td>${dataFormatada}</td>
+            <td>${v.clienteNome}</td>
+            <td>${v.vendedorResp}</td>
+            <td>${v.formaPagamento}</td>
+            <td style="font-weight: bold;">R$ ${(v.total || 0).toFixed(2)}</td>
             <td>
-              <button class="btn btn-primary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="enviarWhatsapp('${v.id}')">Zap</button>
+              <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="excluirVenda('${v.id}')">Excluir</button>
             </td>
           </tr>
         `;
       });
 
-      const totalFiado = clientes.reduce((acc, c) => acc + (Number(c.saldoDevedor) || 0), 0);
-      document.getElementById('fatTotal').innerText = `R$ ${faturamentoTotal.toFixed(2)}`;
-      document.getElementById('fatFiado').innerText = `R$ ${totalFiado.toFixed(2)}`;
+      if (fatTotalEl) fatTotalEl.innerText = `R$ ${faturamentoGeral.toFixed(2)}`;
+      if (fatFiadoEl) fatFiadoEl.innerText = `R$ ${totalFiados.toFixed(2)}`;
     }
 
-    // Iniciar tudo ao carregar a página
+    function excluirVenda(id) {
+      if (confirm("Deseja realmente excluir este histórico de venda? (Atenção: o estoque e o saldo fiado não serão revertidos automaticamente).")) {
+        db.collection("vendas").doc(id).delete();
+      }
+    }
+
     window.onload = function() {
       iniciarFirestore();
+      alternarCamposLogin();
     };
   </script>
-
 </body>
 </html>

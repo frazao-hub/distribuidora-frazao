@@ -130,7 +130,7 @@
       <button class="nav-btn" onclick="switchTab('produtosTab', event)">Estoque & Catálogo</button>
       <button class="nav-btn" onclick="switchTab('clientesTab', event)">Clientes & Fiado</button>
       <button class="nav-btn admin-only" onclick="switchTab('vendedoresTab', event)">Cadastrar Vendedor</button>
-      <button class="nav-btn admin-only" onclick="switchTab('relatoriosTab', event)">Faturamento & Relatórios</button>
+      <button class="nav-btn" onclick="switchTab('relatoriosTab', event)">Faturamento & Relatórios</button>
     </nav>
 
     <!-- ABA 1: VENDAS (PDV) -->
@@ -278,7 +278,7 @@
             <input type="text" id="cliEndereco" placeholder="Ex: Rua Exemplo, 123 - Rocha, São Gonçalo" required>
           </div>
           <div class="form-group full-width">
-            <label for="cliVendedor">Vendedor Responsável:</label>
+            <label for="cliVendedor">Vendedor Responsável pelo Cliente:</label>
             <select id="cliVendedor"></select>
           </div>
           <div class="form-group full-width">
@@ -321,6 +321,12 @@
             <label for="vendSenha">Senha de Acesso:</label>
             <input type="password" id="vendSenha" placeholder="Senha do vendedor" required>
           </div>
+          <div class="form-group">
+            <label for="vendSupervisor">Vendedor Superior / Responsável (Supervisor - Opcional):</label>
+            <select id="vendSupervisor">
+              <option value="">Nenhum (Direto)</option>
+            </select>
+          </div>
           <div class="form-group full-width">
             <button type="button" class="btn btn-primary" onclick="cadastrarVendedor()">Salvar Vendedor</button>
           </div>
@@ -335,6 +341,7 @@
               <tr>
                 <th>Nome</th>
                 <th>Senha Cadastrada</th>
+                <th>Vendedor Superior</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -344,10 +351,10 @@
       </div>
     </div>
 
-    <!-- ABA 5: RELATÓRIOS (EXCLUSIVO ADMIN) -->
+    <!-- ABA 5: RELATÓRIOS -->
     <div id="relatoriosTab" class="tab-content">
-      <div class="card admin-only">
-        <h2>Resumo de Faturamento e Vendas</h2>
+      <div class="card">
+        <h2>Resumo de Faturamento e Vendas <span id="labelFiltroRelatorio" style="font-size: 0.85rem; color: #64748b; font-weight: normal;"></span></h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px;">
           <div style="background: #e0f2fe; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd;">
             <span style="font-size: 0.85rem; color: #0369a1; font-weight: bold;">FATURAMENTO TOTAL</span>
@@ -359,14 +366,14 @@
           </div>
         </div>
 
-        <h2>Histórico Geral de Pedidos</h2>
+        <h2>Histórico de Pedidos</h2>
         <div class="table-responsive">
           <table>
             <thead>
               <tr>
                 <th>Nº Pedido / Data</th>
                 <th>Cliente</th>
-                <th>Vendedor</th>
+                <th>Vendedor Resp.</th>
                 <th>Pagamento</th>
                 <th>Total</th>
                 <th>Ações</th>
@@ -431,6 +438,7 @@
         renderizarVendedores();
         atualizarSelectVendedoresLogin();
         preencherSelectVendedorCliente();
+        atualizarSelectSupervisorVendedor();
       });
 
       db.collection("vendas").orderBy("criadoEm", "desc").onSnapshot((snapshot) => {
@@ -465,6 +473,15 @@
       });
     }
 
+    function atualizarSelectSupervisorVendedor() {
+      const select = document.getElementById('vendSupervisor');
+      if (!select) return;
+      select.innerHTML = `<option value="">Nenhum (Direto)</option>`;
+      vendedores.forEach(v => {
+        select.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
+      });
+    }
+
     function fazerLogin() {
       const tipo = document.getElementById('loginTipo').value;
       const senhaInformada = document.getElementById('loginSenha').value.trim();
@@ -491,7 +508,11 @@
         }
 
         if (vendedorObj.senha === senhaInformada) {
-          usuarioLogado = { tipo: 'vendedor', nome: vendedorObj.nome };
+          usuarioLogado = { 
+            tipo: 'vendedor', 
+            nome: vendedorObj.nome, 
+            supervisor: vendedorObj.supervisor || '' 
+          };
           iniciarSessaoApp();
         } else {
           alert("Senha incorreta para este vendedor!");
@@ -518,12 +539,12 @@
       } else {
         adminElements.forEach(el => el.style.display = 'none');
         btnAltSenha.style.display = 'none';
-        switchTab('vendasTab');
       }
 
       preencherSelectVendedorCliente();
       renderizarClientes();
       carregarSelectClientes();
+      renderizarRelatorios();
     }
 
     function fazerLogout() {
@@ -559,13 +580,14 @@
     function cadastrarVendedor() {
       const nome = document.getElementById('vendNome').value.trim();
       const senha = document.getElementById('vendSenha').value.trim();
+      const supervisor = document.getElementById('vendSupervisor').value;
 
       if (!nome || !senha) {
         alert("Preencha o nome e a senha do vendedor!");
         return;
       }
 
-      db.collection("vendedores").add({ nome, senha })
+      db.collection("vendedores").add({ nome, senha, supervisor })
         .then(() => {
           document.getElementById('formVendedor').reset();
           alert("Vendedor cadastrado com sucesso!");
@@ -588,6 +610,7 @@
           <tr>
             <td>${v.nome}</td>
             <td>${v.senha}</td>
+            <td>${v.supervisor || 'Nenhum'}</td>
             <td><button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="excluirVendedor('${v.id}')">Excluir</button></td>
           </tr>
         `;
@@ -918,10 +941,23 @@
       if (!tbody) return;
       tbody.innerHTML = '';
 
+      const labelFiltro = document.getElementById('labelFiltroRelatorio');
+
+      // Se for vendedor, filtra apenas as vendas onde o vendedorResp é igual ao nome dele
+      const listaVendas = (usuarioLogado && usuarioLogado.tipo === 'vendedor')
+        ? vendas.filter(v => v.vendedorResp === usuarioLogado.nome)
+        : vendas;
+
+      if (labelFiltro) {
+        labelFiltro.innerText = (usuarioLogado && usuarioLogado.tipo === 'vendedor')
+          ? `(Exibindo apenas as suas vendas)`
+          : `(Exibindo todas as vendas)`;
+      }
+
       let fatTotal = 0;
       let fatFiado = 0;
 
-      vendas.forEach(v => {
+      listaVendas.forEach(v => {
         fatTotal += (v.total || 0);
         if (v.formaPagamento === 'Fiado') {
           fatFiado += (v.total || 0);

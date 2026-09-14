@@ -80,7 +80,7 @@
     @media print {
       body * { visibility: hidden; }
       #print-area, #print-area * { visibility: visible; }
-      #print-area { position: absolute; left: 0; top: 0; width: 80mm; padding: 10px; font-family: monospace; font-size: 12px; color: black; }
+      #print-area { position: absolute; left: 0; top: 0; width: 80mm; padding: 10px; font-family: monospace; font-size: 11px; color: black; line-height: 1.3; }
     }
   </style>
 </head>
@@ -130,7 +130,7 @@
       <button class="nav-btn" onclick="switchTab('produtosTab', event)">Estoque & Catálogo</button>
       <button class="nav-btn" onclick="switchTab('clientesTab', event)">Clientes & Fiado</button>
       <button class="nav-btn admin-only" onclick="switchTab('vendedoresTab', event)">Cadastrar Vendedor</button>
-      <button class="nav-btn" onclick="switchTab('relatoriosTab', event)">Faturamento & Relatórios</button>
+      <button class="nav-btn admin-only" onclick="switchTab('relatoriosTab', event)">Faturamento & Relatórios</button>
     </nav>
 
     <!-- ABA 1: VENDAS (PDV) -->
@@ -278,7 +278,7 @@
             <input type="text" id="cliEndereco" placeholder="Ex: Rua Exemplo, 123 - Rocha, São Gonçalo" required>
           </div>
           <div class="form-group full-width">
-            <label for="cliVendedor">Vendedor Responsável pelo Cliente:</label>
+            <label for="cliVendedor">Vendedor Responsável:</label>
             <select id="cliVendedor"></select>
           </div>
           <div class="form-group full-width">
@@ -321,12 +321,6 @@
             <label for="vendSenha">Senha de Acesso:</label>
             <input type="password" id="vendSenha" placeholder="Senha do vendedor" required>
           </div>
-          <div class="form-group">
-            <label for="vendSupervisor">Vendedor Superior / Responsável (Supervisor - Opcional):</label>
-            <select id="vendSupervisor">
-              <option value="">Nenhum (Direto)</option>
-            </select>
-          </div>
           <div class="form-group full-width">
             <button type="button" class="btn btn-primary" onclick="cadastrarVendedor()">Salvar Vendedor</button>
           </div>
@@ -341,7 +335,6 @@
               <tr>
                 <th>Nome</th>
                 <th>Senha Cadastrada</th>
-                <th>Vendedor Superior</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -351,10 +344,10 @@
       </div>
     </div>
 
-    <!-- ABA 5: RELATÓRIOS -->
+    <!-- ABA 5: RELATÓRIOS (EXCLUSIVO ADMIN) -->
     <div id="relatoriosTab" class="tab-content">
-      <div class="card">
-        <h2>Resumo de Faturamento e Vendas <span id="labelFiltroRelatorio" style="font-size: 0.85rem; color: #64748b; font-weight: normal;"></span></h2>
+      <div class="card admin-only">
+        <h2>Resumo de Faturamento e Vendas</h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px;">
           <div style="background: #e0f2fe; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd;">
             <span style="font-size: 0.85rem; color: #0369a1; font-weight: bold;">FATURAMENTO TOTAL</span>
@@ -366,14 +359,14 @@
           </div>
         </div>
 
-        <h2>Histórico de Pedidos</h2>
+        <h2>Histórico Geral de Pedidos</h2>
         <div class="table-responsive">
           <table>
             <thead>
               <tr>
                 <th>Nº Pedido / Data</th>
                 <th>Cliente</th>
-                <th>Vendedor Resp.</th>
+                <th>Vendedor</th>
                 <th>Pagamento</th>
                 <th>Total</th>
                 <th>Ações</th>
@@ -411,6 +404,10 @@
     let adminSenha = localStorage.getItem('df_admin_senha') || "admin123";
     let usuarioLogado = null;
 
+    window.onload = function() {
+      iniciarFirestore();
+    };
+
     function iniciarFirestore() {
       db.collection("produtos").onSnapshot((snapshot) => {
         produtos = [];
@@ -438,7 +435,6 @@
         renderizarVendedores();
         atualizarSelectVendedoresLogin();
         preencherSelectVendedorCliente();
-        atualizarSelectSupervisorVendedor();
       });
 
       db.collection("vendas").orderBy("criadoEm", "desc").onSnapshot((snapshot) => {
@@ -473,15 +469,6 @@
       });
     }
 
-    function atualizarSelectSupervisorVendedor() {
-      const select = document.getElementById('vendSupervisor');
-      if (!select) return;
-      select.innerHTML = `<option value="">Nenhum (Direto)</option>`;
-      vendedores.forEach(v => {
-        select.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
-      });
-    }
-
     function fazerLogin() {
       const tipo = document.getElementById('loginTipo').value;
       const senhaInformada = document.getElementById('loginSenha').value.trim();
@@ -508,11 +495,7 @@
         }
 
         if (vendedorObj.senha === senhaInformada) {
-          usuarioLogado = { 
-            tipo: 'vendedor', 
-            nome: vendedorObj.nome, 
-            supervisor: vendedorObj.supervisor || '' 
-          };
+          usuarioLogado = { tipo: 'vendedor', nome: vendedorObj.nome };
           iniciarSessaoApp();
         } else {
           alert("Senha incorreta para este vendedor!");
@@ -539,12 +522,12 @@
       } else {
         adminElements.forEach(el => el.style.display = 'none');
         btnAltSenha.style.display = 'none';
+        switchTab('vendasTab');
       }
 
       preencherSelectVendedorCliente();
       renderizarClientes();
       carregarSelectClientes();
-      renderizarRelatorios();
     }
 
     function fazerLogout() {
@@ -580,14 +563,13 @@
     function cadastrarVendedor() {
       const nome = document.getElementById('vendNome').value.trim();
       const senha = document.getElementById('vendSenha').value.trim();
-      const supervisor = document.getElementById('vendSupervisor').value;
 
       if (!nome || !senha) {
         alert("Preencha o nome e a senha do vendedor!");
         return;
       }
 
-      db.collection("vendedores").add({ nome, senha, supervisor })
+      db.collection("vendedores").add({ nome, senha })
         .then(() => {
           document.getElementById('formVendedor').reset();
           alert("Vendedor cadastrado com sucesso!");
@@ -610,7 +592,6 @@
           <tr>
             <td>${v.nome}</td>
             <td>${v.senha}</td>
-            <td>${v.supervisor || 'Nenhum'}</td>
             <td><button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="excluirVendedor('${v.id}')">Excluir</button></td>
           </tr>
         `;
@@ -826,62 +807,65 @@
       }
     }
 
-    // --- CARRINHO ---
+    // --- CARRINHO & VENDAS ---
     function adicionarAoCarrinho() {
       const prodId = document.getElementById('carrinhoProduto').value;
-      const preco = parseFloat(document.getElementById('carrinhoPreco').value);
+      const precoUn = parseFloat(document.getElementById('carrinhoPreco').value);
       const qtd = parseInt(document.getElementById('carrinhoQtd').value);
 
-      if (!prodId || isNaN(preco) || isNaN(qtd) || qtd <= 0) {
-        alert("Selecione um produto, informe o preço e uma quantidade válida.");
+      if (!prodId) {
+        alert("Selecione um produto!");
         return;
       }
-
       const prod = produtos.find(p => p.id === prodId);
       if (!prod) return;
 
+      if (qtd <= 0 || isNaN(qtd)) {
+        alert("Quantidade inválida.");
+        return;
+      }
+
       if (qtd > prod.estoque) {
-        alert(`Quantidade solicitada (${qtd}) maior que o estoque disponível (${prod.estoque}).`);
+        alert(`Estoque insuficiente! Disponível: ${prod.estoque} un.`);
         return;
       }
 
       carrinho.push({
-        id: prod.id,
+        produtoId: prod.id,
         nome: prod.nome,
-        preco: preco,
+        preco: precoUn,
         qtd: qtd,
-        subtotal: preco * qtd
+        subtotal: precoUn * qtd
       });
 
       renderizarCarrinho();
-      document.getElementById('carrinhoQtd').value = 1;
-    }
-
-    function renderizarCarrinho() {
-      const tbody = document.getElementById('tabelaCarrinho');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      let total = 0;
-
-      carrinho.forEach((item, index) => {
-        total += item.subtotal;
-        tbody.innerHTML += `
-          <tr>
-            <td>${item.nome}</td>
-            <td>${item.qtd} un.</td>
-            <td>R$ ${item.preco.toFixed(2)}</td>
-            <td>R$ ${item.subtotal.toFixed(2)}</td>
-            <td><button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removerDoCarrinho(${index})">Remover</button></td>
-          </tr>
-        `;
-      });
-
-      document.getElementById('carrinhoTotal').innerText = `R$ ${total.toFixed(2)}`;
     }
 
     function removerDoCarrinho(index) {
       carrinho.splice(index, 1);
       renderizarCarrinho();
+    }
+
+    function renderizarCarrinho() {
+      const tbody = document.getElementById('tabelaCarrinho');
+      const totalSpan = document.getElementById('carrinhoTotal');
+      tbody.innerHTML = '';
+      let totalGeral = 0;
+
+      carrinho.forEach((item, index) => {
+        totalGeral += item.subtotal;
+        tbody.innerHTML += `
+          <tr>
+            <td>${item.nome}</td>
+            <td>${item.qtd}</td>
+            <td>R$ ${item.preco.toFixed(2)}</td>
+            <td>R$ ${item.subtotal.toFixed(2)}</td>
+            <td><button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.7rem;" onclick="removerDoCarrinho(${index})">Remover</button></td>
+          </tr>
+        `;
+      });
+
+      totalSpan.innerText = `R$ ${totalGeral.toFixed(2)}`;
     }
 
     function finalizarPedido() {
@@ -891,21 +875,20 @@
       }
 
       const clienteId = document.getElementById('vendaCliente').value;
-      if (!clienteId) {
-        alert("Selecione um cliente para o pedido.");
+      const clienteObj = clientes.find(c => c.id === clienteId);
+      if (!clienteObj) {
+        alert("Selecione um cliente válido!");
         return;
       }
 
-      const clienteObj = clientes.find(c => c.id === clienteId);
       const vendedorResp = document.getElementById('vendaVendedorResponsavel').value;
       const formaPagamento = document.getElementById('vendaFormaPagamento').value;
-
-      let totalPedido = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
+      const totalPedido = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
 
       const novaVenda = {
-        clienteId: clienteId,
-        clienteNome: clienteObj ? clienteObj.nome : 'Cliente',
-        vendedorResp: vendedorResp,
+        clienteId: clienteObj.id,
+        clienteNome: clienteObj.nome,
+        vendedor: vendedorResp,
         itens: [...carrinho],
         formaPagamento: formaPagamento,
         total: totalPedido,
@@ -914,21 +897,24 @@
 
       db.collection("vendas").add(novaVenda)
         .then((docRef) => {
+          // Atualiza estoque de cada produto
           carrinho.forEach(item => {
-            const prod = produtos.find(p => p.id === item.id);
-            if (prod) {
-              const novoEstoque = Math.max(0, prod.estoque - item.qtd);
-              db.collection("produtos").doc(item.id).update({ estoque: novoEstoque });
+            const p = produtos.find(prod => prod.id === item.produtoId);
+            if (p) {
+              const novoEstoque = Math.max(0, p.estoque - item.qtd);
+              db.collection("produtos").doc(p.id).update({ estoque: novoEstoque });
             }
           });
 
-          if (formaPagamento === 'Fiado' && clienteObj) {
+          // Se for Fiado, atualiza o saldo devedor do cliente
+          if (formaPagamento === 'Fiado') {
             const novoSaldo = (clienteObj.saldoDevedor || 0) + totalPedido;
-            db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo });
+            db.collection("clientes").doc(clienteObj.id).update({ saldoDevedor: novoSaldo });
           }
 
-          imprimirComprovante({ id: docRef.id, ...novaVenda, dataHora: new Date().toLocaleString() });
+          emitirComprovante({ id: docRef.id, ...novaVenda, dataStr: new Date().toLocaleString() });
 
+          // Limpa carrinho
           carrinho = [];
           renderizarCarrinho();
           alert("Pedido finalizado com sucesso!");
@@ -936,85 +922,74 @@
         .catch(err => alert("Erro ao finalizar pedido: " + err.message));
     }
 
+    function emitirComprovante(venda) {
+      const area = document.getElementById('print-area');
+      const itensHtml = venda.itens.map(i => `
+        <div>${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}</div>
+      `).join('');
+
+      area.innerHTML = `
+        <div style="text-align: center; font-weight: bold; margin-bottom: 5px;">DISTRIBUIDORA FRAZÃO</div>
+        <div style="text-align: center; margin-bottom: 8px;">São Gonçalo - RJ</div>
+        <div>--------------------------------</div>
+        <div>Pedido: ${venda.id}</div>
+        <div>Data: ${venda.dataStr || new Date().toLocaleString()}</div>
+        <div>Cliente: ${venda.clienteNome}</div>
+        <div>Vendedor: ${venda.vendedor}</div>
+        <div>Pagamento: ${venda.formaPagamento}</div>
+        <div>--------------------------------</div>
+        <div style="font-weight: bold;">ITENS:</div>
+        ${itensHtml}
+        <div>--------------------------------</div>
+        <div style="font-size: 13px; font-weight: bold; text-align: right;">TOTAL: R$ ${venda.total.toFixed(2)}</div>
+        <div style="text-align: center; margin-top: 15px;">Obrigado pela preferência!</div>
+      `;
+
+      window.print();
+    }
+
     function renderizarRelatorios() {
       const tbody = document.getElementById('tabelaHistoricoVendas');
+      const fatTotalEl = document.getElementById('fatTotal');
+      const fatFiadoEl = document.getElementById('fatFiado');
       if (!tbody) return;
+
       tbody.innerHTML = '';
+      let totalGeral = 0;
+      let totalFiado = 0;
 
-      const labelFiltro = document.getElementById('labelFiltroRelatorio');
-
-      // Se for vendedor, filtra apenas as vendas onde o vendedorResp é igual ao nome dele
-      const listaVendas = (usuarioLogado && usuarioLogado.tipo === 'vendedor')
-        ? vendas.filter(v => v.vendedorResp === usuarioLogado.nome)
-        : vendas;
-
-      if (labelFiltro) {
-        labelFiltro.innerText = (usuarioLogado && usuarioLogado.tipo === 'vendedor')
-          ? `(Exibindo apenas as suas vendas)`
-          : `(Exibindo todas as vendas)`;
-      }
-
-      let fatTotal = 0;
-      let fatFiado = 0;
-
-      listaVendas.forEach(v => {
-        fatTotal += (v.total || 0);
+      vendas.forEach(v => {
+        totalGeral += v.total || 0;
         if (v.formaPagamento === 'Fiado') {
-          fatFiado += (v.total || 0);
+          totalFiado += v.total || 0;
         }
 
-        const dataStr = v.criadoEm && v.criadoEm.toDate ? v.criadoEm.toDate().toLocaleString() : 'Data recente';
+        const dataFormatada = v.criadoEm && v.criadoEm.toDate ? v.criadoEm.toDate().toLocaleString() : 'Data recente';
 
         tbody.innerHTML += `
           <tr>
-            <td>${v.id.substring(0, 8)}...<br><small style="color:#64748b;">${dataStr}</small></td>
+            <td>${v.id.substring(0, 8)}...<br><small style="color:#64748b">${dataFormatada}</small></td>
             <td>${v.clienteNome}</td>
-            <td>${v.vendedorResp}</td>
+            <td>${v.vendedor}</td>
             <td>${v.formaPagamento}</td>
             <td style="font-weight: bold;">R$ ${(v.total || 0).toFixed(2)}</td>
             <td>
-              <button class="btn btn-primary" style="padding: 4px 8px; font-size: 0.75rem;" onclick='reimprimirComprovante(${JSON.stringify(v)})'>Comprovante</button>
+              <button class="btn btn-primary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="reemitir('${v.id}')">Comprovante</button>
             </td>
           </tr>
         `;
       });
 
-      document.getElementById('fatTotal').innerText = `R$ ${fatTotal.toFixed(2)}`;
-      document.getElementById('fatFiado').innerText = `R$ ${fatFiado.toFixed(2)}`;
+      if (fatTotalEl) fatTotalEl.innerText = `R$ ${totalGeral.toFixed(2)}`;
+      if (fatFiadoEl) fatFiadoEl.innerText = `R$ ${totalFiado.toFixed(2)}`;
     }
 
-    function imprimirComprovante(venda) {
-      const printArea = document.getElementById('print-area');
-      const itensHtml = venda.itens.map(i => `<div>${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}</div>`).join('');
-      printArea.innerHTML = `
-        <div style="text-align: center; font-weight: bold;">DISTRIBUIDORA FRAZÃO</div>
-        <div style="text-align: center;">CNPJ / Comprovante de Pedido</div>
-        <hr>
-        <div>Pedido: ${venda.id}</div>
-        <div>Cliente: ${venda.clienteNome}</div>
-        <div>Vendedor: ${venda.vendedorResp}</div>
-        <div>Pagamento: ${venda.formaPagamento}</div>
-        <div>Data: ${venda.dataHora || new Date().toLocaleString()}</div>
-        <hr>
-        <div style="font-weight: bold;">ITENS:</div>
-        ${itensHtml}
-        <hr>
-        <div style="font-weight: bold; text-align: right;">TOTAL: R$ ${venda.total.toFixed(2)}</div>
-        <hr>
-        <div style="text-align: center; margin-top: 10px;">Obrigado pela preferência!</div>
-      `;
-      window.print();
+    function reemitir(id) {
+      const v = vendas.find(item => item.id === id);
+      if (v) {
+        emitirComprovante(v);
+      }
     }
-
-    function reimprimirComprovante(vendaObj) {
-      const dataStr = vendaObj.criadoEm && vendaObj.criadoEm.toDate ? vendaObj.criadoEm.toDate().toLocaleString() : 'Data recente';
-      imprimirComprovante({ ...vendaObj, dataHora: dataStr });
-    }
-
-    window.onload = function() {
-      iniciarFirestore();
-      alternarCamposLogin();
-    };
   </script>
 </body>
 </html>

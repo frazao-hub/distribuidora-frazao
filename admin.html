@@ -76,6 +76,15 @@
 
     .summary-box { background: #f8fafc; padding: 15px; border-radius: 6px; margin-top: 15px; font-size: 1.1rem; font-weight: bold; display: flex; justify-content: space-between; border: 1px solid #e2e8f0; }
 
+    .produto-miniatura {
+      width: 45px;
+      height: 45px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid #cbd5e1;
+      background-color: #f1f5f9;
+    }
+
     #print-area { display: none; }
     @media print {
       body * { visibility: hidden; }
@@ -165,7 +174,8 @@
           <button type="button" class="btn btn-primary" onclick="adicionarAoCarrinho()">+ Adicionar</button>
         </div>
 
-        <div style="margin-top: 10px; padding: 8px; background: #f8fafc; border-radius: 6px;" id="previewEstoqueInfo">
+        <div style="margin-top: 10px; padding: 8px; background: #f8fafc; border-radius: 6px; display: flex; align-items: center; gap: 12px;" id="previewEstoqueInfo">
+          <img id="previewEstoqueImg" src="" alt="" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; display: none;">
           <small style="color: #64748b;" id="previewEstoqueProd">Selecione um produto</small>
         </div>
 
@@ -173,6 +183,7 @@
           <table>
             <thead>
               <tr>
+                <th>Foto</th>
                 <th>Produto</th>
                 <th>Qtd</th>
                 <th>Preço Un.</th>
@@ -217,6 +228,21 @@
             <input type="text" id="prodNome" placeholder="Ex: Bala de Café 500g" required>
           </div>
           <div class="form-group">
+            <label for="prodCategoria">Categoria:</label>
+            <select id="prodCategoria" required>
+              <option value="balas e pirulitos">Balas e Pirulitos</option>
+              <option value="bebidas">Bebidas</option>
+              <option value="biscoitos">Biscoitos</option>
+              <option value="descartaveis">Descartáveis</option>
+              <option value="doces">Doces</option>
+              <option value="drops e chicletes">Drops e Chicletes</option>
+              <option value="higiene">Higiene</option>
+              <option value="limpeza">Limpeza</option>
+              <option value="mercearia">Mercearia</option>
+              <option value="papelaria">Papelaria</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label for="prodPreco">Preço de Venda (R$):</label>
             <input type="number" id="prodPreco" step="0.01" required>
           </div>
@@ -224,6 +250,16 @@
             <label for="prodEstoque">Quantidade em Estoque:</label>
             <input type="number" id="prodEstoque" required>
           </div>
+          <div class="form-group">
+            <label for="prodFotoArquivo">Enviar Foto do Produto (Arquivo):</label>
+            <input type="file" id="prodFotoArquivo" accept="image/*" onchange="converterImagemBase64(event)">
+          </div>
+          <div class="form-group">
+            <label for="prodFotoUrl">Ou Link da Foto (URL):</label>
+            <input type="url" id="prodFotoUrl" placeholder="https://exemplo.com/foto.jpg">
+          </div>
+          <input type="hidden" id="prodFotoBase64">
+
           <div class="form-group full-width" style="display: flex; gap: 10px; margin-top: 5px;">
             <button type="button" class="btn btn-primary" onclick="salvarProduto()">Salvar no Estoque</button>
             <button type="button" class="btn btn-warning" onclick="limparFormProduto()">Cancelar Edição</button>
@@ -237,7 +273,9 @@
           <table>
             <thead>
               <tr>
+                <th>Foto</th>
                 <th>Produto</th>
+                <th>Categoria</th>
                 <th>Preço</th>
                 <th>Estoque</th>
                 <th>Ações</th>
@@ -718,25 +756,47 @@
     }
 
     // --- PRODUTOS ---
+    function converterImagemBase64(event) {
+      const arquivo = event.target.files[0];
+      if (!arquivo) return;
+      const leitor = new FileReader();
+      leitor.onload = function(e) {
+        document.getElementById('prodFotoBase64').value = e.target.result;
+      };
+      leitor.readAsDataURL(arquivo);
+    }
+
     function salvarProduto() {
       const docId = document.getElementById('prodDocId').value;
       const nome = document.getElementById('prodNome').value.trim();
+      const categoria = document.getElementById('prodCategoria').value;
       const preco = parseFloat(document.getElementById('prodPreco').value);
       const estoque = parseInt(document.getElementById('prodEstoque').value);
+      const fotoBase64 = document.getElementById('prodFotoBase64').value;
+      const fotoUrl = document.getElementById('prodFotoUrl').value.trim();
+      const fotoFinal = fotoBase64 || fotoUrl || '';
 
       if (!nome || isNaN(preco) || isNaN(estoque)) {
         alert("Preencha corretamente os dados do produto.");
         return;
       }
 
+      const dadosProduto = {
+        nome,
+        categoria,
+        preco,
+        estoque,
+        foto: fotoFinal
+      };
+
       if (docId) {
-        db.collection("produtos").doc(docId).update({ nome, preco, estoque })
+        db.collection("produtos").doc(docId).update(dadosProduto)
           .then(() => {
             limparFormProduto();
             alert("Produto atualizado com sucesso!");
           });
       } else {
-        db.collection("produtos").add({ nome, preco, estoque })
+        db.collection("produtos").add(dadosProduto)
           .then(() => {
             limparFormProduto();
             alert("Produto cadastrado com sucesso!");
@@ -749,9 +809,15 @@
       if (!tbody) return;
       tbody.innerHTML = '';
       produtos.forEach(p => {
+        const fotoTag = p.foto 
+          ? `<img src="${p.foto}" class="produto-miniatura" alt="${p.nome}">` 
+          : `<span style="font-size: 0.75rem; color: #94a3b8;">Sem foto</span>`;
+
         tbody.innerHTML += `
           <tr>
+            <td>${fotoTag}</td>
             <td>${p.nome}</td>
+            <td style="text-transform: capitalize;">${p.categoria || 'Geral'}</td>
             <td>R$ ${Number(p.preco).toFixed(2)}</td>
             <td>${p.estoque} un.</td>
             <td>
@@ -768,7 +834,7 @@
       if (!select) return;
       select.innerHTML = '<option value="">Selecione um produto</option>';
       produtos.forEach(p => {
-        select.innerHTML += `<option value="${p.id}">${p.nome} (Estoque: ${p.estoque})</option>`;
+        select.innerHTML += `<option value="${p.id}">${p.nome} [${p.categoria || 'Geral'}] (Estoque: ${p.estoque})</option>`;
       });
     }
 
@@ -777,8 +843,11 @@
       if (!prod) return;
       document.getElementById('prodDocId').value = prod.id;
       document.getElementById('prodNome').value = prod.nome;
+      document.getElementById('prodCategoria').value = prod.categoria || 'mercearia';
       document.getElementById('prodPreco').value = prod.preco;
       document.getElementById('prodEstoque').value = prod.estoque;
+      document.getElementById('prodFotoBase64').value = prod.foto && prod.foto.startsWith('data:') ? prod.foto : '';
+      document.getElementById('prodFotoUrl').value = prod.foto && !prod.foto.startsWith('data:') ? prod.foto : '';
       document.getElementById('tituloFormProd').innerText = "Editar Produto";
     }
 
@@ -791,6 +860,7 @@
     function limparFormProduto() {
       document.getElementById('prodDocId').value = '';
       document.getElementById('formProduto').reset();
+      document.getElementById('prodFotoBase64').value = '';
       document.getElementById('tituloFormProd').innerText = "Cadastrar / Editar Produto no Estoque";
     }
 
@@ -798,12 +868,20 @@
       const prodId = document.getElementById('carrinhoProduto').value;
       const prod = produtos.find(p => p.id === prodId);
       const infoDiv = document.getElementById('previewEstoqueProd');
+      const imgEl = document.getElementById('previewEstoqueImg');
 
       if (prod) {
         document.getElementById('carrinhoPreco').value = Number(prod.preco).toFixed(2);
-        infoDiv.innerText = `📦 ${prod.nome} — Estoque Disponível: ${prod.estoque} un.`;
+        infoDiv.innerText = `📦 ${prod.nome} (${prod.categoria}) — Estoque: ${prod.estoque} un.`;
+        if (prod.foto) {
+          imgEl.src = prod.foto;
+          imgEl.style.display = 'block';
+        } else {
+          imgEl.style.display = 'none';
+        }
       } else {
         infoDiv.innerText = "Selecione um produto";
+        imgEl.style.display = 'none';
       }
     }
 
@@ -833,6 +911,8 @@
       carrinho.push({
         produtoId: prod.id,
         nome: prod.nome,
+        categoria: prod.categoria,
+        foto: prod.foto || '',
         preco: precoUn,
         qtd: qtd,
         subtotal: precoUn * qtd
@@ -854,8 +934,13 @@
 
       carrinho.forEach((item, index) => {
         totalGeral += item.subtotal;
+        const fotoTag = item.foto 
+          ? `<img src="${item.foto}" class="produto-miniatura" alt="${item.nome}">` 
+          : `-`;
+
         tbody.innerHTML += `
           <tr>
+            <td>${fotoTag}</td>
             <td>${item.nome}</td>
             <td>${item.qtd}</td>
             <td>R$ ${item.preco.toFixed(2)}</td>
@@ -897,7 +982,6 @@
 
       db.collection("vendas").add(novaVenda)
         .then((docRef) => {
-          // Atualiza estoque de cada produto
           carrinho.forEach(item => {
             const p = produtos.find(prod => prod.id === item.produtoId);
             if (p) {
@@ -906,7 +990,6 @@
             }
           });
 
-          // Se for Fiado, atualiza o saldo devedor do cliente
           if (formaPagamento === 'Fiado') {
             const novoSaldo = (clienteObj.saldoDevedor || 0) + totalPedido;
             db.collection("clientes").doc(clienteObj.id).update({ saldoDevedor: novoSaldo });
@@ -914,7 +997,6 @@
 
           emitirComprovante({ id: docRef.id, ...novaVenda, dataStr: new Date().toLocaleString() });
 
-          // Limpa carrinho
           carrinho = [];
           renderizarCarrinho();
           alert("Pedido finalizado com sucesso!");
@@ -980,8 +1062,8 @@
         `;
       });
 
-      if (fatTotalEl) fatTotalEl.innerText = `R$ ${totalGeral.toFixed(2)}`;
-      if (fatFiadoEl) fatFiadoEl.innerText = `R$ ${totalFiado.toFixed(2)}`;
+      if (fatTotalEl) fatTotalEl.textContents = `R$ ${totalGeral.toFixed(2)}`;
+      if (fatFiadoEl) fatFiadoEl.textContents = `R$ ${totalFiado.toFixed(2)}`;
     }
 
     function reemitir(id) {

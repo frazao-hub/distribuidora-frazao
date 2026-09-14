@@ -70,10 +70,11 @@
     .btn-warning { background: var(--warning-color); color: white; }
 
     .table-responsive { overflow-x: auto; margin-top: 10px; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    table { width: 100% ; border-collapse: collapse; font-size: 0.9rem; }
     th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
     th { background: #f8fafc; color: #475569; font-weight: bold; }
 
+    .product-thumb { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1; background: #f8fafc; }
     .summary-box { background: #f8fafc; padding: 15px; border-radius: 6px; margin-top: 15px; font-size: 1.1rem; font-weight: bold; display: flex; justify-content: space-between; border: 1px solid #e2e8f0; }
 
     #print-area { display: none; }
@@ -155,7 +156,7 @@
             <select id="carrinhoProduto" onchange="carregarDetalhesProduto()"></select>
           </div>
           <div class="form-group">
-            <label for="carrinhoPreco">Preço Un. (R$):</label>
+            <label for="carrinhoPreco">Preço Venda (R$):</label>
             <input type="number" id="carrinhoPreco" step="0.01">
           </div>
           <div class="form-group">
@@ -217,12 +218,36 @@
             <input type="text" id="prodNome" placeholder="Ex: Bala de Café 500g" required>
           </div>
           <div class="form-group">
+            <label for="prodCategoria">Categoria:</label>
+            <select id="prodCategoria" required>
+              <option value="Balas e Pirulito">Balas e pirulito</option>
+              <option value="Bebidas">Bebidas</option>
+              <option value="Biscoitos">Biscoitos</option>
+              <option value="Descartáveis">Descartáveis</option>
+              <option value="Doces">Doces</option>
+              <option value="Drops e Chicletes">Drops e chicletes</option>
+              <option value="Higiene">Higiene</option>
+              <option value="Limpeza">Limpeza</option>
+              <option value="Mercearia">Mercearia</option>
+              <option value="Papelaria">Papelaria</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="prodCusto">Preço de Custo (R$):</label>
+            <input type="number" id="prodCusto" step="0.01" required>
+          </div>
+          <div class="form-group">
             <label for="prodPreco">Preço de Venda (R$):</label>
             <input type="number" id="prodPreco" step="0.01" required>
           </div>
           <div class="form-group">
             <label for="prodEstoque">Quantidade em Estoque:</label>
             <input type="number" id="prodEstoque" required>
+          </div>
+          <div class="form-group">
+            <label for="prodImagem">Link da Imagem (URL):</label>
+            <input type="url.">
+            <input type="url" id="prodImagem" placeholder="https://exemplo.com/imagem.jpg">
           </div>
           <div class="form-group full-width" style="display: flex; gap: 10px; margin-top: 5px;">
             <button type="button" class="btn btn-primary" onclick="salvarProduto()">Salvar no Estoque</button>
@@ -237,8 +262,11 @@
           <table>
             <thead>
               <tr>
+                <th>Imagem</th>
                 <th>Produto</th>
-                <th>Preço</th>
+                <th>Categoria</th>
+                <th>Custo</th>
+                <th>Venda</th>
                 <th>Estoque</th>
                 <th>Ações</th>
               </tr>
@@ -348,7 +376,7 @@
     <div id="relatoriosTab" class="tab-content">
       <div class="card admin-only">
         <h2>Resumo de Faturamento e Vendas</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
           <div style="background: #e0f2fe; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd;">
             <span style="font-size: 0.85rem; color: #0369a1; font-weight: bold;">FATURAMENTO TOTAL</span>
             <p id="fatTotal" style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color);">R$ 0,00</p>
@@ -356,6 +384,10 @@
           <div style="background: #fef3c7; padding: 15px; border-radius: 8px; border: 1px solid #fde68a;">
             <span style="font-size: 0.85rem; color: #b45309; font-weight: bold;">RECEBÍVEIS EM FIADO</span>
             <p id="fatFiado" style="font-size: 1.5rem; font-weight: bold; color: var(--warning-color);">R$ 0,00</p>
+          </div>
+          <div style="background: #dcfce7; padding: 15px; border-radius: 8px; border: 1px solid #bbf7d0;">
+            <span style="font-size: 0.85rem; color: #15803d; font-weight: bold;">LUCRO BRUTO ESTIMADO</span>
+            <p id="fatLucro" style="font-size: 1.5rem; font-weight: bold; color: var(--success-color);">R$ 0,00</p>
           </div>
         </div>
 
@@ -371,7 +403,8 @@
           <table>
             <thead>
               <tr>
-                <th>Nº Pedido / Data</th>
+                <th>Nº Pedido</th>
+                <th>Data</th>
                 <th>Cliente</th>
                 <th>Vendedor</th>
                 <th>Pagamento</th>
@@ -444,18 +477,12 @@
         preencherSelectVendedorCliente();
       });
 
-      // Removido .orderBy("criadoEm", "desc") para evitar erro de índice ausente no Firestore
       db.collection("vendas").onSnapshot((snapshot) => {
         vendas = [];
         snapshot.forEach((doc) => {
           vendas.push({ id: doc.id, ...doc.data() });
         });
-        // Ordena no cliente por timestamp ou data
-        vendas.sort((a, b) => {
-          const tA = a.criadoEm ? a.criadoEm.toMillis() : 0;
-          const tB = b.criadoEm ? b.criadoEm.toMillis() : 0;
-          return tB - tA;
-        });
+        vendas.sort((a, b) => (b.numeroSequencial || 0) - (a.numeroSequencial || 0));
         renderizarRelatorios();
       });
     }
@@ -735,22 +762,27 @@
     function salvarProduto() {
       const docId = document.getElementById('prodDocId').value;
       const nome = document.getElementById('prodNome').value.trim();
+      const categoria = document.getElementById('prodCategoria').value;
+      const custo = parseFloat(document.getElementById('prodCusto').value);
       const preco = parseFloat(document.getElementById('prodPreco').value);
       const estoque = parseInt(document.getElementById('prodEstoque').value);
+      const imagem = document.getElementById('prodImagem').value.trim();
 
-      if (!nome || isNaN(preco) || isNaN(estoque)) {
+      if (!nome || isNaN(custo) || isNaN(preco) || isNaN(estoque)) {
         alert("Preencha corretamente os dados do produto.");
         return;
       }
 
+      const dadosProduto = { nome, categoria, custo, preco, estoque, imagem };
+
       if (docId) {
-        db.collection("produtos").doc(docId).update({ nome, preco, estoque })
+        db.collection("produtos").doc(docId).update(dadosProduto)
           .then(() => {
             limparFormProduto();
             alert("Produto atualizado com sucesso!");
           });
       } else {
-        db.collection("produtos").add({ nome, preco, estoque })
+        db.collection("produtos").add(dadosProduto)
           .then(() => {
             limparFormProduto();
             alert("Produto cadastrado com sucesso!");
@@ -763,9 +795,13 @@
       if (!tbody) return;
       tbody.innerHTML = '';
       produtos.forEach(p => {
+        const imgHtml = p.imagem ? `<img src="${p.imagem}" class="product-thumb" alt="${p.nome}" onerror="this.src='https://via.placeholder.com/45?text=Sem+Foto'">` : `<img src="https://via.placeholder.com/45?text=Sem+Foto" class="product-thumb">`;
         tbody.innerHTML += `
           <tr>
-            <td>${p.nome}</td>
+            <td>${imgHtml}</td>
+            <td><b>${p.nome}</b></td>
+            <td>${p.categoria || 'Geral'}</td>
+            <td>R$ ${Number(p.custo || 0).toFixed(2)}</td>
             <td>R$ ${Number(p.preco).toFixed(2)}</td>
             <td>${p.estoque} un.</td>
             <td>
@@ -791,8 +827,11 @@
       if (!prod) return;
       document.getElementById('prodDocId').value = prod.id;
       document.getElementById('prodNome').value = prod.nome;
+      document.getElementById('prodCategoria').value = prod.categoria || 'Balas e Pirulito';
+      document.getElementById('prodCusto').value = prod.custo || 0;
       document.getElementById('prodPreco').value = prod.preco;
       document.getElementById('prodEstoque').value = prod.estoque;
+      document.getElementById('prodImagem').value = prod.imagem || '';
       document.getElementById('tituloFormProd').innerText = "Editar Produto";
     }
 
@@ -815,7 +854,7 @@
 
       if (prod) {
         document.getElementById('carrinhoPreco').value = Number(prod.preco).toFixed(2);
-        infoDiv.innerHTML = `📦 <b>${prod.nome}</b> — Estoque Disponível: ${prod.estoque} un.`;
+        infoDiv.innerHTML = `📦 <b>${prod.nome}</b> — Estoque: ${prod.estoque} un. | Custo: R$ ${Number(prod.custo || 0).toFixed(2)}`;
       } else {
         infoDiv.innerHTML = "Selecione um produto";
       }
@@ -843,6 +882,7 @@
       carrinho.push({
         id: prod.id,
         nome: prod.nome,
+        custoUnitario: Number(prod.custo || 0),
         preco: precoUn,
         qtd: qtd,
         subtotal: precoUn * qtd
@@ -894,8 +934,25 @@
       }
 
       const totalPedido = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
+      const custoTotalPedido = carrinho.reduce((acc, item) => acc + ((item.custoUnitario || 0) * item.qtd), 0);
 
       try {
+        // Transação atômica para pegar próximo número sequencial (0001, 0002, ...)
+        const counterRef = db.collection("config").doc("contadorPedidos");
+        const numeroSequencial = await db.runTransaction(async (transaction) => {
+          const counterDoc = await transaction.get(counterRef);
+          let proximoNumero = 1;
+          if (counterDoc.exists) {
+            proximoNumero = (counterDoc.data().ultimoNumero || 0) + 1;
+            transaction.update(counterRef, { ultimoNumero: proximoNumero });
+          } else {
+            transaction.set(counterRef, { ultimoNumero: 1 });
+          }
+          return proximoNumero;
+        });
+
+        const numeroFormatado = String(numeroSequencial).padStart(4, '0');
+
         const batch = db.batch();
 
         for (const item of carrinho) {
@@ -914,12 +971,16 @@
         }
 
         const vendaData = {
+          numeroSequencial: numeroSequencial,
+          numeroFormatado: numeroFormatado,
           clienteId: clienteObj.id,
           clienteNome: clienteObj.nome,
           vendedor: vendedorResp,
           formaPagamento: formaPagamento,
           itens: carrinho,
           total: totalPedido,
+          custoTotal: custoTotalPedido,
+          lucro: totalPedido - custoTotalPedido,
           criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
           dataTexto: new Date().toLocaleString('pt-BR')
         };
@@ -934,7 +995,7 @@
         carrinho = [];
         renderizarCarrinho();
         document.getElementById('carrinhoQtd').value = 1;
-        alert("Pedido finalizado com sucesso!");
+        alert(`Pedido #${numeroFormatado} finalizado com sucesso!`);
       } catch (err) {
         alert("Erro ao finalizar pedido: " + err.message);
       }
@@ -949,7 +1010,7 @@
           CNPJ / Comprovante de Venda<br>
           --------------------------------<br>
         </div>
-        Pedido: ${venda.id.substring(0, 8)}<br>
+        Pedido: #${venda.numeroFormatado || venda.id.substring(0, 8)}<br>
         Data: ${venda.dataTexto || new Date().toLocaleString('pt-BR')}<br>
         Cliente: ${venda.clienteNome}<br>
         Vendedor: ${venda.vendedor}<br>
@@ -972,16 +1033,21 @@
 
       let totalGeralFat = 0;
       let totalFiadoFat = 0;
+      let totalLucroBruto = 0;
 
       vendas.forEach(v => {
         totalGeralFat += (v.total || 0);
+        totalLucroBruto += (v.lucro || 0);
         if (v.formaPagamento === 'Fiado') {
           totalFiadoFat += (v.total || 0);
         }
 
+        const numPed = v.numeroFormatado || v.id.substring(0, 6);
+
         tbody.innerHTML += `
           <tr>
-            <td>${v.id.substring(0, 8)}<br><small>${v.dataTexto || ''}</small></td>
+            <td><b>#${numPed}</b></td>
+            <td><small>${v.dataTexto || ''}</small></td>
             <td>${v.clienteNome || 'Cliente'}</td>
             <td>${v.vendedor || '-'}</td>
             <td>${v.formaPagamento}</td>
@@ -997,6 +1063,7 @@
 
       document.getElementById('fatTotal').innerText = `R$ ${totalGeralFat.toFixed(2)}`;
       document.getElementById('fatFiado').innerText = `R$ ${totalFiadoFat.toFixed(2)}`;
+      document.getElementById('fatLucro').innerText = `R$ ${totalLucroBruto.toFixed(2)}`;
     }
 
     function reimprimirVenda(vendaId) {
@@ -1005,10 +1072,11 @@
     }
 
     function gerarTextoPedido(v) {
+      const numPed = v.numeroFormatado || v.id.substring(0, 6);
       const itensTexto = (v.itens || []).map(i => `• ${i.nome} (x${i.qtd}) - R$ ${i.subtotal.toFixed(2)}`).join('\n');
       return `*COMPROVANTE DE PEDIDO - DISTRIBUIDORA FRAZÃO*\n` +
              `--------------------------------\n` +
-             `📌 Pedido: #${v.id.substring(0, 8)}\n` +
+             `📌 Pedido: #${numPed}\n` +
              `📅 Data: ${v.dataTexto || ''}\n` +
              `👤 Cliente: ${v.clienteNome}\n` +
              `💼 Vendedor: ${v.vendedor}\n` +
@@ -1044,11 +1112,13 @@
     function gerarTextoRelatorioGeral() {
       let totalGeralFat = 0;
       let totalFiadoFat = 0;
+      let totalLucroBruto = 0;
       let qtdPedidos = vendas.length;
 
       const formas = {};
       vendas.forEach(v => {
         totalGeralFat += (v.total || 0);
+        totalLucroBruto += (v.lucro || 0);
         if (v.formaPagamento === 'Fiado') {
           totalFiadoFat += (v.total || 0);
         }
@@ -1067,7 +1137,8 @@
              `--------------------------------\n` +
              `📦 Total de Pedidos: ${qtdPedidos}\n` +
              `💰 Faturamento Total: R$ ${totalGeralFat.toFixed(2)}\n` +
-             `⚠️ Total em Fiado: R$ ${totalFiadoFat.toFixed(2)}\n\n` +
+             `⚠️ Total em Fiado: R$ ${totalFiadoFat.toFixed(2)}\n` +
+             `📈 Lucro Bruto Estimado: R$ ${totalLucroBruto.toFixed(2)}\n\n` +
              `*Por Forma de Pagamento:*\n` +
              `${formasTexto}` +
              `--------------------------------\n` +
@@ -1092,10 +1163,12 @@
     function imprimirRelatorioGeral() {
       let totalGeralFat = 0;
       let totalFiadoFat = 0;
+      let totalLucroBruto = 0;
       const formas = {};
 
       vendas.forEach(v => {
         totalGeralFat += (v.total || 0);
+        totalLucroBruto += (v.lucro || 0);
         if (v.formaPagamento === 'Fiado') totalFiadoFat += (v.total || 0);
         formas[v.formaPagamento] = (formas[v.formaPagamento] || 0) + (v.total || 0);
       });
@@ -1116,6 +1189,7 @@
         <b>Total de Pedidos:</b> ${vendas.length}<br>
         <b>Faturamento Total:</b> R$ ${totalGeralFat.toFixed(2)}<br>
         <b>Recebíveis em Fiado:</b> R$ ${totalFiadoFat.toFixed(2)}<br>
+        <b>Lucro Bruto:</b> R$ ${totalLucroBruto.toFixed(2)}<br>
         --------------------------------<br>
         <b>FORMAS DE PAGAMENTO:</b><br>
         ${formasHtml || 'Nenhum registro'}<br>

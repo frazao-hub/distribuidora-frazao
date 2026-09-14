@@ -60,7 +60,7 @@
     input:focus, select:focus { border-color: var(--secondary-color); }
     input[readonly] { background-color: #f1f5f9; cursor: not-allowed; }
 
-    .btn { padding: 9px 15px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn { padding: 8px 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.85rem; display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
     .btn-primary { background: var(--secondary-color); color: white; }
     .btn-primary:hover { background: #1d4ed8; }
     .btn-success { background: var(--success-color); color: white; }
@@ -359,6 +359,13 @@
           </div>
         </div>
 
+        <!-- BOTÕES DE AÇÃO: IMPRIMIR, COPIAR E WHATSAPP -->
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+          <button class="btn btn-primary" onclick="imprimirRelatorioGeral()">🖨️ Imprimir Relatório Geral</button>
+          <button class="btn btn-warning" onclick="copiarRelatorioGeral()">📋 Copiar Texto do Relatório</button>
+          <button class="btn btn-success" onclick="enviarWhatsAppRelatorioGeral()">💬 Compartilhar via WhatsApp</button>
+        </div>
+
         <h2>Histórico Geral de Pedidos</h2>
         <div class="table-responsive">
           <table>
@@ -369,7 +376,7 @@
                 <th>Vendedor</th>
                 <th>Pagamento</th>
                 <th>Total</th>
-                <th>Ações</th>
+                <th>Ações (Imprimir / Copiar / WhatsApp)</th>
               </tr>
             </thead>
             <tbody id="tabelaHistoricoVendas"></tbody>
@@ -437,10 +444,17 @@
         preencherSelectVendedorCliente();
       });
 
-      db.collection("vendas").orderBy("criadoEm", "desc").onSnapshot((snapshot) => {
+      // Removido .orderBy("criadoEm", "desc") para evitar erro de índice ausente no Firestore
+      db.collection("vendas").onSnapshot((snapshot) => {
         vendas = [];
         snapshot.forEach((doc) => {
           vendas.push({ id: doc.id, ...doc.data() });
+        });
+        // Ordena no cliente por timestamp ou data
+        vendas.sort((a, b) => {
+          const tA = a.criadoEm ? a.criadoEm.toMillis() : 0;
+          const tB = b.criadoEm ? b.criadoEm.toMillis() : 0;
+          return tB - tA;
         });
         renderizarRelatorios();
       });
@@ -801,20 +815,20 @@
 
       if (prod) {
         document.getElementById('carrinhoPreco').value = Number(prod.preco).toFixed(2);
-        infoDiv.innerText = `📦 ${prod.nome} — Estoque Disponível: ${prod.estoque} un.`;
+        infoDiv.innerHTML = `📦 <b>${prod.nome}</b> — Estoque Disponível: ${prod.estoque} un.`;
       } else {
-        infoDiv.innerText = "Selecione um produto";
+        infoDiv.innerHTML = "Selecione um produto";
       }
     }
 
-    // --- CARRINHO & VENDAS ---
+    // --- CARRINHO & PDV ---
     function adicionarAoCarrinho() {
       const prodId = document.getElementById('carrinhoProduto').value;
-      const preco = parseFloat(document.getElementById('carrinhoPreco').value);
+      const precoUn = parseFloat(document.getElementById('carrinhoPreco').value);
       const qtd = parseInt(document.getElementById('carrinhoQtd').value);
 
-      if (!prodId || isNaN(preco) || isNaN(qtd) || qtd <= 0) {
-        alert("Selecione um produto, informe o preço e uma quantidade válida.");
+      if (!prodId || isNaN(precoUn) || isNaN(qtd) || qtd <= 0) {
+        alert("Selecione um produto e informe quantidade e preço válidos.");
         return;
       }
 
@@ -829,9 +843,9 @@
       carrinho.push({
         id: prod.id,
         nome: prod.nome,
-        preco: preco,
+        preco: precoUn,
         qtd: qtd,
-        subtotal: preco * qtd
+        subtotal: precoUn * qtd
       });
 
       renderizarCarrinho();
@@ -845,96 +859,109 @@
     function renderizarCarrinho() {
       const tbody = document.getElementById('tabelaCarrinho');
       tbody.innerHTML = '';
-      let total = 0;
+      let totalGeral = 0;
 
       carrinho.forEach((item, index) => {
-        total += item.subtotal;
+        totalGeral += item.subtotal;
         tbody.innerHTML += `
           <tr>
             <td>${item.nome}</td>
             <td>${item.qtd}</td>
             <td>R$ ${item.preco.toFixed(2)}</td>
             <td>R$ ${item.subtotal.toFixed(2)}</td>
-            <td><button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.7rem;" onclick="removerDoCarrinho(${index})">Remover</button></td>
+            <td><button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.75rem;" onclick="removerDoCarrinho(${index})">Remover</button></td>
           </tr>
         `;
       });
 
-      document.getElementById('carrinhoTotal').innerText = `R$ ${total.toFixed(2)}`;
+      document.getElementById('carrinhoTotal').innerText = `R$ ${totalGeral.toFixed(2)}`;
     }
 
-    function finalizarPedido() {
-      const clienteId = document.getElementById('vendaCliente').value;
-      const formaPagamento = document.getElementById('vendaFormaPagamento').value;
-      const vendedorResp = document.getElementById('vendaVendedorResponsavel').value;
-
-      if (!clienteId || carrinho.length === 0) {
-        alert("Selecione um cliente e adicione produtos ao carrinho.");
+    async function finalizarPedido() {
+      if (carrinho.length === 0) {
+        alert("O carrinho está vazio!");
         return;
       }
 
-      const cliente = clientes.find(c => c.id === clienteId);
+      const clienteId = document.getElementById('vendaCliente').value;
+      const vendedorResp = document.getElementById('vendaVendedorResponsavel').value;
+      const formaPagamento = document.getElementById('vendaFormaPagamento').value;
+
+      const clienteObj = clientes.find(c => c.id === clienteId);
+      if (!clienteObj) {
+        alert("Selecione um cliente válido!");
+        return;
+      }
+
       const totalPedido = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
 
-      const novaVenda = {
-        clienteId: cliente.id,
-        clienteNome: cliente.nome,
-        vendedorResp: vendedorResp,
-        itens: [...carrinho],
-        formaPagamento: formaPagamento,
-        total: totalPedido,
-        criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-      };
+      try {
+        const batch = db.batch();
 
-      db.collection("vendas").add(novaVenda).then((docRef) => {
-        // Atualizar estoque
-        carrinho.forEach(item => {
-          const prod = produtos.find(p => p.id === item.id);
-          if (prod) {
-            const novoEstoque = prod.estoque - item.qtd;
-            db.collection("produtos").doc(prod.id).update({ estoque: novoEstoque });
+        for (const item of carrinho) {
+          const prodObj = produtos.find(p => p.id === item.id);
+          if (prodObj) {
+            const novoEstoque = Math.max(0, prodObj.estoque - item.qtd);
+            const prodRef = db.collection("produtos").doc(item.id);
+            batch.update(prodRef, { estoque: novoEstoque });
           }
-        });
-
-        // Se for Fiado, atualizar saldo devedor do cliente
-        if (formaPagamento === 'Fiado') {
-          const novoSaldo = (cliente.saldoDevedor || 0) + totalPedido;
-          db.collection("clientes").doc(cliente.id).update({ saldoDevedor: novoSaldo });
         }
 
-        alert("Pedido finalizado com sucesso!");
-        imprimirComprovante({ id: docRef.id, ...novaVenda });
+        if (formaPagamento === 'Fiado') {
+          const novoSaldo = (clienteObj.saldoDevedor || 0) + totalPedido;
+          const cliRef = db.collection("clientes").doc(clienteId);
+          batch.update(cliRef, { saldoDevedor: novoSaldo });
+        }
+
+        const vendaData = {
+          clienteId: clienteObj.id,
+          clienteNome: clienteObj.nome,
+          vendedor: vendedorResp,
+          formaPagamento: formaPagamento,
+          itens: carrinho,
+          total: totalPedido,
+          criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
+          dataTexto: new Date().toLocaleString('pt-BR')
+        };
+
+        const vendaRef = db.collection("vendas").doc();
+        batch.set(vendaRef, vendaData);
+
+        await batch.commit();
+
+        emitirComprovante({ id: vendaRef.id, ...vendaData });
 
         carrinho = [];
         renderizarCarrinho();
-      }).catch(err => alert("Erro ao finalizar pedido: " + err.message));
+        document.getElementById('carrinhoQtd').value = 1;
+        alert("Pedido finalizado com sucesso!");
+      } catch (err) {
+        alert("Erro ao finalizar pedido: " + err.message);
+      }
     }
 
-    function imprimirComprovante(venda) {
+    function emitirComprovante(venda) {
       const printArea = document.getElementById('print-area');
-      const dataStr = new Date().toLocaleString('pt-BR');
-      let itensHtml = '';
-      venda.itens.forEach(i => {
-        itensHtml += `<div>${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}</div>`;
-      });
-
+      const itensHtml = (venda.itens || []).map(i => `${i.nome} x${i.qtd} - R$ ${i.subtotal.toFixed(2)}`).join('<br>');
       printArea.innerHTML = `
-        <div style="text-align: center; font-weight: bold;">DISTRIBUIDORA FRAZÃO</div>
-        <div style="text-align: center;">CNPJ / São Gonçalo - RJ</div>
-        <hr style="border: dashed 1px black; margin: 5px 0;">
-        <div>Data: ${dataStr}</div>
-        <div>Pedido: ${venda.id}</div>
-        <div>Cliente: ${venda.clienteNome}</div>
-        <div>Vendedor: ${venda.vendedorResp}</div>
-        <hr style="border: dashed 1px black; margin: 5px 0;">
-        ${itensHtml}
-        <hr style="border: dashed 1px black; margin: 5px 0;">
-        <div style="font-weight: bold; text-align: right;">TOTAL: R$ ${venda.total.toFixed(2)}</div>
-        <div>Pagamento: ${venda.formaPagamento}</div>
-        <hr style="border: dashed 1px black; margin: 5px 0;">
-        <div style="text-align: center;">Obrigado pela preferência!</div>
+        <div style="text-align: center; font-weight: bold;">
+          DISTRIBUIDORA FRAZÃO<br>
+          CNPJ / Comprovante de Venda<br>
+          --------------------------------<br>
+        </div>
+        Pedido: ${venda.id.substring(0, 8)}<br>
+        Data: ${venda.dataTexto || new Date().toLocaleString('pt-BR')}<br>
+        Cliente: ${venda.clienteNome}<br>
+        Vendedor: ${venda.vendedor}<br>
+        Pagamento: ${venda.formaPagamento}<br>
+        --------------------------------<br>
+        ITENS:<br>
+        ${itensHtml}<br>
+        --------------------------------<br>
+        <b>TOTAL: R$ ${(venda.total || 0).toFixed(2)}</b><br>
+        --------------------------------<br>
+        Obrigado pela preferência!
       `;
-
       window.print();
     }
 
@@ -943,34 +970,159 @@
       if (!tbody) return;
       tbody.innerHTML = '';
 
-      let totalFaturamento = 0;
-      let totalFiado = 0;
-
-      clientes.forEach(c => {
-        totalFiado += (c.saldoDevedor || 0);
-      });
+      let totalGeralFat = 0;
+      let totalFiadoFat = 0;
 
       vendas.forEach(v => {
-        totalFaturamento += v.total;
-        const dataFormatada = v.criadoEm && v.criadoEm.toDate ? v.criadoEm.toDate().toLocaleDateString('pt-BR') : 'Data recente';
+        totalGeralFat += (v.total || 0);
+        if (v.formaPagamento === 'Fiado') {
+          totalFiadoFat += (v.total || 0);
+        }
+
         tbody.innerHTML += `
           <tr>
-            <td>${dataFormatada}</td>
-            <td>${v.clienteNome}</td>
-            <td>${v.vendedorResp}</td>
+            <td>${v.id.substring(0, 8)}<br><small>${v.dataTexto || ''}</small></td>
+            <td>${v.clienteNome || 'Cliente'}</td>
+            <td>${v.vendedor || '-'}</td>
             <td>${v.formaPagamento}</td>
-            <td>R$ ${v.total.toFixed(2)}</td>
-            <td>
-              <button class="btn btn-primary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="imprimirComprovante(${JSON.stringify(v).replace(/"/g, '&quot;')})">Reimprimir</button>
+            <td style="font-weight: bold;">R$ ${(v.total || 0).toFixed(2)}</td>
+            <td style="display: flex; gap: 4px; flex-wrap: wrap;">
+              <button class="btn btn-primary" onclick="reimprimirVenda('${v.id}')">🖨️ Imprimir</button>
+              <button class="btn btn-warning" onclick="copiarTextoVenda('${v.id}')">📋 Copiar</button>
+              <button class="btn btn-success" onclick="whatsappVenda('${v.id}')">💬 WhatsApp</button>
             </td>
           </tr>
         `;
       });
 
-      const elFatTotal = document.getElementById('fatTotal');
-      const elFatFiado = document.getElementById('fatFiado');
-      if (elFatTotal) elFatTotal.innerText = `R$ ${totalFaturamento.toFixed(2)}`;
-      if (elFatFiado) elFatFiado.innerText = `R$ ${totalFiado.toFixed(2)}`;
+      document.getElementById('fatTotal').innerText = `R$ ${totalGeralFat.toFixed(2)}`;
+      document.getElementById('fatFiado').innerText = `R$ ${totalFiadoFat.toFixed(2)}`;
+    }
+
+    function reimprimirVenda(vendaId) {
+      const venda = vendas.find(v => v.id === vendaId);
+      if (venda) emitirComprovante(venda);
+    }
+
+    function gerarTextoPedido(v) {
+      const itensTexto = (v.itens || []).map(i => `• ${i.nome} (x${i.qtd}) - R$ ${i.subtotal.toFixed(2)}`).join('\n');
+      return `*COMPROVANTE DE PEDIDO - DISTRIBUIDORA FRAZÃO*\n` +
+             `--------------------------------\n` +
+             `📌 Pedido: #${v.id.substring(0, 8)}\n` +
+             `📅 Data: ${v.dataTexto || ''}\n` +
+             `👤 Cliente: ${v.clienteNome}\n` +
+             `💼 Vendedor: ${v.vendedor}\n` +
+             `💳 Pagamento: ${v.formaPagamento}\n` +
+             `--------------------------------\n` +
+             `*ITENS DO PEDIDO:*\n` +
+             `${itensTexto}\n` +
+             `--------------------------------\n` +
+             `💰 *TOTAL: R$ ${(v.total || 0).toFixed(2)}*\n` +
+             `Obrigado pela preferência!`;
+    }
+
+    function copiarTextoVenda(vendaId) {
+      const venda = vendas.find(v => v.id === vendaId);
+      if (!venda) return;
+      const texto = gerarTextoPedido(venda);
+      navigator.clipboard.writeText(texto).then(() => {
+        alert("Comprovante copiado para a área de transferência!");
+      }).catch(err => {
+        alert("Erro ao copiar: " + err);
+      });
+    }
+
+    function whatsappVenda(vendaId) {
+      const venda = vendas.find(v => v.id === vendaId);
+      if (!venda) return;
+      const texto = encodeURIComponent(gerarTextoPedido(venda));
+      const url = `https://api.whatsapp.com/send?text=${texto}`;
+      window.open(url, '_blank');
+    }
+
+    // --- RELATÓRIO GERAL (ADMIN) ---
+    function gerarTextoRelatorioGeral() {
+      let totalGeralFat = 0;
+      let totalFiadoFat = 0;
+      let qtdPedidos = vendas.length;
+
+      const formas = {};
+      vendas.forEach(v => {
+        totalGeralFat += (v.total || 0);
+        if (v.formaPagamento === 'Fiado') {
+          totalFiadoFat += (v.total || 0);
+        }
+        formas[v.formaPagamento] = (formas[v.formaPagamento] || 0) + (v.total || 0);
+      });
+
+      let formasTexto = '';
+      for (const [forma, val] of Object.entries(formas)) {
+        formasTexto += `• ${forma}: R$ ${val.toFixed(2)}\n`;
+      }
+
+      const dataHoje = new Date().toLocaleDateString('pt-BR');
+
+      return `*RELATÓRIO GERAL DE VENDAS - DISTRIBUIDORA FRAZÃO*\n` +
+             `Data de Emissão: ${dataHoje}\n` +
+             `--------------------------------\n` +
+             `📦 Total de Pedidos: ${qtdPedidos}\n` +
+             `💰 Faturamento Total: R$ ${totalGeralFat.toFixed(2)}\n` +
+             `⚠️ Total em Fiado: R$ ${totalFiadoFat.toFixed(2)}\n\n` +
+             `*Por Forma de Pagamento:*\n` +
+             `${formasTexto}` +
+             `--------------------------------\n` +
+             `Gerado pelo Sistema Distribuidora Frazão`;
+    }
+
+    function copiarRelatorioGeral() {
+      const texto = gerarTextoRelatorioGeral();
+      navigator.clipboard.writeText(texto).then(() => {
+        alert("Relatório geral copiado para a área de transferência!");
+      }).catch(err => {
+        alert("Erro ao copiar o relatório: " + err);
+      });
+    }
+
+    function enviarWhatsAppRelatorioGeral() {
+      const texto = encodeURIComponent(gerarTextoRelatorioGeral());
+      const url = `https://api.whatsapp.com/send?text=${texto}`;
+      window.open(url, '_blank');
+    }
+
+    function imprimirRelatorioGeral() {
+      let totalGeralFat = 0;
+      let totalFiadoFat = 0;
+      const formas = {};
+
+      vendas.forEach(v => {
+        totalGeralFat += (v.total || 0);
+        if (v.formaPagamento === 'Fiado') totalFiadoFat += (v.total || 0);
+        formas[v.formaPagamento] = (formas[v.formaPagamento] || 0) + (v.total || 0);
+      });
+
+      let formasHtml = '';
+      for (const [forma, val] of Object.entries(formas)) {
+        formasHtml += `${forma}: R$ ${val.toFixed(2)}<br>`;
+      }
+
+      const printArea = document.getElementById('print-area');
+      printArea.innerHTML = `
+        <div style="text-align: center; font-weight: bold;">
+          DISTRIBUIDORA FRAZÃO<br>
+          RELATÓRIO GERAL DE VENDAS<br>
+          Emitido em: ${new Date().toLocaleString('pt-BR')}<br>
+          --------------------------------<br>
+        </div>
+        <b>Total de Pedidos:</b> ${vendas.length}<br>
+        <b>Faturamento Total:</b> R$ ${totalGeralFat.toFixed(2)}<br>
+        <b>Recebíveis em Fiado:</b> R$ ${totalFiadoFat.toFixed(2)}<br>
+        --------------------------------<br>
+        <b>FORMAS DE PAGAMENTO:</b><br>
+        ${formasHtml || 'Nenhum registro'}<br>
+        --------------------------------<br>
+        Documento restrito ao Administrador.
+      `;
+      window.print();
     }
   </script>
 </body>

@@ -822,6 +822,11 @@
 
     // --- PRODUTOS E ESTOQUE ---
     function salvarProduto() {
+      if (usuarioLogado && usuarioLogado.tipo !== 'admin') {
+        alert("Apenas o Administrador pode cadastrar ou editar produtos.");
+        return;
+      }
+
       const docId = document.getElementById('prodDocId').value;
       const nome = document.getElementById('prodNome').value.trim();
       const categoria = document.getElementById('prodCategoria').value;
@@ -855,6 +860,7 @@
     }
 
     function editarProduto(id) {
+      if (usuarioLogado && usuarioLogado.tipo !== 'admin') return;
       const p = produtos.find(prod => prod.id === id);
       if (!p) return;
       document.getElementById('prodDocId').value = p.id;
@@ -874,6 +880,10 @@
     }
 
     function excluirProduto(id) {
+      if (usuarioLogado && usuarioLogado.tipo !== 'admin') {
+        alert("Apenas o Administrador pode excluir produtos.");
+        return;
+      }
       if (confirm("Deseja excluir este produto do estoque?")) {
         db.collection("produtos").doc(id).delete();
       }
@@ -900,7 +910,7 @@
             <td>${p.categoria || ''}</td>
             <td>R$ ${(p.custo || 0).toFixed(2)}</td>
             <td>R$ ${(p.preco || 0).toFixed(2)}</td>
-            <td>${p.estoque || 0}</td>
+            <td style="font-weight: bold; color: ${p.estoque < 0 ? 'var(--danger-color)' : 'inherit'}">${p.estoque || 0}</td>
             ${isAdmin ? `
               <td>
                 <button class="btn btn-warning" style="padding: 3px 6px; font-size: 0.7rem;" onclick="editarProduto('${p.id}')">Editar</button>
@@ -959,12 +969,7 @@
       const precoVenda = parseFloat(document.getElementById('carrinhoPreco').value) || 0;
       const qtd = parseInt(document.getElementById('carrinhoQtd').value) || 1;
 
-      if (qtd > (produtoObj.estoque || 0)) {
-        if (!confirm(`A quantidade solicitada (${qtd}) é maior que o estoque atual (${produtoObj.estoque}). Deseja continuar mesmo assim?`)) {
-          return;
-        }
-      }
-
+      // REMOVIDO A TRAVA DE ESTOQUE INSUFICIENTE: Permite venda negativa
       carrinho.push({
         produtoId: produtoObj.id,
         nome: produtoObj.nome,
@@ -1038,11 +1043,11 @@
       };
 
       db.collection("vendas").add(dadosVenda).then((docRef) => {
-        // Atualizar estoque dos produtos
+        // Baixa no estoque permitindo valores negativos (ex: 0 - 1 = -1)
         carrinho.forEach(item => {
           const pObj = produtos.find(p => p.id === item.produtoId);
           if (pObj) {
-            const novoEstoque = Math.max(0, (pObj.estoque || 0) - item.qtd);
+            const novoEstoque = (pObj.estoque || 0) - item.qtd;
             db.collection("produtos").doc(item.produtoId).update({ estoque: novoEstoque });
           }
         });

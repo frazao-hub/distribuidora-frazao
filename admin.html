@@ -201,11 +201,20 @@
         </div>
 
         <h3 style="font-size: 0.95rem; color: var(--primary-color); margin-bottom: 8px;">Adicionar Produtos ao Carrinho</h3>
-        <div style="display: grid; grid-template-columns: 2fr 1fr auto auto; gap: 8px; align-items: end;">
+        
+        <!-- CAMPO DE PESQUISA (LUPA) E SELEÇÃO DE PRODUTOS POR CATEGORIA -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-bottom: 8px;">
           <div class="form-group">
-            <label for="carrinhoProduto">Produto do Estoque:</label>
+            <label for="filtroBuscaProduto">🔍 Pesquisar Produto:</label>
+            <input type="text" id="filtroBuscaProduto" placeholder="Digite para filtrar produtos..." oninput="carregarSelectProdutos()">
+          </div>
+          <div class="form-group">
+            <label for="carrinhoProduto">Produto do Estoque (Agrupado por Categoria):</label>
             <select id="carrinhoProduto" onchange="carregarDetalhesProduto()"></select>
           </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: end;">
           <div class="form-group">
             <label for="carrinhoPreco">Preço Venda (R$):</label>
             <input type="number" id="carrinhoPreco" step="0.01">
@@ -968,11 +977,42 @@
 
     function carregarSelectProdutos() {
       const select = document.getElementById('carrinhoProduto');
+      const inputBusca = document.getElementById('filtroBuscaProduto');
       if (!select) return;
-      select.innerHTML = '<option value="">Selecione um produto</option>';
-      produtos.forEach(p => {
-        select.innerHTML += `<option value="${p.id}">${p.nome} (Estoque: ${p.estoque} un.) - R$ ${(p.precoVenda || 0).toFixed(2)}</option>`;
+
+      const termoBusca = inputBusca ? inputBusca.value.trim().toLowerCase() : '';
+
+      // Filtra produtos conforme a lupa
+      const produtosFiltrados = produtos.filter(p => {
+        if (!termoBusca) return true;
+        return (p.nome && p.nome.toLowerCase().includes(termoBusca)) || 
+               (p.categoria && p.categoria.toLowerCase().includes(termoBusca));
       });
+
+      // Agrupa os produtos por Categoria
+      const agrupados = {};
+      produtosFiltrados.forEach(p => {
+        const cat = p.categoria || 'Sem Categoria';
+        if (!agrupados[cat]) agrupados[cat] = [];
+        agrupados[cat].push(p);
+      });
+
+      select.innerHTML = '<option value="">Selecione um produto</option>';
+
+      for (const categoria in agrupados) {
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = categoria;
+
+        agrupados[categoria].forEach(p => {
+          const option = document.createElement('option');
+          option.value = p.id;
+          option.textContent = `${p.nome} (Estoque: ${p.estoque} un.) - R$ ${(p.precoVenda || 0).toFixed(2)}`;
+          optgroup.appendChild(option);
+        });
+
+        select.appendChild(optgroup);
+      }
+
       carregarDetalhesProduto();
     }
 
@@ -1148,7 +1188,7 @@
       });
     }
 
-    // --- IMPRESSÃO DE COMPROVANTE ---
+    // --- IMPRESSÃO E COMPARTILHAMENTO DE PEDIDOS ---
     function imprimirComprovante(venda) {
       const printArea = document.getElementById('print-area');
       const dataFormatada = new Date(venda.data).toLocaleString('pt-BR');
@@ -1182,6 +1222,42 @@
     function reimprimirPedido(vendaId) {
       const v = vendas.find(item => item.id === vendaId);
       if (v) imprimirComprovante(v);
+    }
+
+    function copiarTextoPedido(vendaId) {
+      const v = vendas.find(item => item.id === vendaId);
+      if (!v) return;
+      const dataFormatada = new Date(v.data).toLocaleString('pt-BR');
+      let texto = `📦 *Pedido #${v.numeroSequencial} - Distribuidora Frazão*\n`;
+      texto += `📅 Data: ${dataFormatada}\n`;
+      texto += `👤 Cliente: ${v.clienteNome}\n`;
+      texto += `🤝 Vendedor: ${v.vendedorResponsavel}\n`;
+      texto += `💳 Pagamento: ${v.formaPagamento}\n\n*Itens:* \n`;
+      v.itens.forEach(i => {
+        texto += `• ${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}\n`;
+      });
+      texto += `\n💰 *TOTAL: R$ ${v.total.toFixed(2)}*`;
+
+      navigator.clipboard.writeText(texto).then(() => {
+        alert("Resumo do pedido copiado para a área de transferência!");
+      }).catch(err => alert("Erro ao copiar: " + err.message));
+    }
+
+    function enviarWhatsAppPedido(vendaId) {
+      const v = vendas.find(item => item.id === vendaId);
+      if (!v) return;
+      const dataFormatada = new Date(v.data).toLocaleString('pt-BR');
+      let texto = `📦 *Pedido #${v.numeroSequencial} - Distribuidora Frazão*%0A`;
+      texto += `📅 Data: ${dataFormatada}%0A`;
+      texto += `👤 Cliente: ${v.clienteNome}%0A`;
+      texto += `🤝 Vendedor: ${v.vendedorResponsavel}%0A`;
+      texto += `💳 Pagamento: ${v.formaPagamento}%0A%0A*Itens:*%0A`;
+      v.itens.forEach(i => {
+        texto += `• ${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}%0A`;
+      });
+      texto += `%0A💰 *TOTAL: R$ ${v.total.toFixed(2)}*`;
+
+      window.open(`https://api.whatsapp.com/send?text=${texto}`, '_blank');
     }
 
     function excluirPedido(vendaId) {
@@ -1230,8 +1306,10 @@
             <td>${v.formaPagamento}</td>
             <td style="font-weight: bold; color: var(--success-color);">R$ ${(v.total || 0).toFixed(2)}</td>
             <td>
-              <button class="btn btn-primary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="reimprimirPedido('${v.id}')">🖨️</button>
-              <button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.65rem;" onclick="excluirPedido('${v.id}')">X</button>
+              <button class="btn btn-primary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="reimprimirPedido('${v.id}')" title="Imprimir">🖨️</button>
+              <button class="btn btn-warning" style="padding: 2px 5px; font-size: 0.65rem;" onclick="copiarTextoPedido('${v.id}')" title="Copiar Texto">📋</button>
+              <button class="btn btn-success" style="padding: 2px 5px; font-size: 0.65rem;" onclick="enviarWhatsAppPedido('${v.id}')" title="Enviar WhatsApp">💬</button>
+              <button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.65rem;" onclick="excluirPedido('${v.id}')" title="Excluir">X</button>
             </td>
           </tr>
         `;

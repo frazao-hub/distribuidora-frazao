@@ -429,10 +429,17 @@
     <!-- ABA 5: RELATÓRIOS (EXCLUSIVO ADMIN) -->
     <div id="relatoriosTab" class="tab-content">
       <div class="card admin-only">
-        <h2>Resumo de Faturamento e Vendas</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+          <h2 style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">Resumo de Faturamento e Vendas</h2>
+          <div class="form-group" style="min-width: 180px;">
+            <label for="filtroMesRelatorio" style="font-size: 0.75rem;">Filtrar Mês/Ano:</label>
+            <input type="month" id="filtroMesRelatorio" onchange="renderizarRelatorios()" style="padding: 5px; font-size: 0.85rem;">
+          </div>
+        </div>
+
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 15px;">
           <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; border: 1px solid #bae6fd;">
-            <span style="font-size: 0.75rem; color: #0369a1; font-weight: bold;">FATURAMENTO TOTAL</span>
+            <span style="font-size: 0.75rem; color: #0369a1; font-weight: bold;">FATURAMENTO MENSAL</span>
             <p id="fatTotal" style="font-size: 1.25rem; font-weight: bold; color: var(--primary-color);">R$ 0,00</p>
           </div>
           <div style="background: #fef3c7; padding: 12px; border-radius: 8px; border: 1px solid #fde68a;">
@@ -440,7 +447,7 @@
             <p id="fatFiado" style="font-size: 1.25rem; font-weight: bold; color: var(--warning-color);">R$ 0,00</p>
           </div>
           <div style="background: #dcfce7; padding: 12px; border-radius: 8px; border: 1px solid #bbf7d0;">
-            <span style="font-size: 0.75rem; color: #15803d; font-weight: bold;">LUCRO BRUTO ESTIMADO</span>
+            <span style="font-size: 0.75rem; color: #15803d; font-weight: bold;">LUCRO BRUTO MENSAL</span>
             <p id="fatLucro" style="font-size: 1.25rem; font-weight: bold; color: var(--success-color);">R$ 0,00</p>
           </div>
         </div>
@@ -451,7 +458,7 @@
           <button class="btn btn-success" onclick="enviarWhatsAppRelatorioGeral()">💬 Compartilhar via WhatsApp</button>
         </div>
 
-        <h2>Histórico Geral de Pedidos</h2>
+        <h2>Histórico de Pedidos do Mês</h2>
         <div class="table-responsive">
           <table>
             <thead>
@@ -501,6 +508,14 @@
 
     window.onload = function() {
       iniciarFirestore();
+      // Inicializar o input de filtro de mês com o mês atual (YYYY-MM)
+      const inputMes = document.getElementById('filtroMesRelatorio');
+      if (inputMes) {
+        const hoje = new Date();
+        const ano = hoje.getFullYear();
+        const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+        inputMes.value = `${ano}-${mes}`;
+      }
     };
 
     function iniciarFirestore() {
@@ -795,94 +810,88 @@
     }
 
     function abaterDivida(clienteId) {
-      if (!usuarioLogado || usuarioLogado.tipo !== 'admin') {
-        alert("Apenas o Administrador Master pode abater dívidas!");
-        return;
-      }
-
       const cliente = clientes.find(c => c.id === clienteId);
       if (!cliente) return;
-
-      const valorStr = prompt(`Qual o valor a abater da dívida de ${cliente.nome}? (Saldo atual: R$ ${(cliente.saldoDevedor || 0).toFixed(2)})`);
-      if (valorStr === null) return;
-
-      const valorAbate = parseFloat(valorStr.replace(',', '.'));
-      if (isNaN(valorAbate) || valorAbate <= 0) {
-        alert("Digite um valor válido para o abatimento!");
-        return;
+      
+      const valorAtual = cliente.saldoDevedor || 0;
+      const inputVal = prompt(`Cliente: ${cliente.nome}\nSaldo Devedor Atual: R$ ${valorAtual.toFixed(2)}\n\nDigite o valor do abatimento (pagamento recebido):`, valorAtual.toFixed(2));
+      
+      if (inputVal !== null) {
+        const valorAbate = parseFloat(inputVal.replace(',', '.'));
+        if (isNaN(valorAbate) || valorAbate <= 0) {
+          alert("Digite um valor válido para o abatimento.");
+          return;
+        }
+        
+        const novoSaldo = Math.max(0, valorAtual - valorAbate);
+        db.collection("clientes").doc(clienteId).update({
+          saldoDevedor: novoSaldo
+        }).then(() => {
+          alert(`Abatimento registrado com sucesso! Novo saldo devedor: R$ ${novoSaldo.toFixed(2)}`);
+        }).catch(err => alert("Erro ao atualizar dívida: " + err.message));
       }
-
-      const novoSaldo = Math.max(0, (cliente.saldoDevedor || 0) - valorAbate);
-
-      db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo })
-        .then(() => alert("Dívida abatida com sucesso!"))
-        .catch(err => alert("Erro ao abater dívida: " + err.message));
     }
 
-    function excluirCliente(clienteId) {
-      if (!usuarioLogado || usuarioLogado.tipo !== 'admin') {
-        alert("Apenas o Administrador Master pode excluir clientes!");
-        return;
-      }
+    function excluirCliente(id) {
       if (confirm("Deseja realmente excluir este cliente?")) {
-        db.collection("clientes").doc(clienteId).delete()
-          .catch(err => alert("Erro ao excluir cliente: " + err.message));
+        db.collection("clientes").doc(id).delete();
       }
     }
 
-    // --- PRODUTOS ---
+    // --- PRODUTOS & ESTOQUE ---
     function salvarProduto() {
       const docId = document.getElementById('prodDocId').value;
       const nome = document.getElementById('prodNome').value.trim();
       const categoria = document.getElementById('prodCategoria').value;
-      const custo = parseFloat(document.getElementById('prodCusto').value);
-      const preco = parseFloat(document.getElementById('prodPreco').value);
+      const precoCusto = parseFloat(document.getElementById('prodCusto').value);
+      const precoVenda = parseFloat(document.getElementById('prodPreco').value);
       const estoque = parseInt(document.getElementById('prodEstoque').value);
       const imagem = document.getElementById('prodImagem').value.trim();
 
-      if (!nome || isNaN(custo) || isNaN(preco) || isNaN(estoque)) {
+      if (!nome || isNaN(precoCusto) || isNaN(precoVenda) || isNaN(estoque)) {
         alert("Preencha todos os campos obrigatórios do produto!");
         return;
       }
 
-      const dadosProduto = { nome, categoria, custo, preco, estoque, imagem };
+      const dadosProd = { nome, categoria, precoCusto, precoVenda, estoque, imagem: imagem || '' };
 
       if (docId) {
-        db.collection("produtos").doc(docId).update(dadosProduto)
-          .then(() => {
-            limparFormProduto();
-            alert("Produto atualizado com sucesso!");
-          });
+        db.collection("produtos").doc(docId).update(dadosProd).then(() => {
+          alert("Produto atualizado com sucesso!");
+          limparFormProduto();
+        });
       } else {
-        db.collection("produtos").add(dadosProduto)
-          .then(() => {
-            limparFormProduto();
-            alert("Produto cadastrado com sucesso!");
-          });
-      }
-    }
-
-    function editarProduto(id) {
-      const p = produtos.find(item => item.id === id);
-      if (!p) return;
-      document.getElementById('prodDocId').value = p.id;
-      document.getElementById('prodNome').value = p.nome || '';
-      document.getElementById('prodCategoria').value = p.categoria || 'Mercearia';
-      document.getElementById('prodCusto').value = p.custo || '';
-      document.getElementById('prodPreco').value = p.preco || '';
-      document.getElementById('prodEstoque').value = p.estoque || '';
-      document.getElementById('prodImagem').value = p.imagem || '';
-    }
-
-    function excluirProduto(id) {
-      if (confirm("Deseja excluir este produto do estoque?")) {
-        db.collection("produtos").doc(id).delete();
+        db.collection("produtos").add(dadosProd).then(() => {
+          alert("Produto cadastrado com sucesso!");
+          limparFormProduto();
+        });
       }
     }
 
     function limparFormProduto() {
       document.getElementById('formProduto').reset();
       document.getElementById('prodDocId').value = '';
+      document.getElementById('tituloFormProd').innerText = "Cadastrar / Editar Produto no Estoque";
+    }
+
+    function editarProduto(id) {
+      const p = produtos.find(item => item.id === id);
+      if (!p) return;
+      document.getElementById('prodDocId').value = p.id;
+      document.getElementById('prodNome').value = p.nome;
+      document.getElementById('prodCategoria').value = p.categoria;
+      document.getElementById('prodCusto').value = p.precoCusto;
+      document.getElementById('prodPreco').value = p.precoVenda;
+      document.getElementById('prodEstoque').value = p.estoque;
+      document.getElementById('prodImagem').value = p.imagem || '';
+      document.getElementById('tituloFormProd').innerText = `Editando: ${p.nome}`;
+      switchTab('produtosTab');
+    }
+
+    function excluirProduto(id) {
+      if (confirm("Deseja realmente excluir este produto do estoque?")) {
+        db.collection("produtos").doc(id).delete();
+      }
     }
 
     function renderizarProdutos() {
@@ -891,28 +900,26 @@
       tbody.innerHTML = '';
 
       const isAdmin = usuarioLogado && usuarioLogado.tipo === 'admin';
+      
+      // Ajustar visibilidade da coluna de custo conforme permissão
       const thCusto = document.getElementById('thCustoProduto');
       const thAcao = document.getElementById('thAcaoProduto');
-
       if (thCusto) thCusto.style.display = isAdmin ? '' : 'none';
       if (thAcao) thAcao.style.display = isAdmin ? '' : 'none';
 
       produtos.forEach(p => {
-        const imgHtml = p.imagem ? `<img src="${p.imagem}" class="product-thumb" alt="prod">` : `<div class="product-thumb" style="display:flex;align-items:center;justify-content:center;font-size:0.6rem;">Sem foto</div>`;
         tbody.innerHTML += `
           <tr>
-            <td>${imgHtml}</td>
-            <td><strong>${p.nome}</strong></td>
+            <td><img src="${p.imagem || 'https://via.placeholder.com/38'}" class="product-thumb" alt="Img"></td>
+            <td><strong>${p.nome}</strong><br><small style="color:#64748b">${p.categoria}</small></td>
             <td>${p.categoria}</td>
-            ${isAdmin ? `<td>R$ ${(p.custo || 0).toFixed(2)}</td>` : ''}
-            <td>R$ ${(p.preco || 0).toFixed(2)}</td>
-            <td>${p.estoque}</td>
-            ${isAdmin ? `
-              <td>
-                <button class="btn btn-warning" style="padding: 3px 6px; font-size: 0.7rem;" onclick="editarProduto('${p.id}')">Editar</button>
-                <button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.7rem;" onclick="excluirProduto('${p.id}')">Excluir</button>
-              </td>
-            ` : ''}
+            <td style="display: ${isAdmin ? '' : 'none'}">R$ ${(p.precoCusto || 0).toFixed(2)}</td>
+            <td style="color: var(--success-color); font-weight: bold;">R$ ${(p.precoVenda || 0).toFixed(2)}</td>
+            <td>${p.estoque} un.</td>
+            <td style="display: ${isAdmin ? '' : 'none'}">
+              <button class="btn btn-warning" style="padding: 3px 6px; font-size: 0.7rem;" onclick="editarProduto('${p.id}')">Editar</button>
+              <button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.7rem;" onclick="excluirProduto('${p.id}')">Excluir</button>
+            </td>
           </tr>
         `;
       });
@@ -921,68 +928,83 @@
     function carregarSelectProdutos() {
       const select = document.getElementById('carrinhoProduto');
       if (!select) return;
-      select.innerHTML = '<option value="">Selecione um produto...</option>';
+      select.innerHTML = '<option value="">Selecione um produto</option>';
       produtos.forEach(p => {
-        select.innerHTML += `<option value="${p.id}" data-preco="${p.preco}" data-estoque="${p.estoque}">${p.nome} (Estoque: ${p.estoque}) - R$ ${(p.preco || 0).toFixed(2)}</option>`;
+        select.innerHTML += `<option value="${p.id}">${p.nome} (Estoque: ${p.estoque} un.) - R$ ${(p.precoVenda || 0).toFixed(2)}</option>`;
       });
       carregarDetalhesProduto();
     }
 
     function carregarDetalhesProduto() {
-      const select = document.getElementById('carrinhoProduto');
+      const selectId = document.getElementById('carrinhoProduto').value;
       const inputPreco = document.getElementById('carrinhoPreco');
-      const previewEstoque = document.getElementById('previewEstoqueProd');
-      const option = select.selectedOptions[0];
-
-      if (!option || !option.value) {
+      const infoDiv = document.getElementById('previewEstoqueProd');
+      
+      const p = produtos.find(item => item.id === selectId);
+      if (p) {
+        inputPreco.value = p.precoVenda;
+        infoDiv.innerHTML = `Produto: <strong>${p.nome}</strong> | Disponível em estoque: <strong>${p.estoque} unidades</strong>`;
+      } else {
         inputPreco.value = '';
-        previewEstoque.innerText = 'Selecione um produto';
-        return;
+        infoDiv.innerHTML = 'Selecione um produto';
       }
-
-      const preco = option.getAttribute('data-preco');
-      const estoque = option.getAttribute('data-estoque');
-      inputPreco.value = preco;
-      previewEstoque.innerText = `Disponível em estoque: ${estoque} unidades`;
     }
 
-    function alterarQtdInput(delta) {
-      const input = document.getElementById('carrinhoQtd');
-      let val = parseInt(input.value) || 1;
-      val += delta;
-      if (val < 1) val = 1;
-      input.value = val;
+    function alterarQtdInput(valor) {
+      const inputQtd = document.getElementById('carrinhoQtd');
+      let atual = parseInt(inputQtd.value) || 1;
+      atual += valor;
+      if (atual < 1) atual = 1;
+      inputQtd.value = atual;
     }
 
+    // --- CARRINHO & PDV ---
     function adicionarAoCarrinho() {
-      const select = document.getElementById('carrinhoProduto');
-      const option = select.selectedOptions[0];
-      if (!option || !option.value) {
-        alert("Selecione um produto!");
-        return;
-      }
-
-      const prodId = option.value;
-      const produto = produtos.find(p => p.id === prodId);
+      const prodId = document.getElementById('carrinhoProduto').value;
       const precoVenda = parseFloat(document.getElementById('carrinhoPreco').value);
       const qtd = parseInt(document.getElementById('carrinhoQtd').value);
 
-      if (isNaN(precoVenda) || isNaN(qtd) || qtd <= 0) {
-        alert("Informe um preço e uma quantidade válidos!");
+      if (!prodId) {
+        alert("Selecione um produto!");
+        return;
+      }
+      const p = produtos.find(item => item.id === prodId);
+      if (!p) return;
+
+      if (isNaN(precoVenda) || precoVenda < 0) {
+        alert("Informe um preço de venda válido.");
+        return;
+      }
+      if (isNaN(qtd) || qtd <= 0) {
+        alert("Informe uma quantidade válida.");
         return;
       }
 
-      carrinho.push({
-        id: produto.id,
-        nome: produto.nome,
-        custo: produto.custo || 0,
-        preco: precoVenda,
-        qtd: qtd,
-        subtotal: precoVenda * qtd
-      });
+      if (qtd > p.estoque) {
+        alert(`Quantidade indisponível em estoque! Estoque atual: ${p.estoque} unidades.`);
+        return;
+      }
+
+      const itemExistente = carrinho.find(item => item.id === prodId);
+      if (itemExistente) {
+        if ((itemExistente.qtd + qtd) > p.estoque) {
+          alert("A quantidade total no carrinho excede o estoque disponível.");
+          return;
+        }
+        itemExistente.qtd += qtd;
+        itemExistente.subtotal = itemExistente.qtd * itemExistente.precoVenda;
+      } else {
+        carrinho.push({
+          id: p.id,
+          nome: p.nome,
+          precoCusto: p.precoCusto || 0,
+          precoVenda: precoVenda,
+          qtd: qtd,
+          subtotal: precoVenda * qtd
+        });
+      }
 
       renderizarCarrinho();
-      document.getElementById('carrinhoQtd').value = 1;
     }
 
     function removerDoCarrinho(index) {
@@ -993,6 +1015,8 @@
     function renderizarCarrinho() {
       const tbody = document.getElementById('tabelaCarrinho');
       const totalSpan = document.getElementById('carrinhoTotal');
+      if (!tbody) return;
+
       tbody.innerHTML = '';
       let totalGeral = 0;
 
@@ -1002,9 +1026,9 @@
           <tr>
             <td>${item.nome}</td>
             <td>${item.qtd}</td>
-            <td>R$ ${item.preco.toFixed(2)}</td>
+            <td>R$ ${item.precoVenda.toFixed(2)}</td>
             <td>R$ ${item.subtotal.toFixed(2)}</td>
-            <td><button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.65rem;" onclick="removerDoCarrinho(${index})">Remover</button></td>
+            <td><button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.65rem;" onclick="removerDoCarrinho(${index})">X</button></td>
           </tr>
         `;
       });
@@ -1012,134 +1036,235 @@
       totalSpan.innerText = `R$ ${totalGeral.toFixed(2)}`;
     }
 
-    async function finalizarPedido() {
+    function finalizarPedido() {
       if (carrinho.length === 0) {
         alert("O carrinho está vazio!");
         return;
       }
 
       const clienteId = document.getElementById('vendaCliente').value;
-      const formaPagamento = document.getElementById('vendaFormaPagamento').value;
-      const vendedorResp = usuarioLogado ? usuarioLogado.nome : 'Administrador Master';
-
       if (!clienteId) {
         alert("Selecione um cliente para o pedido!");
         return;
       }
 
       const clienteObj = clientes.find(c => c.id === clienteId);
-      const totalPedido = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
+      const formaPagamento = document.getElementById('vendaFormaPagamento').value;
+      const vendedorResp = usuarioLogado ? usuarioLogado.nome : 'Administrador Master';
 
-      // Gerar número sequencial baseado no total de vendas
-      const numSequencial = vendas.length + 1;
-      const dataAtual = new Date();
+      let totalPedido = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
+      let totalCusto = carrinho.reduce((acc, item) => acc + (item.precoCusto * item.qtd), 0);
+      let lucroPedido = totalPedido - totalCusto;
 
-      const novaVenda = {
-        numeroSequencial: numSequencial,
-        data: dataAtual.toISOString(),
-        clienteId: clienteObj.id,
-        clienteNome: clienteObj.nome,
+      // Gerar número sequencial baseado na quantidade de vendas existentes
+      const numeroSequencial = vendas.length + 1;
+      const dataAtual = new Date().toISOString();
+
+      const batch = db.batch();
+
+      // 1. Atualizar estoque dos produtos
+      carrinho.forEach(item => {
+        const prodRef = db.collection("produtos").doc(item.id);
+        const prodOriginal = produtos.find(p => p.id === item.id);
+        const novoEstoque = Math.max(0, (prodOriginal ? prodOriginal.estoque : 0) - item.qtd);
+        batch.update(prodRef, { estoque: novoEstoque });
+      });
+
+      // 2. Se for fiado, atualizar o saldo devedor do cliente
+      if (formaPagamento === 'Fiado' && clienteObj) {
+        const cliRef = db.collection("clientes").doc(clienteId);
+        const novoSaldo = (clienteObj.saldoDevedor || 0) + totalPedido;
+        batch.update(cliRef, { saldoDevedor: novoSaldo });
+      }
+
+      // 3. Registrar a venda
+      const vendaRef = db.collection("vendas").doc();
+      batch.set(vendaRef, {
+        numeroSequencial,
+        data: dataAtual,
+        clienteId,
+        clienteNome: clienteObj ? clienteObj.nome : 'Cliente Desconhecido',
         vendedorResponsavel: vendedorResp,
-        formaPagamento: formaPagamento,
         itens: carrinho,
-        total: totalPedido
-      };
+        formaPagamento,
+        total: totalPedido,
+        lucro: lucroPedido
+      });
 
-      try {
-        await db.collection("vendas").add(novaVenda);
+      batch.commit().then(() => {
+        alert(`Pedido #${numeroSequencial} finalizado com sucesso!`);
+        imprimirComprovante({
+          numeroSequencial,
+          data: dataAtual,
+          clienteNome: clienteObj ? clienteObj.nome : 'Cliente',
+          vendedorResponsavel: vendedorResp,
+          itens: carrinho,
+          formaPagamento,
+          total: totalPedido
+        });
 
-        // Atualizar estoque dos produtos
-        for (const item of carrinho) {
-          const prodObj = produtos.find(p => p.id === item.id);
-          if (prodObj) {
-            const novoEstoque = Math.max(0, (prodObj.estoque || 0) - item.qtd);
-            await db.collection("produtos").doc(item.id).update({ estoque: novoEstoque });
-          }
-        }
-
-        // Se for Fiado, atualizar o saldo devedor do cliente
-        if (formaPagamento === 'Fiado') {
-          const novoSaldo = (clienteObj.saldoDevedor || 0) + totalPedido;
-          await db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo });
-        }
-
-        alert(`Pedido #${numSequencial} finalizado com sucesso!`);
+        // Limpar carrinho
         carrinho = [];
         renderizarCarrinho();
-      } catch (err) {
+        carregarSelectProdutos();
+      }).catch(err => {
         alert("Erro ao finalizar pedido: " + err.message);
+      });
+    }
+
+    // --- IMPRESSÃO DE COMPROVANTE ---
+    function imprimirComprovante(venda) {
+      const printArea = document.getElementById('print-area');
+      const dataFormatada = new Date(venda.data).toLocaleString('pt-BR');
+
+      let itensHtml = '';
+      venda.itens.forEach(i => {
+        itensHtml += `${i.nome}\n  ${i.qtd}x R$ ${i.precoVenda.toFixed(2)} = R$ ${i.subtotal.toFixed(2)}\n`;
+      });
+
+      printArea.innerHTML = `
+        <div style="text-align: center; font-weight: bold; font-size: 13px;">DISTRIBUIDORA FRAZÃO</div>
+        <div style="text-align: center; font-size: 10px;">CNPJ: A.R. Frazão Ltda</div>
+        <div style="text-align: center; font-size: 10px; margin-bottom: 5px;">São Gonçalo - RJ</div>
+        <div>--------------------------------</div>
+        <div>PEDIDO #${venda.numeroSequencial}</div>
+        <div>Data: ${dataFormatada}</div>
+        <div>Cliente: ${venda.clienteNome}</div>
+        <div>Vendedor: ${venda.vendedorResponsavel}</div>
+        <div>Pagamento: ${venda.formaPagamento}</div>
+        <div>--------------------------------</div>
+        <pre style="font-family: monospace; font-size: 11px; margin: 0; white-space: pre-wrap;">${itensHtml}</pre>
+        <div>--------------------------------</div>
+        <div style="font-weight: bold; font-size: 12px; text-align: right;">TOTAL: R$ ${venda.total.toFixed(2)}</div>
+        <div>--------------------------------</div>
+        <div style="text-align: center; margin-top: 8px; font-size: 10px;">Obrigado pela preferência!</div>
+      `;
+
+      window.print();
+    }
+
+    function reimprimirPedido(vendaId) {
+      const v = vendas.find(item => item.id === vendaId);
+      if (v) imprimirComprovante(v);
+    }
+
+    function excluirPedido(vendaId) {
+      if (confirm("Deseja realmente excluir este pedido do histórico? (Isso não estorna o estoque automaticamente)")) {
+        db.collection("vendas").doc(vendaId).delete().then(() => {
+          alert("Pedido excluído com sucesso.");
+        }).catch(err => alert("Erro ao excluir pedido: " + err.message));
       }
     }
 
+    // --- RELATÓRIOS & FATURAMENTO MENSAL ---
     function renderizarRelatorios() {
-      const tbody = document.getElementById('tabelaHistoricoVendas');
-      if (!tbody) return;
-      tbody.innerHTML = '';
+      const fatTotalEl = document.getElementById('fatTotal');
+      const fatFiadoEl = document.getElementById('fatFiado');
+      const fatLucroEl = document.getElementById('fatLucro');
+      const tbodyHistorico = document.getElementById('tabelaHistoricoVendas');
+      const inputMes = document.getElementById('filtroMesRelatorio');
 
-      let faturamentoTotal = 0;
-      let fiadoTotal = 0;
-      let lucroEstimado = 0;
+      if (!fatTotalEl || !tbodyHistorico) return;
 
-      vendas.forEach(v => {
-        faturamentoTotal += v.total || 0;
-        if (v.formaPagamento === 'Fiado') {
-          fiadoTotal += v.total || 0;
-        }
+      // Obter o mês selecionado no formato YYYY-MM
+      const mesSelecionado = inputMes ? inputMes.value : '';
 
-        let custoVenda = 0;
-        if (v.itens) {
-          v.itens.forEach(item => {
-            custoVenda += (item.custo || 0) * (item.qtd || 1);
-          });
-        }
-        lucroEstimado += (v.total || 0) - custoVenda;
+      // Filtrar vendas pelo mês selecionado
+      const vendasFiltradas = vendas.filter(v => {
+        if (!mesSelecionado) return true;
+        if (!v.data) return false;
+        const dataVendaStr = v.data.substring(0, 7); // Pega 'YYYY-MM'
+        return dataVendaStr === mesSelecionado;
+      });
 
-        const dataFormatada = v.data ? new Date(v.data).toLocaleString('pt-BR') : '';
+      let faturamentoMensal = 0;
+      let lucroMensal = 0;
 
-        tbody.innerHTML += `
+      tbodyHistorico.innerHTML = '';
+
+      vendasFiltradas.forEach(v => {
+        faturamentoMensal += (v.total || 0);
+        lucroMensal += (v.lucro || 0);
+
+        const dataF = v.data ? new Date(v.data).toLocaleDateString('pt-BR') : 'Data não informada';
+        tbodyHistorico.innerHTML += `
           <tr>
-            <td>#${v.numeroSequencial || ''}</td>
-            <td>${dataFormatada}</td>
-            <td>${v.clienteNome || ''}</td>
-            <td>${v.vendedorResponsavel || ''}</td>
-            <td>${v.formaPagamento || ''}</td>
-            <td>R$ ${(v.total || 0).toFixed(2)}</td>
+            <td>#${v.numeroSequencial || 'N/A'}</td>
+            <td>${dataF}</td>
+            <td>${v.clienteNome || 'Cliente'}</td>
+            <td>${v.vendedorResponsavel || 'Admin'}</td>
+            <td>${v.formaPagamento}</td>
+            <td style="font-weight: bold; color: var(--success-color);">R$ ${(v.total || 0).toFixed(2)}</td>
             <td>
-              <button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.65rem;" onclick="excluirVenda('${v.id}')">Excluir</button>
+              <button class="btn btn-primary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="reimprimirPedido('${v.id}')">🖨️</button>
+              <button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.65rem;" onclick="excluirPedido('${v.id}')">X</button>
             </td>
           </tr>
         `;
       });
 
-      document.getElementById('fatTotal').innerText = `R$ ${faturamentoTotal.toFixed(2)}`;
-      document.getElementById('fatFiado').innerText = `R$ ${fiadoTotal.toFixed(2)}`;
-      document.getElementById('fatLucro').innerText = `R$ ${lucroEstimado.toFixed(2)}`;
+      // Calcular o total de recebíveis em fiado de todos os clientes cadastrados
+      let totalFiadoGeral = clientes.reduce((acc, c) => acc + (c.saldoDevedor || 0), 0);
+
+      fatTotalEl.innerText = `R$ ${faturamentoMensal.toFixed(2)}`;
+      fatFiadoEl.innerText = `R$ ${totalFiadoGeral.toFixed(2)}`;
+      fatLucroEl.innerText = `R$ ${lucroMensal.toFixed(2)}`;
     }
 
-    function excluirVenda(id) {
-      if (confirm("Deseja realmente excluir este pedido do histórico?")) {
-        db.collection("vendas").doc(id).delete();
-      }
+    function obterDadosRelatorioAtual() {
+      const inputMes = document.getElementById('filtroMesRelatorio');
+      const mesSelecionado = inputMes ? inputMes.value : '';
+      
+      const vendasFiltradas = vendas.filter(v => {
+        if (!mesSelecionado) return true;
+        if (!v.data) return false;
+        return v.data.substring(0, 7) === mesSelecionado;
+      });
+
+      let faturamento = vendasFiltradas.reduce((acc, v) => acc + (v.total || 0), 0);
+      let lucro = vendasFiltradas.reduce((acc, v) => acc + (v.lucro || 0), 0);
+      let totalFiado = clientes.reduce((acc, c) => acc + (c.saldoDevedor || 0), 0);
+
+      return {
+        mes: mesSelecionado || 'Geral',
+        faturamento,
+        lucro,
+        totalFiado,
+        qtdVendas: vendasFiltradas.length
+      };
     }
 
     function imprimirRelatorioGeral() {
+      const r = obterDadosRelatorioAtual();
+      const printArea = document.getElementById('print-area');
+
+      printArea.innerHTML = `
+        <div style="text-align: center; font-weight: bold; font-size: 13px;">DISTRIBUIDORA FRAZÃO</div>
+        <div style="text-align: center; font-size: 10px;">RELATÓRIO FINANCEIRO (MÊS: ${r.mes})</div>
+        <div>--------------------------------</div>
+        <div>Total de Pedidos: ${r.qtdVendas}</div>
+        <div>Faturamento: R$ ${r.faturamento.toFixed(2)}</div>
+        <div>Lucro Bruto: R$ ${r.lucro.toFixed(2)}</div>
+        <div>Recebíveis Fiado: R$ ${r.totalFiado.toFixed(2)}</div>
+        <div>--------------------------------</div>
+        <div style="text-align: center; font-size: 10px;">Gerado em sistema próprio</div>
+      `;
       window.print();
     }
 
     function copiarRelatorioGeral() {
-      const fat = document.getElementById('fatTotal').innerText;
-      const fiado = document.getElementById('fatFiado').innerText;
-      const lucro = document.getElementById('fatLucro').innerText;
-      const texto = `*Relatório - Distribuidora Frazão*\n- Faturamento Total: ${fat}\n- Recebíveis em Fiado: ${fiado}\n- Lucro Bruto Estimado: ${lucro}`;
-      navigator.clipboard.writeText(texto).then(() => alert("Relatório copiado para a área de transferência!"));
+      const r = obterDadosRelatorioAtual();
+      const texto = `📊 *Relatório Financeiro - Distribuidora Frazão*\n📅 Período: ${r.mes}\n\n📦 Pedidos realizados: ${r.qtdVendas}\n💰 Faturamento: R$ ${r.faturamento.toFixed(2)}\n📈 Lucro Bruto: R$ ${r.lucro.toFixed(2)}\n⚠️ Total em Fiado: R$ ${r.totalFiado.toFixed(2)}`;
+
+      navigator.clipboard.writeText(texto).then(() => {
+        alert("Relatório copiado para a área de transferência!");
+      }).catch(err => alert("Erro ao copiar: " + err.message));
     }
 
     function enviarWhatsAppRelatorioGeral() {
-      const fat = document.getElementById('fatTotal').innerText;
-      const fiado = document.getElementById('fatFiado').innerText;
-      const lucro = document.getElementById('fatLucro').innerText;
-      const texto = encodeURIComponent(`*Relatório - Distribuidora Frazão*\n- Faturamento Total: ${fat}\n- Recebíveis em Fiado: ${fiado}\n- Lucro Bruto Estimado: ${lucro}`);
-      window.open(`https://wa.me/?text=${texto}`, '_blank');
+      const r = obterDadosRelatorioAtual();
+      const texto = `📊 *Relatório Financeiro - Distribuidora Frazão*%0A📅 Período: ${r.mes}%0A%0A📦 Pedidos realizados: ${r.qtdVendas}%0A💰 Faturamento: R$ ${r.faturamento.toFixed(2)}%0A📈 Lucro Bruto: R$ ${r.lucro.toFixed(2)}%0A⚠️ Total em Fiado: R$ ${r.totalFiado.toFixed(2)}`;
+      window.open(`https://api.whatsapp.com/send?text=${texto}`, '_blank');
     }
   </script>
 </body>

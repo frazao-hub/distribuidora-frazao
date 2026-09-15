@@ -508,7 +508,6 @@
 
     window.onload = function() {
       iniciarFirestore();
-      // Inicializar o input de filtro de mês com o mês atual (YYYY-MM)
       const inputMes = document.getElementById('filtroMesRelatorio');
       if (inputMes) {
         const hoje = new Date();
@@ -782,7 +781,9 @@
             <td>${c.vendedorResp}</td>
             <td style="font-weight: bold; color: ${c.saldoDevedor > 0 ? 'var(--warning-color)' : 'inherit'}">R$ ${(c.saldoDevedor || 0).toFixed(2)}</td>
             <td>
-              ${isAdmin ? `<button class="btn btn-warning" style="padding: 3px 6px; font-size: 0.7rem;" onclick="abaterDivida('${c.id}')">Abater Fiado</button>` : ''}
+              ${isAdmin ? `<button class="btn btn-primary" style="padding: 3px 6px; font-size: 0.7rem; margin-bottom: 2px;" onclick="incluirDivida('${c.id}')">Incluir</button>` : ''}
+              ${isAdmin ? `<button class="btn btn-warning" style="padding: 3px 6px; font-size: 0.7rem; margin-bottom: 2px;" onclick="abaterDivida('${c.id}')">Abater</button>` : ''}
+              ${isAdmin ? `<button class="btn btn-success" style="padding: 3px 6px; font-size: 0.7rem; margin-bottom: 2px;" onclick="quitarDivida('${c.id}')">Quitar</button>` : ''}
               ${isAdmin ? `<button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.7rem;" onclick="excluirCliente('${c.id}')">Excluir</button>` : ''}
             </td>
           </tr>
@@ -809,12 +810,34 @@
       });
     }
 
+    function incluirDivida(clienteId) {
+      const cliente = clientes.find(c => c.id === clienteId);
+      if (!cliente) return;
+      
+      const inputVal = prompt(`Cliente: ${cliente.nome}\nSaldo Devedor Atual: R$ ${(cliente.saldoDevedor || 0).toFixed(2)}\n\nDigite o valor da dívida antiga ou nova a ser INCLUÍDA:`, "0.00");
+      
+      if (inputVal !== null) {
+        const valorIncluir = parseFloat(inputVal.replace(',', '.'));
+        if (isNaN(valorIncluir) || valorIncluir <= 0) {
+          alert("Digite um valor válido para incluir.");
+          return;
+        }
+        
+        const novoSaldo = (cliente.saldoDevedor || 0) + valorIncluir;
+        db.collection("clientes").doc(clienteId).update({
+          saldoDevedor: novoSaldo
+        }).then(() => {
+          alert(`Dívida incluída com sucesso! Novo saldo devedor: R$ ${novoSaldo.toFixed(2)}`);
+        }).catch(err => alert("Erro ao atualizar dívida: " + err.message));
+      }
+    }
+
     function abaterDivida(clienteId) {
       const cliente = clientes.find(c => c.id === clienteId);
       if (!cliente) return;
       
       const valorAtual = cliente.saldoDevedor || 0;
-      const inputVal = prompt(`Cliente: ${cliente.nome}\nSaldo Devedor Atual: R$ ${valorAtual.toFixed(2)}\n\nDigite o valor do abatimento (pagamento recebido):`, valorAtual.toFixed(2));
+      const inputVal = prompt(`Cliente: ${cliente.nome}\nSaldo Devedor Atual: R$ ${valorAtual.toFixed(2)}\n\nDigite o valor do abatimento (pagamento parcial recebido):`, valorAtual.toFixed(2));
       
       if (inputVal !== null) {
         const valorAbate = parseFloat(inputVal.replace(',', '.'));
@@ -829,6 +852,25 @@
         }).then(() => {
           alert(`Abatimento registrado com sucesso! Novo saldo devedor: R$ ${novoSaldo.toFixed(2)}`);
         }).catch(err => alert("Erro ao atualizar dívida: " + err.message));
+      }
+    }
+
+    function quitarDivida(clienteId) {
+      const cliente = clientes.find(c => c.id === clienteId);
+      if (!cliente) return;
+
+      const valorAtual = cliente.saldoDevedor || 0;
+      if (valorAtual <= 0) {
+        alert("Este cliente já não possui saldo devedor.");
+        return;
+      }
+
+      if (confirm(`Deseja realmente QUITAR (zerar) todo o saldo devedor de R$ ${valorAtual.toFixed(2)} do cliente ${cliente.nome}?`)) {
+        db.collection("clientes").doc(clienteId).update({
+          saldoDevedor: 0.00
+        }).then(() => {
+          alert("Dívida quitada com sucesso!");
+        }).catch(err => alert("Erro ao quitar dívida: " + err.message));
       }
     }
 
@@ -901,7 +943,6 @@
 
       const isAdmin = usuarioLogado && usuarioLogado.tipo === 'admin';
       
-      // Ajustar visibilidade da coluna de custo conforme permissão
       const thCusto = document.getElementById('thCustoProduto');
       const thAcao = document.getElementById('thAcaoProduto');
       if (thCusto) thCusto.style.display = isAdmin ? '' : 'none';
@@ -1056,13 +1097,11 @@
       let totalCusto = carrinho.reduce((acc, item) => acc + (item.precoCusto * item.qtd), 0);
       let lucroPedido = totalPedido - totalCusto;
 
-      // Gerar número sequencial baseado na quantidade de vendas existentes
       const numeroSequencial = vendas.length + 1;
       const dataAtual = new Date().toISOString();
 
       const batch = db.batch();
 
-      // 1. Atualizar estoque dos produtos
       carrinho.forEach(item => {
         const prodRef = db.collection("produtos").doc(item.id);
         const prodOriginal = produtos.find(p => p.id === item.id);
@@ -1070,14 +1109,12 @@
         batch.update(prodRef, { estoque: novoEstoque });
       });
 
-      // 2. Se for fiado, atualizar o saldo devedor do cliente
       if (formaPagamento === 'Fiado' && clienteObj) {
         const cliRef = db.collection("clientes").doc(clienteId);
         const novoSaldo = (clienteObj.saldoDevedor || 0) + totalPedido;
         batch.update(cliRef, { saldoDevedor: novoSaldo });
       }
 
-      // 3. Registrar a venda
       const vendaRef = db.collection("vendas").doc();
       batch.set(vendaRef, {
         numeroSequencial,
@@ -1103,7 +1140,6 @@
           total: totalPedido
         });
 
-        // Limpar carrinho
         carrinho = [];
         renderizarCarrinho();
         carregarSelectProdutos();
@@ -1166,14 +1202,12 @@
 
       if (!fatTotalEl || !tbodyHistorico) return;
 
-      // Obter o mês selecionado no formato YYYY-MM
       const mesSelecionado = inputMes ? inputMes.value : '';
 
-      // Filtrar vendas pelo mês selecionado
       const vendasFiltradas = vendas.filter(v => {
         if (!mesSelecionado) return true;
         if (!v.data) return false;
-        const dataVendaStr = v.data.substring(0, 7); // Pega 'YYYY-MM'
+        const dataVendaStr = v.data.substring(0, 7);
         return dataVendaStr === mesSelecionado;
       });
 
@@ -1203,7 +1237,6 @@
         `;
       });
 
-      // Calcular o total de recebíveis em fiado de todos os clientes cadastrados
       let totalFiadoGeral = clientes.reduce((acc, c) => acc + (c.saldoDevedor || 0), 0);
 
       fatTotalEl.innerText = `R$ ${faturamentoMensal.toFixed(2)}`;

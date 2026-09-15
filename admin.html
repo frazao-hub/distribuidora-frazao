@@ -319,7 +319,7 @@
                 <th>Imagem</th>
                 <th>Produto</th>
                 <th>Categoria</th>
-                <th>Custo</th>
+                <th id="thCustoProduto">Custo</th>
                 <th>Venda</th>
                 <th>Estoque</th>
                 <th id="thAcaoProduto">Ações</th>
@@ -891,11 +891,13 @@
 
     function renderizarProdutos() {
       const tbody = document.getElementById('tabelaProdutos');
+      const thCusto = document.getElementById('thCustoProduto');
       const thAcao = document.getElementById('thAcaoProduto');
       if (!tbody) return;
       tbody.innerHTML = '';
 
       const isAdmin = (usuarioLogado && usuarioLogado.tipo === 'admin');
+      if (thCusto) thCusto.style.display = isAdmin ? 'table-cell' : 'none';
       if (thAcao) thAcao.style.display = isAdmin ? 'table-cell' : 'none';
 
       produtos.forEach(p => {
@@ -908,7 +910,7 @@
             <td>${imgHtml}</td>
             <td><strong>${p.nome}</strong></td>
             <td>${p.categoria || ''}</td>
-            <td>R$ ${(p.custo || 0).toFixed(2)}</td>
+            ${isAdmin ? `<td>R$ ${(p.custo || 0).toFixed(2)}</td>` : ''}
             <td>R$ ${(p.preco || 0).toFixed(2)}</td>
             <td style="font-weight: bold; color: ${p.estoque < 0 ? 'var(--danger-color)' : 'inherit'}">${p.estoque || 0}</td>
             ${isAdmin ? `
@@ -969,7 +971,6 @@
       const precoVenda = parseFloat(document.getElementById('carrinhoPreco').value) || 0;
       const qtd = parseInt(document.getElementById('carrinhoQtd').value) || 1;
 
-      // REMOVIDO A TRAVA DE ESTOQUE INSUFICIENTE: Permite venda negativa
       carrinho.push({
         produtoId: produtoObj.id,
         nome: produtoObj.nome,
@@ -1043,7 +1044,6 @@
       };
 
       db.collection("vendas").add(dadosVenda).then((docRef) => {
-        // Baixa no estoque permitindo valores negativos (ex: 0 - 1 = -1)
         carrinho.forEach(item => {
           const pObj = produtos.find(p => p.id === item.produtoId);
           if (pObj) {
@@ -1052,7 +1052,6 @@
           }
         });
 
-        // Se for fiado, atualizar saldo do cliente
         if (formaPagamento === 'Fiado' && clienteObj) {
           const novoSaldo = (clienteObj.saldoDevedor || 0) + totalPedido;
           db.collection("clientes").doc(clienteObj.id).update({ saldoDevedor: novoSaldo });

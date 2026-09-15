@@ -226,7 +226,7 @@
 
         <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: end;">
           <div class="form-group">
-            <label for="carrinhoPreco">Preço Venda (R$):</label>
+            <label for="carrinhoPreco" title="Você pode alterar o preço livremente para cima ou para baixo nesta venda">Preço Venda (R$) (Editável):</label>
             <input type="number" id="carrinhoPreco" step="0.01">
           </div>
           <div class="form-group">
@@ -1021,7 +1021,6 @@
       }
 
       if (docId) {
-        // Atualizar cliente existente
         db.collection("clientes").doc(docId).update({
           nome, docTipo, documento, telefone, endereco, vendedorResp
         }).then(() => {
@@ -1029,7 +1028,6 @@
           limparFormCliente();
         }).catch(err => alert("Erro ao atualizar cliente: " + err.message));
       } else {
-        // Cadastrar novo cliente
         db.collection("clientes").add({
           nome, docTipo, documento, telefone, endereco, vendedorResp, saldoDevedor: 0
         }).then(() => {
@@ -1178,7 +1176,6 @@
           await db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldoCli });
         }
 
-        // Obter número sequencial do pedido
         const countSnap = await db.collection("vendas").get();
         const numeroSequencial = countSnap.size + 1;
 
@@ -1188,6 +1185,7 @@
         const dadosVenda = {
           numeroSequencial,
           dataIso,
+          clienteId: clienteObj.id,
           clienteNome: clienteObj.nome,
           clienteTelefone: clienteObj.telefone || '',
           vendedor: vendedorResp,
@@ -1197,9 +1195,8 @@
           lucro: lucroPedido
         };
 
-        const docRef = await db.collection("vendas").add(dadosVenda);
+        await db.collection("vendas").add(dadosVenda);
         
-        // Limpar carrinho
         carrinho = [];
         renderizarCarrinho();
         carregarSelectClientes();
@@ -1209,6 +1206,53 @@
 
       } catch (err) {
         alert("Erro ao finalizar pedido: " + err.message);
+      }
+    }
+
+    // --- CANCELAR NOTA / VENDA ---
+    async function cancelarVenda(vendaId) {
+      const vendaObj = vendas.find(v => v.id === vendaId);
+      if (!vendaObj) {
+        alert("Venda não encontrada.");
+        return;
+      }
+
+      if (!confirm(`Tem certeza absoluta que deseja CANCELAR a Nota / Pedido #${vendaObj.numeroSequencial}?\n\n- Os itens retornarão ao estoque.\n- Se foi Fiado, o saldo do cliente será abatido.`)) {
+        return;
+      }
+
+      try {
+        // 1. Retornar os produtos ao estoque
+        if (vendaObj.itens && Array.isArray(vendaObj.itens)) {
+          for (const item of vendaObj.itens) {
+            const prodRef = db.collection("produtos").doc(item.produtoId);
+            const prodDoc = await prodRef.get();
+            if (prodDoc.exists) {
+              const estoqueAtual = prodDoc.data().estoque || 0;
+              const novoEstoque = estoqueAtual + item.quantidade;
+              await prodRef.update({ estoque: novoEstoque });
+            }
+          }
+        }
+
+        // 2. Se a venda foi Fiado, abater o saldo devedor do cliente
+        if (vendaObj.formaPagamento === 'Fiado' && vendaObj.clienteId) {
+          const cliRef = db.collection("clientes").doc(vendaObj.clienteId);
+          const cliDoc = await cliRef.get();
+          if (cliDoc.exists) {
+            const saldoAtual = cliDoc.data().saldoDevedor || 0;
+            let novoSaldo = saldoAtual - (vendaObj.total || 0);
+            if (novoSaldo < 0) novoSaldo = 0;
+            await cliRef.update({ saldoDevedor: novoSaldo });
+          }
+        }
+
+        // 3. Excluir o registro da venda do Firestore
+        await db.collection("vendas").doc(vendaId).delete();
+
+        alert(`Pedido #${vendaObj.numeroSequencial} cancelado com sucesso! Estoque estornado e contas ajustadas.`);
+      } catch (err) {
+        alert("Erro ao cancelar o pedido: " + err.message);
       }
     }
 
@@ -1293,14 +1337,13 @@
       const tbody = document.getElementById('tabelaHistoricoVendas');
       if (!inputMes || !tbody) return;
 
-      const mesAnoFiltro = inputMes.value; // formato "YYYY-MM"
+      const mesAnoFiltro = inputMes.value;
       tbody.innerHTML = '';
 
       let faturamentoMensal = 0;
       let lucroMensal = 0;
       let totalFiadoGeral = 0;
 
-      // Calcular recebíveis em fiado de todos os clientes
       clientes.forEach(c => {
         totalFiadoGeral += (c.saldoDevedor || 0);
       });
@@ -1323,8 +1366,9 @@
             <td>${v.formaPagamento}</td>
             <td><strong>R$ ${(v.total || 0).toFixed(2)}</strong></td>
             <td>
-              <button class="btn btn-primary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="imprimirComprovante(vendas.find(x => x.id === '${v.id}'))">🖨️ Imprimir</button>
-              <button class="btn btn-success" style="padding: 3px 6px; font-size: 0.7rem;" onclick="abrirModalReciboPorId('${v.id}')">💬 Recibo</button>
+              <button class="btn btn-primary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="imprimirComprovante(vendas.find(x => x.id === '${v.id}'))">🖨️</button>
+              <button class="btn btn-success" style="padding: 3px 6px; font-size: 0.7rem;" onclick="abrirModalReciboPorId('${v.id}')">💬</button>
+              <button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.7rem;" onclick="cancelarVenda('${v.id}')">Cancelar Nota</button>
             </td>
           </tr>
         `;

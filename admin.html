@@ -787,12 +787,10 @@
             <td>${c.tipo}: ${c.documento}</td>
             <td>${c.telefone}</td>
             <td>${c.endereco}</td>
-            <td>${c.vendedorResp}</td>
-            <td style="font-weight: bold; color: ${c.saldoDevedor > 0 ? 'var(--warning-color)' : 'inherit'}">R$ ${(c.saldoDevedor || 0).toFixed(2)}</td>
+            <td>${c.vendedorResp || 'Geral'}</td>
+            <td style="color: ${c.saldoDevedor > 0 ? 'var(--danger-color)' : 'inherit'}; font-weight: bold;">R$ ${(c.saldoDevedor || 0).toFixed(2)}</td>
             <td>
-              ${isAdmin ? `<button class="btn btn-primary" style="padding: 3px 6px; font-size: 0.7rem; margin-bottom: 2px;" onclick="incluirDivida('${c.id}')">Incluir</button>` : ''}
-              ${isAdmin ? `<button class="btn btn-warning" style="padding: 3px 6px; font-size: 0.7rem; margin-bottom: 2px;" onclick="abaterDivida('${c.id}')">Abater</button>` : ''}
-              ${isAdmin ? `<button class="btn btn-success" style="padding: 3px 6px; font-size: 0.7rem; margin-bottom: 2px;" onclick="quitarDivida('${c.id}')">Quitar</button>` : ''}
+              ${c.saldoDevedor > 0 ? `<button class="btn btn-success" style="padding: 3px 6px; font-size: 0.7rem; margin-right: 4px;" onclick="quitarFiado('${c.id}')">Quitar</button>` : ''}
               ${isAdmin ? `<button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.7rem;" onclick="excluirCliente('${c.id}')">Excluir</button>` : ''}
             </td>
           </tr>
@@ -800,93 +798,49 @@
       });
     }
 
+    function excluirCliente(id) {
+      if (confirm("Deseja excluir este cliente?")) {
+        db.collection("clientes").doc(id).delete();
+      }
+    }
+
+    function quitarFiado(clienteId) {
+      const cli = clientes.find(c => c.id === clienteId);
+      if (!cli) return;
+
+      const valorQuitacao = prompt(`Cliente: ${cli.nome}\nSaldo devedor atual: R$ ${(cli.saldoDevedor || 0).toFixed(2)}\n\nDigite o valor que o cliente está pagando para abater/quitar:`, cli.saldoDevedor.toFixed(2));
+      
+      if (valorQuitacao !== null) {
+        const valorNum = parseFloat(valorQuitacao.replace(',', '.'));
+        if (isNaN(valorNum) || valorNum <= 0) {
+          alert("Valor inválido.");
+          return;
+        }
+
+        const novoSaldo = Math.max(0, cli.saldoDevedor - valorNum);
+        db.collection("clientes").doc(clienteId).update({
+          saldoDevedor: novoSaldo
+        }).then(() => {
+          alert(`Pagamento registrado com sucesso! Novo saldo devedor: R$ ${novoSaldo.toFixed(2)}`);
+        }).catch(err => alert("Erro ao atualizar saldo: " + err.message));
+      }
+    }
+
     function carregarSelectClientes() {
       const select = document.getElementById('vendaCliente');
       if (!select) return;
       select.innerHTML = '';
-
       const listaClientes = (usuarioLogado && usuarioLogado.tipo === 'vendedor')
         ? clientes.filter(c => c.vendedorResp === usuarioLogado.nome)
         : clientes;
 
       if (listaClientes.length === 0) {
-        select.innerHTML = '<option value="">Nenhum cliente disponível</option>';
+        select.innerHTML = `<option value="">Nenhum cliente disponível</option>`;
         return;
       }
-
       listaClientes.forEach(c => {
-        select.innerHTML += `<option value="${c.id}">${c.nome} (Fiado: R$ ${(c.saldoDevedor || 0).toFixed(2)})</option>`;
+        select.innerHTML += `<option value="${c.id}">${c.nome} (Resp: ${c.vendedorResp || 'Geral'})</option>`;
       });
-    }
-
-    function incluirDivida(clienteId) {
-      const cliente = clientes.find(c => c.id === clienteId);
-      if (!cliente) return;
-      
-      const inputVal = prompt(`Cliente: ${cliente.nome}\nSaldo Devedor Atual: R$ ${(cliente.saldoDevedor || 0).toFixed(2)}\n\nDigite o valor da dívida antiga ou nova a ser INCLUÍDA:`, "0.00");
-      
-      if (inputVal !== null) {
-        const valorIncluir = parseFloat(inputVal.replace(',', '.'));
-        if (isNaN(valorIncluir) || valorIncluir <= 0) {
-          alert("Digite um valor válido para incluir.");
-          return;
-        }
-        
-        const novoSaldo = (cliente.saldoDevedor || 0) + valorIncluir;
-        db.collection("clientes").doc(clienteId).update({
-          saldoDevedor: novoSaldo
-        }).then(() => {
-          alert(`Dívida incluída com sucesso! Novo saldo devedor: R$ ${novoSaldo.toFixed(2)}`);
-        }).catch(err => alert("Erro ao atualizar dívida: " + err.message));
-      }
-    }
-
-    function abaterDivida(clienteId) {
-      const cliente = clientes.find(c => c.id === clienteId);
-      if (!cliente) return;
-      
-      const valorAtual = cliente.saldoDevedor || 0;
-      const inputVal = prompt(`Cliente: ${cliente.nome}\nSaldo Devedor Atual: R$ ${valorAtual.toFixed(2)}\n\nDigite o valor do abatimento (pagamento parcial recebido):`, valorAtual.toFixed(2));
-      
-      if (inputVal !== null) {
-        const valorAbate = parseFloat(inputVal.replace(',', '.'));
-        if (isNaN(valorAbate) || valorAbate <= 0) {
-          alert("Digite um valor válido para o abatimento.");
-          return;
-        }
-        
-        const novoSaldo = Math.max(0, valorAtual - valorAbate);
-        db.collection("clientes").doc(clienteId).update({
-          saldoDevedor: novoSaldo
-        }).then(() => {
-          alert(`Abatimento registrado com sucesso! Novo saldo devedor: R$ ${novoSaldo.toFixed(2)}`);
-        }).catch(err => alert("Erro ao atualizar dívida: " + err.message));
-      }
-    }
-
-    function quitarDivida(clienteId) {
-      const cliente = clientes.find(c => c.id === clienteId);
-      if (!cliente) return;
-
-      const valorAtual = cliente.saldoDevedor || 0;
-      if (valorAtual <= 0) {
-        alert("Este cliente já não possui saldo devedor.");
-        return;
-      }
-
-      if (confirm(`Deseja realmente QUITAR (zerar) todo o saldo devedor de R$ ${valorAtual.toFixed(2)} do cliente ${cliente.nome}?`)) {
-        db.collection("clientes").doc(clienteId).update({
-          saldoDevedor: 0.00
-        }).then(() => {
-          alert("Dívida quitada com sucesso!");
-        }).catch(err => alert("Erro ao quitar dívida: " + err.message));
-      }
-    }
-
-    function excluirCliente(id) {
-      if (confirm("Deseja realmente excluir este cliente?")) {
-        db.collection("clientes").doc(id).delete();
-      }
     }
 
     // --- PRODUTOS & ESTOQUE ---
@@ -894,17 +848,17 @@
       const docId = document.getElementById('prodDocId').value;
       const nome = document.getElementById('prodNome').value.trim();
       const categoria = document.getElementById('prodCategoria').value;
-      const precoCusto = parseFloat(document.getElementById('prodCusto').value);
-      const precoVenda = parseFloat(document.getElementById('prodPreco').value);
+      const custo = parseFloat(document.getElementById('prodCusto').value);
+      const preco = parseFloat(document.getElementById('prodPreco').value);
       const estoque = parseInt(document.getElementById('prodEstoque').value);
       const imagem = document.getElementById('prodImagem').value.trim();
 
-      if (!nome || isNaN(precoCusto) || isNaN(precoVenda) || isNaN(estoque)) {
-        alert("Preencha todos os campos obrigatórios do produto!");
+      if (!nome || isNaN(custo) || isNaN(preco) || isNaN(estoque)) {
+        alert("Preencha todos os campos obrigatórios do produto corretamente.");
         return;
       }
 
-      const dadosProd = { nome, categoria, precoCusto, precoVenda, estoque, imagem: imagem || '' };
+      const dadosProd = { nome, categoria, custo, preco, estoque, imagem };
 
       if (docId) {
         db.collection("produtos").doc(docId).update(dadosProd).then(() => {
@@ -922,21 +876,21 @@
     function limparFormProduto() {
       document.getElementById('formProduto').reset();
       document.getElementById('prodDocId').value = '';
-      document.getElementById('tituloFormProd').innerText = "Cadastrar / Editar Produto no Estoque";
+      document.getElementById('tituloFormProd').innerText = 'Cadastrar / Editar Produto no Estoque';
     }
 
     function editarProduto(id) {
-      const p = produtos.find(item => item.id === id);
+      const p = produtos.find(prod => prod.id === id);
       if (!p) return;
       document.getElementById('prodDocId').value = p.id;
-      document.getElementById('prodNome').value = p.nome;
-      document.getElementById('prodCategoria').value = p.categoria;
-      document.getElementById('prodCusto').value = p.precoCusto;
-      document.getElementById('prodPreco').value = p.precoVenda;
-      document.getElementById('prodEstoque').value = p.estoque;
+      document.getElementById('prodNome').value = p.nome || '';
+      document.getElementById('prodCategoria').value = p.categoria || 'Mercearia';
+      document.getElementById('prodCusto').value = p.custo || '';
+      document.getElementById('prodPreco').value = p.preco || '';
+      document.getElementById('prodEstoque').value = p.estoque || '';
       document.getElementById('prodImagem').value = p.imagem || '';
-      document.getElementById('tituloFormProd').innerText = `Editando: ${p.nome}`;
-      switchTab('produtosTab');
+      document.getElementById('tituloFormProd').innerText = 'Editando Produto: ' + p.nome;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function excluirProduto(id) {
@@ -947,29 +901,29 @@
 
     function renderizarProdutos() {
       const tbody = document.getElementById('tabelaProdutos');
+      const thCusto = document.getElementById('thCustoProduto');
+      const thAcao = document.getElementById('thAcaoProduto');
       if (!tbody) return;
       tbody.innerHTML = '';
 
       const isAdmin = usuarioLogado && usuarioLogado.tipo === 'admin';
-      
-      const thCusto = document.getElementById('thCustoProduto');
-      const thAcao = document.getElementById('thAcaoProduto');
-      if (thCusto) thCusto.style.display = isAdmin ? '' : 'none';
-      if (thAcao) thAcao.style.display = isAdmin ? '' : 'none';
+      if (thCusto) thCusto.style.display = isAdmin ? 'table-cell' : 'none';
+      if (thAcao) thAcao.style.display = isAdmin ? 'table-cell' : 'none';
 
       produtos.forEach(p => {
+        const imgTag = p.imagem ? `<img src="${p.imagem}" class="product-thumb" alt="Img">` : `<div class="product-thumb" style="display:flex;align-items:center;justify-content:center;font-size:10px;color:#94a3b8;">Sem foto</div>`;
+        const custoTd = isAdmin ? `<td>R$ ${(p.custo || 0).toFixed(2)}</td>` : '';
+        const acaoTd = isAdmin ? `<td><button class="btn btn-warning" style="padding: 3px 6px; font-size: 0.7rem; margin-right: 4px;" onclick="editarProduto('${p.id}')">Editar</button><button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.7rem;" onclick="excluirProduto('${p.id}')">Excluir</button></td>` : '';
+
         tbody.innerHTML += `
           <tr>
-            <td><img src="${p.imagem || 'https://via.placeholder.com/38'}" class="product-thumb" alt="Img"></td>
-            <td><strong>${p.nome}</strong><br><small style="color:#64748b">${p.categoria}</small></td>
-            <td>${p.categoria}</td>
-            <td style="display: ${isAdmin ? '' : 'none'}">R$ ${(p.precoCusto || 0).toFixed(2)}</td>
-            <td style="color: var(--success-color); font-weight: bold;">R$ ${(p.precoVenda || 0).toFixed(2)}</td>
+            <td>${imgTag}</td>
+            <td><strong>${p.nome}</strong></td>
+            <td>${p.categoria || 'Geral'}</td>
+            ${custoTd}
+            <td style="color: var(--success-color); font-weight: bold;">R$ ${(p.preco || 0).toFixed(2)}</td>
             <td>${p.estoque} un.</td>
-            <td style="display: ${isAdmin ? '' : 'none'}">
-              <button class="btn btn-warning" style="padding: 3px 6px; font-size: 0.7rem;" onclick="editarProduto('${p.id}')">Editar</button>
-              <button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.7rem;" onclick="excluirProduto('${p.id}')">Excluir</button>
-            </td>
+            ${acaoTd}
           </tr>
         `;
       });
@@ -977,40 +931,39 @@
 
     function carregarSelectProdutos() {
       const select = document.getElementById('carrinhoProduto');
-      const inputBusca = document.getElementById('filtroBuscaProduto');
+      const filtroInput = document.getElementById('filtroBuscaProduto');
       if (!select) return;
 
-      const termoBusca = inputBusca ? inputBusca.value.trim().toLowerCase() : '';
+      const termoBusca = filtroInput ? filtroInput.value.toLowerCase().trim() : '';
+      select.innerHTML = '';
 
-      // Filtra produtos conforme a lupa
-      const produtosFiltrados = produtos.filter(p => {
-        if (!termoBusca) return true;
-        return (p.nome && p.nome.toLowerCase().includes(termoBusca)) || 
-               (p.categoria && p.categoria.toLowerCase().includes(termoBusca));
-      });
+      const produtosFiltrados = produtos.filter(p => p.nome.toLowerCase().includes(termoBusca));
 
-      // Agrupa os produtos por Categoria
-      const agrupados = {};
+      if (produtosFiltrados.length === 0) {
+        select.innerHTML = `<option value="">Nenhum produto encontrado</option>`;
+        document.getElementById('carrinhoPreco').value = '';
+        document.getElementById('previewEstoqueProd').innerText = 'Produto não encontrado';
+        return;
+      }
+
+      // Agrupar por Categoria
+      const categoriasMap = {};
       produtosFiltrados.forEach(p => {
-        const cat = p.categoria || 'Sem Categoria';
-        if (!agrupados[cat]) agrupados[cat] = [];
-        agrupados[cat].push(p);
+        const cat = p.categoria || 'Outros';
+        if (!categoriasMap[cat]) categoriasMap[cat] = [];
+        categoriasMap[cat].push(p);
       });
 
-      select.innerHTML = '<option value="">Selecione um produto</option>';
-
-      for (const categoria in agrupados) {
-        const optgroup = document.createElement('optgroup');
-        optgroup.label = categoria;
-
-        agrupados[categoria].forEach(p => {
+      for (const cat in categoriasMap) {
+        const optGroup = document.createElement('optgroup');
+        optGroup.label = cat.toUpperCase();
+        categoriasMap[cat].forEach(p => {
           const option = document.createElement('option');
           option.value = p.id;
-          option.textContent = `${p.nome} (Estoque: ${p.estoque} un.) - R$ ${(p.precoVenda || 0).toFixed(2)}`;
-          optgroup.appendChild(option);
+          option.textContent = `${p.nome} - Estoque: ${p.estoque} un. (R$ ${(p.preco || 0).toFixed(2)})`;
+          optGroup.appendChild(option);
         });
-
-        select.appendChild(optgroup);
+        select.appendChild(optGroup);
       }
 
       carregarDetalhesProduto();
@@ -1019,72 +972,71 @@
     function carregarDetalhesProduto() {
       const selectId = document.getElementById('carrinhoProduto').value;
       const inputPreco = document.getElementById('carrinhoPreco');
-      const infoDiv = document.getElementById('previewEstoqueProd');
-      
+      const preview = document.getElementById('previewEstoqueProd');
       const p = produtos.find(item => item.id === selectId);
+
       if (p) {
-        inputPreco.value = p.precoVenda;
-        infoDiv.innerHTML = `Produto: <strong>${p.nome}</strong> | Disponível em estoque: <strong>${p.estoque} unidades</strong>`;
+        inputPreco.value = p.preco || 0;
+        preview.innerHTML = `📦 <strong>${p.nome}</strong> | Categoria: <em>${p.categoria || 'Geral'}</em> | Estoque Disponível: <strong style="color:${p.estoque > 0 ? 'var(--success-color)' : 'var(--danger-color)'};">${p.estoque} unidades</strong>`;
       } else {
         inputPreco.value = '';
-        infoDiv.innerHTML = 'Selecione um produto';
+        preview.innerText = 'Selecione um produto';
       }
     }
 
-    function alterarQtdInput(valor) {
+    function alterarQtdInput(delta) {
       const inputQtd = document.getElementById('carrinhoQtd');
-      let atual = parseInt(inputQtd.value) || 1;
-      atual += valor;
-      if (atual < 1) atual = 1;
-      inputQtd.value = atual;
+      let valorAtual = parseInt(inputQtd.value) || 1;
+      valorAtual += delta;
+      if (valorAtual < 1) valorAtual = 1;
+      inputQtd.value = valorAtual;
     }
 
-    // --- CARRINHO & PDV ---
+    // --- CARRINHO & VENDAS ---
     function adicionarAoCarrinho() {
       const prodId = document.getElementById('carrinhoProduto').value;
       const precoVenda = parseFloat(document.getElementById('carrinhoPreco').value);
       const qtd = parseInt(document.getElementById('carrinhoQtd').value);
 
       if (!prodId) {
-        alert("Selecione um produto!");
+        alert("Selecione um produto.");
         return;
       }
-      const p = produtos.find(item => item.id === prodId);
-      if (!p) return;
+      const prodObj = produtos.find(p => p.id === prodId);
+      if (!prodObj) return;
 
-      if (isNaN(precoVenda) || precoVenda < 0) {
-        alert("Informe um preço de venda válido.");
-        return;
-      }
-      if (isNaN(qtd) || qtd <= 0) {
-        alert("Informe uma quantidade válida.");
+      if (isNaN(precoVenda) || precoVenda < 0 || isNaN(qtd) || qtd <= 0) {
+        alert("Informe um preço e uma quantidade válidos.");
         return;
       }
 
-      if (qtd > p.estoque) {
-        alert(`Quantidade indisponível em estoque! Estoque atual: ${p.estoque} unidades.`);
+      if (qtd > prodObj.estoque) {
+        alert(`Atenção: Estoque insuficiente! Há apenas ${prodObj.estoque} unidades disponíveis de ${prodObj.nome}.`);
         return;
       }
 
-      const itemExistente = carrinho.find(item => item.id === prodId);
+      // Verificar se já está no carrinho
+      const itemExistente = carrinho.find(item => item.prodId === prodId);
       if (itemExistente) {
-        if ((itemExistente.qtd + qtd) > p.estoque) {
-          alert("A quantidade total no carrinho excede o estoque disponível.");
+        if ((itemExistente.qtd + qtd) > prodObj.estoque) {
+          alert(`Quantidade total no carrinho excede o estoque disponível (${prodObj.estoque} un.).`);
           return;
         }
         itemExistente.qtd += qtd;
-        itemExistente.subtotal = itemExistente.qtd * itemExistente.precoVenda;
+        itemExistente.precoUnit = precoVenda;
+        itemExistente.subtotal = itemExistente.qtd * itemExistente.precoUnit;
       } else {
         carrinho.push({
-          id: p.id,
-          nome: p.nome,
-          precoCusto: p.precoCusto || 0,
-          precoVenda: precoVenda,
+          prodId: prodObj.id,
+          nome: prodObj.nome,
+          custoUnit: prodObj.custo || 0,
+          precoUnit: precoVenda,
           qtd: qtd,
-          subtotal: precoVenda * qtd
+          subtotal: qtd * precoVenda
         });
       }
 
+      document.getElementById('carrinhoQtd').value = 1;
       renderizarCarrinho();
     }
 
@@ -1095,287 +1047,246 @@
 
     function renderizarCarrinho() {
       const tbody = document.getElementById('tabelaCarrinho');
-      const totalSpan = document.getElementById('carrinhoTotal');
+      const spanTotal = document.getElementById('carrinhoTotal');
       if (!tbody) return;
-
       tbody.innerHTML = '';
+
       let totalGeral = 0;
 
       carrinho.forEach((item, index) => {
         totalGeral += item.subtotal;
         tbody.innerHTML += `
           <tr>
-            <td>${item.nome}</td>
+            <td><strong>${item.nome}</strong></td>
             <td>${item.qtd}</td>
-            <td>R$ ${item.precoVenda.toFixed(2)}</td>
-            <td>R$ ${item.subtotal.toFixed(2)}</td>
-            <td><button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.65rem;" onclick="removerDoCarrinho(${index})">X</button></td>
+            <td>R$ ${item.precoUnit.toFixed(2)}</td>
+            <td style="font-weight: bold;">R$ ${item.subtotal.toFixed(2)}</td>
+            <td><button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.7rem;" onclick="removerDoCarrinho(${index})">X</button></td>
           </tr>
         `;
       });
 
-      totalSpan.innerText = `R$ ${totalGeral.toFixed(2)}`;
+      spanTotal.innerText = `R$ ${totalGeral.toFixed(2)}`;
     }
 
     function finalizarPedido() {
       if (carrinho.length === 0) {
-        alert("O carrinho está vazio!");
+        alert("O carrinho de compras está vazio!");
         return;
       }
 
       const clienteId = document.getElementById('vendaCliente').value;
-      if (!clienteId) {
-        alert("Selecione um cliente para o pedido!");
+      const clienteObj = clientes.find(c => c.id === clienteId);
+      if (!clienteObj) {
+        alert("Selecione um cliente válido.");
         return;
       }
 
-      const clienteObj = clientes.find(c => c.id === clienteId);
       const formaPagamento = document.getElementById('vendaFormaPagamento').value;
       const vendedorResp = usuarioLogado ? usuarioLogado.nome : 'Administrador Master';
 
       let totalPedido = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
-      let totalCusto = carrinho.reduce((acc, item) => acc + (item.precoCusto * item.qtd), 0);
-      let lucroPedido = totalPedido - totalCusto;
+      let custoTotalPedido = carrinho.reduce((acc, item) => acc + (item.custoUnit * item.qtd), 0);
+      let lucroPedido = totalPedido - custoTotalPedido;
 
-      const numeroSequencial = vendas.length + 1;
-      const dataAtual = new Date().toISOString();
-
-      const batch = db.batch();
-
-      carrinho.forEach(item => {
-        const prodRef = db.collection("produtos").doc(item.id);
-        const prodOriginal = produtos.find(p => p.id === item.id);
-        const novoEstoque = Math.max(0, (prodOriginal ? prodOriginal.estoque : 0) - item.qtd);
-        batch.update(prodRef, { estoque: novoEstoque });
-      });
-
-      if (formaPagamento === 'Fiado' && clienteObj) {
-        const cliRef = db.collection("clientes").doc(clienteId);
+      // Se for fiado, atualizar saldo devedor do cliente
+      let promessaCliente = Promise.resolve();
+      if (formaPagamento === 'Fiado') {
         const novoSaldo = (clienteObj.saldoDevedor || 0) + totalPedido;
-        batch.update(cliRef, { saldoDevedor: novoSaldo });
+        promessaCliente = db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo });
       }
 
-      const vendaRef = db.collection("vendas").doc();
-      batch.set(vendaRef, {
-        numeroSequencial,
-        data: dataAtual,
-        clienteId,
-        clienteNome: clienteObj ? clienteObj.nome : 'Cliente Desconhecido',
-        vendedorResponsavel: vendedorResp,
-        itens: carrinho,
-        formaPagamento,
-        total: totalPedido,
-        lucro: lucroPedido
+      // Baixar estoque dos produtos
+      const promessasEstoque = carrinho.map(item => {
+        const prodOriginal = produtos.find(p => p.id === item.prodId);
+        if (prodOriginal) {
+          const novoEstoque = Math.max(0, prodOriginal.estoque - item.qtd);
+          return db.collection("produtos").doc(item.prodId).update({ estoque: novoEstoque });
+        }
+        return Promise.resolve();
       });
 
-      batch.commit().then(() => {
-        alert(`Pedido #${numeroSequencial} finalizado com sucesso!`);
-        imprimirComprovante({
-          numeroSequencial,
-          data: dataAtual,
-          clienteNome: clienteObj ? clienteObj.nome : 'Cliente',
-          vendedorResponsavel: vendedorResp,
-          itens: carrinho,
-          formaPagamento,
-          total: totalPedido
-        });
+      // Gerar número sequencial do pedido
+      const numeroSequencial = vendas.length > 0 ? Math.max(...vendas.map(v => v.numeroSequencial || 1000)) + 1 : 1001;
+      const dataIso = new Date().toISOString();
 
-        carrinho = [];
-        renderizarCarrinho();
-        carregarSelectProdutos();
+      const dadosVenda = {
+        numeroSequencial,
+        data: dataIso,
+        clienteId: clienteObj.id,
+        clienteNome: clienteObj.nome,
+        clienteDoc: clienteObj.documento || 'Não informado',
+        clienteTel: clienteObj.telefone || '',
+        clienteEnd: clienteObj.endereco || '',
+        vendedor: vendedorResp,
+        formaPagamento,
+        itens: [...carrinho],
+        total: totalPedido,
+        lucro: lucroPedido
+      };
+
+      Promise.all([promessaCliente, ...promessasEstoque]).then(() => {
+        db.collection("vendas").add(dadosVenda).then((docRef) => {
+          alert(`Pedido nº ${numeroSequencial} finalizado com sucesso!`);
+          imprimirComprovante({ id: docRef.id, ...dadosVenda });
+          carrinho = [];
+          renderizarCarrinho();
+        });
       }).catch(err => {
         alert("Erro ao finalizar pedido: " + err.message);
       });
     }
 
-    // --- IMPRESSÃO E COMPARTILHAMENTO DE PEDIDOS ---
+    // --- RELATÓRIOS & IMPRESSÃO ---
+    function renderizarRelatorios() {
+      const tbody = document.getElementById('tabelaHistoricoVendas');
+      const fatTotal = document.getElementById('fatTotal');
+      const fatFiado = document.getElementById('fatFiado');
+      const fatLucro = document.getElementById('fatLucro');
+      const inputMes = document.getElementById('filtroMesRelatorio');
+
+      if (!tbody || !inputMes) return;
+
+      const mesFiltro = inputMes.value; // Formato AAAA-MM
+      tbody.innerHTML = '';
+
+      const vendasFiltradas = vendas.filter(v => {
+        if (!v.data) return false;
+        return v.data.startsWith(mesFiltro);
+      });
+
+      let totalFaturamento = 0;
+      let totalFiadoMes = 0;
+      let totalLucroMes = 0;
+
+      vendasFiltradas.forEach(v => {
+        totalFaturamento += (v.total || 0);
+        totalLucroMes += (v.lucro || 0);
+        if (v.formaPagamento === 'Fiado') {
+          totalFiadoMes += (v.total || 0);
+        }
+
+        const dataFormatada = new Date(v.data).toLocaleString('pt-BR');
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>#${v.numeroSequencial || '---'}</strong></td>
+            <td>${dataFormatada}</td>
+            <td>${v.clienteNome}</td>
+            <td>${v.vendedor || 'Geral'}</td>
+            <td>${v.formaPagamento}</td>
+            <td style="color: var(--success-color); font-weight: bold;">R$ ${(v.total || 0).toFixed(2)}</td>
+            <td>
+              <button class="btn btn-primary" style="padding: 3px 6px; font-size: 0.7rem;" onclick="reimprimirPedido('${v.id}')">🖨️ Comprovante</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      if (fatTotal) fatTotal.innerText = `R$ ${totalFaturamento.toFixed(2)}`;
+      if (fatFiado) fatFiado.innerText = `R$ ${totalFiadoMes.toFixed(2)}`;
+      if (fatLucro) fatLucro.innerText = `R$ ${totalLucroMes.toFixed(2)}`;
+    }
+
+    function reimprimirPedido(vendaId) {
+      const venda = vendas.find(v => v.id === vendaId);
+      if (venda) imprimirComprovante(venda);
+    }
+
     function imprimirComprovante(venda) {
       const printArea = document.getElementById('print-area');
       const dataFormatada = new Date(venda.data).toLocaleString('pt-BR');
 
       let itensHtml = '';
       venda.itens.forEach(i => {
-        itensHtml += `${i.nome}\n  ${i.qtd}x R$ ${i.precoVenda.toFixed(2)} = R$ ${i.subtotal.toFixed(2)}\n`;
+        itensHtml += `
+          <div style="display: flex; justify-content: space-between;">
+            <span>${i.qtd}x ${i.nome}</span>
+            <span>R$ ${i.subtotal.toFixed(2)}</span>
+          </div>
+        `;
       });
 
       printArea.innerHTML = `
-        <div style="text-align: center; font-weight: bold; font-size: 13px;">DISTRIBUIDORA FRAZÃO</div>
-        <div style="text-align: center; font-size: 10px;">CNPJ: A.R. Frazão Ltda</div>
-        <div style="text-align: center; font-size: 10px; margin-bottom: 5px;">São Gonçalo - RJ</div>
-        <div>--------------------------------</div>
-        <div>PEDIDO #${venda.numeroSequencial}</div>
-        <div>Data: ${dataFormatada}</div>
-        <div>Cliente: ${venda.clienteNome}</div>
-        <div>Vendedor: ${venda.vendedorResponsavel}</div>
-        <div>Pagamento: ${venda.formaPagamento}</div>
-        <div>--------------------------------</div>
-        <pre style="font-family: monospace; font-size: 11px; margin: 0; white-space: pre-wrap;">${itensHtml}</pre>
-        <div>--------------------------------</div>
-        <div style="font-weight: bold; font-size: 12px; text-align: right;">TOTAL: R$ ${venda.total.toFixed(2)}</div>
-        <div>--------------------------------</div>
-        <div style="text-align: center; margin-top: 8px; font-size: 10px;">Obrigado pela preferência!</div>
+        <div style="text-align: center; font-weight: bold; font-size: 13px; margin-bottom: 5px;">
+          DISTRIBUIDORA FRAZÃO<br>
+          CNPJ: A.R. Frazão Ltda<br>
+          São Gonçalo - RJ
+        </div>
+        <div style="border-bottom: 1px dashed black; margin: 5px 0;"></div>
+        <div><strong>Pedido:</strong> #${venda.numeroSequencial}</div>
+        <div><strong>Data:</strong> ${dataFormatada}</div>
+        <div><strong>Cliente:</strong> ${venda.clienteNome}</div>
+        <div><strong>Tel:</strong> ${venda.clienteTel || 'Não informado'}</div>
+        <div><strong>Vendedor:</strong> ${venda.vendedor}</div>
+        <div><strong>Pagamento:</strong> ${venda.formaPagamento}</div>
+        <div style="border-bottom: 1px dashed black; margin: 5px 0;"></div>
+        <div style="font-weight: bold;">ITENS DO PEDIDO:</div>
+        ${itensHtml}
+        <div style="border-bottom: 1px dashed black; margin: 5px 0;"></div>
+        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 12px;">
+          <span>TOTAL:</span>
+          <span>R$ ${venda.total.toFixed(2)}</span>
+        </div>
+        <div style="border-bottom: 1px dashed black; margin: 5px 0;"></div>
+        <div style="text-align: center; margin-top: 8px; font-size: 10px;">
+          Obrigado pela preferência!<br>
+          Volte sempre!
+        </div>
       `;
 
       window.print();
     }
 
-    function reimprimirPedido(vendaId) {
-      const v = vendas.find(item => item.id === vendaId);
-      if (v) imprimirComprovante(v);
-    }
-
-    function copiarTextoPedido(vendaId) {
-      const v = vendas.find(item => item.id === vendaId);
-      if (!v) return;
-      const dataFormatada = new Date(v.data).toLocaleString('pt-BR');
-      let texto = `📦 *Pedido #${v.numeroSequencial} - Distribuidora Frazão*\n`;
-      texto += `📅 Data: ${dataFormatada}\n`;
-      texto += `👤 Cliente: ${v.clienteNome}\n`;
-      texto += `🤝 Vendedor: ${v.vendedorResponsavel}\n`;
-      texto += `💳 Pagamento: ${v.formaPagamento}\n\n*Itens:* \n`;
-      v.itens.forEach(i => {
-        texto += `• ${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}\n`;
-      });
-      texto += `\n💰 *TOTAL: R$ ${v.total.toFixed(2)}*`;
-
-      navigator.clipboard.writeText(texto).then(() => {
-        alert("Resumo do pedido copiado para a área de transferência!");
-      }).catch(err => alert("Erro ao copiar: " + err.message));
-    }
-
-    function enviarWhatsAppPedido(vendaId) {
-      const v = vendas.find(item => item.id === vendaId);
-      if (!v) return;
-      const dataFormatada = new Date(v.data).toLocaleString('pt-BR');
-      let texto = `📦 *Pedido #${v.numeroSequencial} - Distribuidora Frazão*%0A`;
-      texto += `📅 Data: ${dataFormatada}%0A`;
-      texto += `👤 Cliente: ${v.clienteNome}%0A`;
-      texto += `🤝 Vendedor: ${v.vendedorResponsavel}%0A`;
-      texto += `💳 Pagamento: ${v.formaPagamento}%0A%0A*Itens:*%0A`;
-      v.itens.forEach(i => {
-        texto += `• ${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}%0A`;
-      });
-      texto += `%0A💰 *TOTAL: R$ ${v.total.toFixed(2)}*`;
-
-      window.open(`https://api.whatsapp.com/send?text=${texto}`, '_blank');
-    }
-
-    function excluirPedido(vendaId) {
-      if (confirm("Deseja realmente excluir este pedido do histórico? (Isso não estorna o estoque automaticamente)")) {
-        db.collection("vendas").doc(vendaId).delete().then(() => {
-          alert("Pedido excluído com sucesso.");
-        }).catch(err => alert("Erro ao excluir pedido: " + err.message));
-      }
-    }
-
-    // --- RELATÓRIOS & FATURAMENTO MENSAL ---
-    function renderizarRelatorios() {
-      const fatTotalEl = document.getElementById('fatTotal');
-      const fatFiadoEl = document.getElementById('fatFiado');
-      const fatLucroEl = document.getElementById('fatLucro');
-      const tbodyHistorico = document.getElementById('tabelaHistoricoVendas');
-      const inputMes = document.getElementById('filtroMesRelatorio');
-
-      if (!fatTotalEl || !tbodyHistorico) return;
-
-      const mesSelecionado = inputMes ? inputMes.value : '';
-
-      const vendasFiltradas = vendas.filter(v => {
-        if (!mesSelecionado) return true;
-        if (!v.data) return false;
-        const dataVendaStr = v.data.substring(0, 7);
-        return dataVendaStr === mesSelecionado;
-      });
-
-      let faturamentoMensal = 0;
-      let lucroMensal = 0;
-
-      tbodyHistorico.innerHTML = '';
-
-      vendasFiltradas.forEach(v => {
-        faturamentoMensal += (v.total || 0);
-        lucroMensal += (v.lucro || 0);
-
-        const dataF = v.data ? new Date(v.data).toLocaleDateString('pt-BR') : 'Data não informada';
-        tbodyHistorico.innerHTML += `
-          <tr>
-            <td>#${v.numeroSequencial || 'N/A'}</td>
-            <td>${dataF}</td>
-            <td>${v.clienteNome || 'Cliente'}</td>
-            <td>${v.vendedorResponsavel || 'Admin'}</td>
-            <td>${v.formaPagamento}</td>
-            <td style="font-weight: bold; color: var(--success-color);">R$ ${(v.total || 0).toFixed(2)}</td>
-            <td>
-              <button class="btn btn-primary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="reimprimirPedido('${v.id}')" title="Imprimir">🖨️</button>
-              <button class="btn btn-warning" style="padding: 2px 5px; font-size: 0.65rem;" onclick="copiarTextoPedido('${v.id}')" title="Copiar Texto">📋</button>
-              <button class="btn btn-success" style="padding: 2px 5px; font-size: 0.65rem;" onclick="enviarWhatsAppPedido('${v.id}')" title="Enviar WhatsApp">💬</button>
-              <button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.65rem;" onclick="excluirPedido('${v.id}')" title="Excluir">X</button>
-            </td>
-          </tr>
-        `;
-      });
-
-      let totalFiadoGeral = clientes.reduce((acc, c) => acc + (c.saldoDevedor || 0), 0);
-
-      fatTotalEl.innerText = `R$ ${faturamentoMensal.toFixed(2)}`;
-      fatFiadoEl.innerText = `R$ ${totalFiadoGeral.toFixed(2)}`;
-      fatLucroEl.innerText = `R$ ${lucroMensal.toFixed(2)}`;
-    }
-
-    function obterDadosRelatorioAtual() {
-      const inputMes = document.getElementById('filtroMesRelatorio');
-      const mesSelecionado = inputMes ? inputMes.value : '';
-      
-      const vendasFiltradas = vendas.filter(v => {
-        if (!mesSelecionado) return true;
-        if (!v.data) return false;
-        return v.data.substring(0, 7) === mesSelecionado;
-      });
-
-      let faturamento = vendasFiltradas.reduce((acc, v) => acc + (v.total || 0), 0);
-      let lucro = vendasFiltradas.reduce((acc, v) => acc + (v.lucro || 0), 0);
-      let totalFiado = clientes.reduce((acc, c) => acc + (c.saldoDevedor || 0), 0);
-
-      return {
-        mes: mesSelecionado || 'Geral',
-        faturamento,
-        lucro,
-        totalFiado,
-        qtdVendas: vendasFiltradas.length
-      };
-    }
-
     function imprimirRelatorioGeral() {
-      const r = obterDadosRelatorioAtual();
-      const printArea = document.getElementById('print-area');
+      const inputMes = document.getElementById('filtroMesRelatorio').value;
+      const vendasFiltradas = vendas.filter(v => v.data && v.data.startsWith(inputMes));
+      let totalFat = vendasFiltradas.reduce((acc, v) => acc + (v.total || 0), 0);
+      let totalLucro = vendasFiltradas.reduce((acc, v) => acc + (v.lucro || 0), 0);
 
+      const printArea = document.getElementById('print-area');
       printArea.innerHTML = `
-        <div style="text-align: center; font-weight: bold; font-size: 13px;">DISTRIBUIDORA FRAZÃO</div>
-        <div style="text-align: center; font-size: 10px;">RELATÓRIO FINANCEIRO (MÊS: ${r.mes})</div>
-        <div>--------------------------------</div>
-        <div>Total de Pedidos: ${r.qtdVendas}</div>
-        <div>Faturamento: R$ ${r.faturamento.toFixed(2)}</div>
-        <div>Lucro Bruto: R$ ${r.lucro.toFixed(2)}</div>
-        <div>Recebíveis Fiado: R$ ${r.totalFiado.toFixed(2)}</div>
-        <div>--------------------------------</div>
-        <div style="text-align: center; font-size: 10px;">Gerado em sistema próprio</div>
+        <div style="text-align: center; font-weight: bold; font-size: 13px; margin-bottom: 5px;">
+          RELATÓRIO DE FATURAMENTO<br>
+          DISTRIBUIDORA FRAZÃO<br>
+          Mês/Ano: ${inputMes}
+        </div>
+        <div style="border-bottom: 1px dashed black; margin: 5px 0;"></div>
+        <div><strong>Total de Pedidos:</strong> ${vendasFiltradas.length}</div>
+        <div><strong>Faturamento Total:</strong> R$ ${totalFat.toFixed(2)}</div>
+        <div><strong>Lucro Bruto Estimado:</strong> R$ ${totalLucro.toFixed(2)}</div>
+        <div style="border-bottom: 1px dashed black; margin: 5px 0;"></div>
+        <div style="text-align: center; margin-top: 8px; font-size: 10px;">
+          Gerado pelo Sistema Interno Frazão
+        </div>
       `;
       window.print();
     }
 
     function copiarRelatorioGeral() {
-      const r = obterDadosRelatorioAtual();
-      const texto = `📊 *Relatório Financeiro - Distribuidora Frazão*\n📅 Período: ${r.mes}\n\n📦 Pedidos realizados: ${r.qtdVendas}\n💰 Faturamento: R$ ${r.faturamento.toFixed(2)}\n📈 Lucro Bruto: R$ ${r.lucro.toFixed(2)}\n⚠️ Total em Fiado: R$ ${r.totalFiado.toFixed(2)}`;
+      const inputMes = document.getElementById('filtroMesRelatorio').value;
+      const vendasFiltradas = vendas.filter(v => v.data && v.data.startsWith(inputMes));
+      let totalFat = vendasFiltradas.reduce((acc, v) => acc + (v.total || 0), 0);
+      let totalLucro = vendasFiltradas.reduce((acc, v) => acc + (v.lucro || 0), 0);
+      let totalFiado = vendasFiltradas.filter(v => v.formaPagamento === 'Fiado').reduce((acc, v) => acc + (v.total || 0), 0);
+
+      const texto = `📊 *RELATÓRIO DE VENDAS - DISTRIBUIDORA FRAZÃO*\n📅 Mês: ${inputMes}\n\n📦 Total de Pedidos: ${vendasFiltradas.length}\n💰 Faturamento: R$ ${totalFat.toFixed(2)}\n⚠️ Total em Fiado: R$ ${totalFiado.toFixed(2)}\n📈 Lucro Bruto: R$ ${totalLucro.toFixed(2)}`;
 
       navigator.clipboard.writeText(texto).then(() => {
         alert("Relatório copiado para a área de transferência!");
-      }).catch(err => alert("Erro ao copiar: " + err.message));
+      });
     }
 
     function enviarWhatsAppRelatorioGeral() {
-      const r = obterDadosRelatorioAtual();
-      const texto = `📊 *Relatório Financeiro - Distribuidora Frazão*%0A📅 Período: ${r.mes}%0A%0A📦 Pedidos realizados: ${r.qtdVendas}%0A💰 Faturamento: R$ ${r.faturamento.toFixed(2)}%0A📈 Lucro Bruto: R$ ${r.lucro.toFixed(2)}%0A⚠️ Total em Fiado: R$ ${r.totalFiado.toFixed(2)}`;
-      window.open(`https://api.whatsapp.com/send?text=${texto}`, '_blank');
+      const inputMes = document.getElementById('filtroMesRelatorio').value;
+      const vendasFiltradas = vendas.filter(v => v.data && v.data.startsWith(inputMes));
+      let totalFat = vendasFiltradas.reduce((acc, v) => acc + (v.total || 0), 0);
+      let totalLucro = vendasFiltradas.reduce((acc, v) => acc + (v.lucro || 0), 0);
+      let totalFiado = vendasFiltradas.filter(v => v.formaPagamento === 'Fiado').reduce((acc, v) => acc + (v.total || 0), 0);
+
+      const texto = `📊 *RELATÓRIO DE VENDAS - DISTRIBUIDORA FRAZÃO*\n📅 Mês: ${inputMes}\n\n📦 Total de Pedidos: ${vendasFiltradas.length}\n💰 Faturamento: R$ ${totalFat.toFixed(2)}\n⚠️ Total em Fiado: R$ ${totalFiado.toFixed(2)}\n📈 Lucro Bruto: R$ ${totalLucro.toFixed(2)}`;
+
+      const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
+      window.open(url, '_blank');
     }
   </script>
 </body>

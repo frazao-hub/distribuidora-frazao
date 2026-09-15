@@ -485,7 +485,9 @@
         appId: "1:642540059204:web:c113fa6966fd97fc20da11"
     };
 
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
     const db = firebase.firestore();
 
     let produtos = [];
@@ -502,7 +504,6 @@
     };
 
     function iniciarFirestore() {
-      // PRODUTOS COM ORDENAÇÃO ALFABÉTICA (A-Z)
       db.collection("produtos").onSnapshot((snapshot) => {
         produtos = [];
         snapshot.forEach((doc) => {
@@ -513,7 +514,6 @@
         carregarSelectProdutos();
       });
 
-      // CLIENTES COM ORDENAÇÃO ALFABÉTICA (A-Z)
       db.collection("clientes").onSnapshot((snapshot) => {
         clientes = [];
         snapshot.forEach((doc) => {
@@ -1078,6 +1078,8 @@
           fiadoTotal += (v.total || 0);
         }
 
+        const vendaJsonEscapada = JSON.stringify(v).replace(/"/g, '&quot;');
+
         tbody.innerHTML += `
           <tr>
             <td>#${v.numeroSequencial ? String(v.numeroSequencial).slice(-6) : ''}</td>
@@ -1087,7 +1089,9 @@
             <td>${v.formaPagamento || ''}</td>
             <td><strong>R$ ${(v.total || 0).toFixed(2)}</strong></td>
             <td>
-              <button class="btn btn-primary" style="padding: 2px 5px; font-size: 0.65rem;" onclick='imprimirComprovante(${JSON.stringify(v)})'>Imprimir</button>
+              <button class="btn btn-primary" style="padding: 2px 5px; font-size: 0.65rem;" onclick='imprimirComprovantePorObj(${vendaJsonEscapada})'>Imprimir</button>
+              <button class="btn btn-warning" style="padding: 2px 5px; font-size: 0.65rem;" onclick='copiarComprovantePorObj(${vendaJsonEscapada})'>Copiar</button>
+              <button class="btn btn-success" style="padding: 2px 5px; font-size: 0.65rem;" onclick='enviarWhatsAppComprovantePorObj(${vendaJsonEscapada})'>WhatsApp</button>
               ${usuarioLogado && usuarioLogado.tipo === 'admin' ? `<button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.65rem;" onclick="excluirVenda('${v.id}')">Excluir</button>` : ''}
             </td>
           </tr>
@@ -1107,7 +1111,7 @@
 
     function imprimirComprovante(venda) {
       const printArea = document.getElementById('print-area');
-      const itensHtml = venda.itens.map(i => `
+      const itensHtml = (venda.itens || []).map(i => `
         <div>${i.qtd}x ${i.nome} - R$ ${(i.preco * i.qtd).toFixed(2)}</div>
       `).join('');
 
@@ -1122,10 +1126,49 @@
         <div>--------------------------------</div>
         ${itensHtml}
         <div>--------------------------------</div>
-        <div style="font-weight: bold; text-align: right;">TOTAL: R$ ${venda.total.toFixed(2)}</div>
+        <div style="font-weight: bold; text-align: right;">TOTAL: R$ ${(venda.total || 0).toFixed(2)}</div>
         <div style="text-align: center; margin-top: 10px;">Obrigado pela preferência!</div>
       `;
       window.print();
+    }
+
+    function imprimirComprovantePorObj(vendaObj) {
+      imprimirComprovante(vendaObj);
+    }
+
+    function copiarComprovantePorObj(v) {
+      const itensTxt = (v.itens || []).map(i => `${i.qtd}x ${i.nome} - R$ ${(i.preco * i.qtd).toFixed(2)}`).join('\n');
+      let texto = `*COMPROVANTE - DISTRIBUIDORA FRAZÃO*\n`;
+      texto += `Pedido: #${v.numeroSequencial ? String(v.numeroSequencial).slice(-6) : ''}\n`;
+      texto += `Data: ${v.dataHora}\n`;
+      texto += `Cliente: ${v.clienteNome}\n`;
+      texto += `Vendedor: ${v.vendedor}\n`;
+      texto += `Forma de Pagamento: ${v.formaPagamento}\n`;
+      texto += `--------------------------------\n`;
+      texto += `${itensTxt}\n`;
+      texto += `--------------------------------\n`;
+      texto += `*TOTAL: R$ ${(v.total || 0).toFixed(2)}*\n`;
+      texto += `Obrigado pela preferência!`;
+
+      navigator.clipboard.writeText(texto).then(() => {
+        alert("Comprovante copiado para a área de transferência!");
+      });
+    }
+
+    function enviarWhatsAppComprovantePorObj(v) {
+      const itensTxt = (v.itens || []).map(i => `${i.qtd}x ${i.nome} - R$ ${(i.preco * i.qtd).toFixed(2)}`).join('%0a');
+      let texto = `*COMPROVANTE - DISTRIBUIDORA FRAZÃO*%0a` +
+        `Pedido: #${v.numeroSequencial ? String(v.numeroSequencial).slice(-6) : ''}%0a` +
+        `Data: ${v.dataHora}%0a` +
+        `Cliente: ${v.clienteNome}%0a` +
+        `Vendedor: ${v.vendedor}%0a` +
+        `Forma de Pagamento: ${v.formaPagamento}%0a` +
+        `--------------------------------%0a` +
+        `${itensTxt}%0a` +
+        `--------------------------------%0a` +
+        `*TOTAL: R$ ${(v.total || 0).toFixed(2)}*%0a` +
+        `Obrigado pela preferência!`;
+      window.open(`https://api.whatsapp.com/send?text=${texto}`, '_blank');
     }
 
     function imprimirRelatorioGeral() {

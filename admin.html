@@ -661,6 +661,15 @@
       labelUsuario.innerText = `Logado: ${usuarioLogado.nome}`;
       inputResp.value = usuarioLogado.nome;
 
+      // Trava o campo de vendedor responsável no cadastro de cliente se for vendedor logado
+      const selectCliVendedor = document.getElementById('cliVendedor');
+      if (usuarioLogado.tipo === 'vendedor') {
+        selectCliVendedor.value = usuarioLogado.nome;
+        selectCliVendedor.disabled = true;
+      } else {
+        selectCliVendedor.disabled = false;
+      }
+
       if (usuarioLogado.tipo === 'admin') {
         adminElements.forEach(el => el.style.display = 'block');
         btnAltSenha.style.display = 'inline-block';
@@ -756,6 +765,13 @@
       vendedores.forEach(v => {
         select.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
       });
+
+      if (usuarioLogado && usuarioLogado.tipo === 'vendedor') {
+        select.value = usuarioLogado.nome;
+        select.disabled = true;
+      } else {
+        select.disabled = false;
+      }
     }
 
     // --- PRODUTOS ---
@@ -1021,7 +1037,11 @@
       const documento = document.getElementById('cliDocumento').value.trim();
       const telefone = document.getElementById('cliTelefone').value.trim();
       const endereco = document.getElementById('cliEndereco').value.trim();
-      const vendedorResp = document.getElementById('cliVendedor').value;
+      
+      // Se for vendedor logado, fixa automaticamente a carteira nele próprio
+      const vendedorResp = (usuarioLogado && usuarioLogado.tipo === 'vendedor') 
+        ? usuarioLogado.nome 
+        : document.getElementById('cliVendedor').value;
 
       if (!nome || !telefone || !endereco) {
         alert("Preencha Nome, Telefone e Endereço.");
@@ -1053,7 +1073,12 @@
       document.getElementById('cliDocumento').value = c.documento || '';
       document.getElementById('cliTelefone').value = c.telefone || '';
       document.getElementById('cliEndereco').value = c.endereco || '';
-      document.getElementById('cliVendedor').value = c.vendedorResp || '';
+      
+      const selectVend = document.getElementById('cliVendedor');
+      selectVend.value = c.vendedorResp || '';
+      if (usuarioLogado && usuarioLogado.tipo === 'vendedor') {
+        selectVend.disabled = true;
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -1066,13 +1091,28 @@
     function limparFormCliente() {
       document.getElementById('formCliente').reset();
       document.getElementById('cliDocId').value = '';
+      if (usuarioLogado && usuarioLogado.tipo === 'vendedor') {
+        document.getElementById('cliVendedor').value = usuarioLogado.nome;
+        document.getElementById('cliVendedor').disabled = true;
+      }
+    }
+
+    function obterClientesDaCarteira() {
+      if (!usuarioLogado) return [];
+      if (usuarioLogado.tipo === 'admin') {
+        return clientes;
+      }
+      return clientes.filter(c => (c.vendedorResp || '').trim() === usuarioLogado.nome.trim());
     }
 
     function renderizarClientes() {
       const tbody = document.getElementById('tabelaClientes');
       if (!tbody) return;
       tbody.innerHTML = '';
-      clientes.forEach(c => {
+
+      const listaFiltrada = obterClientesDaCarteira();
+
+      listaFiltrada.forEach(c => {
         const saldo = c.saldoDevedor || 0;
         const saldoEstilo = saldo > 0 ? 'color: var(--warning-color); font-weight: bold;' : 'color: var(--success-color);';
         tbody.innerHTML += `
@@ -1098,7 +1138,9 @@
       const select = document.getElementById('vendaCliente');
       if (!select) return;
       select.innerHTML = '<option value="">-- Cliente Avulso / Dinheiro --</option>';
-      clientes.forEach(c => {
+
+      const listaFiltrada = obterClientesDaCarteira();
+      listaFiltrada.forEach(c => {
         select.innerHTML += `<option value="${c.id}">${c.nome} (${c.telefone || ''})</option>`;
       });
     }

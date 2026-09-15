@@ -661,7 +661,6 @@
       labelUsuario.innerText = `Logado: ${usuarioLogado.nome}`;
       inputResp.value = usuarioLogado.nome;
 
-      // Trava o campo de vendedor responsável no cadastro de cliente se for vendedor logado
       const selectCliVendedor = document.getElementById('cliVendedor');
       if (usuarioLogado.tipo === 'vendedor') {
         selectCliVendedor.value = usuarioLogado.nome;
@@ -989,7 +988,17 @@
       }, 0);
 
       const agora = new Date();
-      const numeroSeq = Date.now();
+
+      // Calcula o próximo número sequencial (1001 a 9999) baseado no maior número já salvo no Firebase
+      let maiorNum = 1000;
+      vendas.forEach(v => {
+        if (v.numeroSequencial && v.numeroSequencial >= 1001 && v.numeroSequencial <= 9999) {
+          if (v.numeroSequencial > maiorNum) {
+            maiorNum = v.numeroSequencial;
+          }
+        }
+      });
+      let numeroSeq = maiorNum >= 9999 ? 1001 : maiorNum + 1;
 
       const dadosVenda = {
         numeroSequencial: numeroSeq,
@@ -1020,7 +1029,7 @@
       db.collection("vendas").add(dadosVenda).then(() => {
         return batch.commit();
       }).then(() => {
-        alert("Pedido finalizado com sucesso!");
+        alert(`Pedido #${numeroSeq} finalizado com sucesso!`);
         gerarTextoRecibo(dadosVenda);
         carrinho = [];
         renderizarCarrinho();
@@ -1038,7 +1047,6 @@
       const telefone = document.getElementById('cliTelefone').value.trim();
       const endereco = document.getElementById('cliEndereco').value.trim();
       
-      // Se for vendedor logado, fixa automaticamente a carteira nele próprio
       const vendedorResp = (usuarioLogado && usuarioLogado.tipo === 'vendedor') 
         ? usuarioLogado.nome 
         : document.getElementById('cliVendedor').value;
@@ -1145,7 +1153,6 @@
       });
     }
 
-    // NOVO: Acrescentar / somar dívidas passadas ao fiado do cliente
     function acrescentarFiado(clienteId) {
       const cliente = clientes.find(c => c.id === clienteId);
       if (!cliente) return;
@@ -1204,7 +1211,7 @@
         const dataFormatada = v.data ? new Date(v.data).toLocaleString('pt-BR') : '';
         tbody.innerHTML += `
           <tr>
-            <td>#${String(v.numeroSequencial || '').slice(-6)}</td>
+            <td><strong>#${v.numeroSequencial || ''}</strong></td>
             <td>${dataFormatada}</td>
             <td>${v.clienteNome}</td>
             <td>${v.vendedor || '-'}</td>
@@ -1233,7 +1240,7 @@
       let txt = `====================================\n`;
       txt += `       DISTRIBUIDORA FRAZÃO        \n`;
       txt += `====================================\n`;
-      txt += `Pedido: #${String(venda.numeroSequencial || '').slice(-6)}\n`;
+      txt += `Pedido: #${venda.numeroSequencial || ''}\n`;
       txt += `Data: ${dataStr}\n`;
       txt += `Cliente: ${venda.clienteNome}\n`;
       txt += `Vendedor: ${venda.vendedor || '-'}\n`;

@@ -3,12 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Vendas e Gestão - Distribuidora Frazão</title>
-    
-    <!-- Scripts do Firebase v9 (SDK Web compat) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
+    <title>Distribuidora Frazão - Sistema de Vendas e Gestão</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -218,7 +213,7 @@
 </head>
 <body>
 
-    <!-- Sidebar -->
+    <!-- Sidebar Corrigida -->
     <aside>
         <div class="logo-area">Distribuidora Frazão</div>
         <ul class="menu">
@@ -326,7 +321,7 @@
                 </div>
 
                 <div class="card">
-                    <h3>Lista de Produtos em Estoque (Nuvem)</h3>
+                    <h3>Lista de Produtos em Estoque</h3>
                     <table>
                         <thead>
                             <tr>
@@ -337,9 +332,7 @@
                                 <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="tabela-produtos">
-                            <tr><td colspan="5" style="text-align: center;">Carregando produtos...</td></tr>
-                        </tbody>
+                        <tbody id="tabela-produtos"></tbody>
                     </table>
                 </div>
             </div>
@@ -364,7 +357,7 @@
                 </div>
 
                 <div class="card">
-                    <h3>Controle de Clientes e Fiado (Nuvem)</h3>
+                    <h3>Controle de Clientes e Fiado</h3>
                     <table>
                         <thead>
                             <tr>
@@ -375,9 +368,7 @@
                                 <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="tabela-clientes">
-                            <tr><td colspan="5" style="text-align: center;">Carregando clientes...</td></tr>
-                        </tbody>
+                        <tbody id="tabela-clientes"></tbody>
                     </table>
                 </div>
             </div>
@@ -385,7 +376,7 @@
             <!-- ABA PEDIDOS -->
             <div id="pedidos" class="tab-content">
                 <div class="card">
-                    <h3>Histórico de Pedidos (Nuvem)</h3>
+                    <h3>Histórico de Pedidos</h3>
                     <table>
                         <thead>
                             <tr>
@@ -398,9 +389,7 @@
                                 <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="tabela-pedidos">
-                            <tr><td colspan="7" style="text-align: center;">Carregando pedidos...</td></tr>
-                        </tbody>
+                        <tbody id="tabela-pedidos"></tbody>
                     </table>
                 </div>
             </div>
@@ -409,25 +398,30 @@
     </main>
 
     <script>
-        // Configuração do Firebase da Distribuidora Frazão
-        const firebaseConfig = {
-            apiKey: "AIzaSyD8SnMWXagUVz4uVM87bc2dAakZyGGW3nM",
-            authDomain: "distribuidora-frazao.firebaseapp.com",
-            projectId: "distribuidora-frazao",
-            storageBucket: "distribuidora-frazao.firebasestorage.app",
-            messagingSenderId: "642540059204",
-            appId: "1:642540059204:web:c113fa6966fd97fc20da11"
-        };
+        // Estrutura de Dados Inicial / LocalStorage
+        let produtos = JSON.parse(localStorage.getItem('frazao_produtos')) || [
+            { id: 1, nome: 'Refrigerante 2L', preco: 9.00, estoque: 50 },
+            { id: 2, nome: 'Bombom Caixa', preco: 12.50, estoque: 30 }
+        ];
 
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        let clientes = JSON.parse(localStorage.getItem('frazao_clientes')) || [
+            { id: 1, nome: 'Cliente Geral / Balcão', telefone: '', divida: 0 }
+        ];
 
-        // Arrays em memória sincronizados em tempo real com o Firestore
-        let produtos = [];
-        let clientes = [];
-        let pedidos = [];
+        let pedidos = JSON.parse(localStorage.getItem('frazao_pedidos')) || [];
+
+        // Sequencial de pedidos iniciando em 1011 se não houver registros anteriores
+        let proximoPedidoNumero = parseInt(localStorage.getItem('frazao_proximo_pedido')) || 1011;
+
         let carrinho = [];
+
+        // Salvar dados no Storage
+        function salvarDados() {
+            localStorage.setItem('frazao_produtos', JSON.stringify(produtos));
+            localStorage.setItem('frazao_clientes', JSON.stringify(clientes));
+            localStorage.setItem('frazao_pedidos', JSON.stringify(pedidos));
+            localStorage.setItem('frazao_proximo_pedido', proximoPedidoNumero);
+        }
 
         // Navegação de Abas
         function switchTab(tabId, el) {
@@ -444,43 +438,24 @@
                 'pedidos': 'Histórico de Pedidos'
             };
             document.getElementById('header-title').innerText = titles[tabId];
+
+            if(tabId === 'vendas') carregarSelectsPDV();
+            if(tabId === 'produtos') renderizarProdutos();
+            if(tabId === 'clientes') renderizarClientes();
+            if(tabId === 'pedidos') renderizarPedidos();
         }
 
-        // --- SINCRONIZAÇÃO EM TEMPO REAL COM O FIREBASE ---
+        // Inicialização
         window.onload = function() {
-            // Escutar Produtos
-            db.collection("produtos").orderBy("nome").onSnapshot((snapshot) => {
-                produtos = [];
-                snapshot.forEach((doc) => {
-                    produtos.push({ id: doc.id, ...doc.data() });
-                });
-                renderizarProdutos();
-                carregarSelectsPDV();
-            });
-
-            // Escutar Clientes
-            db.collection("clientes").orderBy("nome").onSnapshot((snapshot) => {
-                clientes = [];
-                snapshot.forEach((doc) => {
-                    clientes.push({ id: doc.id, ...doc.data() });
-                });
-                renderizarClientes();
-                carregarSelectsPDV();
-            });
-
-            // Escutar Pedidos
-            db.collection("pedidos").orderBy("criadoEm", "desc").onSnapshot((snapshot) => {
-                pedidos = [];
-                snapshot.forEach((doc) => {
-                    pedidos.push({ id: doc.id, ...doc.data() });
-                });
-                renderizarPedidos();
-            });
-        };
+            carregarSelectsPDV();
+            renderizarProdutos();
+            renderizarClientes();
+            renderizarPedidos();
+        }
 
         // --- MÓDULO PRODUTOS ---
         function salvarProduto() {
-            const nome = document.getElementById('prod-nome').value.trim();
+            const nome = document.getElementById('prod-nome').value;
             const preco = parseFloat(document.getElementById('prod-preco').value);
             const estoque = parseInt(document.getElementById('prod-estoque').value);
 
@@ -489,105 +464,85 @@
                 return;
             }
 
-            db.collection("produtos").add({
-                nome: nome,
-                preco: preco,
-                estoque: estoque,
-                criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then(() => {
-                document.getElementById('prod-nome').value = '';
-                document.getElementById('prod-preco').value = '';
-                document.getElementById('prod-estoque').value = '';
-                alert('Produto cadastrado na nuvem com sucesso!');
-            })
-            .catch(err => alert('Erro ao salvar produto: ' + err.message));
+            const novoId = produtos.length > 0 ? produtos[produtos.length - 1].id + 1 : 1;
+            produtos.push({ id: novoId, nome, preco, estoque });
+            salvarDados();
+
+            document.getElementById('prod-nome').value = '';
+            document.getElementById('prod-preco').value = '';
+            document.getElementById('prod-estoque').value = '';
+
+            renderizarProdutos();
+            alert('Produto cadastrado com sucesso!');
         }
 
         function renderizarProdutos() {
             const tbody = document.getElementById('tabela-produtos');
             tbody.innerHTML = '';
-            
-            if(produtos.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Nenhum produto cadastrado.</td></tr>`;
-                return;
-            }
-
             produtos.forEach(p => {
                 tbody.innerHTML += `
                     <tr>
-                        <td>#${p.id.slice(-4)}</td>
+                        <td>#${p.id}</td>
                         <td>${p.nome}</td>
-                        <td>R$ ${Number(p.preco).toFixed(2)}</td>
+                        <td>R$ ${p.preco.toFixed(2)}</td>
                         <td>${p.estoque}</td>
-                        <td><button class="btn-danger" onclick="excluirProduto('${p.id}')">Excluir</button></td>
+                        <td><button class="btn-danger" onclick="excluirProduto(${p.id})">Excluir</button></td>
                     </tr>
                 `;
             });
         }
 
         function excluirProduto(id) {
-            if(confirm('Deseja excluir este produto da nuvem?')) {
-                db.collection("produtos").doc(id).delete()
-                .then(() => alert('Produto removido!'))
-                .catch(err => alert('Erro ao excluir: ' + err.message));
-            }
+            produtos = produtos.filter(p => p.id !== id);
+            salvarDados();
+            renderizarProdutos();
         }
 
         // --- MÓDULO CLIENTES ---
         function salvarCliente() {
-            const nome = document.getElementById('cli-nome').value.trim();
-            const telefone = document.getElementById('cli-tel').value.trim();
+            const nome = document.getElementById('cli-nome').value;
+            const telefone = document.getElementById('cli-tel').value;
 
             if(!nome) {
                 alert('Informe o nome do cliente!');
                 return;
             }
 
-            db.collection("clientes").add({
-                nome: nome,
-                telefone: telefone,
-                divida: 0,
-                criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then(() => {
-                document.getElementById('cli-nome').value = '';
-                document.getElementById('cli-tel').value = '';
-                alert('Cliente cadastrado na nuvem com sucesso!');
-            })
-            .catch(err => alert('Erro ao salvar cliente: ' + err.message));
+            const novoId = clientes.length > 0 ? clientes[clientes.length - 1].id + 1 : 1;
+            clientes.push({ id: novoId, nome, telefone, divida: 0 });
+            salvarDados();
+
+            document.getElementById('cli-nome').value = '';
+            document.getElementById('cli-tel').value = '';
+
+            renderizarClientes();
+            alert('Cliente cadastrado com sucesso!');
         }
 
         function renderizarClientes() {
             const tbody = document.getElementById('tabela-clientes');
             tbody.innerHTML = '';
-
-            if(clientes.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Nenhum cliente cadastrado.</td></tr>`;
-                return;
-            }
-
             clientes.forEach(c => {
-                const dividaNum = Number(c.divida || 0);
                 tbody.innerHTML += `
                     <tr>
-                        <td>#${c.id.slice(-4)}</td>
+                        <td>#${c.id}</td>
                         <td>${c.nome}</td>
                         <td>${c.telefone || '-'}</td>
-                        <td><span style="color: ${dividaNum > 0 ? 'red' : 'inherit'}; font-weight: bold;">R$ ${dividaNum.toFixed(2)}</span></td>
+                        <td><span style="color: ${c.divida > 0 ? 'red' : 'inherit'}; font-weight: bold;">R$ ${c.divida.toFixed(2)}</span></td>
                         <td>
-                            ${dividaNum > 0 ? `<button class="btn-success" onclick="quitarDivida('${c.id}', ${dividaNum})">Quitar Dívida</button>` : '-'}
+                            ${c.divida > 0 ? `<button class="btn-success" onclick="quitarDivida(${c.id})">Quitar Dívida</button>` : '-'}
                         </td>
                     </tr>
                 `;
             });
         }
 
-        function quitarDivida(id, valorAtual) {
-            if(confirm(`Deseja quitar a dívida de R$ ${valorAtual.toFixed(2)} deste cliente?`)) {
-                db.collection("clientes").doc(id).update({ divida: 0 })
-                .then(() => alert('Dívida quitada com sucesso!'))
-                .catch(err => alert('Erro ao quitar dívida: ' + err.message));
+        function quitarDivida(id) {
+            const cliente = clientes.find(c => c.id === id);
+            if(cliente && confirm(`Deseja quitar a dívida de R$ ${cliente.divida.toFixed(2)} do cliente ${cliente.nome}?`)) {
+                cliente.divida = 0;
+                salvarDados();
+                renderizarClientes();
             }
         }
 
@@ -618,11 +573,10 @@
         function adicionarItemCarrinho() {
             const select = document.getElementById('pdv-produto');
             if(!select.value) {
-                alert('Selecione um produto!');
+                alert('Nenhum produto selecionado ou disponível!');
                 return;
             }
-            
-            const produtoId = select.value;
+            const produtoId = parseInt(select.value);
             const produtoNome = select.options[select.selectedIndex].text.split(' (Estoque')[0];
             const qtd = parseInt(document.getElementById('pdv-qtd').value);
             const precoUnitario = parseFloat(document.getElementById('pdv-preco').value);
@@ -694,54 +648,42 @@
                 return;
             }
 
-            const clienteId = document.getElementById('pdv-cliente').value;
+            const clienteId = parseInt(document.getElementById('pdv-cliente').value);
             const formaPagamento = document.getElementById('pdv-pagamento').value;
             const cliente = clientes.find(c => c.id === clienteId);
             
             let totalVenda = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
 
-            // Transação ou lote no Firestore para atualizar estoque, dívida e registrar pedido
-            const batch = db.batch();
-
-            // 1. Dar baixa no estoque de cada produto
             for(let item of carrinho) {
                 let prod = produtos.find(p => p.id === item.produtoId);
                 if(prod) {
-                    let novoEstoque = Math.max(0, prod.estoque - item.qtd);
-                    let prodRef = db.collection("produtos").doc(prod.id);
-                    batch.update(prodRef, { estoque: novoEstoque });
+                    prod.estoque -= item.qtd;
                 }
             }
 
-            // 2. Se for fiado, aumentar a dívida do cliente
-            if(formaPagamento === 'Fiado' && cliente) {
-                let novaDivida = Number(cliente.divida || 0) + totalVenda;
-                let cliRef = db.collection("clientes").doc(cliente.id);
-                batch.update(cliRef, { divida: novaDivida });
+            if(formaPagamento === 'Fiado') {
+                cliente.divida += totalVenda;
             }
 
-            // 3. Registrar o pedido
-            const pedidoRef = db.collection("pedidos").doc();
-            const dadosPedido = {
-                numeroPedido: Math.floor(1000 + Math.random() * 9000), // Número aleatório de 4 dígitos ou sequencial
-                clienteNome: cliente ? cliente.nome : 'Cliente Balcão',
+            const novoPedido = {
+                id: proximoPedidoNumero,
+                clienteNome: cliente ? cliente.nome : 'Desconhecido',
                 clienteId: clienteId,
                 itens: [...carrinho],
                 total: totalVenda,
                 pagamento: formaPagamento,
-                status: 'Concluído',
-                criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                status: 'Concluído'
             };
-            batch.set(pedidoRef, dadosPedido);
 
-            batch.commit()
-            .then(() => {
-                carrinho = [];
-                renderizarCarrinho();
-                alert(`Venda finalizada e salva na nuvem com sucesso!`);
-                switchTab('pedidos', document.querySelectorAll('.menu li')[3]);
-            })
-            .catch(err => alert('Erro ao finalizar venda: ' + err.message));
+            pedidos.unshift(novoPedido);
+            proximoPedidoNumero++;
+            
+            salvarDados();
+
+            carrinho = [];
+            renderizarCarrinho();
+            alert(`Venda finalizada com sucesso! Pedido #${novoPedido.id}`);
+            switchTab('pedidos', document.querySelectorAll('.menu li')[3]);
         }
 
         // --- MÓDULO PEDIDOS & HISTÓRICO ---
@@ -750,24 +692,24 @@
             tbody.innerHTML = '';
 
             if(pedidos.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Nenhum pedido registrado na nuvem.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Nenhum pedido registrado</td></tr>`;
                 return;
             }
 
             pedidos.forEach(p => {
-                let itensStr = p.itens ? p.itens.map(i => `${i.qtd}x ${i.produtoNome}`).join(', ') : '';
+                let itensStr = p.itens.map(i => `${i.qtd}x ${i.produtoNome}`).join(', ');
                 let badgeClass = p.status === 'Concluído' ? 'success' : 'danger';
 
                 tbody.innerHTML += `
                     <tr>
-                        <td>#${p.numeroPedido || p.id.slice(-4)}</td>
+                        <td>#${p.id}</td>
                         <td>${p.clienteNome}</td>
                         <td style="max-width: 250px; font-size: 0.85rem;">${itensStr}</td>
-                        <td>R$ ${Number(p.total).toFixed(2)}</td>
+                        <td>R$ ${p.total.toFixed(2)}</td>
                         <td>${p.pagamento}</td>
                         <td><span class="badge ${badgeClass}">${p.status}</span></td>
                         <td>
-                            ${p.status === 'Concluído' ? `<button class="btn-danger" onclick="cancelarPedido('${p.id}')">Cancelar</button>` : '-'}
+                            ${p.status === 'Concluído' ? `<button class="btn-danger" onclick="cancelarPedido(${p.id})">Cancelar</button>` : '-'}
                         </td>
                     </tr>
                 `;
@@ -778,33 +720,27 @@
             const pedido = pedidos.find(p => p.id === id);
             if(!pedido || pedido.status === 'Cancelado') return;
 
-            if(confirm(`Tem certeza que deseja cancelar este pedido? Esta ação devolverá os itens ao estoque e ajustará eventuais débitos.`)) {
-                // Devolver estoque e estornar fiado se necessário
-                const batch = db.batch();
-
+            if(confirm(`Tem certeza que deseja cancelar o Pedido #${pedido.id}? Esta ação devolverá os itens ao estoque e ajustará eventuais débitos de fiado.`)) {
+                
                 for(let item of pedido.itens) {
                     let prod = produtos.find(p => p.id === item.produtoId);
                     if(prod) {
-                        let prodRef = db.collection("produtos").doc(prod.id);
-                        batch.update(prodRef, { estoque: prod.estoque + item.qtd });
+                        prod.estoque += item.qtd;
                     }
                 }
 
                 if(pedido.pagamento === 'Fiado') {
                     let cliente = clientes.find(c => c.id === pedido.clienteId);
                     if(cliente) {
-                        let cliRef = db.collection("clientes").doc(cliente.id);
-                        let novaDivida = Math.max(0, Number(cliente.divida || 0) - pedido.total);
-                        batch.update(cliRef, { divida: novaDivida });
+                        cliente.divida = Math.max(0, cliente.divida - pedido.total);
                     }
                 }
 
-                let pedidoRef = db.collection("pedidos").doc(id);
-                batch.update(pedidoRef, { status: 'Cancelado' });
+                pedido.status = 'Cancelado';
+                salvarDados();
 
-                batch.commit()
-                .then(() => alert('Pedido cancelado e estoque/saldos estornados com sucesso!'))
-                .catch(err => alert('Erro ao cancelar pedido: ' + err.message));
+                renderizarPedidos();
+                alert(`Pedido #${pedido.id} cancelado com sucesso. Estoque e saldos atualizados!`);
             }
         }
     </script>

@@ -501,16 +501,17 @@
   <!-- ÁREA DE IMPRESSÃO COMPROVANTE -->
   <div id="print-area"></div>
 
-  <!-- MODAL PARA COMPARTILHAR / COPIAR RECIBO EM TEXTO -->
+  <!-- MODAL PARA COMPARTILHAR / COPIAR / IMPRIMIR RECIBO EM TEXTO -->
   <div id="modalRecibo" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; align-items:center; justify-content:center; padding:15px;">
     <div style="background:white; padding:20px; border-radius:8px; width:100%; max-width:450px; box-shadow:0 4px 15px rgba(0,0,0,0.2);">
       <h3 style="color:var(--primary-color); margin-bottom:10px;">Recibo do Pedido</h3>
-      <p style="font-size:0.8rem; color:#64748b; margin-bottom:10px;">Copie o texto abaixo ou envie diretamente via WhatsApp:</p>
-      <textarea id="textoReciboModal" style="width:100%; height:200px; font-family:monospace; font-size:0.85rem; padding:8px; border:1px solid #cbd5e1; border-radius:4px; resize:vertical;"></textarea>
-      <div style="display:flex; gap:8px; margin-top:12px; justify-content:flex-end;">
+      <p style="font-size:0.8rem; color:#64748b; margin-bottom:10px;">Copie o texto, imprima ou envie diretamente via WhatsApp:</p>
+      <textarea id="textoReciboModal" style="width:100%; height:180px; font-family:monospace; font-size:0.85rem; padding:8px; border:1px solid #cbd5e1; border-radius:4px; resize:vertical;"></textarea>
+      <div style="display:flex; gap:6px; margin-top:12px; justify-content:flex-end; flex-wrap:wrap;">
         <button class="btn btn-warning" onclick="fecharModalRecibo()">Fechar</button>
-        <button class="btn btn-primary" onclick="copiarTextoReciboModal()">📋 Copiar Texto</button>
-        <button class="btn btn-success" onclick="enviarWhatsAppModalRecibo()">💬 Enviar WhatsApp</button>
+        <button class="btn btn-primary" onclick="imprimirReciboModal()">🖨️ Imprimir</button>
+        <button class="btn btn-primary" onclick="copiarTextoReciboModal()">📋 Copiar</button>
+        <button class="btn btn-success" onclick="enviarWhatsAppModalRecibo()">💬 WhatsApp</button>
       </div>
     </div>
   </div>
@@ -943,20 +944,36 @@
       }
     }
 
-    function registrarPagamentoFiado(id) {
+    // GESTÃO DE FIADO: ADICIONAR (+) OU DIMINUIR (-)
+    function alterarSaldoFiado(id, operacao) {
       const c = clientes.find(item => item.id === id);
       if (!c) return;
-      const valorAtual = c.saldoDevedor || 0;
-      const valStr = prompt(`Cliente: ${c.nome}\nSaldo Devedor Atual: R$ ${valorAtual.toFixed(2)}\n\nDigite o valor que o cliente está PAGANDO (quitando):`, valorAtual.toFixed(2));
+      const saldoAtual = c.saldoDevedor || 0;
+      
+      let tituloPrompt = '';
+      if (operacao === 'adicionar') {
+        tituloPrompt = `Cliente: ${c.nome}\nSaldo Devedor Atual: R$ ${saldoAtual.toFixed(2)}\n\nDigite o valor a ADICIONAR (nova dívida/fiado):`;
+      } else {
+        tituloPrompt = `Cliente: ${c.nome}\nSaldo Devedor Atual: R$ ${saldoAtual.toFixed(2)}\n\nDigite o valor a DIMINUIR/PAGAR (abatimento/quitação):`;
+      }
+
+      const valStr = prompt(tituloPrompt, "0.00");
       if (valStr !== null) {
-        const pago = parseFloat(valStr.replace(',', '.'));
-        if (isNaN(pago) || pago <= 0) {
+        const valorDigitado = parseFloat(valStr.replace(',', '.'));
+        if (isNaN(valorDigitado) || valorDigitado <= 0) {
           alert("Valor inválido.");
           return;
         }
-        const novoSaldo = Math.max(0, valorAtual - pago);
+
+        let novoSaldo = saldoAtual;
+        if (operacao === 'adicionar') {
+          novoSaldo += valorDigitado;
+        } else {
+          novoSaldo = Math.max(0, saldoAtual - valorDigitado);
+        }
+
         db.collection("clientes").doc(id).update({ saldoDevedor: novoSaldo })
-          .then(() => alert(`Pagamento registrado! Novo saldo devedor: R$ ${novoSaldo.toFixed(2)}`))
+          .then(() => alert(`Fiado atualizado com sucesso! Novo saldo devedor: R$ ${novoSaldo.toFixed(2)}`))
           .catch(err => alert("Erro: " + err.message));
       }
     }
@@ -968,10 +985,11 @@
       clientes.forEach(c => {
         let acoesHtml = `
           <button class="btn btn-primary" style="padding: 2px 5px; font-size: 0.7rem;" onclick="editarCliente('${c.id}')">Editar</button>
-          <button class="btn btn-success" style="padding: 2px 5px; font-size: 0.7rem;" onclick="registrarPagamentoFiado('${c.id}')">Quitar Fiado</button>
+          <button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.7rem;" title="Adicionar valor ao fiado" onclick="alterarSaldoFiado('${c.id}', 'adicionar')">+ Fiado</button>
+          <button class="btn btn-success" style="padding: 2px 5px; font-size: 0.7rem;" title="Diminuir ou quitar fiado" onclick="alterarSaldoFiado('${c.id}', 'diminuir')">- Pagar</button>
         `;
         if (usuarioLogado && usuarioLogado.tipo === 'admin') {
-          acoesHtml += `<button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.7rem;" onclick="excluirCliente('${c.id}')">Excluir</button>`;
+          acoesHtml += `<button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.7rem; background:#7f1d1d;" onclick="excluirCliente('${c.id}')">Excluir</button>`;
         }
 
         tbody.innerHTML += `
@@ -1187,7 +1205,6 @@
 
       const lucroPedido = totalPedido - custoTotalPedido;
 
-      // Calcular número sequencial do pedido
       let proximoNumero = 1;
       if (vendas.length > 0) {
         const maxSeq = Math.max(...vendas.map(v => v.numeroSequencial || 0));
@@ -1207,7 +1224,6 @@
       };
 
       try {
-        // Atualizar estoque dos produtos
         for (let it of carrinho) {
           const prodOriginal = produtos.find(p => p.id === it.prodId);
           if (prodOriginal) {
@@ -1216,14 +1232,12 @@
           }
         }
 
-        // Se for Fiado, atualizar o saldo devedor do cliente
         if (formaPagamento === 'Fiado') {
           const saldoAtual = clienteObj.saldoDevedor || 0;
           const novoSaldo = saldoAtual + totalPedido;
           await db.collection("clientes").doc(clienteObj.id).update({ saldoDevedor: novoSaldo });
         }
 
-        // Salvar a venda
         await db.collection("vendas").add(dadosVenda);
 
         alert(`Pedido #${proximoNumero} finalizado com sucesso!`);
@@ -1242,7 +1256,6 @@
 
       let vendasFiltradas = vendas;
 
-      // Se for vendedor, restringe APENAS às vendas dele próprio
       if (usuarioLogado && usuarioLogado.tipo === 'vendedor') {
         vendasFiltradas = vendasFiltradas.filter(v => v.vendedor === usuarioLogado.nome);
         document.getElementById('tituloRelatorioBox').innerText = `Minhas Vendas (${usuarioLogado.nome})`;
@@ -1257,7 +1270,6 @@
       const totalFat = vendasFiltradas.reduce((acc, v) => acc + (v.total || 0), 0);
       const totalLucro = vendasFiltradas.reduce((acc, v) => acc + (v.lucro || 0), 0);
       
-      // Recebíveis em fiado de clientes do vendedor ou geral
       let totalFiado = 0;
       if (usuarioLogado && usuarioLogado.tipo === 'vendedor') {
         totalFiado = clientes.filter(c => c.vendedor === usuarioLogado.nome).reduce((acc, c) => acc + (c.saldoDevedor || 0), 0);
@@ -1303,7 +1315,6 @@
             return;
           }
 
-          // 1. Devolver mercadorias ao estoque
           if (vendaObj.itens && Array.isArray(vendaObj.itens)) {
             for (let it of vendaObj.itens) {
               const prod = produtos.find(p => p.id === it.prodId);
@@ -1314,7 +1325,6 @@
             }
           }
 
-          // 2. Subtrair saldo devedor se foi fiado
           if (vendaObj.formaPagamento === 'Fiado' && vendaObj.clienteId) {
             const clienteObj = clientes.find(c => c.id === vendaObj.clienteId);
             if (clienteObj) {
@@ -1324,7 +1334,6 @@
             }
           }
 
-          // 3. Excluir o documento de venda
           await db.collection("vendas").doc(id).delete();
           alert("Pedido cancelado com sucesso! Estoque e fiado estornados.");
         } catch (err) {
@@ -1374,6 +1383,12 @@
     function enviarWhatsAppModalRecibo() {
       const textoCodificado = encodeURIComponent(textoReciboAtual);
       window.open(`https://api.whatsapp.com/send?text=${textoCodificado}`, '_blank');
+    }
+
+    function imprimirReciboModal() {
+      const printArea = document.getElementById('print-area');
+      printArea.innerHTML = `<div style="font-family: monospace; font-size: 11px; white-space: pre-line;">${textoReciboAtual}</div>`;
+      window.print();
     }
 
     function imprimirRelatorioGeral() {

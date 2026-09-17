@@ -859,7 +859,7 @@
             <td><span style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-size:0.75rem;">${p.categoria}</span></td>
             ${custoHtml}
             <td style="color:var(--success-color); font-weight:bold;">R$ ${(p.preco || 0).toFixed(2)}</td>
-            <td><span style="font-weight:bold; color:${p.estoque <= 3 ? 'var(--danger-color)' : 'inherit'};">${p.estoque} un.</span></td>
+            <td><span style="font-weight:bold; color:${p.estoque < 0 ? 'var(--danger-color)' : (p.estoque <= 3 ? 'var(--warning-color)' : 'inherit')};">${p.estoque} un.</span></td>
             ${acoesHtml}
           </tr>
         `;
@@ -914,7 +914,7 @@
       if (selectedOpt && selectedOpt.dataset.preco) {
         inputPreco.value = parseFloat(selectedOpt.dataset.preco).toFixed(2);
         const est = selectedOpt.dataset.estoque;
-        preview.innerHTML = `Estoque disponível em tempo real: <b style="color:${est <= 3 ? 'var(--danger-color)' : 'var(--success-color)'};">${est} unidades</b>`;
+        preview.innerHTML = `Estoque disponível: <b style="color:${est < 0 ? 'var(--danger-color)' : 'var(--success-color)'};">${est} unidades</b> (Permite estoque negativo)`;
       } else {
         inputPreco.value = '';
         preview.innerText = 'Selecione um produto válido';
@@ -1038,9 +1038,8 @@
       const saldoAtual = c.saldoDevedor || 0;
 
       const titulo = operacao === 'somar' ? 'Adicionar Dívida (+ Fiado)' : 'Registrar Pagamento (- Pagar)';
-      const msg = `Cliente: ${c.nome}\nSaldo Devedor Atual: R$ ${saldoAtual.toFixed(2)}\n\nDigite o valor (R$):`;
+      const valorStr = prompt(`Cliente: ${c.nome}\nSaldo Devedor Atual: R$ ${saldoAtual.toFixed(2)}\n\nDigite o valor (R$):`, "0.00");
       
-      const valorStr = prompt(titulo, "0.00");
       if (valorStr !== null) {
         const val = parseFloat(valorStr.replace(',', '.'));
         if (isNaN(val) || val <= 0) {
@@ -1084,7 +1083,7 @@
         tbody.innerHTML += `
           <tr>
             <td style="font-weight:600;">${c.nome}</td>
-            <td>${c.documento ? `${c.docTipo}: ${c.documento}` : '-'}</td>
+            <td>${c.documento ? `${c.docTipo}:${c.documento}` : '-'}</td>
             <td>${c.telefone}</td>
             <td style="font-size:0.75rem; color:#475569;">${c.endereco}</td>
             <td><span style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-size:0.75rem;">${c.vendedorResp || '-'}</span></td>
@@ -1186,17 +1185,8 @@
         return;
       }
 
-      if (qtd > prodObj.estoque) {
-        alert(`Estoque insuficiente! Estoque atual: ${prodObj.estoque} unidades.`);
-        return;
-      }
-
       const itemExistente = carrinho.find(item => item.id === prodId);
       if (itemExistente) {
-        if ((itemExistente.qtd + qtd) > prodObj.estoque) {
-          alert("Quantidade total excede o estoque disponível.");
-          return;
-        }
         itemExistente.qtd += qtd;
         itemExistente.precoUn = precoVenda;
         itemExistente.subtotal = itemExistente.qtd * itemExistente.precoUn;
@@ -1275,7 +1265,7 @@
         totalCustoPedido += (item.custo * item.qtd);
       });
 
-      // Calcular número sequencial iniciando em 1011
+      // Cálculo do Número Sequencial (último + 1, garantindo base 1011+)
       let maiorSeq = 1010;
       vendas.forEach(v => {
         if ((v.numeroSequencial || 0) > maiorSeq) {
@@ -1300,11 +1290,13 @@
       };
 
       const batch = db.batch();
+      
+      // Baixa no estoque permitindo estoque negativo (diminui normalmente)
       carrinho.forEach(item => {
         const prodRef = db.collection("produtos").doc(item.id);
         const prodOrig = produtos.find(p => p.id === item.id);
         if (prodOrig) {
-          const novoEstoque = Math.max(0, prodOrig.estoque - item.qtd);
+          const novoEstoque = (prodOrig.estoque || 0) - item.qtd;
           batch.update(prodRef, { estoque: novoEstoque });
         }
       });
@@ -1336,17 +1328,17 @@
 
       const batch = db.batch();
 
-      // 1. Retornar mercadorias ao estoque
+      // 1. Estornar mercadorias ao estoque
       (v.itens || []).forEach(item => {
         const prodOrig = produtos.find(p => p.id === item.id);
         if (prodOrig) {
           const prodRef = db.collection("produtos").doc(item.id);
-          const estoqueAtualizado = prodOrig.estoque + item.qtd;
+          const estoqueAtualizado = (prodOrig.estoque || 0) + item.qtd;
           batch.update(prodRef, { estoque: estoqueAtualizado });
         }
       });
 
-      // 2. Se foi Fiado, abater o valor do saldo devedor do cliente
+      // 2. Se foi Fiado, abater o saldo devedor do cliente
       if (v.formaPagamento === 'Fiado' && v.clienteId) {
         const clienteObj = clientes.find(c => c.id === v.clienteId);
         if (clienteObj) {

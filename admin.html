@@ -834,7 +834,6 @@
       if (!tbody) return;
       tbody.innerHTML = '';
 
-      // ISOLAMENTO DE CLIENTES: Se for vendedor, exibe apenas os dele. Se for admin, exibe todos.
       let clientesFiltrados = clientes;
       if (usuarioLogado && usuarioLogado.tipo === 'vendedor') {
         clientesFiltrados = clientes.filter(c => c.vendedorResp === usuarioLogado.nome);
@@ -870,7 +869,6 @@
       if (!select) return;
       select.innerHTML = '';
 
-      // No PDV, o vendedor seleciona apenas entre os seus próprios clientes cadastrados
       let clientesParaVenda = clientes;
       if (usuarioLogado && usuarioLogado.tipo === 'vendedor') {
         clientesParaVenda = clientes.filter(c => c.vendedorResp === usuarioLogado.nome);
@@ -1172,7 +1170,6 @@
       const lucroPedido = totalPedido - totalCusto;
       const dataHora = new Date().toISOString();
 
-      // NUMERAÇÃO SEQUENCIAL RIGOROSA (Inicia em 1011 e continua incrementando)
       let maiorSeq = 1010;
       vendas.forEach(v => {
         if (v.numeroSequencial && v.numeroSequencial > maiorSeq) {
@@ -1278,7 +1275,11 @@
         fiadoTotal += Number(c.divida || 0);
       });
 
+      // Filtra as vendas com base no mês e, se for vendedor comum, restringe apenas às vendas dele
       const vendasFiltradas = vendas.filter(v => {
+        if (usuarioLogado && usuarioLogado.tipo === 'vendedor') {
+          if (v.vendedorResp !== usuarioLogado.nome) return false;
+        }
         if (!mesFiltro) return true;
         if (!v.dataHora) return false;
         return v.dataHora.startsWith(mesFiltro);

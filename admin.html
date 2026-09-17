@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Vendas e Gestão</title>
+    <title>Distribuidora Frazão - Sistema de Vendas e Gestão</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -214,7 +214,7 @@
 <body>
 
     <!-- Sidebar -->
-    aside>
+    <aside>
         <div class="logo-area">Distribuidora Frazão</div>
         <ul class="menu">
             <li class="active" onclick="switchTab('vendas', this)">Frente de Caixa (PDV)</li>
@@ -572,6 +572,10 @@
 
         function adicionarItemCarrinho() {
             const select = document.getElementById('pdv-produto');
+            if(!select.value) {
+                alert('Selecione um produto!');
+                return;
+            }
             const produtoId = parseInt(select.value);
             const produtoNome = select.options[select.selectedIndex].text.split(' (Estoque')[0];
             const qtd = parseInt(document.getElementById('pdv-qtd').value);
@@ -583,7 +587,6 @@
                 return;
             }
 
-            // Verificar se já existe no carrinho para validar estoque acumulado
             const itemExistente = carrinho.find(i => i.produtoId === produtoId);
             const qtdTotalNoCarrinho = itemExistente ? itemExistente.qtd + qtd : qtd;
 
@@ -664,7 +667,7 @@
                 cliente.divida += totalVenda;
             }
 
-            // 3. Registrar o pedido com numeração sequencial correta
+            // 3. Registrar o pedido
             const novoPedido = {
                 id: proximoPedidoNumero,
                 clienteNome: cliente ? cliente.nome : 'Desconhecido',
@@ -676,7 +679,7 @@
             };
 
             pedidos.unshift(novoPedido);
-            proximoPedidoNumero++; // Incrementa para o próximo pedido
+            proximoPedidoNumero++;
             
             salvarDados();
 

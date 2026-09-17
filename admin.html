@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Vendas e Gestão</title>
+    <title>Sistema de Vendas e Gestão - Distribuidora Frazão</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -69,7 +69,7 @@
             border-right: 4px solid var(--primary);
         }
 
-        /* Main Content */
+        /* Main Container */
         main {
             flex-grow: 1;
             display: flex;
@@ -83,6 +83,9 @@
             border-bottom: 1px solid var(--border);
             font-size: 1.1rem;
             font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .content-body {
@@ -118,6 +121,33 @@
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
             gap: 15px;
+        }
+
+        .grid-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .stat-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-box h4 {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .stat-box span {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
         }
 
         label {
@@ -205,16 +235,23 @@
         }
         .badge.success { background: #dcfce7; color: #166534; }
         .badge.danger { background: #fee2e2; color: #991b1b; }
-        .badge.warning { background: #fef9c3; color: #854d0e; }
 
         .mt-20 { margin-top: 20px; }
-        .flex-row { display: flex; gap: 10px; align-items: flex-end; }
+        .vendedor-header-box {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            background: #f1f5f9;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar -->
-    aside>
+    <!-- Sidebar Corrigida -->
+    <aside>
         <div class="logo-area">Distribuidora Frazão</div>
         <ul class="menu">
             <li class="active" onclick="switchTab('vendas', this)">Frente de Caixa (PDV)</li>
@@ -226,7 +263,17 @@
 
     <!-- Main Container -->
     <main>
-        <header id="header-title">Frente de Caixa (PDV)</header>
+        <header>
+            <span id="header-title">Frente de Caixa (PDV)</span>
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+                <label for="vendedor-global" style="margin: 0; font-weight: bold;">Vendedor Ativo:</label>
+                <select id="vendedor-global" onchange="mudarVendedorGlobal()" style="width: 180px; padding: 6px;">
+                    <option value="Angelo">Angelo</option>
+                    <option value="Fabinho">Fabinho</option>
+                    <option value="Carlos">Carlos</option>
+                </select>
+            </div>
+        </header>
         <div class="content-body">
 
             <!-- ABA VENDAS / PDV -->
@@ -253,9 +300,9 @@
                         </div>
 
                         <div class="card">
-                            <h3>Finalizar Venda</h3>
+                            <h3>Finalizar Venda (<span id="lbl-vendedor-atual">Angelo</span>)</h3>
                             <div class="mt-20">
-                                <label>Cliente</label>
+                                <label>Cliente (Seus Clientes)</label>
                                 <select id="pdv-cliente"></select>
                             </div>
                             <div class="mt-20">
@@ -339,8 +386,28 @@
 
             <!-- ABA CLIENTES -->
             <div id="clientes" class="tab-content">
+                <div class="vendedor-header-box">
+                    <label for="filtro-vendedor-clientes" style="margin:0; font-weight:bold;">Visualizar clientes do vendedor:</label>
+                    <select id="filtro-vendedor-clientes" onchange="renderizarClientes()" style="width: 200px; padding: 6px;">
+                        <option value="Angelo">Angelo</option>
+                        <option value="Fabinho">Fabinho</option>
+                        <option value="Carlos">Carlos</option>
+                    </select>
+                </div>
+
+                <div class="grid-stats">
+                    <div class="stat-box">
+                        <h4>Total de Vendas do Vendedor</h4>
+                        <span id="stat-total-vendas">R$ 0.00</span>
+                    </div>
+                    <div class="stat-box">
+                        <h4>Saldo Devedor Total (Fiado)</h4>
+                        <span id="stat-total-divida" style="color: var(--danger);">R$ 0.00</span>
+                    </div>
+                </div>
+
                 <div class="card">
-                    <h3>Cadastrar Cliente</h3>
+                    <h3>Cadastrar Cliente para <span id="lbl-cad-vendedor">Angelo</span></h3>
                     <div class="grid-2 mt-20">
                         <div>
                             <label>Nome do Cliente</label>
@@ -357,7 +424,7 @@
                 </div>
 
                 <div class="card">
-                    <h3>Controle de Clientes e Fiado</h3>
+                    <h3>Meus Clientes e Controle de Fiado</h3>
                     <table>
                         <thead>
                             <tr>
@@ -381,6 +448,7 @@
                         <thead>
                             <tr>
                                 <th>Pedido #</th>
+                                <th>Vendedor</th>
                                 <th>Cliente</th>
                                 <th>Itens</th>
                                 <th>Total</th>
@@ -405,15 +473,17 @@
         ];
 
         let clientes = JSON.parse(localStorage.getItem('frazao_clientes')) || [
-            { id: 1, nome: 'Cliente Geral / Balcão', telefone: '', divida: 0 }
+            { id: 1, nome: 'Cliente Geral / Balcão', telefone: '', divida: 0, vendedor: 'Angelo' },
+            { id: 2, nome: 'Mercado do João', telefone: '', divida: 0, vendedor: 'Fabinho' }
         ];
 
         let pedidos = JSON.parse(localStorage.getItem('frazao_pedidos')) || [];
 
-        // Sequencial de pedidos iniciando em 1011 se não houver registros anteriores
+        // Sequencial de pedidos iniciando em 1011
         let proximoPedidoNumero = parseInt(localStorage.getItem('frazao_proximo_pedido')) || 1011;
 
         let carrinho = [];
+        let vendedorAtivo = 'Angelo';
 
         // Salvar dados no Storage
         function salvarDados() {
@@ -421,6 +491,19 @@
             localStorage.setItem('frazao_clientes', JSON.stringify(clientes));
             localStorage.setItem('frazao_pedidos', JSON.stringify(pedidos));
             localStorage.setItem('frazao_proximo_pedido', proximoPedidoNumero);
+        }
+
+        // Troca de Vendedor Global
+        function mudarVendedorGlobal() {
+            vendedorAtivo = document.getElementById('vendedor-global').value;
+            document.getElementById('lbl-vendedor-atual').innerText = vendedorAtivo;
+            document.getElementById('filtro-vendedor-clientes').value = vendedorAtivo;
+            document.getElementById('lbl-cad-vendedor').innerText = vendedorAtivo;
+
+            carregarSelectsPDV();
+            if(document.getElementById('clientes').classList.contains('active')) {
+                renderizarClientes();
+            }
         }
 
         // Navegação de Abas
@@ -441,12 +524,18 @@
 
             if(tabId === 'vendas') carregarSelectsPDV();
             if(tabId === 'produtos') renderizarProdutos();
-            if(tabId === 'clientes') renderizarClientes();
+            if(tabId === 'clientes') {
+                document.getElementById('filtro-vendedor-clientes').value = vendedorAtivo;
+                document.getElementById('lbl-cad-vendedor').innerText = vendedorAtivo;
+                renderizarClientes();
+            }
             if(tabId === 'pedidos') renderizarPedidos();
         }
 
         // Inicialização
         window.onload = function() {
+            document.getElementById('vendedor-global').value = vendedorAtivo;
+            document.getElementById('lbl-vendedor-atual').innerText = vendedorAtivo;
             carregarSelectsPDV();
             renderizarProdutos();
             renderizarClientes();
@@ -498,10 +587,11 @@
             renderizarProdutos();
         }
 
-        // --- MÓDULO CLIENTES ---
+        // --- MÓDULO CLIENTES & FIADO POR VENDEDOR ---
         function salvarCliente() {
             const nome = document.getElementById('cli-nome').value;
             const telefone = document.getElementById('cli-tel').value;
+            const vendedorAtual = document.getElementById('filtro-vendedor-clientes').value;
 
             if(!nome) {
                 alert('Informe o nome do cliente!');
@@ -509,32 +599,53 @@
             }
 
             const novoId = clientes.length > 0 ? clientes[clientes.length - 1].id + 1 : 1;
-            clientes.push({ id: novoId, nome, telefone, divida: 0 });
+            clientes.push({ id: novoId, nome, telefone, divida: 0, vendedor: vendedorAtual });
             salvarDados();
 
             document.getElementById('cli-nome').value = '';
             document.getElementById('cli-tel').value = '';
 
             renderizarClientes();
-            alert('Cliente cadastrado com sucesso!');
+            alert('Cliente cadastrado com sucesso para o vendedor ' + vendedorAtual + '!');
         }
 
         function renderizarClientes() {
+            const vendedorSelecionado = document.getElementById('filtro-vendedor-clientes').value;
+            document.getElementById('lbl-cad-vendedor').innerText = vendedorSelecionado;
+
             const tbody = document.getElementById('tabela-clientes');
             tbody.innerHTML = '';
-            clientes.forEach(c => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>#${c.id}</td>
-                        <td>${c.nome}</td>
-                        <td>${c.telefone || '-'}</td>
-                        <td><span style="color: ${c.divida > 0 ? 'red' : 'inherit'}; font-weight: bold;">R$ ${c.divida.toFixed(2)}</span></td>
-                        <td>
-                            ${c.divida > 0 ? `<button class="btn-success" onclick="quitarDivida(${c.id})">Quitar Dívida</button>` : '-'}
-                        </td>
-                    </tr>
-                `;
-            });
+
+            // Filtrar apenas clientes do vendedor selecionado
+            const clientesDoVendedor = clientes.filter(c => c.vendedor === vendedorSelecionado);
+
+            let dividaTotalVendedor = 0;
+            if(clientesDoVendedor.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Nenhum cliente cadastrado para este vendedor.</td></tr>`;
+            } else {
+                clientesDoVendedor.forEach(c => {
+                    dividaTotalVendedor += c.divida;
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>#${c.id}</td>
+                            <td>${c.nome}</td>
+                            <td>${c.telefone || '-'}</td>
+                            <td><span style="color: ${c.divida > 0 ? 'red' : 'inherit'}; font-weight: bold;">R$ ${c.divida.toFixed(2)}</span></td>
+                            <td>
+                                ${c.divida > 0 ? `<button class="btn-success" onclick="quitarDivida(${c.id})">Quitar Dívida</button>` : '-'}
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // Calcular total de vendas do vendedor selecionado
+            const vendasDoVendedor = pedidos.filter(p => p.vendedor === vendedorSelecionado && p.status === 'Concluído');
+            const totalVendasValor = vendasDoVendedor.reduce((acc, p) => acc + p.total, 0);
+
+            // Atualizar os cards de estatísticas
+            document.getElementById('stat-total-vendas').innerText = `R$ ${totalVendasValor.toFixed(2)}`;
+            document.getElementById('stat-total-divida').innerText = `R$ ${dividaTotalVendedor.toFixed(2)}`;
         }
 
         function quitarDivida(id) {
@@ -555,11 +666,18 @@
             });
             atualizarPrecoPDV();
 
+            // Filtrar clientes apenas do vendedor ativo
             const selectCli = document.getElementById('pdv-cliente');
             selectCli.innerHTML = '';
-            clientes.forEach(c => {
-                selectCli.innerHTML += `<option value="${c.id}">${c.nome}</option>`;
-            });
+            const clientesFiltrados = clientes.filter(c => c.vendedor === vendedorAtivo);
+            
+            if(clientesFiltrados.length === 0) {
+                selectCli.innerHTML = `<option value="">Nenhum cliente cadastrado para ${vendedorAtivo}</option>`;
+            } else {
+                clientesFiltrados.forEach(c => {
+                    selectCli.innerHTML += `<option value="${c.id}">${c.nome}</option>`;
+                });
+            }
         }
 
         function atualizarPrecoPDV() {
@@ -572,6 +690,10 @@
 
         function adicionarItemCarrinho() {
             const select = document.getElementById('pdv-produto');
+            if(!select.value) {
+                alert('Selecione um produto válido!');
+                return;
+            }
             const produtoId = parseInt(select.value);
             const produtoNome = select.options[select.selectedIndex].text.split(' (Estoque')[0];
             const qtd = parseInt(document.getElementById('pdv-qtd').value);
@@ -583,7 +705,6 @@
                 return;
             }
 
-            // Verificar se já existe no carrinho para validar estoque acumulado
             const itemExistente = carrinho.find(i => i.produtoId === produtoId);
             const qtdTotalNoCarrinho = itemExistente ? itemExistente.qtd + qtd : qtd;
 
@@ -645,7 +766,13 @@
                 return;
             }
 
-            const clienteId = parseInt(document.getElementById('pdv-cliente').value);
+            const clienteSelectValue = document.getElementById('pdv-cliente').value;
+            if(!clienteSelectValue) {
+                alert('Selecione um cliente válido para o vendedor atual!');
+                return;
+            }
+
+            const clienteId = parseInt(clienteSelectValue);
             const formaPagamento = document.getElementById('pdv-pagamento').value;
             const cliente = clientes.find(c => c.id === clienteId);
             
@@ -664,9 +791,10 @@
                 cliente.divida += totalVenda;
             }
 
-            // 3. Registrar o pedido com numeração sequencial correta
+            // 3. Registrar o pedido com numeração sequencial e salvando quem vendeu
             const novoPedido = {
                 id: proximoPedidoNumero,
+                vendedor: vendedorAtivo,
                 clienteNome: cliente ? cliente.nome : 'Desconhecido',
                 clienteId: clienteId,
                 itens: [...carrinho],
@@ -676,7 +804,7 @@
             };
 
             pedidos.unshift(novoPedido);
-            proximoPedidoNumero++; // Incrementa para o próximo pedido
+            proximoPedidoNumero++;
             
             salvarDados();
 
@@ -693,7 +821,7 @@
             tbody.innerHTML = '';
 
             if(pedidos.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Nenhum pedido registrado</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center;">Nenhum pedido registrado</td></tr>`;
                 return;
             }
 
@@ -704,8 +832,9 @@
                 tbody.innerHTML += `
                     <tr>
                         <td>#${p.id}</td>
+                        <td><b>${p.vendedor || 'Angelo'}</b></td>
                         <td>${p.clienteNome}</td>
-                        <td style="max-width: 250px; font-size: 0.85rem;">${itensStr}</td>
+                        <td style="max-width: 220px; font-size: 0.85rem;">${itensStr}</td>
                         <td>R$ ${p.total.toFixed(2)}</td>
                         <td>${p.pagamento}</td>
                         <td><span class="badge ${badgeClass}">${p.status}</span></td>

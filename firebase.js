@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Vendedor</title>
     
-    <!-- Scripts do Firebase v9 (SDK Web) -->
+    <!-- Scripts do Firebase v9 (SDK Web Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
@@ -82,29 +82,35 @@
     const form = document.getElementById('formVendedor');
     const tabela = document.getElementById('tabelaVendedores');
 
-    // Carregar os vendedores em tempo real da nuvem
-    db.collection("vendedores").onSnapshot((snapshot) => {
-        tabela.innerHTML = '';
-        
-        if (snapshot.empty) {
-            tabela.innerHTML = '<tr><td colspan="3" style="text-align:center;">Nenhum vendedor cadastrado na nuvem.</td></tr>';
-            return;
-        }
+    // Função otimizada para carregar os vendedores uma única vez (sem escuta em tempo real travando o navegador)
+    function carregarVendedores() {
+        tabela.innerHTML = '<tr><td colspan="3" style="text-align:center;">Carregando dados...</td></tr>';
 
-        snapshot.forEach((doc) => {
-            const vendedor = doc.data();
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${vendedor.nome}</td>
-                <td>${vendedor.senha}</td>
-                <td><button class="btn-excluir" onclick="removerVendedor('${doc.id}')">Excluir</button></td>
-            `;
-            tabela.appendChild(tr);
-        });
-    }, (error) => {
-        console.error("Erro ao carregar dados:", error);
-        tabela.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">Erro ao carregar os dados. Verifique as regras no Firebase.</td></tr>';
-    });
+        db.collection("vendedores").get()
+            .then((snapshot) => {
+                tabela.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    tabela.innerHTML = '<tr><td colspan="3" style="text-align:center;">Nenhum vendedor cadastrado na nuvem.</td></tr>';
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const vendedor = doc.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${vendedor.nome}</td>
+                        <td>${vendedor.senha}</td>
+                        <td><button class="btn-excluir" onclick="removerVendedor('${doc.id}')">Excluir</button></td>
+                    `;
+                    tabela.appendChild(tr);
+                });
+            })
+            .catch((error) => {
+                console.error("Erro ao carregar dados:", error);
+                tabela.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">Erro ao carregar os dados. Verifique as regras no Firebase.</td></tr>';
+            });
+    }
 
     // Salvar novo vendedor no Firebase
     form.addEventListener('submit', function(e) {
@@ -113,8 +119,9 @@
         const nome = document.getElementById('nome').value.trim();
         const senha = document.getElementById('senha').value.trim();
 
-        document.getElementById('btnSalvar').disabled = true;
-        document.getElementById('btnSalvar').innerText = 'Gravando...';
+        const btnSalvar = document.getElementById('btnSalvar');
+        btnSalvar.disabled = true;
+        btnSalvar.innerText = 'Gravando...';
 
         db.collection("vendedores").add({
             nome: nome,
@@ -124,13 +131,14 @@
         .then(() => {
             alert('Vendedor salvo na nuvem com sucesso!');
             form.reset();
+            carregarVendedores(); // Atualiza a tabela instantaneamente após salvar
         })
         .catch((error) => {
             alert('Erro ao gravar no banco: ' + error.message);
         })
         .finally(() => {
-            document.getElementById('btnSalvar').disabled = false;
-            document.getElementById('btnSalvar').innerText = 'Cadastrar Vendedor';
+            btnSalvar.disabled = false;
+            btnSalvar.innerText = 'Cadastrar Vendedor';
         });
     });
 
@@ -138,10 +146,16 @@
     function removerVendedor(id) {
         if (confirm('Deseja excluir este vendedor da nuvem?')) {
             db.collection("vendedores").doc(id).delete()
-            .then(() => alert('Vendedor removido!'))
+            .then(() => {
+                alert('Vendedor removido!');
+                carregarVendedores(); // Atualiza a tabela após a exclusão
+            })
             .catch((error) => alert('Erro ao remover: ' + error.message));
         }
     }
+
+    // Carrega os dados assim que a página é aberta
+    carregarVendedores();
 </script>
 
 </body>

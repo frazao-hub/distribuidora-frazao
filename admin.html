@@ -1452,11 +1452,15 @@
       document.getElementById('modalRecibo').style.display = 'none';
     }
 
-    function copiarTextoReciboModal() {
+   function copiarTextoReciboModal() {
       const textarea = document.getElementById('textoReciboModal');
-      textarea.select();
-      document.execCommand('copy');
-      alert("Texto do recibo copiado para a área de transferência!");
+      if (!textarea) return;
+      
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        alert("Texto do recibo copiado para a área de transferência!");
+      }).catch(err => {
+        console.error('Erro ao copiar:', err);
+      });
     }
 
     function imprimirReciboModal() {

@@ -77,10 +77,78 @@
     .btn-danger:hover { background: #b91c1c; }
     .btn-warning { background: var(--warning-color); color: white; }
 
+    .category-highlight-box {
+      border: 2px dashed var(--secondary-color);
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .stepper-group {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      overflow: hidden;
+      background: white;
+    }
+    .stepper-btn {
+      background: #e2e8f0;
+      border: none;
+      padding: 6px 10px;
+      font-weight: bold;
+      cursor: pointer;
+      color: var(--primary-color);
+      font-size: 0.9rem;
+    }
+    .stepper-btn:hover { background: #cbd5e1; }
+    .stepper-input {
+      width: 55px;
+      text-align: center;
+      border: none;
+      outline: none;
+      font-weight: bold;
+      padding: 4px 0;
+    }
+
     .table-responsive { overflow-x: auto; margin-top: 8px; }
     table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
     th, td { padding: 7px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
     th { background: #f8fafc; color: #475569; font-weight: bold; }
+
+    .product-thumb { width: 38px; height: 38px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1; background: #f8fafc; }
+    .summary-box { background: #f8fafc; padding: 12px; border-radius: 6px; margin-top: 12px; font-size: 1rem; font-weight: bold; display: flex; justify-content: space-between; border: 1px solid #e2e8f0; }
+
+    #print-area { display: none; }
+    
+    @page {
+      size: 80mm auto;
+      margin: 0;
+    }
+    @media print {
+      body * { visibility: hidden; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 80mm;
+        padding: 5mm 4mm 22mm 4mm;
+        font-family: monospace;
+        font-size: 11px;
+        color: black;
+        line-height: 1.3;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 4px; }
+      .card { padding: 10px; }
+      form { grid-template-columns: 1fr; }
+      header { padding: 8px 10px; }
+      header h1 { font-size: 1rem; }
+    }
   </style>
 </head>
 <body>
@@ -113,18 +181,41 @@
     </div>
   </div>
 
+  <!-- APLICAÇÃO PRINCIPAL -->
   <div id="app-container">
     <header>
-      <h1>Sistema de Gestão</h1>
+      <h1>Distribuidora Frazão</h1>
       <div class="role-container">
-        <span id="user-display">Usuário</span>
-        <button class="btn btn-danger" style="padding: 3px 8px; font-size: 0.7rem;" onclick="logout()">Sair</button>
+        <span id="labelUsuarioLogado" style="font-weight: bold; font-size: 0.85rem;"></span>
+        <button class="btn btn-warning" onclick="abrirModalAlterarSenha()" id="btnAltSenha" style="padding: 4px 7px; font-size: 0.75rem;">Alterar Senha</button>
+        <button class="btn btn-danger" onclick="fazerLogout()" style="padding: 4px 7px; font-size: 0.75rem;">Sair</button>
       </div>
     </header>
   </div>
 
   <script>
-    // Cole aqui embaixo todo o seu código JavaScript original (incluindo o Firebase, fazerLogin e alternarCamposLogin)
+    // Funções essenciais para evitar erros de referência no teste
+    function alternarCamposLogin() {
+      const tipo = document.getElementById('loginTipo').value;
+      const grupoVendedor = document.getElementById('grupoSelectVendedorLogin');
+      if (tipo === 'vendedor') {
+        grupoVendedor.style.display = 'block';
+      } else {
+        grupoVendedor.style.display = 'none';
+      }
+    }
+
+    function fazerLogin() {
+      alert("Tentativa de login acionada.");
+    }
+
+    function fazerLogout() {
+      alert("Logout acionado.");
+    }
+
+    function abrirModalAlterarSenha() {
+      alert("Alterar senha acionado.");
+    }
   </script>
 </body>
 </html>

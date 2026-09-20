@@ -50,105 +50,18 @@
     header h1 { font-size: 1.15rem; font-weight: bold; }
     .role-container { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); padding: 5px 10px; border-radius: 6px; flex-wrap: wrap; }
 
-    nav { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
-    nav button { padding: 8px 12px; background: var(--card-bg); border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; color: var(--text-color); font-size: 0.8rem; white-space: nowrap; }
-    nav button.active, nav button:hover { background: var(--secondary-color); color: white; border-color: var(--secondary-color); }
-
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    .card { background: var(--card-bg); border-radius: 8px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 14px; }
-    .card h2 { margin-bottom: 10px; border-bottom: 2px solid var(--bg-color); padding-bottom: 6px; color: var(--primary-color); font-size: 1.05rem; }
-
-    form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 10px; }
-    .form-group { display: flex; flex-direction: column; gap: 4px; }
-    .form-group.full-width { grid-column: 1 / -1; }
-    label { font-size: 0.8rem; font-weight: bold; color: #475569; }
-    input, select { padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none; width: 100%; }
-    input:focus, select:focus { border-color: var(--secondary-color); }
-    input[readonly] { background-color: #f1f5f9; cursor: not-allowed; }
-
     .btn { padding: 7px 10px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
     .btn-primary { background: var(--secondary-color); color: white; }
     .btn-primary:hover { background: #1d4ed8; }
-    .btn-success { background: var(--success-color); color: white; }
-    .btn-success:hover { background: #15803d; }
     .btn-danger { background: var(--danger-color); color: white; }
     .btn-danger:hover { background: #b91c1c; }
     .btn-warning { background: var(--warning-color); color: white; }
 
-    .category-highlight-box {
-      border: 2px dashed var(--secondary-color);
-      background: #f8fafc;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-    }
-
-    .stepper-group {
-      display: inline-flex;
-      align-items: center;
-      border: 1px solid #cbd5e1;
-      border-radius: 4px;
-      overflow: hidden;
-      background: white;
-    }
-    .stepper-btn {
-      background: #e2e8f0;
-      border: none;
-      padding: 6px 10px;
-      font-weight: bold;
-      cursor: pointer;
-      color: var(--primary-color);
-      font-size: 0.9rem;
-    }
-    .stepper-btn:hover { background: #cbd5e1; }
-    .stepper-input {
-      width: 55px;
-      text-align: center;
-      border: none;
-      outline: none;
-      font-weight: bold;
-      padding: 4px 0;
-    }
-
-    .table-responsive { overflow-x: auto; margin-top: 8px; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-    th, td { padding: 7px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
-    th { background: #f8fafc; color: #475569; font-weight: bold; }
-
-    .product-thumb { width: 38px; height: 38px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1; background: #f8fafc; }
-    .summary-box { background: #f8fafc; padding: 12px; border-radius: 6px; margin-top: 12px; font-size: 1rem; font-weight: bold; display: flex; justify-content: space-between; border: 1px solid #e2e8f0; }
-
-    #print-area { display: none; }
-    
-    @page {
-      size: 80mm auto;
-      margin: 0;
-    }
-    @media print {
-      body * { visibility: hidden; }
-      #print-area, #print-area * { visibility: visible; }
-      #print-area {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 80mm;
-        padding: 5mm 4mm 22mm 4mm;
-        font-family: monospace;
-        font-size: 11px;
-        color: black;
-        line-height: 1.3;
-      }
-    }
-
-    @media (max-width: 600px) {
-      body { padding: 4px; }
-      .card { padding: 10px; }
-      form { grid-template-columns: 1fr; }
-      header { padding: 8px 10px; }
-      header h1 { font-size: 1rem; }
-    }
+    form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 10px; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    label { font-size: 0.8rem; font-weight: bold; color: #475569; }
+    input, select { padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none; width: 100%; }
+    input:focus, select:focus { border-color: var(--secondary-color); }
   </style>
 </head>
 <body>
@@ -194,19 +107,66 @@
   </div>
 
   <script>
-    // Funções essenciais para evitar erros de referência no teste
+    // Configuração do Firebase (Caso seu arquivo original já tenha a inicialização do Firebase, ela será usada aqui)
+    // Se precisar colar sua configuração exata do Firebase, basta colocar aqui em cima.
+
+    // Função para alternar a exibição do select de vendedores
     function alternarCamposLogin() {
       const tipo = document.getElementById('loginTipo').value;
       const grupoVendedor = document.getElementById('grupoSelectVendedorLogin');
       if (tipo === 'vendedor') {
         grupoVendedor.style.display = 'block';
+        carregarVendedoresNoLogin(); // Puxa do Firebase ao selecionar vendedor
       } else {
         grupoVendedor.style.display = 'none';
       }
     }
 
+    // Função que busca os vendedores no Firebase e preenche o select
+    function carregarVendedoresNoLogin() {
+      const selectVendedor = document.getElementById('loginVendedorSelect');
+      
+      // Verifica se o firebase e o db já estão inicializados
+      if (typeof db === 'undefined') {
+        selectVendedor.innerHTML = '<option value="">Erro: Firebase não conectado</option>';
+        return;
+      }
+
+      selectVendedor.innerHTML = '<option value="">Carregando vendedores...</option>';
+
+      db.collection('vendedores').get().then((snapshot) => {
+        selectVendedor.innerHTML = '<option value="">Selecione um vendedor...</option>';
+        if (snapshot.empty) {
+          selectVendedor.innerHTML = '<option value="">Nenhum vendedor cadastrado</option>';
+          return;
+        }
+        snapshot.forEach((doc) => {
+          const dados = doc.data();
+          const nomeVendedor = dados.nome || dados.name || doc.id;
+          const option = document.createElement('option');
+          option.value = doc.id;
+          option.textContent = nomeVendedor;
+          selectVendedor.appendChild(option);
+        });
+      }).catch((error) => {
+        console.error("Erro ao carregar vendedores:", error);
+        selectVendedor.innerHTML = '<option value="">Erro ao carregar lista</option>';
+      });
+    }
+
     function fazerLogin() {
-      alert("Tentativa de login acionada.");
+      const tipo = document.getElementById('loginTipo').value;
+      const senha = document.getElementById('loginSenha').value;
+      
+      if (tipo === 'vendedor') {
+        const vendedorId = document.getElementById('loginVendedorSelect').value;
+        if (!vendedorId) {
+          alert("Por favor, selecione um vendedor.");
+          return;
+        }
+      }
+      
+      alert("Tentativa de login acionada para: " + tipo);
     }
 
     function fazerLogout() {

@@ -1,1 +1,17 @@
-teste.html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Teste de Erro Mobile</title>
+</head>
+<body>
+    <h1>Página de Teste</h1>
+    
+    <script>
+      window.onerror = function(msg, url, line) {
+          alert("Erro travando o celular na linha " + line + ": " + msg);
+          return true;
+      };
+    </script>
+</body>
+</html>

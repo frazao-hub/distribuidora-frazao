@@ -112,7 +112,7 @@
       padding: 4px 0;
     }
 
-    .table-responsive { overflow-x: auto; margin-top: 8px; }
+    .table-responsive { document; overflow-x: auto; margin-top: 8px; }
     table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
     th, td { padding: 7px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
     th { background: #f8fafc; color: #475569; font-weight: bold; }
@@ -160,7 +160,12 @@
   </div>
 
   <script>
-    // Se você tiver mais código JavaScript do seu sistema, pode colocar aqui embaixo.
+    // Cole aqui o seu bloco de inicialização do Firebase e as funções principais do sistema (como carregarVendedores e fazerLogin)
+    try {
+      console.log("Sistema iniciado no ambiente de teste.");
+    } catch (err) {
+      alert("Erro ao iniciar script: " + err.message);
+    }
   </script>
 </body>
 </html>

@@ -653,7 +653,7 @@
       });
     }
 
-    function fazerLogin() {
+   function fazerLogin() {
       const tipo = document.getElementById('loginTipo').value;
       const senhaInformada = document.getElementById('loginSenha').value.trim();
 
@@ -671,19 +671,34 @@
         }
       } else {
         const nomeVend = document.getElementById('loginVendedorSelect').value;
-        const vendedorObj = vendedores.find(v => v.nome === nomeVend);
-
-        if (!vendedorObj) {
+        if (!nomeVend) {
           alert("Selecione um vendedor válido.");
           return;
         }
 
-        if (vendedorObj.senha === senhaInformada) {
-          usuarioLogado = { tipo: 'vendedor', nome: vendedorObj.nome };
-          iniciarSessaoApp();
-        } else {
-          alert("Senha incorreta para este vendedor!");
-        }
+        db.collection("vendedores").where("nome", "==", nomeVend).get().then((querySnapshot) => {
+          if (querySnapshot.empty) {
+            alert("Vendedor não encontrado no banco de dados.");
+            return;
+          }
+
+          let vendedorObj = null;
+          querySnapshot.forEach((doc) => {
+            vendedorObj = { id: doc.id, ...doc.data() };
+          });
+
+          const senhaCadastrada = vendedorObj.senha || vendedorObj.password;
+
+          if (senhaCadastrada && senhaCadastrada === senhaInformada) {
+            usuarioLogado = { tipo: 'vendedor', nome: vendedorObj.nome };
+            iniciarSessaoApp();
+          } else {
+            alert("Senha incorreta para este vendedor!");
+          }
+        }).catch((error) => {
+          console.error("Erro ao validar login do vendedor:", error);
+          alert("Erro ao conectar com o banco para validar a senha.");
+        });
       }
     }
 

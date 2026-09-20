@@ -551,7 +551,7 @@
       }
     };
 
-    function iniciarFirestore() {
+   function iniciarFirestore() {
       db.collection("produtos").onSnapshot((snapshot) => {
         produtos = [];
         snapshot.forEach((doc) => {
@@ -572,14 +572,13 @@
         carregarSelectClientes();
       });
 
+      // <--- COLOQUE ESTE BLOCO EXATAMENTE AQUI --->
       db.collection("vendedores").onSnapshot((snapshot) => {
         vendedores = [];
         snapshot.forEach((doc) => {
           vendedores.push({ id: doc.id, ...doc.data() });
         });
-        renderizarVendedores();
         atualizarSelectVendedoresLogin();
-        preencherSelectVendedorCliente();
       });
 
       db.collection("vendas").onSnapshot((snapshot) => {
@@ -591,7 +590,6 @@
         renderizarRelatorios();
       });
     }
-
     // --- FUNÇÕES DE VALIDAÇÃO DE CPF E CNPJ ---
     function validarCPF(cpf) {
       cpf = cpf.replace(/[^\d]/g, '');

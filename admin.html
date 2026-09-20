@@ -1480,7 +1480,7 @@
       window.open(url, '_blank');
     }
 
-   function imprimirRelatorioGeral() {
+  function imprimirRelatorioGeral() {
       const inputMes = document.getElementById('filtroMesRelatorio');
       const mesFiltro = inputMes ? inputMes.value : '';
       let vendasFilt = vendas;
@@ -1503,29 +1503,10 @@
       txt += `Total de Pedidos: ${vendasFilt.length}\n`;
       txt += `Faturamento: R$ ${totalFat.toFixed(2)}\n`;
       
-      // O Lucro só é adicionado ao texto se NÃO for um vendedor logado
       if (!usuarioLogado || usuarioLogado.tipo !== 'vendedor') {
         txt += `Lucro Bruto: R$ ${totalLucro.toFixed(2)}\n`;
       }
 
-      txt += `--------------------------------\n`;
-      txt += `HISTÓRICO RESUMIDO:\n`;
-      vendasFilt.forEach(v => {
-        txt += `#${v.numeroSequencial} | ${v.clienteNome} | R$ ${(v.total||0).toFixed(2)} (${v.formaPagamento})\n`;
-      });
-      txt += `================================\n`;
-
-      const printArea = document.getElementById('print-area');
-      printArea.innerHTML = `<pre style="font-family: monospace; white-space: pre-wrap;">${txt}</pre>`;
-      window.print();
-    }
-      let txt = `================================\n`;
-      txt += `   RELATÓRIO - DISTRIBUIDORA FRAZÃO\n`;
-      txt += `   Mês/Ref: ${mesFiltro || 'Geral'}\n`;
-      txt += `================================\n`;
-      txt += `Total de Pedidos: ${vendasFilt.length}\n`;
-      txt += `Faturamento: R$ ${totalFat.toFixed(2)}\n`;
-      txt += `Lucro Bruto: R$ ${totalLucro.toFixed(2)}\n`;
       txt += `--------------------------------\n`;
       txt += `HISTÓRICO RESUMIDO:\n`;
       vendasFilt.forEach(v => {
@@ -1558,14 +1539,17 @@
       txt += `Mês/Ref: ${mesFiltro || 'Geral'}\n\n`;
       txt += `• Total de Pedidos: ${vendasFilt.length}\n`;
       txt += `• Faturamento: *R$ ${totalFat.toFixed(2)}*\n`;
-      txt += `• Lucro Bruto: *R$ ${totalLucro.toFixed(2)}*\n`;
+      
+      if (!usuarioLogado || usuarioLogado.tipo !== 'vendedor') {
+        txt += `• Lucro Bruto: *R$ ${totalLucro.toFixed(2)}*\n`;
+      }
 
       navigator.clipboard.writeText(txt).then(() => {
         alert("Resumo do relatório copiado para a área de transferência!");
       });
     }
 
-   function enviarWhatsAppRelatorioGeral() {
+    function enviarWhatsAppRelatorioGeral() {
       const inputMes = document.getElementById('filtroMesRelatorio');
       const mesFiltro = inputMes ? inputMes.value : '';
       let vendasFilt = vendas;
@@ -1586,7 +1570,6 @@
       txt += `• Total de Pedidos: ${vendasFilt.length}\n`;
       txt += `• Faturamento: *R$ ${totalFat.toFixed(2)}*\n`;
       
-      // O Lucro só entra na mensagem do WhatsApp se NÃO for vendedor
       if (!usuarioLogado || usuarioLogado.tipo !== 'vendedor') {
         txt += `• Lucro Bruto: *R$ ${totalLucro.toFixed(2)}*\n`;
       }

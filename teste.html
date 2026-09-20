@@ -1,27 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Teste de Erro Mobile</title>
-</head>
-<body>
-    <h1>Página de Teste</h1>
-    
-    <script>
-      window.onerror = function(msg, url, line) {
-          alert("Erro travando o celular na linha " + line + ": " + msg);
-          return true;
-      };
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Gestão - Distribuidora Frazão</title>
+  <title>Sistema de Gestão - Teste Mobile</title>
   
+  <!-- Rastreador de erros para capturar falhas no celular -->
+  <script>
+    window.onerror = function(msg, url, line) {
+        alert("Erro na linha " + line + ": " + msg);
+        return true;
+    };
+  </script>
+
   <!-- Scripts do Firebase v9 (Compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -45,3 +36,37 @@
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(15, 23, 42, 0.85); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 15px;
     }
+    .login-card {
+      background: var(--card-bg); padding: 22px; border-radius: 12px; width: 100%; max-width: 380px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center;
+    }
+    .login-card h2 { color: var(--primary-color); margin-bottom: 12px; font-size: 1.3rem; }
+    .login-card .form-group { margin-bottom: 12px; text-align: left; }
+
+    /* APLICAÇÃO PRINCIPAL */
+    #app-container { display: none; max-width: 1200px; margin: 0 auto; }
+
+    header { display: flex; justify-content: space-between; align-items: center; background: var(--primary-color); color: white; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+    header h1 { font-size: 1.15rem; font-weight: bold; }
+    .role-container { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); padding: 5px 10px; border-radius: 6px; flex-wrap: wrap; }
+
+    nav { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
+    nav button { padding: 8px 12px; background: var(--card-bg); border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; color: var(--text-color); font-size: 0.8rem; white-space: nowrap; }
+    nav button.active, nav button:hover { background: var(--secondary-color); color: white; border-color: var(--secondary-color); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .card { background: var(--card-bg); border-radius: 8px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 14px; }
+    .card h2 { margin-bottom: 10px; border-bottom: 2px solid var(--bg-color); padding-bottom: 6px; color: var(--primary-color); font-size: 1.05rem; }
+  </style>
+</head>
+<body>
+
+  <!-- COLE AQUI A SUA TELA DE LOGIN E O RESTO DO SEU HTML ORIGINAL -->
+
+  <script>
+    // COLE AQUI TODO O SEU JAVASCRIPT ORIGINAL DO SISTEMA
+  </script>
+</body>
+</html>

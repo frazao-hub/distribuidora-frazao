@@ -77,75 +77,39 @@
     .btn-danger:hover { background: #b91c1c; }
     .btn-warning { background: var(--warning-color); color: white; }
 
-    .category-highlight-box {
-      border: 2px dashed var(--secondary-color);
-      background: #f8fafc;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-    }
-
-    .stepper-group {
-      display: inline-flex;
-      align-items: center;
-      border: 1px solid #cbd5e1;
-      border-radius: 4px;
-      overflow: hidden;
-      background: white;
-    }
-    .stepper-btn {
-      background: #e2e8f0;
-      border: none;
-      padding: 6px 10px;
-      font-weight: bold;
-      cursor: pointer;
-      color: var(--primary-color);
-      font-size: 0.9rem;
-    }
-    .stepper-btn:hover { background: #cbd5e1; }
-    .stepper-input {
-      width: 55px;
-      text-align: center;
-      border: none;
-      outline: none;
-      font-weight: bold;
-      padding: 4px 0;
-    }
-
-    .table-responsive { document; overflow-x: auto; margin-top: 8px; }
+    .table-responsive { overflow-x: auto; margin-top: 8px; }
     table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
     th, td { padding: 7px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
     th { background: #f8fafc; color: #475569; font-weight: bold; }
-
-    .product-thumb { width: 38px; height: 38px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1; background: #f8fafc; }
-    .summary-box { background: #f8fafc; padding: 12px; border-radius: 6px; margin-top: 12px; font-size: 1rem; font-weight: bold; display: flex; justify-content: space-between; border: 1px solid #e2e8f0; }
-
-    #print-area { display: none; }
-    
-    @page {
-      size: 80mm auto;
-      margin: 0;
-    }
-    @media print {}
   </style>
 </head>
 <body>
 
-  <!-- Tela de Login e Estrutura Principal -->
+  <!-- TELA DE LOGIN -->
   <div id="login-screen">
     <div class="login-card">
       <h2>Distribuidora Frazão</h2>
+      <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Faça login para acessar o sistema</p>
+      
       <div class="form-group">
-        <label>Selecione o Vendedor:</label>
-        <select id="login-vendedor">
-          <option value="">Carregando vendedores...</option>
+        <label for="loginTipo">Entrar como:</label>
+        <select id="loginTipo" onchange="alternarCamposLogin()">
+          <option value="admin">Administrador Master</option>
+          <option value="vendedor">Vendedor Cadastrado</option>
         </select>
       </div>
-      <div class="form-group">
-        <label>Senha de Acesso:</label>
-        <input type="password" id="login-senha" placeholder="Digite sua senha">
+
+      <div class="form-group" id="grupoSelectVendedorLogin" style="display: none;">
+        <label for="loginVendedorSelect">Selecione o Vendedor:</label>
+        <select id="loginVendedorSelect" style="width: 100%;"></select>
       </div>
-      <button class="btn btn-primary" style="width: 100%; margin-top: 8px;" onclick="fazerLogin()">Entrar</button>
+
+      <div class="form-group">
+        <label for="loginSenha">Senha de Acesso:</label>
+        <input type="password" id="loginSenha" placeholder="Digite sua senha" style="width: 100%;">
+      </div>
+
+      <button type="button" class="btn btn-primary" style="width: 100%; padding: 10px; margin-top: 5px;" onclick="fazerLogin()">Entrar no Sistema</button>
     </div>
   </div>
 
@@ -160,12 +124,7 @@
   </div>
 
   <script>
-    // Cole aqui o seu bloco de inicialização do Firebase e as funções principais do sistema (como carregarVendedores e fazerLogin)
-    try {
-      console.log("Sistema iniciado no ambiente de teste.");
-    } catch (err) {
-      alert("Erro ao iniciar script: " + err.message);
-    }
+    // Cole aqui embaixo todo o seu código JavaScript original (incluindo o Firebase, fazerLogin e alternarCamposLogin)
   </script>
 </body>
 </html>

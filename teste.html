@@ -107,8 +107,20 @@
   </div>
 
   <script>
-    // Configuração do Firebase (Caso seu arquivo original já tenha a inicialização do Firebase, ela será usada aqui)
-    // Se precisar colar sua configuração exata do Firebase, basta colocar aqui em cima.
+    // Inicialização oficial do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8SnMWXagUVz4uVM87bc2dAakZyGGW3nM",
+      authDomain: "distribuidora-frazao.firebaseapp.com",
+      projectId: "distribuidora-frazao",
+      storageBucket: "distribuidora-frazao.firebasestorage.app",
+      messagingSenderId: "642540059204",
+      appId: "1:642540059204:web:c113fa6966fd97fc20da11"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
 
     // Função para alternar a exibição do select de vendedores
     function alternarCamposLogin() {
@@ -116,22 +128,15 @@
       const grupoVendedor = document.getElementById('grupoSelectVendedorLogin');
       if (tipo === 'vendedor') {
         grupoVendedor.style.display = 'block';
-        carregarVendedoresNoLogin(); // Puxa do Firebase ao selecionar vendedor
+        carregarVendedoresNoLogin();
       } else {
         grupoVendedor.style.display = 'none';
       }
     }
 
-    // Função que busca os vendedores no Firebase e preenche o select
+    // Função que busca os vendedores na coleção correta do Firestore
     function carregarVendedoresNoLogin() {
       const selectVendedor = document.getElementById('loginVendedorSelect');
-      
-      // Verifica se o firebase e o db já estão inicializados
-      if (typeof db === 'undefined') {
-        selectVendedor.innerHTML = '<option value="">Erro: Firebase não conectado</option>';
-        return;
-      }
-
       selectVendedor.innerHTML = '<option value="">Carregando vendedores...</option>';
 
       db.collection('vendedores').get().then((snapshot) => {
@@ -156,8 +161,6 @@
 
     function fazerLogin() {
       const tipo = document.getElementById('loginTipo').value;
-      const senha = document.getElementById('loginSenha').value;
-      
       if (tipo === 'vendedor') {
         const vendedorId = document.getElementById('loginVendedorSelect').value;
         if (!vendedorId) {
@@ -165,8 +168,7 @@
           return;
         }
       }
-      
-      alert("Tentativa de login acionada para: " + tipo);
+      alert("Tentativa de login acionada com sucesso para: " + tipo);
     }
 
     function fazerLogout() {

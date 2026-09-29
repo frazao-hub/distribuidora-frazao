@@ -3,64 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Clientes - Distribuidora Frazão</title>
+    <title>Identificação - Distribuidora Frazão</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; color: #333; }
-        .card { background: #fff; border-radius: 8px; padding: 25px; max-width: 600px; margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        h2 { color: #27ae60; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-top: 0; }
-        input, button { padding: 12px; margin: 8px 0; width: 100%; box-sizing: border-box; font-size: 14px; }
-        button { background: #3498db; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #2980b9; }
-        ul { list-style: none; padding: 0; }
-        li { background: #f9f9f9; padding: 12px; margin-top: 8px; border-left: 4px solid #3498db; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; }
-        .btn-voltar { display: inline-block; margin-top: 20px; text-decoration: none; color: #3498db; font-weight: bold; }
+        * { box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #f4f4f9; 
+            margin: 0; 
+            padding: 0; 
+            color: #333; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+        header { 
+            background: #27ae60; 
+            color: white; 
+            text-align: center; 
+            padding: 30px 20px; 
+        }
+        header h1 { margin: 0 0 8px 0; font-size: 24px; text-transform: uppercase; }
+        .container { 
+            max-width: 600px; 
+            margin: 30px auto; 
+            padding: 0 20px; 
+            flex: 1; 
+            width: 100%; 
+        }
+        .card-secao { 
+            background: #fff; 
+            border-radius: 8px; 
+            padding: 25px; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
+        }
+        .card-secao h2 { color: #27ae60; margin-top: 0; font-size: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+        .form-grupo { margin-bottom: 15px; }
+        .form-grupo label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #444; }
+        .form-grupo input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ccc; 
+            border-radius: 6px; 
+            font-size: 14px; 
+        }
+        .form-grupo input:focus { outline: none; border-color: #27ae60; }
+        .btn-enviar {
+            background: #27ae60;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .btn-enviar:hover { background: #219653; }
+        footer { text-align: center; padding: 20px; color: #7f8c8d; font-size: 12px; margin-top: auto; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>Cadastro de Clientes</h2>
-        <input type="text" id="nomeCliente" placeholder="Nome do Cliente / Estabelecimento">
-        <input type="text" id="telCliente" placeholder="Telefone / WhatsApp">
-        <button onclick="adicionarCliente()">Cadastrar Cliente</button>
-        
-        <h3>Clientes Registrados</h3>
-        <ul id="listaClientes"></ul>
-        
-        <a href="index.html" class="btn-voltar">← Voltar para o Catálogo Geral</a>
+
+    <header>
+        <h1>Distribuidora Frazão</h1>
+        <p>Informe seus dados para continuar</p>
+    </header>
+
+    <div class="container">
+        <div class="card-secao">
+            <h2>Dados de Entrega</h2>
+            <p>Preencha abaixo para agilizar o seu atendimento no pedido:</p>
+            
+            <form id="form-cliente" onsubmit="salvarDadosEProsseguir(event)">
+                <div class="form-grupo">
+                    <label for="nome">Nome Completo / Razão Social:</label>
+                    <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+                </div>
+                
+                <div class="form-grupo">
+                    <label for="endereco">Endereço de Entrega (Rua, Nº, Bairro, Cidade):</label>
+                    <input type="text" id="endereco" placeholder="Ex: Rua Exemplo, 123 - Centro" required>
+                </div>
+
+                <div class="form-grupo">
+                    <label for="telefone">Telefone / WhatsApp:</label>
+                    <input type="tel" id="telefone" placeholder="(21) 99999-9999" required>
+                </div>
+
+                <button type="submit" class="btn-enviar">Avançar para o Catálogo</button>
+            </form>
+        </div>
     </div>
 
+    <footer>
+        &copy; 2026 Distribuidora Frazão - Todos os direitos reservados.
+    </footer>
+
     <script>
-        function carregarClientes() {
-            let clientes = JSON.parse(localStorage.getItem('clientes_frazao')) || [];
-            let lista = document.getElementById('listaClientes');
-            lista.innerHTML = '';
-            clientes.forEach((item, index) => {
-                lista.innerHTML += `<li><div><strong>${item.nome}</strong><br><small>${item.tel}</small></div> <button onclick="remover(${index})" style="width:auto; padding:5px 10px; background:#e74c3c; margin:0;">Excluir</button></li>`;
-            });
-        }
-
-        function adicionarCliente() {
-            let nome = document.getElementById('nomeCliente').value.trim();
-            let tel = document.getElementById('telCliente').value.trim();
-            if(!nome || !tel) return alert('Preencha todos os campos!');
-
-            let clientes = JSON.parse(localStorage.getItem('clientes_frazao')) || [];
-            clientes.push({nome, tel});
-            localStorage.setItem('clientes_frazao', JSON.stringify(clientes));
+        function salvarDadosEProsseguir(event) {
+            event.preventDefault(); // Evita recarregar a página
             
-            document.getElementById('nomeCliente').value = '';
-            document.getElementById('telCliente').value = '';
-            carregarClientes();
+            // Pega os valores digitados
+            const dadosCliente = {
+                nome: document.getElementById('nome').value,
+                endereco: document.getElementById('endereco').value,
+                telefone: document.getElementById('telefone').value
+            };
+
+            // Salva na memória do navegador
+            localStorage.setItem('dadosClienteFrazao', JSON.stringify(dadosCliente));
+
+            // Redireciona para a página principal (index.html) ou para onde preferir
+            window.location.href = 'index.html';
         }
 
-        function remover(index) {
-            let clientes = JSON.parse(localStorage.getItem('clientes_frazao')) || [];
-            clientes.splice(index, 1);
-            localStorage.setItem('clientes_frazao', JSON.stringify(clientes));
-            carregarClientes();
-        }
-
-        window.onload = carregarClientes;
+        // Se já houver dados salvos anteriormente, preenche automaticamente para facilitar
+        window.onload = function() {
+            const salvos = localStorage.getItem('dadosClienteFrazao');
+            if (salvos) {
+                const cliente = JSON.parse(salvos);
+                document.getElementById('nome').value = cliente.nome || '';
+                document.getElementById('endereco').value = cliente.endereco || '';
+                document.getElementById('telefone').value = cliente.telefone || '';
+            }
+        };
     </script>
 </body>
 </html>

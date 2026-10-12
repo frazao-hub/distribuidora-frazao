@@ -71,6 +71,81 @@
     .summary-box { background: #f8fafc; padding: 12px; border-radius: 6px; margin-top: 12px; font-size: 1rem; font-weight: bold; display: flex; justify-content: space-between; border: 1px solid #e2e8f0; }
     #print-area { display: none; }
   </style>
+
+  <!-- GARANTIA DE ESCOPO GLOBAL IMEDIATO -->
+  <script>
+    // Declarações globais imediatas para que o HTML encontre as funções ao renderizar
+    window.alternarCamposLogin = function() {
+      const tipoSelect = document.getElementById('loginTipo');
+      const selectVendDiv = document.getElementById('grupoSelectVendedorLogin');
+      if (tipoSelect && selectVendDiv) {
+        selectVendDiv.style.display = (tipoSelect.value === 'vendedor') ? 'block' : 'none';
+      }
+    };
+
+    window.fazerLogin = function() {
+      const tipo = document.getElementById('loginTipo').value;
+      const senhaInformada = document.getElementById('loginSenha').value.trim();
+
+      if (!senhaInformada) {
+        alert("Informe a senha de acesso!");
+        return;
+      }
+
+      if (tipo === 'admin') {
+        if (senhaInformada === (window.adminSenha || "admin123")) {
+          window.usuarioLogado = { tipo: 'admin', nome: 'Administrador Master' };
+          window.iniciarSessaoApp();
+        } else {
+          alert("Senha do Administrador incorreta!");
+        }
+      } else {
+        const selectVend = document.getElementById('loginVendedorSelect');
+        const nomeVend = selectVend ? selectVend.value : '';
+
+        if (!nomeVend) {
+          alert("Nenhum vendedor cadastrado ou selecionado.");
+          return;
+        }
+
+        const vendedorObj = (window.vendedores || []).find(v => v.nome === nomeVend);
+        if (!vendedorObj) {
+          alert("Vendedor não encontrado no banco de dados.");
+          return;
+        }
+
+        if (vendedorObj.senha === senhaInformada) {
+          window.usuarioLogado = { tipo: 'vendedor', nome: vendedorObj.nome };
+          window.iniciarSessaoApp();
+        } else {
+          alert("Senha incorreta para este vendedor!");
+        }
+      }
+    };
+
+    window.iniciarSessaoApp = function() {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app-container').style.display = 'block';
+      document.getElementById('loginSenha').value = '';
+
+      const labelUsuario = document.getElementById('labelUsuarioLogado');
+      const btnAltSenha = document.getElementById('btnAltSenha');
+      const inputResp = document.getElementById('vendaVendedorResponsavel');
+      const adminElements = document.querySelectorAll('.admin-only');
+
+      if (labelUsuario) labelUsuario.innerText = `Logado: ${window.usuarioLogado.nome}`;
+      if (inputResp) inputResp.value = window.usuarioLogado.nome;
+
+      if (window.usuarioLogado.tipo === 'admin') {
+        adminElements.forEach(el => el.style.display = 'block');
+        if (btnAltSenha) btnAltSenha.style.display = 'inline-block';
+      } else {
+        adminElements.forEach(el => el.style.display = 'none');
+        if (btnAltSenha) btnAltSenha.style.display = 'none';
+        if (typeof window.switchTab === 'function') window.switchTab('vendasTab');
+      }
+    };
+  </script>
 </head>
 <body>
 
@@ -358,157 +433,95 @@
   <div id="print-area"></div>
 
   <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyD8SnMWXagUVz4uVM87bc2dAakZyGGW3nM",
-        authDomain: "distribuidora-frazao.firebaseapp.com",
-        projectId: "distribuidora-frazao",
-        storageBucket: "distribuidora-frazao.firebasestorage.app",
-        messagingSenderId: "642540059204",
-        appId: "1:642540059204:web:c113fa6966fd97fc20da11"
-    };
+    // Inicialização do Firebase com tratamento de erro
+    let db = null;
+    try {
+      const firebaseConfig = {
+          apiKey: "AIzaSyD8SnMWXagUVz4uVM87bc2dAakZyGGW3nM",
+          authDomain: "distribuidora-frazao.firebaseapp.com",
+          projectId: "distribuidora-frazao",
+          storageBucket: "distribuidora-frazao.firebasestorage.app",
+          messagingSenderId: "642540059204",
+          appId: "1:642540059204:web:c113fa6966fd97fc20da11"
+      };
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      db = firebase.firestore();
+    } catch (e) {
+      console.warn("Firebase offline ou bloqueado:", e);
     }
-    const db = firebase.firestore();
 
-    let produtos = [];
-    let clientes = [];
-    let vendedores = [];
-    let vendas = [];
-    let carrinho = [];
+    window.produtos = [];
+    window.clientes = [];
+    window.vendedores = [];
+    window.vendas = [];
+    window.carrinho = [];
 
-    let adminSenha = localStorage.getItem('df_admin_senha') || "admin123";
-    let usuarioLogado = null;
+    window.adminSenha = localStorage.getItem('df_admin_senha') || "admin123";
+    window.usuarioLogado = null;
 
-    // Inicialização segura no carregamento da página
     window.onload = function() {
       alternarCamposLogin();
-      iniciarFirestore();
+      if (db) {
+        iniciarFirestore();
+      } else {
+        console.warn("Operando sem conexão ativa com o Firestore.");
+      }
     };
 
     function iniciarFirestore() {
       db.collection("produtos").onSnapshot((snapshot) => {
-        produtos = [];
-        snapshot.forEach(doc => produtos.push({ id: doc.id, ...doc.data() }));
+        window.produtos = [];
+        snapshot.forEach(doc => window.produtos.push({ id: doc.id, ...doc.data() }));
         renderizarProdutos();
         carregarSelectProdutos();
       }, err => console.log("Aviso produtos:", err));
 
       db.collection("clientes").onSnapshot((snapshot) => {
-        clientes = [];
-        snapshot.forEach(doc => clientes.push({ id: doc.id, ...doc.data() }));
+        window.clientes = [];
+        snapshot.forEach(doc => window.clientes.push({ id: doc.id, ...doc.data() }));
         renderizarClientes();
         carregarSelectClientes();
       }, err => console.log("Aviso clientes:", err));
 
       db.collection("vendedores").onSnapshot((snapshot) => {
-        vendedores = [];
-        snapshot.forEach(doc => vendedores.push({ id: doc.id, ...doc.data() }));
+        window.vendedores = [];
+        snapshot.forEach(doc => window.vendedores.push({ id: doc.id, ...doc.data() }));
         renderizarVendedores();
         atualizarSelectVendedoresLogin();
       }, err => console.log("Aviso vendedores:", err));
 
       db.collection("vendas").onSnapshot((snapshot) => {
-        vendas = [];
-        snapshot.forEach(doc => vendas.push({ id: doc.id, ...doc.data() }));
+        window.vendas = [];
+        snapshot.forEach(doc => window.vendas.push({ id: doc.id, ...doc.data() }));
         renderizarRelatorios();
       }, err => console.log("Aviso vendas:", err));
     }
 
-    function alternarCamposLogin() {
-      const tipoSelect = document.getElementById('loginTipo');
-      const selectVendDiv = document.getElementById('grupoSelectVendedorLogin');
-      if (tipoSelect && selectVendDiv) {
-        selectVendDiv.style.display = (tipoSelect.value === 'vendedor') ? 'block' : 'none';
-      }
-    }
-
-    function atualizarSelectVendedoresLogin() {
+    window.atualizarSelectVendedoresLogin = function() {
       const select = document.getElementById('loginVendedorSelect');
       if (!select) return;
       select.innerHTML = '';
-      if (vendedores.length === 0) {
+      if (window.vendedores.length === 0) {
         select.innerHTML = `<option value="">Nenhum vendedor cadastrado</option>`;
         return;
       }
-      vendedores.forEach(v => {
+      window.vendedores.forEach(v => {
         select.innerHTML += `<option value="${v.nome}">${v.nome}</option>`;
       });
-    }
+    };
 
-    function fazerLogin() {
-      const tipo = document.getElementById('loginTipo').value;
-      const senhaInformada = document.getElementById('loginSenha').value.trim();
-
-      if (!senhaInformada) {
-        alert("Informe a senha de acesso!");
-        return;
-      }
-
-      if (tipo === 'admin') {
-        if (senhaInformada === adminSenha) {
-          usuarioLogado = { tipo: 'admin', nome: 'Administrador Master' };
-          iniciarSessaoApp();
-        } else {
-          alert("Senha do Administrador incorreta!");
-        }
-      } else {
-        const selectVend = document.getElementById('loginVendedorSelect');
-        const nomeVend = selectVend ? selectVend.value : '';
-
-        if (!nomeVend) {
-          alert("Nenhum vendedor cadastrado ou selecionado.");
-          return;
-        }
-
-        const vendedorObj = vendedores.find(v => v.nome === nomeVend);
-        if (!vendedorObj) {
-          alert("Vendedor não encontrado no banco de dados.");
-          return;
-        }
-
-        if (vendedorObj.senha === senhaInformada) {
-          usuarioLogado = { tipo: 'vendedor', nome: vendedorObj.nome };
-          iniciarSessaoApp();
-        } else {
-          alert("Senha incorreta para este vendedor!");
-        }
-      }
-    }
-
-    function iniciarSessaoApp() {
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app-container').style.display = 'block';
-      document.getElementById('loginSenha').value = '';
-
-      const labelUsuario = document.getElementById('labelUsuarioLogado');
-      const btnAltSenha = document.getElementById('btnAltSenha');
-      const inputResp = document.getElementById('vendaVendedorResponsavel');
-      const adminElements = document.querySelectorAll('.admin-only');
-
-      if (labelUsuario) labelUsuario.innerText = `Logado: ${usuarioLogado.nome}`;
-      if (inputResp) inputResp.value = usuarioLogado.nome;
-
-      if (usuarioLogado.tipo === 'admin') {
-        adminElements.forEach(el => el.style.display = 'block');
-        if (btnAltSenha) btnAltSenha.style.display = 'inline-block';
-      } else {
-        adminElements.forEach(el => el.style.display = 'none');
-        if (btnAltSenha) btnAltSenha.style.display = 'none';
-        switchTab('vendasTab');
-      }
-    }
-
-    function fazerLogout() {
-      usuarioLogado = null;
+    window.fazerLogout = function() {
+      window.usuarioLogado = null;
       document.getElementById('app-container').style.display = 'none';
       document.getElementById('login-screen').style.display = 'flex';
       document.getElementById('loginSenha').value = '';
       alternarCamposLogin();
-    }
+    };
 
-    function switchTab(tabId, evt) {
+    window.switchTab = function(tabId, evt) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
       
@@ -518,66 +531,67 @@
       if (evt && evt.currentTarget) {
         evt.currentTarget.classList.add('active');
       }
-    }
+    };
 
-    function carregarSelectProdutos() {
+    window.carregarSelectProdutos = function() {
       const select = document.getElementById('carrinhoProduto');
       if (!select) return;
       select.innerHTML = '';
-      produtos.forEach(p => {
+      window.produtos.forEach(p => {
         select.innerHTML += `<option value="${p.id}">${p.nome} (Estoque: ${p.estoque || 0})</option>`;
       });
       carregarDetalhesProduto();
-    }
+    };
 
-    function carregarDetalhesProduto() {
+    window.carregarDetalhesProduto = function() {
       const selectProd = document.getElementById('carrinhoProduto');
       const inputPreco = document.getElementById('carrinhoPreco');
       if (!selectProd || !inputPreco) return;
-      const prod = produtos.find(p => p.id === selectProd.value);
+      const prod = window.produtos.find(p => p.id === selectProd.value);
       if (prod) inputPreco.value = Number(prod.precoVenda || 0).toFixed(2);
-    }
+    };
 
-    function adicionarAoCarrinho() {
+    window.adicionarAoCarrinho = function() {
       const selectProd = document.getElementById('carrinhoProduto');
       const inputQtd = document.getElementById('carrinhoQtd');
       const inputPreco = document.getElementById('carrinhoPreco');
       if (!selectProd || !selectProd.value) return;
 
-      const prod = produtos.find(p => p.id === selectProd.value);
+      const prod = window.produtos.find(p => p.id === selectProd.value);
       if (!prod) return;
 
       const qtd = parseInt(inputQtd.value) || 1;
       const precoVenda = parseFloat(inputPreco.value) || prod.precoVenda;
 
-      carrinho.push({ id: prod.id, nome: prod.nome, custoUnitario: prod.precoCusto || 0, precoVenda, qtd });
+      window.carrinho.push({ id: prod.id, nome: prod.nome, custoUnitario: prod.precoCusto || 0, precoVenda, qtd });
       renderizarCarrinho();
-    }
+    };
 
-    function renderizarCarrinho() {
+    window.renderizarCarrinho = function() {
       const tbody = document.getElementById('tabelaCarrinho');
       const spanTotal = document.getElementById('carrinhoTotal');
       if (!tbody) return;
       tbody.innerHTML = '';
       let total = 0;
-      carrinho.forEach((item, idx) => {
+      window.carrinho.forEach((item, idx) => {
         let sub = item.qtd * item.precoVenda;
         total += sub;
-        tbody.innerHTML += `<tr><td>${item.nome}</td><td>${item.qtd}</td><td>R$ ${item.precoVenda.toFixed(2)}</td><td>R$ ${sub.toFixed(2)}</td><td><button onclick="carrinho.splice(${idx},1);renderizarCarrinho()">X</button></td></tr>`;
+        tbody.innerHTML += `<tr><td>${item.nome}</td><td>${item.qtd}</td><td>R$ ${item.precoVenda.toFixed(2)}</td><td>R$ ${sub.toFixed(2)}</td><td><button onclick="window.carrinho.splice(${idx},1);renderizarCarrinho()">X</button></td></tr>`;
       });
       if (spanTotal) spanTotal.innerText = `R$ ${total.toFixed(2)}`;
-    }
+    };
 
-    function carregarSelectClientes() {
+    window.carregarSelectClientes = function() {
       const select = document.getElementById('vendaCliente');
       if (!select) return;
       select.innerHTML = '';
-      clientes.forEach(c => {
+      window.clientes.forEach(c => {
         select.innerHTML += `<option value="${c.id}">${c.nome}</option>`;
       });
-    }
+    };
 
-    function salvarProduto() {
+    window.salvarProduto = function() {
+      if (!db) return alert("Banco offline.");
       const nome = document.getElementById('prodNome').value;
       const precoCusto = parseFloat(document.getElementById('prodCusto').value) || 0;
       const precoVenda = parseFloat(document.getElementById('prodPreco').value) || 0;
@@ -587,18 +601,19 @@
         alert("Salvo!");
         document.getElementById('formProduto').reset();
       });
-    }
+    };
 
-    function renderizarProdutos() {
+    window.renderizarProdutos = function() {
       const tb = document.getElementById('tabelaProdutos');
       if (!tb) return;
       tb.innerHTML = '';
-      produtos.forEach(p => {
+      window.produtos.forEach(p => {
         tb.innerHTML += `<tr><td>${p.nome}</td><td>${p.categoria}</td><td>R$ ${p.precoVenda}</td><td>${p.estoque}</td><td>-</td></tr>`;
       });
-    }
+    };
 
-    function cadastrarCliente() {
+    window.cadastrarCliente = function() {
+      if (!db) return alert("Banco offline.");
       const nome = document.getElementById('cliNome').value;
       const telefone = document.getElementById('cliTelefone').value;
       const endereco = document.getElementById('cliEndereco').value;
@@ -607,18 +622,19 @@
         alert("Cliente salvo!");
         document.getElementById('formCliente').reset();
       });
-    }
+    };
 
-    function renderizarClientes() {
+    window.renderizarClientes = function() {
       const tb = document.getElementById('tabelaClientes');
       if (!tb) return;
       tb.innerHTML = '';
-      clientes.forEach(c => {
+      window.clientes.forEach(c => {
         tb.innerHTML += `<tr><td>${c.nome}</td><td>${c.telefone}</td><td>${c.endereco}</td><td>R$ ${Number(c.saldoDevedor||0).toFixed(2)}</td><td>-</td></tr>`;
       });
-    }
+    };
 
-    function cadastrarVendedor() {
+    window.cadastrarVendedor = function() {
+      if (!db) return alert("Banco offline.");
       const nome = document.getElementById('vendNome').value;
       const senha = document.getElementById('vendSenha').value;
       if (!nome || !senha) return;
@@ -626,41 +642,41 @@
         alert("Vendedor cadastrado!");
         document.getElementById('formVendedor').reset();
       });
-    }
+    };
 
-    function renderizarVendedores() {
+    window.renderizarVendedores = function() {
       const tb = document.getElementById('tabelaVendedores');
       if (!tb) return;
       tb.innerHTML = '';
-      vendedores.forEach(v => {
+      window.vendedores.forEach(v => {
         tb.innerHTML += `<tr><td>${v.nome}</td><td>${v.senha}</td><td>-</td></tr>`;
       });
-    }
+    };
 
-    function finalizarPedido() {
-      if (carrinho.length === 0) return alert("Carrinho vazio");
+    window.finalizarPedido = function() {
+      if (window.carrinho.length === 0) return alert("Carrinho vazio");
       alert("Pedido finalizado com sucesso!");
-      carrinho = [];
+      window.carrinho = [];
       renderizarCarrinho();
-    }
+    };
 
-    function renderizarRelatorios() {
+    window.renderizarRelatorios = function() {
       const tb = document.getElementById('tabelaHistoricoVendas');
       if (!tb) return;
       tb.innerHTML = '';
-      vendas.forEach(v => {
+      window.vendas.forEach(v => {
         tb.innerHTML += `<tr><td>#${v.numeroSequencial||''}</td><td>${v.clienteNome}</td><td>${v.formaPagamento}</td><td>R$ ${Number(v.total||0).toFixed(2)}</td></tr>`;
       });
-    }
+    };
 
-    function abrirModalAlterarSenha() {
+    window.abrirModalAlterarSenha = function() {
       const s = prompt("Nova senha admin:");
       if (s) {
-        adminSenha = s;
+        window.adminSenha = s;
         localStorage.setItem('df_admin_senha', s);
         alert("Alterado!");
       }
-    }
+    };
   </script>
 </body>
 </html>

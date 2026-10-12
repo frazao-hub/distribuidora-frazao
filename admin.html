@@ -1,488 +1,1121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Vendas e Gestão - Distribuidora Frazão</title>
-    
-    <!-- Scripts do Firebase v9 (SDK Web compat) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Gestão - Distribuidora Frazão</title>
 
-    <title>Distribuidora Frazão - Sistema de Vendas e Gestão</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-@@ -218,7 +213,7 @@
+<!-- Scripts do Firebase v9 (Compat) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+<style>
+:root {
+--primary-color: #1e3a8a;
+--secondary-color: #2563eb;
+--bg-color: #f1f5f9;
+--card-bg: #ffffff;
+--text-color: #0f172a;
+--danger-color: #dc2626;
+--success-color: #16a34a;
+--warning-color: #d97706;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+body { background-color: var(--bg-color); color: var(--text-color); padding: 8px; font-size: 0.95rem; }
+
+/* TELA DE LOGIN */
+#login-screen {
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(15, 23, 42, 0.85); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 15px;
+}
+.login-card {
+background: var(--card-bg); padding: 22px; border-radius: 12px; width: 100%; max-width: 380px;
+box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center;
+}
+.login-card h2 { color: var(--primary-color); margin-bottom: 12px; font-size: 1.3rem; }
+.login-card .form-group { margin-bottom: 12px; text-align: left; }
+
+/* APLICAÇÃO PRINCIPAL */
+#app-container { display: none; max-width: 1200px; margin: 0 auto; }
+
+header { display: flex; justify-content: space-between; align-items: center; background: var(--primary-color); color: white; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+header h1 { font-size: 1.15rem; font-weight: bold; }
+.role-container { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); padding: 5px 10px; border-radius: 6px; flex-wrap: wrap; }
+
+nav { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
+nav button { padding: 8px 12px; background: var(--card-bg); border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; color: var(--text-color); font-size: 0.8rem; white-space: nowrap; }
+nav button.active, nav button:hover { background: var(--secondary-color); color: white; border-color: var(--secondary-color); }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.card { background: var(--card-bg); border-radius: 8px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 14px; }
+.card h2 { margin-bottom: 10px; border-bottom: 2px solid var(--bg-color); padding-bottom: 6px; color: var(--primary-color); font-size: 1.05rem; }
+
+form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 10px; }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-group.full-width { grid-column: 1 / -1; }
+label { font-size: 0.8rem; font-weight: bold; color: #475569; }
+input, select { padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none; width: 100%; }
+input:focus, select:focus { border-color: var(--secondary-color); }
+input[readonly] { background-color: #f1f5f9; cursor: not-allowed; }
+
+.btn { padding: 7px 10px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+.btn-primary { background: var(--secondary-color); color: white; }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-success { background: var(--success-color); color: white; }
+.btn-success:hover { background: #15803d; }
+.btn-danger { background: var(--danger-color); color: white; }
+.btn-danger:hover { background: #b91c1c; }
+.btn-warning { background: var(--warning-color); color: white; }
+
+/* Controle de Quantidade com + e - */
+.stepper-group {
+display: inline-flex;
+align-items: center;
+border: 1px solid #cbd5e1;
+border-radius: 4px;
+overflow: hidden;
+background: white;
+}
+.stepper-btn {
+background: #e2e8f0;
+border: none;
+padding: 6px 10px;
+font-weight: bold;
+cursor: pointer;
+color: var(--primary-color);
+font-size: 0.9rem;
+}
+.stepper-btn:hover { background: #cbd5e1; }
+.stepper-input {
+width: 55px;
+text-align: center;
+border: none;
+outline: none;
+font-weight: bold;
+padding: 4px 0;
+}
+
+.table-responsive { overflow-x: auto; margin-top: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+th, td { padding: 7px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+th { background: #f8fafc; color: #475569; font-weight: bold; }
+
+.product-thumb { width: 38px; height: 38px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1; background: #f8fafc; }
+.summary-box { background: #f8fafc; padding: 12px; border-radius: 6px; margin-top: 12px; font-size: 1rem; font-weight: bold; display: flex; justify-content: space-between; border: 1px solid #e2e8f0; }
+
+#print-area { display: none; }
+
+@page {
+size: 80mm auto;
+margin: 0;
+}
+@media print {
+body * { visibility: hidden; }
+#print-area, #print-area * { visibility: visible; }
+#print-area {
+position: absolute;
+left: 0;
+top: 0;
+width: 80mm;
+padding: 5mm 4mm 22mm 4mm;
+font-family: monospace;
+font-size: 11px;
+color: black;
+line-height: 1.3;
+}
+}
+
+@media (max-width: 600px) {
+body { padding: 4px; }
+.card { padding: 10px; }
+form { grid-template-columns: 1fr; }
+header { padding: 8px 10px; }
+header h1 { font-size: 1rem; }
+}
+</style>
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <!-- Sidebar Corrigida -->
-    <aside>
-        <div class="logo-area">Distribuidora Frazão</div>
-        <ul class="menu">
-@@ -326,7 +321,7 @@ <h3>Cadastrar / Editar Produto</h3>
-                </div>
+<!-- TELA DE LOGIN -->
+<div id="login-screen">
+<div class="login-card">
+<h2>Distribuidora Frazão</h2>
+<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Faça login para acessar o sistema</p>
 
-                <div class="card">
-                    <h3>Lista de Produtos em Estoque (Nuvem)</h3>
-                    <h3>Lista de Produtos em Estoque</h3>
-                    <table>
-                        <thead>
-                            <tr>
-@@ -337,9 +332,7 @@ <h3>Lista de Produtos em Estoque (Nuvem)</h3>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-produtos">
-                            <tr><td colspan="5" style="text-align: center;">Carregando produtos...</td></tr>
-                        </tbody>
-                        <tbody id="tabela-produtos"></tbody>
-                    </table>
-                </div>
-            </div>
-@@ -364,7 +357,7 @@ <h3>Cadastrar Cliente</h3>
-                </div>
+<div class="form-group">
+<label for="loginTipo">Entrar como:</label>
+<select id="loginTipo" onchange="alternarCamposLogin()">
+<option value="admin">Administrador Master</option>
+<option value="vendedor">Vendedor Cadastrado</option>
+</select>
+</div>
 
-                <div class="card">
-                    <h3>Controle de Clientes e Fiado (Nuvem)</h3>
-                    <h3>Controle de Clientes e Fiado</h3>
-                    <table>
-                        <thead>
-                            <tr>
-@@ -375,17 +368,15 @@ <h3>Controle de Clientes e Fiado (Nuvem)</h3>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-clientes">
-                            <tr><td colspan="5" style="text-align: center;">Carregando clientes...</td></tr>
-                        </tbody>
-                        <tbody id="tabela-clientes"></tbody>
-                    </table>
-                </div>
-            </div>
+<div class="form-group" id="grupoSelectVendedorLogin" style="display: none;">
+<label for="loginVendedorSelect">Selecione o Vendedor:</label>
+<select id="loginVendedorSelect" style="width: 100%;"></select>
+</div>
 
-            <!-- ABA PEDIDOS -->
-            <div id="pedidos" class="tab-content">
-                <div class="card">
-                    <h3>Histórico de Pedidos (Nuvem)</h3>
-                    <h3>Histórico de Pedidos</h3>
-                    <table>
-                        <thead>
-                            <tr>
-@@ -398,9 +389,7 @@ <h3>Histórico de Pedidos (Nuvem)</h3>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-pedidos">
-                            <tr><td colspan="7" style="text-align: center;">Carregando pedidos...</td></tr>
-                        </tbody>
-                        <tbody id="tabela-pedidos"></tbody>
-                    </table>
-                </div>
-            </div>
-@@ -409,26 +398,31 @@ <h3>Histórico de Pedidos (Nuvem)</h3>
-    </main>
+<div class="form-group">
+<label for="loginSenha">Senha de Acesso:</label>
+<input type="password" id="loginSenha" placeholder="Digite sua senha" style="width: 100%;">
+</div>
 
-    <script>
-        // Configuração do Firebase da Distribuidora Frazão
-        const firebaseConfig = {
-            apiKey: "AIzaSyD8SnMWXagUVz4uVM87bc2dAakZyGGW3nM",
-            authDomain: "distribuidora-frazao.firebaseapp.com",
-            projectId: "distribuidora-frazao",
-            storageBucket: "distribuidora-frazao.firebasestorage.app",
-            messagingSenderId: "642540059204",
-            appId: "1:642540059204:web:c113fa6966fd97fc20da11"
-        };
+<button type="button" class="btn btn-primary" style="width: 100%; padding: 10px; margin-top: 5px;" onclick="fazerLogin()">Entrar no Sistema</button>
+</div>
+</div>
 
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+<!-- APLICAÇÃO PRINCIPAL -->
+<div id="app-container">
+<header>
+<h1>Distribuidora Frazão</h1>
+<div class="role-container">
+<span id="labelUsuarioLogado" style="font-weight: bold; font-size: 0.85rem;"></span>
+<button class="btn btn-warning" onclick="abrirModalAlterarSenha()" id="btnAltSenha" style="padding: 4px 7px; font-size: 0.75rem;">Alterar Senha</button>
+<button class="btn btn-danger" onclick="fazerLogout()" style="padding: 4px 7px; font-size: 0.75rem;">Sair</button>
+</div>
+</header>
 
-        // Arrays em memória sincronizados em tempo real com o Firestore
-        let produtos = [];
-        let clientes = [];
-        let pedidos = [];
-        // Estrutura de Dados Inicial / LocalStorage
-        let produtos = JSON.parse(localStorage.getItem('frazao_produtos')) || [
-            { id: 1, nome: 'Refrigerante 2L', preco: 9.00, estoque: 50 },
-            { id: 2, nome: 'Bombom Caixa', preco: 12.50, estoque: 30 }
-        ];
+<nav>
+<button class="nav-btn active" onclick="switchTab('vendasTab', event)">Ponto de Venda (PDV)</button>
+<button class="nav-btn" onclick="switchTab('produtosTab', event)">Estoque & Catálogo</button>
+<button class="nav-btn" onclick="switchTab('clientesTab', event)">Clientes & Fiado</button>
+<button class="nav-btn admin-only" onclick="switchTab('vendedoresTab', event)">Cadastrar Vendedor</button>
+<button class="nav-btn admin-only" onclick="switchTab('relatoriosTab', event)">Faturamento & Relatórios</button>
+</nav>
 
-        let clientes = JSON.parse(localStorage.getItem('frazao_clientes')) || [
-            { id: 1, nome: 'Cliente Geral / Balcão', telefone: '', divida: 0 }
-        ];
+<!-- ABA 1: VENDAS (PDV) -->
+<div id="vendasTab" class="tab-content active">
+<div class="card">
+<h2>Novo Pedido de Venda</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 12px;">
+<div class="form-group">
+<label for="vendaCliente">Cliente:</label>
+<select id="vendaCliente"></select>
+</div>
+<div class="form-group">
+<label for="vendaVendedorResponsavel">Vendedor Responsável:</label>
+<input type="text" id="vendaVendedorResponsavel" readonly>
+</div>
+</div>
 
-        let pedidos = JSON.parse(localStorage.getItem('frazao_pedidos')) || [];
+<h3 style="font-size: 0.95rem; color: var(--primary-color); margin-bottom: 8px;">Adicionar Produtos ao Carrinho</h3>
+<div style="display: grid; grid-template-columns: 2fr 1fr auto auto; gap: 8px; align-items: end;">
+<div class="form-group">
+<label for="carrinhoProduto">Produto do Estoque:</label>
+<select id="carrinhoProduto" onchange="carregarDetalhesProduto()"></select>
+</div>
+<div class="form-group">
+<label for="carrinhoPreco">Preço Venda (R$):</label>
+<input type="number" id="carrinhoPreco" step="0.01">
+</div>
+<div class="form-group">
+<label>Qtd:</label>
+<div class="stepper-group">
+<button type="button" class="stepper-btn" onclick="alterarQtdInput(-1)">-</button>
+<input type="number" id="carrinhoQtd" class="stepper-input" value="1" min="1">
+<button type="button" class="stepper-btn" onclick="alterarQtdInput(1)">+</button>
+</div>
+</div>
+<button type="button" class="btn btn-primary" style="height: 36px;" onclick="adicionarAoCarrinho()">+ Adicionar</button>
+</div>
 
-        // Sequencial de pedidos iniciando em 1011 se não houver registros anteriores
-        let proximoPedidoNumero = parseInt(localStorage.getItem('frazao_proximo_pedido')) || 1011;
+<div style="margin-top: 8px; padding: 6px 10px; background: #f8fafc; border-radius: 6px;" id="previewEstoqueInfo">
+<small style="color: #64748b;" id="previewEstoqueProd">Selecione um produto</small>
+</div>
 
-        let carrinho = [];
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>Produto</th>
+<th>Qtd</th>
+<th>Preço Un.</th>
+<th>Subtotal</th>
+<th>Ação</th>
+</tr>
+</thead>
+<tbody id="tabelaCarrinho"></tbody>
+</table>
+</div>
 
-        // Salvar dados no Storage
-        function salvarDados() {
-            localStorage.setItem('frazao_produtos', JSON.stringify(produtos));
-            localStorage.setItem('frazao_clientes', JSON.stringify(clientes));
-            localStorage.setItem('frazao_pedidos', JSON.stringify(pedidos));
-            localStorage.setItem('frazao_proximo_pedido', proximoPedidoNumero);
+<div class="summary-box">
+<span>Total do Pedido:</span>
+<span id="carrinhoTotal" style="color: var(--success-color);">R$ 0,00</span>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;">
+<div class="form-group">
+<label for="vendaFormaPagamento">Forma de Pagamento:</label>
+<select id="vendaFormaPagamento">
+<option value="A Vista - Dinheiro/Pix">À Vista (Dinheiro / Pix)</option>
+<option value="Cartao">Cartão de Crédito / Débito</option>
+<option value="Boleto">Boleto Bancário</option>
+<option value="Fiado">Fiado / Dívida em Conta</option>
+</select>
+</div>
+<div style="display: flex; align-items: flex-end;">
+<button type="button" class="btn btn-success" style="width: 100%; padding: 10px;" onclick="finalizarPedido()">Finalizar Pedido e Emitir</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ABA 2: ESTOQUE E PRODUTOS -->
+<div id="produtosTab" class="tab-content">
+<div class="card admin-only">
+<h2 id="tituloFormProd">Cadastrar / Editar Produto no Estoque</h2>
+<form id="formProduto">
+<input type="hidden" id="prodDocId">
+<div class="form-group">
+<label for="prodNome">Nome do Produto:</label>
+<input type="text" id="prodNome" placeholder="Ex: Bala de Café 500g" required>
+</div>
+<div class="form-group">
+<label for="prodCategoria">Categoria:</label>
+<select id="prodCategoria" required>
+<option value="Balas e Pirulito">Balas e pirulito</option>
+<option value="Bebidas">Bebidas</option>
+<option value="Biscoitos">Biscoitos</option>
+<option value="Descartáveis">Descartáveis</option>
+<option value="Doces">Doces</option>
+<option value="Drops e Chicletes">Drops e chicletes</option>
+<option value="Higiene">Higiene</option>
+<option value="Limpeza">Limpeza</option>
+<option value="Mercearia">Mercearia</option>
+<option value="Papelaria">Papelaria</option>
+</select>
+</div>
+<div class="form-group">
+<label for="prodCusto">Preço de Custo (R$):</label>
+<input type="number" id="prodCusto" step="0.01" required>
+</div>
+<div class="form-group">
+<label for="prodPreco">Preço de Venda (R$):</label>
+<input type="number" id="prodPreco" step="0.01" required>
+</div>
+<div class="form-group">
+<label for="prodEstoque">Quantidade em Estoque:</label>
+<input type="number" id="prodEstoque" required>
+</div>
+<div class="form-group">
+<label for="prodImagem">Link da Imagem (URL):</label>
+<input type="url" id="prodImagem" placeholder="https://exemplo.com/imagem.jpg">
+</div>
+<div class="form-group full-width" style="display: flex; gap: 8px; margin-top: 4px;">
+<button type="button" class="btn btn-primary" onclick="salvarProduto()">Salvar no Estoque</button>
+<button type="button" class="btn btn-warning" onclick="limparFormProduto()">Cancelar Edição</button>
+</div>
+</form>
+</div>
+
+<div class="card">
+<h2>Catálogo e Produtos Cadastrados</h2>
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>Imagem</th>
+<th>Produto</th>
+<th>Categoria</th>
+<th id="thCustoProduto">Custo</th>
+<th>Venda</th>
+<th>Estoque</th>
+<th id="thAcaoProduto">Ações</th>
+</tr>
+</thead>
+<tbody id="tabelaProdutos"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ABA 3: CLIENTES E FIADO -->
+<div id="clientesTab" class="tab-content">
+<div class="card">
+<h2>Cadastrar Novo Cliente</h2>
+<form id="formCliente">
+<div class="form-group">
+<label for="cliNome">Nome Completo / Razão Social:</label>
+<input type="text" id="cliNome" required>
+</div>
+<div class="form-group">
+<label for="cliDocTipo">Tipo de Documento:</label>
+<select id="cliDocTipo">
+<option value="CPF">CPF</option>
+<option value="CNPJ">CNPJ</option>
+</select>
+</div>
+<div class="form-group">
+<label for="cliDocumento">Documento (Opcional):</label>
+<input type="text" id="cliDocumento" placeholder="Apenas números (opcional)">
+</div>
+<div class="form-group">
+<label for="cliTelefone">Telefone / WhatsApp:</label>
+<input type="text" id="cliTelefone" placeholder="Ex: 21999998888" required>
+</div>
+<div class="form-group full-width">
+<label for="cliEndereco">Endereço Completo (Rua, Nº, Bairro, Cidade):</label>
+<input type="text" id="cliEndereco" placeholder="Ex: Rua Exemplo, 123 - Rocha, São Gonçalo" required>
+</div>
+<div class="form-group full-width">
+<label for="cliVendedor">Vendedor Responsável:</label>
+<select id="cliVendedor"></select>
+</div>
+<div class="form-group full-width">
+<button type="button" class="btn btn-primary" onclick="cadastrarCliente()">Cadastrar Cliente</button>
+</div>
+</form>
+</div>
+
+<div class="card">
+<h2>Clientes Cadastrados</h2>
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>Cliente</th>
+<th>Documento</th>
+<th>Telefone</th>
+<th>Endereço</th>
+<th>Vendedor Resp.</th>
+<th>Saldo Devedor</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="tabelaClientes"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ABA 4: CADASTRAR VENDEDOR (ADMIN) -->
+<div id="vendedoresTab" class="tab-content">
+<div class="card admin-only">
+<h2>Cadastrar Novo Vendedor</h2>
+<form id="formVendedor">
+<div class="form-group">
+<label for="vendNome">Nome do Vendedor:</label>
+<input type="text" id="vendNome" placeholder="Ex: Carlos Silva" required>
+</div>
+<div class="form-group">
+<label for="vendSenha">Senha de Acesso:</label>
+<input type="password" id="vendSenha" placeholder="Senha do vendedor" required>
+</div>
+<div class="form-group full-width">
+<button type="button" class="btn btn-primary" onclick="cadastrarVendedor()">Salvar Vendedor</button>
+</div>
+</form>
+</div>
+
+<div class="card admin-only">
+<h2>Vendedores Cadastrados</h2>
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>Nome</th>
+<th>Senha Cadastrada</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="tabelaVendedores"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ABA 5: RELATÓRIOS (EXCLUSIVO ADMIN) -->
+<div id="relatoriosTab" class="tab-content">
+<div class="card admin-only">
+        <h2>Resumo de Faturamento e Vendas</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+          <h2 style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">Resumo de Faturamento e Vendas</h2>
+          <div class="form-group" style="min-width: 180px;">
+            <label for="filtroMesRelatorio" style="font-size: 0.75rem;">Filtrar Mês/Ano:</label>
+            <input type="month" id="filtroMesRelatorio" onchange="renderizarRelatorios()" style="padding: 5px; font-size: 0.85rem;">
+          </div>
+        </div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 15px;">
+<div style="background: #e0f2fe; padding: 12px; border-radius: 8px; border: 1px solid #bae6fd;">
+            <span style="font-size: 0.75rem; color: #0369a1; font-weight: bold;">FATURAMENTO TOTAL</span>
+            <span style="font-size: 0.75rem; color: #0369a1; font-weight: bold;">FATURAMENTO MENSAL</span>
+<p id="fatTotal" style="font-size: 1.25rem; font-weight: bold; color: var(--primary-color);">R$ 0,00</p>
+</div>
+<div style="background: #fef3c7; padding: 12px; border-radius: 8px; border: 1px solid #fde68a;">
+<span style="font-size: 0.75rem; color: #b45309; font-weight: bold;">RECEBÍVEIS EM FIADO</span>
+<p id="fatFiado" style="font-size: 1.25rem; font-weight: bold; color: var(--warning-color);">R$ 0,00</p>
+</div>
+<div style="background: #dcfce7; padding: 12px; border-radius: 8px; border: 1px solid #bbf7d0;">
+            <span style="font-size: 0.75rem; color: #15803d; font-weight: bold;">LUCRO BRUTO ESTIMADO</span>
+            <span style="font-size: 0.75rem; color: #15803d; font-weight: bold;">LUCRO BRUTO MENSAL</span>
+<p id="fatLucro" style="font-size: 1.25rem; font-weight: bold; color: var(--success-color);">R$ 0,00</p>
+</div>
+</div>
+@@ -451,7 +458,7 @@
+<button class="btn btn-success" onclick="enviarWhatsAppRelatorioGeral()">💬 Compartilhar via WhatsApp</button>
+</div>
+
+        <h2>Histórico Geral de Pedidos</h2>
+        <h2>Histórico de Pedidos do Mês</h2>
+<div class="table-responsive">
+<table>
+<thead>
+@@ -501,6 +508,14 @@
+
+window.onload = function() {
+iniciarFirestore();
+      // Inicializar o input de filtro de mês com o mês atual (YYYY-MM)
+      const inputMes = document.getElementById('filtroMesRelatorio');
+      if (inputMes) {
+        const hoje = new Date();
+        const ano = hoje.getFullYear();
+        const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+        inputMes.value = `${ano}-${mes}`;
+      }
+};
+
+function iniciarFirestore() {
+@@ -795,124 +810,116 @@
+}
+
+function abaterDivida(clienteId) {
+      if (!usuarioLogado || usuarioLogado.tipo !== 'admin') {
+        alert("Apenas o Administrador Master pode abater dívidas!");
+        return;
+      }
+
+const cliente = clientes.find(c => c.id === clienteId);
+if (!cliente) return;
+
+      const valorStr = prompt(`Qual o valor a abater da dívida de ${cliente.nome}? (Saldo atual: R$ ${(cliente.saldoDevedor || 0).toFixed(2)})`);
+      if (valorStr === null) return;
+
+      const valorAbate = parseFloat(valorStr.replace(',', '.'));
+      if (isNaN(valorAbate) || valorAbate <= 0) {
+        alert("Digite um valor válido para o abatimento!");
+        return;
+      
+      const valorAtual = cliente.saldoDevedor || 0;
+      const inputVal = prompt(`Cliente: ${cliente.nome}\nSaldo Devedor Atual: R$ ${valorAtual.toFixed(2)}\n\nDigite o valor do abatimento (pagamento recebido):`, valorAtual.toFixed(2));
+      
+      if (inputVal !== null) {
+        const valorAbate = parseFloat(inputVal.replace(',', '.'));
+        if (isNaN(valorAbate) || valorAbate <= 0) {
+          alert("Digite um valor válido para o abatimento.");
+          return;
         }
+        
+        const novoSaldo = Math.max(0, valorAtual - valorAbate);
+        db.collection("clientes").doc(clienteId).update({
+          saldoDevedor: novoSaldo
+        }).then(() => {
+          alert(`Abatimento registrado com sucesso! Novo saldo devedor: R$ ${novoSaldo.toFixed(2)}`);
+        }).catch(err => alert("Erro ao atualizar dívida: " + err.message));
+}
 
-        // Navegação de Abas
-        function switchTab(tabId, el) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-@@ -444,43 +438,24 @@ <h3>Histórico de Pedidos (Nuvem)</h3>
-                'pedidos': 'Histórico de Pedidos'
-            };
-            document.getElementById('header-title').innerText = titles[tabId];
+      const novoSaldo = Math.max(0, (cliente.saldoDevedor || 0) - valorAbate);
 
-            if(tabId === 'vendas') carregarSelectsPDV();
-            if(tabId === 'produtos') renderizarProdutos();
-            if(tabId === 'clientes') renderizarClientes();
-            if(tabId === 'pedidos') renderizarPedidos();
+      db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo })
+        .then(() => alert("Dívida abatida com sucesso!"))
+        .catch(err => alert("Erro ao abater dívida: " + err.message));
+}
+
+    function excluirCliente(clienteId) {
+      if (!usuarioLogado || usuarioLogado.tipo !== 'admin') {
+        alert("Apenas o Administrador Master pode excluir clientes!");
+        return;
+      }
+    function excluirCliente(id) {
+if (confirm("Deseja realmente excluir este cliente?")) {
+        db.collection("clientes").doc(clienteId).delete()
+          .catch(err => alert("Erro ao excluir cliente: " + err.message));
+        db.collection("clientes").doc(id).delete();
+}
+}
+
+    // --- PRODUTOS ---
+    // --- PRODUTOS & ESTOQUE ---
+function salvarProduto() {
+const docId = document.getElementById('prodDocId').value;
+const nome = document.getElementById('prodNome').value.trim();
+const categoria = document.getElementById('prodCategoria').value;
+      const custo = parseFloat(document.getElementById('prodCusto').value);
+      const preco = parseFloat(document.getElementById('prodPreco').value);
+      const precoCusto = parseFloat(document.getElementById('prodCusto').value);
+      const precoVenda = parseFloat(document.getElementById('prodPreco').value);
+const estoque = parseInt(document.getElementById('prodEstoque').value);
+const imagem = document.getElementById('prodImagem').value.trim();
+
+      if (!nome || isNaN(custo) || isNaN(preco) || isNaN(estoque)) {
+      if (!nome || isNaN(precoCusto) || isNaN(precoVenda) || isNaN(estoque)) {
+alert("Preencha todos os campos obrigatórios do produto!");
+return;
+}
+
+      const dadosProduto = { nome, categoria, custo, preco, estoque, imagem };
+      const dadosProd = { nome, categoria, precoCusto, precoVenda, estoque, imagem: imagem || '' };
+
+if (docId) {
+        db.collection("produtos").doc(docId).update(dadosProduto)
+          .then(() => {
+            limparFormProduto();
+            alert("Produto atualizado com sucesso!");
+          });
+        db.collection("produtos").doc(docId).update(dadosProd).then(() => {
+          alert("Produto atualizado com sucesso!");
+          limparFormProduto();
+        });
+} else {
+        db.collection("produtos").add(dadosProduto)
+          .then(() => {
+            limparFormProduto();
+            alert("Produto cadastrado com sucesso!");
+          });
+        db.collection("produtos").add(dadosProd).then(() => {
+          alert("Produto cadastrado com sucesso!");
+          limparFormProduto();
+        });
+}
+}
+
+    function limparFormProduto() {
+      document.getElementById('formProduto').reset();
+      document.getElementById('prodDocId').value = '';
+      document.getElementById('tituloFormProd').innerText = "Cadastrar / Editar Produto no Estoque";
+    }
+
+function editarProduto(id) {
+const p = produtos.find(item => item.id === id);
+if (!p) return;
+document.getElementById('prodDocId').value = p.id;
+      document.getElementById('prodNome').value = p.nome || '';
+      document.getElementById('prodCategoria').value = p.categoria || 'Mercearia';
+      document.getElementById('prodCusto').value = p.custo || '';
+      document.getElementById('prodPreco').value = p.preco || '';
+      document.getElementById('prodEstoque').value = p.estoque || '';
+      document.getElementById('prodNome').value = p.nome;
+      document.getElementById('prodCategoria').value = p.categoria;
+      document.getElementById('prodCusto').value = p.precoCusto;
+      document.getElementById('prodPreco').value = p.precoVenda;
+      document.getElementById('prodEstoque').value = p.estoque;
+document.getElementById('prodImagem').value = p.imagem || '';
+      document.getElementById('tituloFormProd').innerText = `Editando: ${p.nome}`;
+      switchTab('produtosTab');
+}
+
+function excluirProduto(id) {
+      if (confirm("Deseja excluir este produto do estoque?")) {
+      if (confirm("Deseja realmente excluir este produto do estoque?")) {
+db.collection("produtos").doc(id).delete();
+}
+}
+
+    function limparFormProduto() {
+      document.getElementById('formProduto').reset();
+      document.getElementById('prodDocId').value = '';
+    }
+
+function renderizarProdutos() {
+const tbody = document.getElementById('tabelaProdutos');
+if (!tbody) return;
+tbody.innerHTML = '';
+
+const isAdmin = usuarioLogado && usuarioLogado.tipo === 'admin';
+      
+      // Ajustar visibilidade da coluna de custo conforme permissão
+const thCusto = document.getElementById('thCustoProduto');
+const thAcao = document.getElementById('thAcaoProduto');
+
+if (thCusto) thCusto.style.display = isAdmin ? '' : 'none';
+if (thAcao) thAcao.style.display = isAdmin ? '' : 'none';
+
+produtos.forEach(p => {
+        const imgHtml = p.imagem ? `<img src="${p.imagem}" class="product-thumb" alt="prod">` : `<div class="product-thumb" style="display:flex;align-items:center;justify-content:center;font-size:0.6rem;">Sem foto</div>`;
+tbody.innerHTML += `
+         <tr>
+            <td>${imgHtml}</td>
+            <td><strong>${p.nome}</strong></td>
+            <td><img src="${p.imagem || 'https://via.placeholder.com/38'}" class="product-thumb" alt="Img"></td>
+            <td><strong>${p.nome}</strong><br><small style="color:#64748b">${p.categoria}</small></td>
+           <td>${p.categoria}</td>
+            ${isAdmin ? `<td>R$ ${(p.custo || 0).toFixed(2)}</td>` : ''}
+            <td>R$ ${(p.preco || 0).toFixed(2)}</td>
+            <td>${p.estoque}</td>
+            ${isAdmin ? `
+              <td>
+                <button class="btn btn-warning" style="padding: 3px 6px; font-size: 0.7rem;" onclick="editarProduto('${p.id}')">Editar</button>
+                <button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.7rem;" onclick="excluirProduto('${p.id}')">Excluir</button>
+              </td>
+            ` : ''}
+            <td style="display: ${isAdmin ? '' : 'none'}">R$ ${(p.precoCusto || 0).toFixed(2)}</td>
+            <td style="color: var(--success-color); font-weight: bold;">R$ ${(p.precoVenda || 0).toFixed(2)}</td>
+            <td>${p.estoque} un.</td>
+            <td style="display: ${isAdmin ? '' : 'none'}">
+              <button class="btn btn-warning" style="padding: 3px 6px; font-size: 0.7rem;" onclick="editarProduto('${p.id}')">Editar</button>
+              <button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.7rem;" onclick="excluirProduto('${p.id}')">Excluir</button>
+            </td>
+         </tr>
+       `;
+});
+@@ -921,68 +928,83 @@
+function carregarSelectProdutos() {
+const select = document.getElementById('carrinhoProduto');
+if (!select) return;
+      select.innerHTML = '<option value="">Selecione um produto...</option>';
+      select.innerHTML = '<option value="">Selecione um produto</option>';
+produtos.forEach(p => {
+        select.innerHTML += `<option value="${p.id}" data-preco="${p.preco}" data-estoque="${p.estoque}">${p.nome} (Estoque: ${p.estoque}) - R$ ${(p.preco || 0).toFixed(2)}</option>`;
+        select.innerHTML += `<option value="${p.id}">${p.nome} (Estoque: ${p.estoque} un.) - R$ ${(p.precoVenda || 0).toFixed(2)}</option>`;
+});
+carregarDetalhesProduto();
+}
+
+function carregarDetalhesProduto() {
+      const select = document.getElementById('carrinhoProduto');
+      const selectId = document.getElementById('carrinhoProduto').value;
+const inputPreco = document.getElementById('carrinhoPreco');
+      const previewEstoque = document.getElementById('previewEstoqueProd');
+      const option = select.selectedOptions[0];
+
+      if (!option || !option.value) {
+      const infoDiv = document.getElementById('previewEstoqueProd');
+      
+      const p = produtos.find(item => item.id === selectId);
+      if (p) {
+        inputPreco.value = p.precoVenda;
+        infoDiv.innerHTML = `Produto: <strong>${p.nome}</strong> | Disponível em estoque: <strong>${p.estoque} unidades</strong>`;
+      } else {
+inputPreco.value = '';
+        previewEstoque.innerText = 'Selecione um produto';
+        return;
+        infoDiv.innerHTML = 'Selecione um produto';
+}
+
+      const preco = option.getAttribute('data-preco');
+      const estoque = option.getAttribute('data-estoque');
+      inputPreco.value = preco;
+      previewEstoque.innerText = `Disponível em estoque: ${estoque} unidades`;
+}
+
+    function alterarQtdInput(delta) {
+      const input = document.getElementById('carrinhoQtd');
+      let val = parseInt(input.value) || 1;
+      val += delta;
+      if (val < 1) val = 1;
+      input.value = val;
+    function alterarQtdInput(valor) {
+      const inputQtd = document.getElementById('carrinhoQtd');
+      let atual = parseInt(inputQtd.value) || 1;
+      atual += valor;
+      if (atual < 1) atual = 1;
+      inputQtd.value = atual;
+}
+
+    // --- CARRINHO & PDV ---
+function adicionarAoCarrinho() {
+      const select = document.getElementById('carrinhoProduto');
+      const option = select.selectedOptions[0];
+      if (!option || !option.value) {
+      const prodId = document.getElementById('carrinhoProduto').value;
+      const precoVenda = parseFloat(document.getElementById('carrinhoPreco').value);
+      const qtd = parseInt(document.getElementById('carrinhoQtd').value);
+
+      if (!prodId) {
+alert("Selecione um produto!");
+return;
+}
+      const p = produtos.find(item => item.id === prodId);
+      if (!p) return;
+
+      const prodId = option.value;
+      const produto = produtos.find(p => p.id === prodId);
+      const precoVenda = parseFloat(document.getElementById('carrinhoPreco').value);
+      const qtd = parseInt(document.getElementById('carrinhoQtd').value);
+      if (isNaN(precoVenda) || precoVenda < 0) {
+        alert("Informe um preço de venda válido.");
+        return;
+      }
+      if (isNaN(qtd) || qtd <= 0) {
+        alert("Informe uma quantidade válida.");
+        return;
+      }
+
+      if (isNaN(precoVenda) || isNaN(qtd) || qtd <= 0) {
+        alert("Informe um preço e uma quantidade válidos!");
+      if (qtd > p.estoque) {
+        alert(`Quantidade indisponível em estoque! Estoque atual: ${p.estoque} unidades.`);
+return;
+}
+
+      carrinho.push({
+        id: produto.id,
+        nome: produto.nome,
+        custo: produto.custo || 0,
+        preco: precoVenda,
+        qtd: qtd,
+        subtotal: precoVenda * qtd
+      });
+      const itemExistente = carrinho.find(item => item.id === prodId);
+      if (itemExistente) {
+        if ((itemExistente.qtd + qtd) > p.estoque) {
+          alert("A quantidade total no carrinho excede o estoque disponível.");
+          return;
         }
+        itemExistente.qtd += qtd;
+        itemExistente.subtotal = itemExistente.qtd * itemExistente.precoVenda;
+      } else {
+        carrinho.push({
+          id: p.id,
+          nome: p.nome,
+          precoCusto: p.precoCusto || 0,
+          precoVenda: precoVenda,
+          qtd: qtd,
+          subtotal: precoVenda * qtd
+        });
+      }
 
-        // --- SINCRONIZAÇÃO EM TEMPO REAL COM O FIREBASE ---
-        // Inicialização
-        window.onload = function() {
-            // Escutar Produtos
-            db.collection("produtos").orderBy("nome").onSnapshot((snapshot) => {
-                produtos = [];
-                snapshot.forEach((doc) => {
-                    produtos.push({ id: doc.id, ...doc.data() });
-                });
-                renderizarProdutos();
-                carregarSelectsPDV();
-            });
+renderizarCarrinho();
+      document.getElementById('carrinhoQtd').value = 1;
+}
 
-            // Escutar Clientes
-            db.collection("clientes").orderBy("nome").onSnapshot((snapshot) => {
-                clientes = [];
-                snapshot.forEach((doc) => {
-                    clientes.push({ id: doc.id, ...doc.data() });
-                });
-                renderizarClientes();
-                carregarSelectsPDV();
-            });
+function removerDoCarrinho(index) {
+@@ -993,6 +1015,8 @@
+function renderizarCarrinho() {
+const tbody = document.getElementById('tabelaCarrinho');
+const totalSpan = document.getElementById('carrinhoTotal');
+      if (!tbody) return;
 
-            // Escutar Pedidos
-            db.collection("pedidos").orderBy("criadoEm", "desc").onSnapshot((snapshot) => {
-                pedidos = [];
-                snapshot.forEach((doc) => {
-                    pedidos.push({ id: doc.id, ...doc.data() });
-                });
-                renderizarPedidos();
-            });
-        };
-            carregarSelectsPDV();
-            renderizarProdutos();
-            renderizarClientes();
-            renderizarPedidos();
+tbody.innerHTML = '';
+let totalGeral = 0;
+
+@@ -1002,144 +1026,245 @@
+         <tr>
+           <td>${item.nome}</td>
+           <td>${item.qtd}</td>
+            <td>R$ ${item.preco.toFixed(2)}</td>
+            <td>R$ ${item.precoVenda.toFixed(2)}</td>
+           <td>R$ ${item.subtotal.toFixed(2)}</td>
+            <td><button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.65rem;" onclick="removerDoCarrinho(${index})">Remover</button></td>
+            <td><button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.65rem;" onclick="removerDoCarrinho(${index})">X</button></td>
+         </tr>
+       `;
+});
+
+totalSpan.innerText = `R$ ${totalGeral.toFixed(2)}`;
+}
+
+    async function finalizarPedido() {
+    function finalizarPedido() {
+if (carrinho.length === 0) {
+alert("O carrinho está vazio!");
+return;
+}
+
+const clienteId = document.getElementById('vendaCliente').value;
+      const formaPagamento = document.getElementById('vendaFormaPagamento').value;
+      const vendedorResp = usuarioLogado ? usuarioLogado.nome : 'Administrador Master';
+
+if (!clienteId) {
+alert("Selecione um cliente para o pedido!");
+return;
+}
+
+const clienteObj = clientes.find(c => c.id === clienteId);
+      const totalPedido = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
+      const formaPagamento = document.getElementById('vendaFormaPagamento').value;
+      const vendedorResp = usuarioLogado ? usuarioLogado.nome : 'Administrador Master';
+
+      // Gerar número sequencial baseado no total de vendas
+      const numSequencial = vendas.length + 1;
+      const dataAtual = new Date();
+      let totalPedido = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
+      let totalCusto = carrinho.reduce((acc, item) => acc + (item.precoCusto * item.qtd), 0);
+      let lucroPedido = totalPedido - totalCusto;
+
+      const novaVenda = {
+        numeroSequencial: numSequencial,
+        data: dataAtual.toISOString(),
+        clienteId: clienteObj.id,
+        clienteNome: clienteObj.nome,
+        vendedorResponsavel: vendedorResp,
+        formaPagamento: formaPagamento,
+        itens: carrinho,
+        total: totalPedido
+      };
+      // Gerar número sequencial baseado na quantidade de vendas existentes
+      const numeroSequencial = vendas.length + 1;
+      const dataAtual = new Date().toISOString();
+
+      try {
+        await db.collection("vendas").add(novaVenda);
+      const batch = db.batch();
+
+        // Atualizar estoque dos produtos
+        for (const item of carrinho) {
+          const prodObj = produtos.find(p => p.id === item.id);
+          if (prodObj) {
+            const novoEstoque = Math.max(0, (prodObj.estoque || 0) - item.qtd);
+            await db.collection("produtos").doc(item.id).update({ estoque: novoEstoque });
+          }
         }
+      // 1. Atualizar estoque dos produtos
+      carrinho.forEach(item => {
+        const prodRef = db.collection("produtos").doc(item.id);
+        const prodOriginal = produtos.find(p => p.id === item.id);
+        const novoEstoque = Math.max(0, (prodOriginal ? prodOriginal.estoque : 0) - item.qtd);
+        batch.update(prodRef, { estoque: novoEstoque });
+      });
 
-        // --- MÓDULO PRODUTOS ---
-        function salvarProduto() {
-            const nome = document.getElementById('prod-nome').value.trim();
-            const nome = document.getElementById('prod-nome').value;
-            const preco = parseFloat(document.getElementById('prod-preco').value);
-            const estoque = parseInt(document.getElementById('prod-estoque').value);
-
-@@ -489,105 +464,85 @@ <h3>Histórico de Pedidos (Nuvem)</h3>
-                return;
-            }
-
-            db.collection("produtos").add({
-                nome: nome,
-                preco: preco,
-                estoque: estoque,
-                criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then(() => {
-                document.getElementById('prod-nome').value = '';
-                document.getElementById('prod-preco').value = '';
-                document.getElementById('prod-estoque').value = '';
-                alert('Produto cadastrado na nuvem com sucesso!');
-            })
-            .catch(err => alert('Erro ao salvar produto: ' + err.message));
-            const novoId = produtos.length > 0 ? produtos[produtos.length - 1].id + 1 : 1;
-            produtos.push({ id: novoId, nome, preco, estoque });
-            salvarDados();
-
-            document.getElementById('prod-nome').value = '';
-            document.getElementById('prod-preco').value = '';
-            document.getElementById('prod-estoque').value = '';
-
-            renderizarProdutos();
-            alert('Produto cadastrado com sucesso!');
+        // Se for Fiado, atualizar o saldo devedor do cliente
+        if (formaPagamento === 'Fiado') {
+          const novoSaldo = (clienteObj.saldoDevedor || 0) + totalPedido;
+          await db.collection("clientes").doc(clienteId).update({ saldoDevedor: novoSaldo });
         }
+      // 2. Se for fiado, atualizar o saldo devedor do cliente
+      if (formaPagamento === 'Fiado' && clienteObj) {
+        const cliRef = db.collection("clientes").doc(clienteId);
+        const novoSaldo = (clienteObj.saldoDevedor || 0) + totalPedido;
+        batch.update(cliRef, { saldoDevedor: novoSaldo });
+      }
 
-        function renderizarProdutos() {
-            const tbody = document.getElementById('tabela-produtos');
-            tbody.innerHTML = '';
-            
-            if(produtos.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Nenhum produto cadastrado.</td></tr>`;
-                return;
-            }
+        alert(`Pedido #${numSequencial} finalizado com sucesso!`);
+      // 3. Registrar a venda
+      const vendaRef = db.collection("vendas").doc();
+      batch.set(vendaRef, {
+        numeroSequencial,
+        data: dataAtual,
+        clienteId,
+        clienteNome: clienteObj ? clienteObj.nome : 'Cliente Desconhecido',
+        vendedorResponsavel: vendedorResp,
+        itens: carrinho,
+        formaPagamento,
+        total: totalPedido,
+        lucro: lucroPedido
+      });
 
-            produtos.forEach(p => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>#${p.id.slice(-4)}</td>
-                        <td>#${p.id}</td>
-                        <td>${p.nome}</td>
-                        <td>R$ ${Number(p.preco).toFixed(2)}</td>
-                        <td>R$ ${p.preco.toFixed(2)}</td>
-                        <td>${p.estoque}</td>
-                        <td><button class="btn-danger" onclick="excluirProduto('${p.id}')">Excluir</button></td>
-                        <td><button class="btn-danger" onclick="excluirProduto(${p.id})">Excluir</button></td>
-                    </tr>
-                `;
-            });
+      batch.commit().then(() => {
+        alert(`Pedido #${numeroSequencial} finalizado com sucesso!`);
+        imprimirComprovante({
+          numeroSequencial,
+          data: dataAtual,
+          clienteNome: clienteObj ? clienteObj.nome : 'Cliente',
+          vendedorResponsavel: vendedorResp,
+          itens: carrinho,
+          formaPagamento,
+          total: totalPedido
+        });
+
+        // Limpar carrinho
+carrinho = [];
+renderizarCarrinho();
+      } catch (err) {
+        carregarSelectProdutos();
+      }).catch(err => {
+alert("Erro ao finalizar pedido: " + err.message);
+      });
+    }
+
+    // --- IMPRESSÃO DE COMPROVANTE ---
+    function imprimirComprovante(venda) {
+      const printArea = document.getElementById('print-area');
+      const dataFormatada = new Date(venda.data).toLocaleString('pt-BR');
+
+      let itensHtml = '';
+      venda.itens.forEach(i => {
+        itensHtml += `${i.nome}\n  ${i.qtd}x R$ ${i.precoVenda.toFixed(2)} = R$ ${i.subtotal.toFixed(2)}\n`;
+      });
+
+      printArea.innerHTML = `
+        <div style="text-align: center; font-weight: bold; font-size: 13px;">DISTRIBUIDORA FRAZÃO</div>
+        <div style="text-align: center; font-size: 10px;">CNPJ: A.R. Frazão Ltda</div>
+        <div style="text-align: center; font-size: 10px; margin-bottom: 5px;">São Gonçalo - RJ</div>
+        <div>--------------------------------</div>
+        <div>PEDIDO #${venda.numeroSequencial}</div>
+        <div>Data: ${dataFormatada}</div>
+        <div>Cliente: ${venda.clienteNome}</div>
+        <div>Vendedor: ${venda.vendedorResponsavel}</div>
+        <div>Pagamento: ${venda.formaPagamento}</div>
+        <div>--------------------------------</div>
+        <pre style="font-family: monospace; font-size: 11px; margin: 0; white-space: pre-wrap;">${itensHtml}</pre>
+        <div>--------------------------------</div>
+        <div style="font-weight: bold; font-size: 12px; text-align: right;">TOTAL: R$ ${venda.total.toFixed(2)}</div>
+        <div>--------------------------------</div>
+        <div style="text-align: center; margin-top: 8px; font-size: 10px;">Obrigado pela preferência!</div>
+      `;
+
+      window.print();
+    }
+
+    function reimprimirPedido(vendaId) {
+      const v = vendas.find(item => item.id === vendaId);
+      if (v) imprimirComprovante(v);
+    }
+
+    function excluirPedido(vendaId) {
+      if (confirm("Deseja realmente excluir este pedido do histórico? (Isso não estorna o estoque automaticamente)")) {
+        db.collection("vendas").doc(vendaId).delete().then(() => {
+          alert("Pedido excluído com sucesso.");
+        }).catch(err => alert("Erro ao excluir pedido: " + err.message));
+}
+}
+
+    // --- RELATÓRIOS & FATURAMENTO MENSAL ---
+function renderizarRelatorios() {
+      const tbody = document.getElementById('tabelaHistoricoVendas');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let faturamentoTotal = 0;
+      let fiadoTotal = 0;
+      let lucroEstimado = 0;
+      const fatTotalEl = document.getElementById('fatTotal');
+      const fatFiadoEl = document.getElementById('fatFiado');
+      const fatLucroEl = document.getElementById('fatLucro');
+      const tbodyHistorico = document.getElementById('tabelaHistoricoVendas');
+      const inputMes = document.getElementById('filtroMesRelatorio');
+
+      if (!fatTotalEl || !tbodyHistorico) return;
+
+      // Obter o mês selecionado no formato YYYY-MM
+      const mesSelecionado = inputMes ? inputMes.value : '';
+
+      // Filtrar vendas pelo mês selecionado
+      const vendasFiltradas = vendas.filter(v => {
+        if (!mesSelecionado) return true;
+        if (!v.data) return false;
+        const dataVendaStr = v.data.substring(0, 7); // Pega 'YYYY-MM'
+        return dataVendaStr === mesSelecionado;
+      });
+
+      vendas.forEach(v => {
+        faturamentoTotal += v.total || 0;
+        if (v.formaPagamento === 'Fiado') {
+          fiadoTotal += v.total || 0;
         }
+      let faturamentoMensal = 0;
+      let lucroMensal = 0;
 
-        function excluirProduto(id) {
-            if(confirm('Deseja excluir este produto da nuvem?')) {
-                db.collection("produtos").doc(id).delete()
-                .then(() => alert('Produto removido!'))
-                .catch(err => alert('Erro ao excluir: ' + err.message));
-            }
-            produtos = produtos.filter(p => p.id !== id);
-            salvarDados();
-            renderizarProdutos();
+        let custoVenda = 0;
+        if (v.itens) {
+          v.itens.forEach(item => {
+            custoVenda += (item.custo || 0) * (item.qtd || 1);
+          });
         }
+        lucroEstimado += (v.total || 0) - custoVenda;
+      tbodyHistorico.innerHTML = '';
 
-        // --- MÓDULO CLIENTES ---
-        function salvarCliente() {
-            const nome = document.getElementById('cli-nome').value.trim();
-            const telefone = document.getElementById('cli-tel').value.trim();
-            const nome = document.getElementById('cli-nome').value;
-            const telefone = document.getElementById('cli-tel').value;
+        const dataFormatada = v.data ? new Date(v.data).toLocaleString('pt-BR') : '';
+      vendasFiltradas.forEach(v => {
+        faturamentoMensal += (v.total || 0);
+        lucroMensal += (v.lucro || 0);
 
-            if(!nome) {
-                alert('Informe o nome do cliente!');
-                return;
-            }
+        tbody.innerHTML += `
+        const dataF = v.data ? new Date(v.data).toLocaleDateString('pt-BR') : 'Data não informada';
+        tbodyHistorico.innerHTML += `
+         <tr>
+            <td>#${v.numeroSequencial || ''}</td>
+            <td>${dataFormatada}</td>
+            <td>${v.clienteNome || ''}</td>
+            <td>${v.vendedorResponsavel || ''}</td>
+            <td>${v.formaPagamento || ''}</td>
+            <td>R$ ${(v.total || 0).toFixed(2)}</td>
+            <td>#${v.numeroSequencial || 'N/A'}</td>
+            <td>${dataF}</td>
+            <td>${v.clienteNome || 'Cliente'}</td>
+            <td>${v.vendedorResponsavel || 'Admin'}</td>
+            <td>${v.formaPagamento}</td>
+            <td style="font-weight: bold; color: var(--success-color);">R$ ${(v.total || 0).toFixed(2)}</td>
+           <td>
+              <button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.65rem;" onclick="excluirVenda('${v.id}')">Excluir</button>
+              <button class="btn btn-primary" style="padding: 2px 5px; font-size: 0.65rem;" onclick="reimprimirPedido('${v.id}')">🖨️</button>
+              <button class="btn btn-danger" style="padding: 2px 5px; font-size: 0.65rem;" onclick="excluirPedido('${v.id}')">X</button>
+           </td>
+         </tr>
+       `;
+});
 
-            db.collection("clientes").add({
-                nome: nome,
-                telefone: telefone,
-                divida: 0,
-                criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then(() => {
-                document.getElementById('cli-nome').value = '';
-                document.getElementById('cli-tel').value = '';
-                alert('Cliente cadastrado na nuvem com sucesso!');
-            })
-            .catch(err => alert('Erro ao salvar cliente: ' + err.message));
-            const novoId = clientes.length > 0 ? clientes[clientes.length - 1].id + 1 : 1;
-            clientes.push({ id: novoId, nome, telefone, divida: 0 });
-            salvarDados();
+      document.getElementById('fatTotal').innerText = `R$ ${faturamentoTotal.toFixed(2)}`;
+      document.getElementById('fatFiado').innerText = `R$ ${fiadoTotal.toFixed(2)}`;
+      document.getElementById('fatLucro').innerText = `R$ ${lucroEstimado.toFixed(2)}`;
+      // Calcular o total de recebíveis em fiado de todos os clientes cadastrados
+      let totalFiadoGeral = clientes.reduce((acc, c) => acc + (c.saldoDevedor || 0), 0);
 
-            document.getElementById('cli-nome').value = '';
-            document.getElementById('cli-tel').value = '';
+      fatTotalEl.innerText = `R$ ${faturamentoMensal.toFixed(2)}`;
+      fatFiadoEl.innerText = `R$ ${totalFiadoGeral.toFixed(2)}`;
+      fatLucroEl.innerText = `R$ ${lucroMensal.toFixed(2)}`;
+}
 
-            renderizarClientes();
-            alert('Cliente cadastrado com sucesso!');
-        }
+    function excluirVenda(id) {
+      if (confirm("Deseja realmente excluir este pedido do histórico?")) {
+        db.collection("vendas").doc(id).delete();
+      }
+    function obterDadosRelatorioAtual() {
+      const inputMes = document.getElementById('filtroMesRelatorio');
+      const mesSelecionado = inputMes ? inputMes.value : '';
+      
+      const vendasFiltradas = vendas.filter(v => {
+        if (!mesSelecionado) return true;
+        if (!v.data) return false;
+        return v.data.substring(0, 7) === mesSelecionado;
+      });
 
-        function renderizarClientes() {
-            const tbody = document.getElementById('tabela-clientes');
-            tbody.innerHTML = '';
+      let faturamento = vendasFiltradas.reduce((acc, v) => acc + (v.total || 0), 0);
+      let lucro = vendasFiltradas.reduce((acc, v) => acc + (v.lucro || 0), 0);
+      let totalFiado = clientes.reduce((acc, c) => acc + (c.saldoDevedor || 0), 0);
 
-            if(clientes.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Nenhum cliente cadastrado.</td></tr>`;
-                return;
-            }
+      return {
+        mes: mesSelecionado || 'Geral',
+        faturamento,
+        lucro,
+        totalFiado,
+        qtdVendas: vendasFiltradas.length
+      };
+}
 
-            clientes.forEach(c => {
-                const dividaNum = Number(c.divida || 0);
-                tbody.innerHTML += `
-                    <tr>
-                        <td>#${c.id.slice(-4)}</td>
-                        <td>#${c.id}</td>
-                        <td>${c.nome}</td>
-                        <td>${c.telefone || '-'}</td>
-                        <td><span style="color: ${dividaNum > 0 ? 'red' : 'inherit'}; font-weight: bold;">R$ ${dividaNum.toFixed(2)}</span></td>
-                        <td><span style="color: ${c.divida > 0 ? 'red' : 'inherit'}; font-weight: bold;">R$ ${c.divida.toFixed(2)}</span></td>
-                        <td>
-                            ${dividaNum > 0 ? `<button class="btn-success" onclick="quitarDivida('${c.id}', ${dividaNum})">Quitar Dívida</button>` : '-'}
-                            ${c.divida > 0 ? `<button class="btn-success" onclick="quitarDivida(${c.id})">Quitar Dívida</button>` : '-'}
-                        </td>
-                    </tr>
-                `;
-            });
-        }
+function imprimirRelatorioGeral() {
+      const r = obterDadosRelatorioAtual();
+      const printArea = document.getElementById('print-area');
 
-        function quitarDivida(id, valorAtual) {
-            if(confirm(`Deseja quitar a dívida de R$ ${valorAtual.toFixed(2)} deste cliente?`)) {
-                db.collection("clientes").doc(id).update({ divida: 0 })
-                .then(() => alert('Dívida quitada com sucesso!'))
-                .catch(err => alert('Erro ao quitar dívida: ' + err.message));
-        function quitarDivida(id) {
-            const cliente = clientes.find(c => c.id === id);
-            if(cliente && confirm(`Deseja quitar a dívida de R$ ${cliente.divida.toFixed(2)} do cliente ${cliente.nome}?`)) {
-                cliente.divida = 0;
-                salvarDados();
-                renderizarClientes();
-            }
-        }
+      printArea.innerHTML = `
+        <div style="text-align: center; font-weight: bold; font-size: 13px;">DISTRIBUIDORA FRAZÃO</div>
+        <div style="text-align: center; font-size: 10px;">RELATÓRIO FINANCEIRO (MÊS: ${r.mes})</div>
+        <div>--------------------------------</div>
+        <div>Total de Pedidos: ${r.qtdVendas}</div>
+        <div>Faturamento: R$ ${r.faturamento.toFixed(2)}</div>
+        <div>Lucro Bruto: R$ ${r.lucro.toFixed(2)}</div>
+        <div>Recebíveis Fiado: R$ ${r.totalFiado.toFixed(2)}</div>
+        <div>--------------------------------</div>
+        <div style="text-align: center; font-size: 10px;">Gerado em sistema próprio</div>
+      `;
+window.print();
+}
 
-@@ -618,11 +573,10 @@ <h3>Histórico de Pedidos (Nuvem)</h3>
-        function adicionarItemCarrinho() {
-            const select = document.getElementById('pdv-produto');
-            if(!select.value) {
-                alert('Selecione um produto!');
-                alert('Nenhum produto selecionado ou disponível!');
-                return;
-            }
-            
-            const produtoId = select.value;
-            const produtoId = parseInt(select.value);
-            const produtoNome = select.options[select.selectedIndex].text.split(' (Estoque')[0];
-            const qtd = parseInt(document.getElementById('pdv-qtd').value);
-            const precoUnitario = parseFloat(document.getElementById('pdv-preco').value);
-@@ -694,54 +648,42 @@ <h3>Histórico de Pedidos (Nuvem)</h3>
-                return;
-            }
+function copiarRelatorioGeral() {
+      const fat = document.getElementById('fatTotal').innerText;
+      const fiado = document.getElementById('fatFiado').innerText;
+      const lucro = document.getElementById('fatLucro').innerText;
+      const texto = `*Relatório - Distribuidora Frazão*\n- Faturamento Total: ${fat}\n- Recebíveis em Fiado: ${fiado}\n- Lucro Bruto Estimado: ${lucro}`;
+      navigator.clipboard.writeText(texto).then(() => alert("Relatório copiado para a área de transferência!"));
+      const r = obterDadosRelatorioAtual();
+      const texto = `📊 *Relatório Financeiro - Distribuidora Frazão*\n📅 Período: ${r.mes}\n\n📦 Pedidos realizados: ${r.qtdVendas}\n💰 Faturamento: R$ ${r.faturamento.toFixed(2)}\n📈 Lucro Bruto: R$ ${r.lucro.toFixed(2)}\n⚠️ Total em Fiado: R$ ${r.totalFiado.toFixed(2)}`;
 
-            const clienteId = document.getElementById('pdv-cliente').value;
-            const clienteId = parseInt(document.getElementById('pdv-cliente').value);
-            const formaPagamento = document.getElementById('pdv-pagamento').value;
-            const cliente = clientes.find(c => c.id === clienteId);
+      navigator.clipboard.writeText(texto).then(() => {
+        alert("Relatório copiado para a área de transferência!");
+      }).catch(err => alert("Erro ao copiar: " + err.message));
+}
 
-            let totalVenda = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
-
-            // Transação ou lote no Firestore para atualizar estoque, dívida e registrar pedido
-            const batch = db.batch();
-
-            // 1. Dar baixa no estoque de cada produto
-            for(let item of carrinho) {
-                let prod = produtos.find(p => p.id === item.produtoId);
-                if(prod) {
-                    let novoEstoque = Math.max(0, prod.estoque - item.qtd);
-                    let prodRef = db.collection("produtos").doc(prod.id);
-                    batch.update(prodRef, { estoque: novoEstoque });
-                    prod.estoque -= item.qtd;
-                }
-            }
-
-            // 2. Se for fiado, aumentar a dívida do cliente
-            if(formaPagamento === 'Fiado' && cliente) {
-                let novaDivida = Number(cliente.divida || 0) + totalVenda;
-                let cliRef = db.collection("clientes").doc(cliente.id);
-                batch.update(cliRef, { divida: novaDivida });
-            if(formaPagamento === 'Fiado') {
-                cliente.divida += totalVenda;
-            }
-
-            // 3. Registrar o pedido
-            const pedidoRef = db.collection("pedidos").doc();
-            const dadosPedido = {
-                numeroPedido: Math.floor(1000 + Math.random() * 9000), // Número aleatório de 4 dígitos ou sequencial
-                clienteNome: cliente ? cliente.nome : 'Cliente Balcão',
-            const novoPedido = {
-                id: proximoPedidoNumero,
-                clienteNome: cliente ? cliente.nome : 'Desconhecido',
-                clienteId: clienteId,
-                itens: [...carrinho],
-                total: totalVenda,
-                pagamento: formaPagamento,
-                status: 'Concluído',
-                criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-                status: 'Concluído'
-            };
-            batch.set(pedidoRef, dadosPedido);
-
-            batch.commit()
-            .then(() => {
-                carrinho = [];
-                renderizarCarrinho();
-                alert(`Venda finalizada e salva na nuvem com sucesso!`);
-                switchTab('pedidos', document.querySelectorAll('.menu li')[3]);
-            })
-            .catch(err => alert('Erro ao finalizar venda: ' + err.message));
-            pedidos.unshift(novoPedido);
-            proximoPedidoNumero++;
-            
-            salvarDados();
-
-            carrinho = [];
-            renderizarCarrinho();
-            alert(`Venda finalizada com sucesso! Pedido #${novoPedido.id}`);
-            switchTab('pedidos', document.querySelectorAll('.menu li')[3]);
-        }
-
-        // --- MÓDULO PEDIDOS & HISTÓRICO ---
-@@ -750,24 +692,24 @@ <h3>Histórico de Pedidos (Nuvem)</h3>
-            tbody.innerHTML = '';
-
-            if(pedidos.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Nenhum pedido registrado na nuvem.</td></tr>`;
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Nenhum pedido registrado</td></tr>`;
-                return;
-            }
-
-            pedidos.forEach(p => {
-                let itensStr = p.itens ? p.itens.map(i => `${i.qtd}x ${i.produtoNome}`).join(', ') : '';
-                let itensStr = p.itens.map(i => `${i.qtd}x ${i.produtoNome}`).join(', ');
-                let badgeClass = p.status === 'Concluído' ? 'success' : 'danger';
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td>#${p.numeroPedido || p.id.slice(-4)}</td>
-                        <td>#${p.id}</td>
-                        <td>${p.clienteNome}</td>
-                        <td style="max-width: 250px; font-size: 0.85rem;">${itensStr}</td>
-                        <td>R$ ${Number(p.total).toFixed(2)}</td>
-                        <td>R$ ${p.total.toFixed(2)}</td>
-                        <td>${p.pagamento}</td>
-                        <td><span class="badge ${badgeClass}">${p.status}</span></td>
-                        <td>
-                            ${p.status === 'Concluído' ? `<button class="btn-danger" onclick="cancelarPedido('${p.id}')">Cancelar</button>` : '-'}
-                            ${p.status === 'Concluído' ? `<button class="btn-danger" onclick="cancelarPedido(${p.id})">Cancelar</button>` : '-'}
-                        </td>
-                    </tr>
-                `;
-@@ -778,33 +720,27 @@ <h3>Histórico de Pedidos (Nuvem)</h3>
-            const pedido = pedidos.find(p => p.id === id);
-            if(!pedido || pedido.status === 'Cancelado') return;
-
-            if(confirm(`Tem certeza que deseja cancelar este pedido? Esta ação devolverá os itens ao estoque e ajustará eventuais débitos.`)) {
-                // Devolver estoque e estornar fiado se necessário
-                const batch = db.batch();
-
-            if(confirm(`Tem certeza que deseja cancelar o Pedido #${pedido.id}? Esta ação devolverá os itens ao estoque e ajustará eventuais débitos de fiado.`)) {
-                
-                for(let item of pedido.itens) {
-                    let prod = produtos.find(p => p.id === item.produtoId);
-                    if(prod) {
-                        let prodRef = db.collection("produtos").doc(prod.id);
-                        batch.update(prodRef, { estoque: prod.estoque + item.qtd });
-                        prod.estoque += item.qtd;
-                    }
-                }
-
-                if(pedido.pagamento === 'Fiado') {
-                    let cliente = clientes.find(c => c.id === pedido.clienteId);
-                    if(cliente) {
-                        let cliRef = db.collection("clientes").doc(cliente.id);
-                        let novaDivida = Math.max(0, Number(cliente.divida || 0) - pedido.total);
-                        batch.update(cliRef, { divida: novaDivida });
-                        cliente.divida = Math.max(0, cliente.divida - pedido.total);
-                    }
-                }
-
-                let pedidoRef = db.collection("pedidos").doc(id);
-                batch.update(pedidoRef, { status: 'Cancelado' });
-                pedido.status = 'Cancelado';
-                salvarDados();
-
-                batch.commit()
-                .then(() => alert('Pedido cancelado e estoque/saldos estornados com sucesso!'))
-                .catch(err => alert('Erro ao cancelar pedido: ' + err.message));
-                renderizarPedidos();
-                alert(`Pedido #${pedido.id} cancelado com sucesso. Estoque e saldos atualizados!`);
-            }
-        }
-    </script><
+function enviarWhatsAppRelatorioGeral() {
+      const fat = document.getElementById('fatTotal').innerText;
+      const fiado = document.getElementById('fatFiado').innerText;
+      const lucro = document.getElementById('fatLucro').innerText;
+      const texto = encodeURIComponent(`*Relatório - Distribuidora Frazão*\n- Faturamento Total: ${fat}\n- Recebíveis em Fiado: ${fiado}\n- Lucro Bruto Estimado: ${lucro}`);
+      window.open(`https://wa.me/?text=${texto}`, '_blank');
+      const r = obterDadosRelatorioAtual();
+      const texto = `📊 *Relatório Financeiro - Distribuidora Frazão*%0A📅 Período: ${r.mes}%0A%0A📦 Pedidos realizados: ${r.qtdVendas}%0A💰 Faturamento: R$ ${r.faturamento.toFixed(2)}%0A📈 Lucro Bruto: R$ ${r.lucro.toFixed(2)}%0A⚠️ Total em Fiado: R$ ${r.totalFiado.toFixed(2)}`;
+      window.open(`https://api.whatsapp.com/send?text=${texto}`, '_blank');
+}
+</script>
+</body>

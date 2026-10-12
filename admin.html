@@ -923,3 +923,23 @@
         db.collection("produtos").add(dadosProd).then(() => {
           alert("Produto cadastrado com sucesso!");
           limparFormProduto();
+        }).catch(err => alert("Erro ao cadastrar produto: " + err.message));
+      }
+    }
+
+    function editarProduto(id) {
+      const p = produtos.find(item => item.id === id);
+      if (!p) return;
+
+      document.getElementById('prodDocId').value = p.id;
+      document.getElementById('prodNome').value = p.nome || '';
+      document.getElementById('prodCategoria').value = p.categoria || 'Mercearia';
+      document.getElementById('prodCusto').value = p.custo || 0;
+      document.getElementById('prodPreco').value = p.preco || 0;
+      document.getElementById('prodEstoque').value = p.estoque || 0;
+      document.getElementById('prodImagem').value = p.imagem || '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function limparFormProduto() {
+      document

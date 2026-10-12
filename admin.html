@@ -1,736 +1,216 @@
-<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distribuidora Frazão - Sistema de Vendas e Gestão</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --success: #16a34a;
-            --danger: #dc2626;
-            --warning: #ca8a04;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #cbd5e1;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Gestão - Distribuidora Frazão</title>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+<!-- Scripts do Firebase v9 (Compat) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
+<style>
+:root {
+--primary-color: #1e3a8a;
+--secondary-color: #2563eb;
+--bg-color: #f1f5f9;
+--card-bg: #ffffff;
+--text-color: #0f172a;
+--danger-color: #dc2626;
+--success-color: #16a34a;
+--warning-color: #d97706;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+body { background-color: var(--bg-color); color: var(--text-color); padding: 8px; font-size: 0.95rem; }
 
-        /* Sidebar */
-        aside {
-            width: 260px;
-            background-color: var(--card);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-        }
+  <!-- TELA DE LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <h2>Distribuidora Frazão</h2>
+    <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Faça login para acessar o sistema</p>
+    
+    <div class="form-group">
+      <label for="loginTipo" style="font-size: 0.8rem; font-weight: bold; color: #475569;">Entrar como:</label>
+      <select id="loginTipo" onchange="alternarCamposLogin()" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+        <option value="admin">Administrador Master</option>
+        <option value="vendedor">Vendedor Cadastrado</option>
+      </select>
+    </div>
+    /* TELA DE LOGIN */
+    #login-screen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.85); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 15px;
+    }
+    .login-card {
+      background: var(--card-bg); padding: 22px; border-radius: 12px; width: 100%; max-width: 380px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center;
+    }
+    .login-card h2 { color: var(--primary-color); margin-bottom: 12px; font-size: 1.3rem; }
+    .login-card .form-group { margin-bottom: 12px; text-align: left; }
 
-        .logo-area {
-            padding: 20px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--primary);
-            border-bottom: 1px solid var(--border);
-            text-align: center;
-        }
+    <div class="form-group" id="grupoSelectVendedorLogin" style="display: none;">
+      <label for="loginVendedorSelect" style="font-size: 0.8rem; font-weight: bold; color: #475569;">Selecione o Vendedor:</label>
+      <select id="loginVendedorSelect" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;"></select>
+    </div>
+    /* APLICAÇÃO PRINCIPAL */
+    #app-container { display: none; max-width: 1200px; margin: 0 auto; }
 
-        .menu {
-            list-style: none;
-            padding: 20px 0;
-            flex-grow: 1;
-        }
+    <div class="form-group">
+      <label for="loginSenha" style="font-size: 0.8rem; font-weight: bold; color: #475569;">Senha de Acesso:</label>
+      <input type="password" id="loginSenha" placeholder="Digite sua senha" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+    </div>
+    header { display: flex; justify-content: space-between; align-items: center; background: var(--primary-color); color: white; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+    header h1 { font-size: 1.15rem; font-weight: bold; }
+    .role-container { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); padding: 5px 10px; border-radius: 6px; flex-wrap: wrap; }
 
-        .menu li {
-            padding: 12px 20px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background 0.2s, color 0.2s;
-        }
+    nav { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
+    nav button { padding: 8px 12px; background: var(--card-bg); border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; color: var(--text-color); font-size: 0.8rem; white-space: nowrap; }
+    nav button.active, nav button:hover { background: var(--secondary-color); color: white; border-color: var(--secondary-color); }
 
-        .menu li:hover, .menu li.active {
-            background-color: #eff6ff;
-            color: var(--primary);
-            border-right: 4px solid var(--primary);
-        }
+    <button type="button" style="width: 100%; padding: 10px; margin-top: 5px; background: #2563eb; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="fazerLogin()">Entrar no Sistema</button>
+  </div>
+</div>
+.tab-content { display: none; }
+.tab-content.active { display: block; }
 
-        /* Main Content */
-        main {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        header {
-            background-color: var(--card);
-            padding: 15px 30px;
-            border-bottom: 1px solid var(--border);
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
-        .content-body {
-            padding: 30px;
-            flex-grow: 1;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Cards & Forms */
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .grid-3 {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        input:focus, select:focus {
-            border-color: var(--primary);
-        }
-
-        button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-
-        button:hover {
-            background-color: var(--primary-dark);
-        }
-
-        button.btn-danger {
-            background-color: var(--danger);
-        }
-        button.btn-danger:hover {
-            background-color: #b91c1c;
-        }
-
-        button.btn-success {
-            background-color: var(--success);
-        }
-        button.btn-success:hover {
-            background-color: #15803d;
-        }
-
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            background: var(--card);
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.9rem;
-        }
-
-        th {
-            background-color: #f1f5f9;
-            font-weight: 600;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-        .badge.success { background: #dcfce7; color: #166534; }
-        .badge.danger { background: #fee2e2; color: #991b1b; }
-        .badge.warning { background: #fef9c3; color: #854d0e; }
-
-        .mt-20 { margin-top: 20px; }
-    </style>
+@@ -149,33 +145,33 @@
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <aside>
-        <div class="logo-area">Distribuidora Frazão</div>
-        <ul class="menu">
-            <li class="active" onclick="switchTab('vendas', this)">Frente de Caixa (PDV)</li>
-            <li onclick="switchTab('produtos', this)">Produtos & Estoque</li>
-            <li onclick="switchTab('clientes', this)">Clientes & Fiado</li>
-            <li onclick="switchTab('pedidos', this)">Histórico de Pedidos</li>
-        </ul>
-    </aside>
+ <!-- TELA DE LOGIN -->
+<div id="login-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 15px;">
+  <div style="background: #ffffff; padding: 22px; border-radius: 12px; width: 100%; max-width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center;">
+    <h2 style="color: #1e3a8a; margin-bottom: 12px; font-size: 1.3rem;">Distribuidora Frazão</h2>
+    <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Faça login para acessar o sistema</p>
+    
+    <div style="margin-bottom: 12px; text-align: left;">
+      <label for="loginTipo" style="font-size: 0.8rem; font-weight: bold; color: #475569;">Entrar como:</label>
+      <select id="loginTipo" onchange="alternarCamposLogin()" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+        <option value="admin">Administrador Master</option>
+        <option value="vendedor">Vendedor Cadastrado</option>
+      </select>
+    </div>
+  <!-- TELA DE LOGIN -->
+  <div id="login-screen">
+    <div class="login-card">
+      <h2>Distribuidora Frazão</h2>
+      <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Faça login para acessar o sistema</p>
+      
+      <div class="form-group">
+        <label for="loginTipo">Entrar como:</label>
+        <select id="loginTipo" onchange="alternarCamposLogin()">
+          <option value="admin">Administrador Master</option>
+          <option value="vendedor">Vendedor Cadastrado</option>
+        </select>
+      </div>
 
-    <!-- Main Container -->
-    <main>
-        <header id="header-title">Frente de Caixa (PDV)</header>
-        <div class="content-body">
+    <div style="margin-bottom: 12px; text-align: left; display: none;" id="grupoSelectVendedorLogin">
+      <label for="loginVendedorSelect" style="font-size: 0.8rem; font-weight: bold; color: #475569;">Selecione o Vendedor:</label>
+      <select id="loginVendedorSelect" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;"></select>
+    </div>
+      <div class="form-group" id="grupoSelectVendedorLogin" style="display: none;">
+        <label for="loginVendedorSelect">Selecione o Vendedor:</label>
+        <select id="loginVendedorSelect" style="width: 100%;"></select>
+      </div>
 
-            <!-- ABA VENDAS / PDV -->
-            <div id="vendas" class="tab-content active">
-                <div class="grid-2">
-                    <div>
-                        <div class="card">
-                            <h3>Lançar Item no Pedido</h3>
-                            <div class="mt-20">
-                                <label>Selecionar Produto</label>
-                                <select id="pdv-produto" onchange="atualizarPrecoPDV()"></select>
-                            </div>
-                            <div class="mt-20">
-                                <label>Quantidade</label>
-                                <input type="number" id="pdv-qtd" value="1" min="1">
-                            </div>
-                            <div class="mt-20">
-                                <label>Preço Unitário (R$)</label>
-                                <input type="number" id="pdv-preco" step="0.01">
-                            </div>
-                            <div class="mt-20">
-                                <button onclick="adicionarItemCarrinho()" style="width: 100%;">Adicionar ao Carrinho</button>
-                            </div>
-                        </div>
+    <div style="margin-bottom: 12px; text-align: left;">
+      <label for="loginSenha" style="font-size: 0.8rem; font-weight: bold; color: #475569;">Senha de Acesso:</label>
+      <input type="password" id="loginSenha" placeholder="Digite sua senha" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+    </div>
+      <div class="form-group">
+        <label for="loginSenha">Senha de Acesso:</label>
+        <input type="password" id="loginSenha" placeholder="Digite sua senha" style="width: 100%;">
+      </div>
 
-                        <div class="card">
-                            <h3>Finalizar Venda</h3>
-                            <div class="mt-20">
-                                <label>Cliente</label>
-                                <select id="pdv-cliente"></select>
-                            </div>
-                            <div class="mt-20">
-                                <label>Forma de Pagamento</label>
-                                <select id="pdv-pagamento">
-                                    <option value="Dinheiro">Dinheiro</option>
-                                    <option value="Pix">Pix</option>
-                                    <option value="Cartão">Cartão</option>
-                                    <option value="Fiado">Fiado (Anotar na Dívida)</option>
-                                </select>
-                            </div>
-                            <div class="mt-20">
-                                <h3>Total: R$ <span id="pdv-total">0.00</span></h3>
-                            </div>
-                            <div class="mt-20">
-                                <button class="btn-success" onclick="finalizarVenda()" style="width: 100%;">Concluir Venda</button>
-                            </div>
-                        </div>
-                    </div>
+    <button type="button" style="width: 100%; padding: 10px; margin-top: 5px; background: #2563eb; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="fazerLogin()">Entrar no Sistema</button>
+      <button type="button" class="btn btn-primary" style="width: 100%; padding: 10px; margin-top: 5px;" onclick="fazerLogin()">Entrar no Sistema</button>
+    </div>
+</div>
+</div>
 
-                    <div>
-                        <div class="card">
-                            <h3>Itens do Pedido Atual</h3>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Produto</th>
-                                        <th>Qtd</th>
-                                        <th>Subtotal</th>
-                                        <th>Ação</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabela-carrinho">
-                                    <tr><td colspan="4" style="text-align: center;">Carrinho vazio</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!-- APLICAÇÃO PRINCIPAL -->
+<div id="app-container">
+@@ -555,7 +551,7 @@
+}
+};
 
-            <!-- ABA PRODUTOS -->
-            <div id="produtos" class="tab-content">
-                <div class="card">
-                    <h3>Cadastrar / Editar Produto</h3>
-                    <div class="grid-3 mt-20">
-                        <div>
-                            <label>Nome do Produto</label>
-                            <input type="text" id="prod-nome" placeholder="Ex: Chocolate Caixa">
-                        </div>
-                        <div>
-                            <label>Preço de Venda (R$)</label>
-                            <input type="number" id="prod-preco" step="0.01" placeholder="0.00">
-                        </div>
-                        <div>
-                            <label>Estoque Inicial</label>
-                            <input type="number" id="prod-estoque" placeholder="0">
-                        </div>
-                    </div>
-                    <div class="mt-20">
-                        <button onclick="salvarProduto()">Salvar Produto</button>
-                    </div>
-                </div>
+   function iniciarFirestore() {
+    function iniciarFirestore() {
+db.collection("produtos").onSnapshot((snapshot) => {
+produtos = [];
+snapshot.forEach((doc) => {
+@@ -576,13 +572,14 @@
+carregarSelectClientes();
+});
 
-                <div class="card">
-                    <h3>Lista de Produtos em Estoque</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nome</th>
-                                <th>Preço</th>
-                                <th>Estoque Atual</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-produtos"></tbody>
-                    </table>
-                </div>
-            </div>
+      // <--- COLOQUE ESTE BLOCO EXATAMENTE AQUI --->
+db.collection("vendedores").onSnapshot((snapshot) => {
+vendedores = [];
+snapshot.forEach((doc) => {
+vendedores.push({ id: doc.id, ...doc.data() });
+});
+        renderizarVendedores();
+atualizarSelectVendedoresLogin();
+        preencherSelectVendedorCliente();
+});
 
-            <!-- ABA CLIENTES -->
-            <div id="clientes" class="tab-content">
-                <div class="card">
-                    <h3>Cadastrar Cliente</h3>
-                    <div class="grid-2 mt-20">
-                        <div>
-                            <label>Nome do Cliente</label>
-                            <input type="text" id="cli-nome" placeholder="Nome Completo">
-                        </div>
-                        <div>
-                            <label>Telefone / WhatsApp</label>
-                            <input type="text" id="cli-tel" placeholder="(00) 00000-0000">
-                        </div>
-                    </div>
-                    <div class="mt-20">
-                        <button onclick="salvarCliente()">Salvar Cliente</button>
-                    </div>
-                </div>
+db.collection("vendas").onSnapshot((snapshot) => {
+@@ -594,6 +591,7 @@
+renderizarRelatorios();
+});
+}
 
-                <div class="card">
-                    <h3>Controle de Clientes e Fiado</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nome</th>
-                                <th>Telefone</th>
-                                <th>Dívida Atual (Fiado)</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-clientes"></tbody>
-                    </table>
-                </div>
-            </div>
+// --- FUNÇÕES DE VALIDAÇÃO DE CPF E CNPJ ---
+function validarCPF(cpf) {
+cpf = cpf.replace(/[^\d]/g, '');
+@@ -655,7 +653,7 @@
+});
+}
 
-            <!-- ABA PEDIDOS -->
-            <div id="pedidos" class="tab-content">
-                <div class="card">
-                    <h3>Histórico de Pedidos</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Pedido #</th>
-                                <th>Cliente</th>
-                                <th>Itens</th>
-                                <th>Total</th>
-                                <th>Pagamento</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-pedidos"></tbody>
-                    </table>
-                </div>
-            </div>
+   function fazerLogin() {
+    function fazerLogin() {
+const tipo = document.getElementById('loginTipo').value;
+const senhaInformada = document.getElementById('loginSenha').value.trim();
 
-        </div>
-    </main>
+@@ -673,34 +671,19 @@
+}
+} else {
+const nomeVend = document.getElementById('loginVendedorSelect').value;
+        if (!nomeVend) {
+        const vendedorObj = vendedores.find(v => v.nome === nomeVend);
 
-    <script>
-        let produtos = JSON.parse(localStorage.getItem('frazao_produtos')) || [
-            { id: 1, nome: 'Refrigerante 2L', preco: 9.00, estoque: 50 },
-            { id: 2, nome: 'Bombom Caixa', preco: 12.50, estoque: 30 }
-        ];
+        if (!vendedorObj) {
+alert("Selecione um vendedor válido.");
+return;
+}
 
-        let clientes = JSON.parse(localStorage.getItem('frazao_clientes')) || [
-            { id: 1, nome: 'Cliente Geral / Balcão', telefone: '', divida: 0 }
-        ];
+        db.collection("vendedores").where("nome", "==", nomeVend).get().then((querySnapshot) => {
+          if (querySnapshot.empty) {
+            alert("Vendedor não encontrado no banco de dados.");
+            return;
+          }
 
-        let pedidos = JSON.parse(localStorage.getItem('frazao_pedidos')) || [];
-        let proximoPedidoNumero = parseInt(localStorage.getItem('frazao_proximo_pedido')) || 1011;
-        let carrinho = [];
+          let vendedorObj = null;
+          querySnapshot.forEach((doc) => {
+            vendedorObj = { id: doc.id, ...doc.data() };
+          });
 
-        function salvarDados() {
-            localStorage.setItem('frazao_produtos', JSON.stringify(produtos));
-            localStorage.setItem('frazao_clientes', JSON.stringify(clientes));
-            localStorage.setItem('frazao_pedidos', JSON.stringify(pedidos));
-            localStorage.setItem('frazao_proximo_pedido', proximoPedidoNumero);
+          const senhaCadastrada = vendedorObj.senha || vendedorObj.password;
+
+          if (senhaCadastrada && senhaCadastrada === senhaInformada) {
+            usuarioLogado = { tipo: 'vendedor', nome: vendedorObj.nome };
+            iniciarSessaoApp();
+          } else {
+            alert("Senha incorreta para este vendedor!");
+          }
+        }).catch((error) => {
+          console.error("Erro ao validar login do vendedor:", error);
+          alert("Erro ao conectar com o banco para validar a senha.");
+        });
+        if (vendedorObj.senha === senhaInformada) {
+          usuarioLogado = { tipo: 'vendedor', nome: vendedorObj.nome };
+          iniciarSessaoApp();
+        } else {
+          alert("Senha incorreta para este vendedor!");
         }
-
-        function switchTab(tabId, el) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.menu li').forEach(item => item.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            el.classList.add('active');
-
-            const titles = {
-                'vendas': 'Frente de Caixa (PDV)',
-                'produtos': 'Produtos & Estoque',
-                'clientes': 'Clientes & Fiado',
-                'pedidos': 'Histórico de Pedidos'
-            };
-            document.getElementById('header-title').innerText = titles[tabId];
-
-            if(tabId === 'vendas') carregarSelectsPDV();
-            if(tabId === 'produtos') renderizarProdutos();
-            if(tabId === 'clientes') renderizarClientes();
-            if(tabId === 'pedidos') renderizarPedidos();
-        }
-
-        window.onload = function() {
-            carregarSelectsPDV();
-            renderizarProdutos();
-            renderizarClientes();
-            renderizarPedidos();
-        }
-
-        function salvarProduto() {
-            const nome = document.getElementById('prod-nome').value;
-            const preco = parseFloat(document.getElementById('prod-preco').value);
-            const estoque = parseInt(document.getElementById('prod-estoque').value);
-
-            if(!nome || isNaN(preco) || isNaN(estoque)) {
-                alert('Preencha todos os campos corretamente!');
-                return;
-            }
-
-            const novoId = produtos.length > 0 ? produtos[produtos.length - 1].id + 1 : 1;
-            produtos.push({ id: novoId, nome, preco, estoque });
-            salvarDados();
-
-            document.getElementById('prod-nome').value = '';
-            document.getElementById('prod-preco').value = '';
-            document.getElementById('prod-estoque').value = '';
-
-            renderizarProdutos();
-            alert('Produto cadastrado com sucesso!');
-        }
-
-        function renderizarProdutos() {
-            const tbody = document.getElementById('tabela-produtos');
-            tbody.innerHTML = '';
-            produtos.forEach(p => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>#${p.id}</td>
-                        <td>${p.nome}</td>
-                        <td>R$ ${p.preco.toFixed(2)}</td>
-                        <td>${p.estoque}</td>
-                        <td><button class="btn-danger" onclick="excluirProduto(${p.id})">Excluir</button></td>
-                    </tr>
-                `;
-            });
-        }
-
-        function excluirProduto(id) {
-            produtos = produtos.filter(p => p.id !== id);
-            salvarDados();
-            renderizarProdutos();
-        }
-
-        function salvarCliente() {
-            const nome = document.getElementById('cli-nome').value;
-            const telefone = document.getElementById('cli-tel').value;
-
-            if(!nome) {
-                alert('Informe o nome do cliente!');
-                return;
-            }
-
-            const novoId = clientes.length > 0 ? clientes[clientes.length - 1].id + 1 : 1;
-            clientes.push({ id: novoId, nome, telefone, divida: 0 });
-            salvarDados();
-
-            document.getElementById('cli-nome').value = '';
-            document.getElementById('cli-tel').value = '';
-
-            renderizarClientes();
-            alert('Cliente cadastrado com sucesso!');
-        }
-
-        function renderizarClientes() {
-            const tbody = document.getElementById('tabela-clientes');
-            tbody.innerHTML = '';
-            clientes.forEach(c => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>#${c.id}</td>
-                        <td>${c.nome}</td>
-                        <td>${c.telefone || '-'}</td>
-                        <td><span style="color: ${c.divida > 0 ? 'red' : 'inherit'}; font-weight: bold;">R$ ${c.divida.toFixed(2)}</span></td>
-                        <td>
-                            ${c.divida > 0 ? `<button class="btn-success" onclick="quitarDivida(${c.id})">Quitar Dívida</button>` : '-'}
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function quitarDivida(id) {
-            const cliente = clientes.find(c => c.id === id);
-            if(cliente && confirm(`Deseja quitar a dívida de R$ ${cliente.divida.toFixed(2)} do cliente ${cliente.nome}?`)) {
-                cliente.divida = 0;
-                salvarDados();
-                renderizarClientes();
-            }
-        }
-
-        function carregarSelectsPDV() {
-            const selectProd = document.getElementById('pdv-produto');
-            selectProd.innerHTML = '';
-            produtos.forEach(p => {
-                selectProd.innerHTML += `<option value="${p.id}" data-preco="${p.preco}" data-estoque="${p.estoque}">${p.nome} (Estoque: ${p.estoque})</option>`;
-            });
-            atualizarPrecoPDV();
-
-            const selectCli = document.getElementById('pdv-cliente');
-            selectCli.innerHTML = '';
-            clientes.forEach(c => {
-                selectCli.innerHTML += `<option value="${c.id}">${c.nome}</option>`;
-            });
-        }
-
-        function atualizarPrecoPDV() {
-            const select = document.getElementById('pdv-produto');
-            const selectedOpt = select.options[select.selectedIndex];
-            if(selectedOpt) {
-                document.getElementById('pdv-preco').value = selectedOpt.getAttribute('data-preco');
-            }
-        }
-
-        function adicionarItemCarrinho() {
-            const select = document.getElementById('pdv-produto');
-            if(!select.value) {
-                alert('Selecione um produto!');
-                return;
-            }
-            const produtoId = parseInt(select.value);
-            const produtoNome = select.options[select.selectedIndex].text.split(' (Estoque')[0];
-            const qtd = parseInt(document.getElementById('pdv-qtd').value);
-            const precoUnitario = parseFloat(document.getElementById('pdv-preco').value);
-            const estoqueDisponivel = parseInt(select.options[select.selectedIndex].getAttribute('data-estoque'));
-
-            if(isNaN(qtd) || qtd <= 0) {
-                alert('Informe uma quantidade válida!');
-                return;
-            }
-
-            const itemExistente = carrinho.find(i => i.produtoId === produtoId);
-            const qtdTotalNoCarrinho = itemExistente ? itemExistente.qtd + qtd : qtd;
-
-            if(qtdTotalNoCarrinho > estoqueDisponivel) {
-                alert(`Quantidade indisponível em estoque! Máximo disponível: ${estoqueDisponivel}`);
-                return;
-            }
-
-            if(itemExistente) {
-                itemExistente.qtd += qtd;
-                itemExistente.subtotal = itemExistente.qtd * itemExistente.precoUnitario;
-            } else {
-                carrinho.push({
-                    produtoId,
-                    produtoNome,
-                    qtd,
-                    precoUnitario,
-                    subtotal: qtd * precoUnitario
-                });
-            }
-
-            renderizarCarrinho();
-        }
-
-        function renderizarCarrinho() {
-            const tbody = document.getElementById('tabela-carrinho');
-            tbody.innerHTML = '';
-            let totalGeral = 0;
-
-            if(carrinho.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Carrinho vazio</td></tr>`;
-                document.getElementById('pdv-total').innerText = '0.00';
-                return;
-            }
-
-            carrinho.forEach((item, index) => {
-                totalGeral += item.subtotal;
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${item.produtoNome}</td>
-                        <td>${item.qtd}</td>
-                        <td>R$ ${item.subtotal.toFixed(2)}</td>
-                        <td><button class="btn-danger" onclick="removerItemCarrinho(${index})">X</button></td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById('pdv-total').innerText = totalGeral.toFixed(2);
-        }
-
-        function removerItemCarrinho(index) {
-            carrinho.splice(index, 1);
-            renderizarCarrinho();
-        }
-
-        function finalizarVenda() {
-            if(carrinho.length === 0) {
-                alert('O carrinho está vazio!');
-                return;
-            }
-
-            const clienteId = parseInt(document.getElementById('pdv-cliente').value);
-            const formaPagamento = document.getElementById('pdv-pagamento').value;
-            const cliente = clientes.find(c => c.id === clienteId);
-            
-            let totalVenda = carrinho.reduce((acc, item) => acc + item.subtotal, 0);
-
-            for(let item of carrinho) {
-                let prod = produtos.find(p => p.id === item.produtoId);
-                if(prod) {
-                    prod.estoque -= item.qtd;
-                }
-            }
-
-            if(formaPagamento === 'Fiado') {
-                cliente.divida += totalVenda;
-            }
-
-            const novoPedido = {
-                id: proximoPedidoNumero,
-                clienteNome: cliente ? cliente.nome : 'Desconhecido',
-                clienteId: clienteId,
-                itens: [...carrinho],
-                total: totalVenda,
-                pagamento: formaPagamento,
-                status: 'Concluído'
-            };
-
-            pedidos.unshift(novoPedido);
-            proximoPedidoNumero++;
-            
-            salvarDados();
-
-            carrinho = [];
-            renderizarCarrinho();
-            alert(`Venda finalizada com sucesso! Pedido #${novoPedido.id}`);
-            switchTab('pedidos', document.querySelectorAll('.menu li')[3]);
-        }
-
-        function renderizarPedidos() {
-            const tbody = document.getElementById('tabela-pedidos');
-            tbody.innerHTML = '';
-
-            if(pedidos.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Nenhum pedido registrado</td></tr>`;
-                return;
-            }
-
-            pedidos.forEach(p => {
-                let itensStr = p.itens.map(i => `${i.qtd}x ${i.produtoNome}`).join(', ');
-                let badgeClass = p.status === 'Concluído' ? 'success' : 'danger';
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td>#${p.id}</td>
-                        <td>${p.clienteNome}</td>
-                        <td style="max-width: 250px; font-size: 0.85rem;">${itensStr}</td>
-                        <td>R$ ${p.total.toFixed(2)}</td>
-                        <td>${p.pagamento}</td>
-                        <td><span class="badge ${badgeClass}">${p.status}</span></td>
-                        <td>
-                            ${p.status === 'Concluído' ? `<button class="btn-danger" onclick="cancelarPedido(${p.id})">Cancelar</button>` : '-'}
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function cancelarPedido(id) {
-            const pedido = pedidos.find(p => p.id === id);
-            if(!pedido || pedido.status === 'Cancelado') return;
-
-            if(confirm(`Tem certeza que deseja cancelar o Pedido #${pedido.id}? Esta ação devolverá os itens ao estoque e ajustará eventuais débitos de fiado.`)) {
-                
-                for(let item of pedido.itens) {
-                    let prod = produtos.find(p => p.id === item.produtoId);
-                    if(prod) {
-                        prod.estoque += item.qtd;
-                    }
-                }
-
-                if(pedido.pagamento === 'Fiado') {
-                    let cliente = clientes.find(c => c.id === pedido.clienteId);
-                    if(cliente) {
-                        cliente.divida = Math.max(0, cliente.divida - pedido.total);
-                    }
-                }
-
-                pedido.status = 'Cancelado';
-                salvarDados();
-
-                renderizarPedidos();
-                alert(`Pedido #${pedido.id} cancelado com sucesso. Estoque e saldos atualizados!`);
-            }
-        }
-    </script>
-</body>
-</html>
+}
+}

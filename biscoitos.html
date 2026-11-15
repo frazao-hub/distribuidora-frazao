@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo - Biscoitos | Distribuidora Frazão</title>
+    <title>Catálogo - Biscoitos e Salgadinhos | Distribuidora Frazão</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; padding-bottom: 120px; }
         h1 { text-align: center; color: #333; }
         .container { max-width: 1200px; margin: 0 auto; }
-        
+        .voltar { display: inline-block; margin-bottom: 10px; color: #27ae60; text-decoration: none; font-weight: bold; }
+
         .loja-layout { display: flex; gap: 20px; flex-wrap: wrap; }
         .produtos-area { flex: 3; min-width: 300px; }
-        
-        /* Carrinho Lateral */
+
         .carrinho-lateral { flex: 1; min-width: 280px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
         .carrinho-lateral h2 { font-size: 18px; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333; }
         .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
@@ -21,7 +21,7 @@
         .item-carrinho button { background: #e0e0e0; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-weight: bold; }
         .item-carrinho button:hover { background: #d0d0d0; }
         .carrinho-total { font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; color: #27ae60; }
-        
+
         .btn-limpar { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; font-weight: bold; }
         .btn-limpar:hover { background: #c0392b; }
 
@@ -30,22 +30,19 @@
         .card img { width: 100%; height: 140px; object-fit: contain; border-radius: 4px; background: #fff; margin-bottom: 10px; }
         .card h3 { font-size: 15px; margin: 0 0 8px 0; color: #444; }
         .card p { font-size: 16px; font-weight: bold; color: #27ae60; margin: 0 0 12px 0; }
-        
-        /* Botões do Card */
+
         .btn-add { background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.2s; }
         .btn-add:hover { background: #2980b9; }
-        
+
         .card-controles { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; border: 1px solid #ddd; border-radius: 5px; padding: 4px; }
         .card-controles button { background: #3498db; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 14px; }
         .card-controles button:hover { background: #2980b9; }
         .card-controles span { font-weight: bold; font-size: 15px; color: #333; }
 
-        /* Paginação */
         .pagination { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
         .pagination button { padding: 8px 12px; border: none; background: #ddd; cursor: pointer; border-radius: 4px; font-weight: bold; }
         .pagination button.active { background: #27ae60; color: white; }
 
-        /* Barra Fixa do WhatsApp */
         .whatsapp-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #25d366; color: white; text-align: center; padding: 12px; font-size: 16px; font-weight: bold; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 20px; box-sizing: border-box; }
         .whatsapp-bar a { background: white; color: #25d366; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; }
         .whatsapp-bar a:hover { background: #f0f0f0; }
@@ -59,8 +56,9 @@
 <body>
 
     <div class="container">
+        <a class="voltar" href="index.html">← Voltar ao catálogo</a>
         <h1>Biscoitos e Salgadinhos</h1>
-        
+
         <div class="loja-layout">
             <div class="produtos-area">
                 <div id="product-grid" class="grid"></div>
@@ -72,9 +70,7 @@
                 <div id="lista-carrinho">
                     <p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
                 </div>
-                <div id="carrinho-total" class="carrinho-total" style="display: none;">
-                    Total: R$ 0,00
-                </div>
+                <div id="carrinho-total" class="carrinho-total" style="display: none;">Total: R$ 0,00</div>
                 <button class="btn-limpar" onclick="limparCarrinho()" id="btn-limpar-carrinho" style="display: none;">Esvaziar Carrinho</button>
             </div>
         </div>
@@ -85,6 +81,10 @@
         <a id="btn-cotar" href="#" target="_blank">Enviar Cotação WhatsApp</a>
     </div>
 
+    <!-- 1º: lógica do carrinho (compartilhada por todas as categorias) -->
+    <script src="carrinho.js"></script>
+
+    <!-- 2º: apenas os produtos desta página -->
     <script>
         const produtos = [
             { id: "bis_001", nome: "Batata Deora 30g c/20", preco: 47.60, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRFtuvQM7okOX2TfiNtk_fLsHk7jDtmjXAwakDIblfGg&s" },
@@ -130,42 +130,38 @@
 
         let paginaAtual = 1;
         const itensPorPagina = 12;
-        let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
 
         function renderizarProdutos() {
             const grid = document.getElementById("product-grid");
             grid.innerHTML = "";
 
             const inicio = (paginaAtual - 1) * itensPorPagina;
-            const fim = inicio + itensPorPagina;
-            const itensPagina = produtos.slice(inicio, fim);
+            const itensPagina = produtos.slice(inicio, inicio + itensPorPagina);
 
             itensPagina.forEach(prod => {
                 const card = document.createElement("div");
                 card.className = "card";
-                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${prod.nome}">` : '';
-                
-                const qtdNoCarrinho = carrinho[prod.id] ? carrinho[prod.id].quantidade : 0;
-                
-                let acaoHTML = "";
-                if (qtdNoCarrinho === 0) {
-                    acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">Adicionar</button>`;
+                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${escaparHTML(prod.nome)}">` : '';
+                const qtd = carrinho[prod.id] ? carrinho[prod.id].quantidade : 0;
+                const nomeJS = prod.nome.replace(/'/g, "\\'");
+
+                let acaoHTML;
+                if (qtd === 0) {
+                    acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, 1)">Adicionar</button>`;
                 } else {
                     acaoHTML = `
                         <div class="card-controles">
-                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, -1)">-</button>
-                            <span>${qtdNoCarrinho}</span>
-                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">+</button>
-                        </div>
-                    `;
+                            <button onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, -1)">-</button>
+                            <span>${qtd}</span>
+                            <button onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, 1)">+</button>
+                        </div>`;
                 }
 
                 card.innerHTML = `
                     ${imgTag}
-                    <h3>${prod.nome}</h3>
+                    <h3>${escaparHTML(prod.nome)}</h3>
                     <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
-                    ${acaoHTML}
-                `;
+                    ${acaoHTML}`;
                 grid.appendChild(card);
             });
 
@@ -175,7 +171,6 @@
         function renderizarPaginacao() {
             const paginacao = document.getElementById("pagination");
             paginacao.innerHTML = "";
-
             const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
 
             for (let i = 1; i <= totalPaginas; i++) {
@@ -191,89 +186,7 @@
             }
         }
 
-        function alterarQuantidade(id, nome, preco, delta) {
-            if (!carrinho[id]) {
-                if (delta > 0) {
-                    carrinho[id] = { nome, preco, quantidade: delta };
-                }
-            } else {
-                carrinho[id].quantidade += delta;
-                if (carrinho[id].quantidade <= 0) {
-                    delete carrinho[id];
-                }
-            }
-            salvarESincronizar();
-        }
-
-        function limparCarrinho() {
-            carrinho = {};
-            salvarESincronizar();
-        }
-
-        function salvarESincronizar() {
-            localStorage.setItem('carrinho_distribuidora', JSON.stringify(carrinho));
-            renderizarProdutos();
-            atualizarCarrinhoUI();
-        }
-
-        function atualizarCarrinhoUI() {
-            const listaDiv = document.getElementById("lista-carrinho");
-            const totalDiv = document.getElementById("carrinho-total");
-            const btnLimpar = document.getElementById("btn-limpar-carrinho");
-            const footerTotal = document.getElementById("footer-total");
-            
-            listaDiv.innerHTML = "";
-            let valorTotal = 0;
-            let temItens = false;
-
-            const numeroWhatsApp = "5521968659086";
-            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes produtos:\n\n";
-            let contador = 1;
-
-            for (let id in carrinho) {
-                temItens = true;
-                let item = carrinho[id];
-                let subtotal = item.preco * item.quantidade;
-                valorTotal += subtotal;
-
-                const itemDiv = document.createElement("div");
-                itemDiv.className = "item-carrinho";
-                itemDiv.innerHTML = `
-                    <div class="detalhes">
-                        <strong>${item.nome}</strong><br>
-                        <small>R$ ${item.preco.toFixed(2).replace('.', ',')} x ${item.quantidade}</small>
-                    </div>
-                    <div class="controles">
-                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, -1)">-</button>
-                        <span>${item.quantidade}</span>
-                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, 1)">+</button>
-                    </div>
-                `;
-                listaDiv.appendChild(itemDiv);
-
-                mensagem += `${contador}. ${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
-                contador++;
-            }
-
-            if (!temItens) {
-                listaDiv.innerHTML = '<p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>';
-                totalDiv.style.display = "none";
-                btnLimpar.style.display = "none";
-            } else {
-                totalDiv.style.display = "block";
-                btnLimpar.style.display = "block";
-                totalDiv.innerText = `Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
-            }
-
-            footerTotal.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
-            mensagem += `\n*Valor Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}*`;
-
-            const linkEncoded = encodeURI(mensagem);
-            document.getElementById("btn-cotar").href = `https://wa.me/${numeroWhatsApp}?text=${linkEncoded}`;
-        }
-
         renderizarProdutos();
-        atualizarCarrinhoUI();
     </script>
 
 </body>

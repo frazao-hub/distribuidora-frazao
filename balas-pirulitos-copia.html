@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo - Balas e Pirulitos | Distribuidora Frazão</title>
+    <title>Catálogo - Categoria | Distribuidora Frazão</title>
     <style>
+        * { box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; padding-bottom: 120px; }
         h1 { text-align: center; color: #333; }
         .container { max-width: 1200px; margin: 0 auto; }
@@ -31,7 +32,6 @@
         .card h3 { font-size: 15px; margin: 0 0 8px 0; color: #444; }
         .card p { font-size: 16px; font-weight: bold; color: #27ae60; margin: 0 0 12px 0; }
         
-        /* Botões do Card */
         .btn-add { background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.2s; }
         .btn-add:hover { background: #2980b9; }
         
@@ -47,8 +47,8 @@
 
         /* Barra Fixa do WhatsApp */
         .whatsapp-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #25d366; color: white; text-align: center; padding: 12px; font-size: 16px; font-weight: bold; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 20px; box-sizing: border-box; }
-        .whatsapp-bar a { background: white; color: #25d366; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; }
-        .whatsapp-bar a:hover { background: #f0f0f0; }
+        .whatsapp-bar button { background: white; color: #25d366; border: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; font-size: 15px; cursor: pointer; }
+        .whatsapp-bar button:hover { background: #f0f0f0; }
 
         @media (max-width: 768px) {
             .loja-layout { flex-direction: column-reverse; }
@@ -59,7 +59,7 @@
 <body>
 
     <div class="container">
-        <h1>Balas e Pirulitos</h1>
+        <h1>Nome da Categoria</h1>
         
         <div class="loja-layout">
             <div class="produtos-area">
@@ -80,56 +80,22 @@
         </div>
     </div>
 
+    <!-- Barra Fixa do WhatsApp acionando o pedido-core.js -->
     <div class="whatsapp-bar">
         <span>Total: <span id="footer-total">R$ 0,00</span></span>
-        <a id="btn-cotar" href="#" target="_blank">Enviar Cotação WhatsApp</a>
+        <button onclick="enviarPedidoWhatsApp(event)">Enviar Cotação WhatsApp</button>
     </div>
 
+    <!-- Scripts do Firebase e do Núcleo Central -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="pedido-core.js"></script>
+
     <script>
+        // Lista de produtos específica desta categoria
         const produtos = [
-            { id: "bal_001", nome: "Bala 7 Belo 500g", preco: 12.99, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcbTKEYqnfZfkIsOhNjY_EbKEGPliYqSpHMME4QNi5IQ&s=10" },
-            { id: "bal_002", nome: "Bala Berbau Soft 500g", preco: 12.35, imagem: "https://supernova.vteximg.com.br/arquivos/ids/171945-1000-1000/Bala-Berbau-Soft-Classic-500g-1-.jpg?v=638895032186400000" },
-            { id: "bal_003", nome: "Bala Dori Frutsy Mast 500g", preco: 8.99, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwu_yLsWVTS2-A59YeL-j8uk3Mv4NeJ6rr8P4PApXBQA&s" },
-            { id: "bal_004", nome: "Bala Dori Bolete 500g", preco: 11.50, imagem: "https://cdn.awsli.com.br/1030/1030675/produto/59006489/872d0c86a3.jpg" },
-            { id: "bal_005", nome: "Bala Dori Hortelã 500g", preco: 11.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzUQOIe71Uh1t6SjWBEeMkryT1MA-Lv5Tnnx32UE7KeQ&s=10" },
-            { id: "bal_006", nome: "Bala Dori Mel 500g", preco: 12.99, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRl1Jq687FHfvRWSPEBr2ft_IEN71iqOWt-6oCRaESNyx8nXorAp_RkugQ&s=10" },
-            { id: "bal_007", nome: "Bala Dori Yogurt 500g", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD8HHA2nozrbgcqF7f_x-ad1HCk7-U5qWID55acLs1FA&s=10" },
-            { id: "bal_008", nome: "Bala Azedinha Melancia", preco: 13.65, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDyIJDGRtwZeMU2HIg5aD9ESIrtqf2P7wxrvFhzrTiWxXh02dzRpUIZQDA&s=10" },
-            { id: "bal_009", nome: "Bala Azedinha Morango", preco: 13.65, imagem: "https://destro.fbitsstatic.net/img/p/bala-azedinha-freegells-morango-584g-72115/258651.jpg?w=500&h=500&v=202501231555&qs=ignore" },
-            { id: "bal_010", nome: "Bala Azedinha Uva", preco: 13.65, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTEy8DF1f7Ws75Ziny-pnxJI2C_Yhi8n9fih8gvigWIg&s=10" },
-            { id: "bal_011", nome: "Bala Toffee Chocolate 400g", preco: 19.50, imagem: "https://cdn.dooca.store/259/products/bala-butter-toffees-chocolate-500g-arcor.jpg?v=1695834239000&webp=0" },
-            { id: "bal_012", nome: "Bala Toffee Coco 400g", preco: 19.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLxIbvoyaL9fzQ0J9YxGHUmoIo0RhGwWDxwupy3JhgBA&s=10" },
-            { id: "bal_013", nome: "Bala Toffee Leite", preco: 19.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRC2dALL-iF7J5pAye2G699x4rPfyIqHvvhICOCGXCrqQ&s=10" },
-            { id: "bal_014", nome: "Bala Toffee Maracujá", preco: 19.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD-TfJpJt5lTLjNZnj4PhCjZTuCCYGtFSHI2jQXmxuoQ&s=10" },
-            { id: "bal_015", nome: "Bala Banana Joice", preco: 14.30, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRih2onakAF8zTlsyDRSUx3T1x6iRp51jTz4EzsDHC1Kw&s=10" },
-            { id: "bal_016", nome: "Bala de Café Soberana 500g", preco: 12.99, imagem: "https://cdn.awsli.com.br/1030/1030675/produto/193522729f3a4181cf8.jpg" },
-            { id: "bal_017", nome: "Bala de Coco Marlon 500g", preco: 12.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3amG64d2R51fK4r0KK95LMyfprrEUbVM1t_CMbHQETg&s" },
-            { id: "bal_018", nome: "Bala Erva Cidreira 500g", preco: 12.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTT6WtoFjymbD9FbrEU1mJT9SYQXXi5sy11gqg5lEWwEw&s" },
-            { id: "bal_019", nome: "Bala de Mel e Gengibre 500g", preco: 16.25, imagem: "https://cdn.awsli.com.br/1030/1030675/produto/21523210013a4644950.jpg" },
-            { id: "bal_020", nome: "Bala Juquinha Sortida 500g", preco: 14.30, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvBrzfZln_c5GcK9Eth-ZTi-YqmN1zL2ye_I1xE_hIqg&s" },
-            { id: "bal_021", nome: "Bala Juquinha Tutti", preco: 14.30, imagem: "https://images.tcdn.com.br/img/img_prod/808609/bala_juquinha_tutti_frutti_florestal_500g_57680305_1_d63a0ffce9a1225cc643f2ff05752606.jpg" },
-            { id: "bal_022", nome: "Bala Maçã Verde 500g", preco: 12.90, imagem: "https://images.tcdn.com.br/img/img_prod/987957/bala_lilith_maca_verde_500g_cory_1720991_1_69d8daef482a043adfb02316cef074c3.png" },
-            { id: "bal_023", nome: "Bala Milho Verde 500g", preco: 14.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-BsG5GN4pFpPLOrQ2Oz1xtRUhSBgs6m8Zb5lczjr8aA&s" },
-            { id: "bal_024", nome: "Bala Moranguinho 600g", preco: 11.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuf9dKOnGm-9CzXwtK2GCHqA8Mgx2sED2JheGRieVF2Q&s" },
-            { id: "bal_025", nome: "Bala Paçoquita 500g", preco: 14.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJ660NrCGEN6KKVKjZowACNw-JoOu2OqvZmeQvjGcUuA&s=10" },
-            { id: "bal_026", nome: "Bala Sortida Erlan 500g", preco: 9.90, imagem: "https://m.media-amazon.com/images/I/61gGUetGZoL._AC_SY300_SX300_QL70_ML2_.jpg" },
-            { id: "bal_027", nome: "Bala Tamarindo 500g", preco: 12.90, imagem: "https://http2.mlstatic.com/D_Q_NP_2X_935423-MLB113569316317_062026-P.webp" },
-            { id: "bal_028", nome: "Caramelo Embaré Meio", preco: 19.50, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_617364-MLA99904114001_112025-F.webp" },
-            { id: "bal_029", nome: "Gamadinho 420g", preco: 16.89, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_931291-MLA99844212233_112025-F.webp" },
-            { id: "pir_001", nome: "Pirulito Blong Azul c/24", preco: 16.20, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnrfq3BSsAS2gbo1gvPKoXi_Di-udRYbvKznk_lyqBbg&s=10" },
-            { id: "pir_002", nome: "Pirulito Blong Preto c/24", preco: 16.20, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUny2YpUnx80jBGea_Ea_tahB3T0jAHJtD08lENtGknQ&s" },
-            { id: "pir_003", nome: "Pirulito Blong Energy c/24", preco: 16.20, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN0H2kK0c0FUImfbfJIrJrJNdNnEpBLy8XJAm1vRWQmQ&s=10" },
-            { id: "pir_004", nome: "Pirulito Blong Melancia c/24", preco: 16.20, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT3XYxrZTs25LEgRwfbrNop2v31MtbSL3wcVCRum00MA&s" },
-            { id: "pir_005", nome: "Pirulito Blong Morango c/24", preco: 16.20, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9uofi3h42h1r7pZsCrQJjZg0ApIxGqPOad7ixynnhAA&s=10" },
-            { id: "pir_006", nome: "Pirulito Blong Tutti Frutti c/24", preco: 16.20, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjvrO9JTHkZdKW-H9mDsI10F5AWKs8iv9yTFJxkiJjqg&s=10"},
-            { id: "pir_007", nome: "Pirulito Blong Uva c/24", preco: 16.20, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3c_Y9VQryo6uAPyCoVYhAz5d_X0EXZJHKMjIRooqvNg&s" },
-            { id: "pir_008", nome: "Pirulito Florestal Coração verm. c/50", preco: 14.30, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_869976-MLA99844366639_112025-F.webp" },
-            { id: "pir_009", nome: "Pirulito Florestal Coração color c/50", preco: 14.30, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKzKAEitZWN6qMXX5mEAbKbAx3mDm0qEioArhIfDiexA&s=10" },
-            { id: "pir_010", nome: "Pirulito Ch. Pop c/50", preco: 18.45, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRuWbhq9otjDOLDMX3OaD9Qb5OkoWuAdX4bg4mV5P47g&s" },
-            { id: "pir_011", nome: "Pirulito Ch. Pop Morango c/50", preco: 18.45, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwcC-wPvX98USLkLpBQOqB5Kt9pJLOn2i6WsY3uZpBWw&s" },
-            { id: "pir_012", nome: "Pirulito Maçã do Amor c/24", preco: 12.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMr-BMwjXvDJ0b0VRxIne_ZsOJO6CZZPNZyeX9IfNPSw&s" },
-            { id: "pir_013", nome: "Pirulito Uva do Amor c/24", preco: 12.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTD9vjfYSjmEd8yZT93imUON3HGqL1inDkUGqc7h0Pdyw&s=10" },
-            { id: "pir_014", nome: "Pirulito Pop Kiss Morango c/50", preco: 13.75, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_695951-MLU78138836254_082024-F.webp" }
+            { id: "cat_001", nome: "Exemplo de Produto 1", preco: 10.00, imagem: "" },
+            { id: "cat_002", nome: "Exemplo de Produto 2", preco: 25.50, imagem: "" }
         ];
 
         let paginaAtual = 1;
@@ -230,10 +196,6 @@
             let valorTotal = 0;
             let temItens = false;
 
-            const numeroWhatsApp = "5521968659086";
-            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes produtos:\n\n";
-            let contador = 1;
-
             for (let id in carrinho) {
                 temItens = true;
                 let item = carrinho[id];
@@ -254,9 +216,6 @@
                     </div>
                 `;
                 listaDiv.appendChild(itemDiv);
-
-                mensagem += `${contador}. ${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
-                contador++;
             }
 
             if (!temItens) {
@@ -270,15 +229,10 @@
             }
 
             footerTotal.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
-            mensagem += `\n*Valor Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}*`;
-
-            const linkEncoded = encodeURI(mensagem);
-            document.getElementById("btn-cotar").href = `https://wa.me/${numeroWhatsApp}?text=${linkEncoded}`;
         }
 
         renderizarProdutos();
         atualizarCarrinhoUI();
     </script>
-
 </body>
 </html>

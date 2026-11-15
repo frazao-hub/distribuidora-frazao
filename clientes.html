@@ -4,63 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Identificação - Distribuidora Frazão</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
         * { box-sizing: border-box; }
-        body { 
-            font-family: Arial, sans-serif; 
-            background-color: #f4f4f9; 
-            margin: 0; 
-            padding: 0; 
-            color: #333; 
-            display: flex; 
-            flex-direction: column; 
-            min-height: 100vh; 
-        }
-        header { 
-            background: #27ae60; 
-            color: white; 
-            text-align: center; 
-            padding: 30px 20px; 
-        }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 0; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
+        header { background: #27ae60; color: white; text-align: center; padding: 30px 20px; }
         header h1 { margin: 0 0 8px 0; font-size: 24px; text-transform: uppercase; }
-        .container { 
-            max-width: 600px; 
-            margin: 30px auto; 
-            padding: 0 20px; 
-            flex: 1; 
-            width: 100%; 
-        }
-        .card-secao { 
-            background: #fff; 
-            border-radius: 8px; 
-            padding: 25px; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
-        }
+        .container { max-width: 600px; margin: 30px auto; padding: 0 20px; flex: 1; width: 100%; }
+        .card-secao { background: #fff; border-radius: 8px; padding: 25px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
         .card-secao h2 { color: #27ae60; margin-top: 0; font-size: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
         .form-grupo { margin-bottom: 15px; }
         .form-grupo label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #444; }
-        .form-grupo input { 
-            width: 100%; 
-            padding: 12px; 
-            border: 1px solid #ccc; 
-            border-radius: 6px; 
-            font-size: 14px; 
-        }
+        .form-grupo input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
         .form-grupo input:focus { outline: none; border-color: #27ae60; }
-        .btn-enviar {
-            background: #27ae60;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.2s;
-        }
+        .btn-enviar { background: #27ae60; color: white; border: none; width: 100%; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
         .btn-enviar:hover { background: #219653; }
         footer { text-align: center; padding: 20px; color: #7f8c8d; font-size: 12px; margin-top: auto; }
     </style>
@@ -76,13 +33,18 @@
         <div class="card-secao">
             <h2>Dados de Entrega</h2>
             <p>Preencha abaixo para agilizar o seu atendimento no pedido:</p>
-            
+
             <form id="form-cliente" onsubmit="salvarDadosEProsseguir(event)">
                 <div class="form-grupo">
                     <label for="nome">Nome Completo / Razão Social:</label>
                     <input type="text" id="nome" placeholder="Digite seu nome completo" required>
                 </div>
-                
+
+                <div class="form-grupo">
+                    <label for="documento">CPF ou CNPJ:</label>
+                    <input type="text" id="documento" placeholder="Somente números" inputmode="numeric" required>
+                </div>
+
                 <div class="form-grupo">
                     <label for="endereco">Endereço de Entrega (Rua, Nº, Bairro, Cidade):</label>
                     <input type="text" id="endereco" placeholder="Ex: Rua Exemplo, 123 - Centro" required>
@@ -103,31 +65,31 @@
     </footer>
 
     <script>
+        const CHAVE = 'cliente_distribuidora';
+
         function salvarDadosEProsseguir(event) {
-            event.preventDefault(); // Evita recarregar a página
-            
-            // Pega os valores digitados
+            event.preventDefault();
+
             const dadosCliente = {
-                nome: document.getElementById('nome').value,
-                endereco: document.getElementById('endereco').value,
-                telefone: document.getElementById('telefone').value
+                nome: document.getElementById('nome').value.trim(),
+                documento: document.getElementById('documento').value.trim(),
+                endereco: document.getElementById('endereco').value.trim(),
+                telefone: document.getElementById('telefone').value.trim()
             };
 
-            // Salva na memória do navegador
-            localStorage.setItem('dadosClienteFrazao', JSON.stringify(dadosCliente));
-
-            // Redireciona para a página principal (index.html) ou para onde preferir
+            localStorage.setItem(CHAVE, JSON.stringify(dadosCliente));
             window.location.href = 'index.html';
         }
 
-        // Se já houver dados salvos anteriormente, preenche automaticamente para facilitar
         window.onload = function() {
-            const salvos = localStorage.getItem('dadosClienteFrazao');
+            // Aproveita cadastros antigos salvos na chave anterior
+            const salvos = localStorage.getItem(CHAVE) || localStorage.getItem('dadosClienteFrazao');
             if (salvos) {
-                const cliente = JSON.parse(salvos);
-                document.getElementById('nome').value = cliente.nome || '';
-                document.getElementById('endereco').value = cliente.endereco || '';
-                document.getElementById('telefone').value = cliente.telefone || '';
+                const c = JSON.parse(salvos);
+                document.getElementById('nome').value = c.nome || '';
+                document.getElementById('documento').value = c.documento || '';
+                document.getElementById('endereco').value = c.endereco || '';
+                document.getElementById('telefone').value = c.telefone || '';
             }
         };
     </script>

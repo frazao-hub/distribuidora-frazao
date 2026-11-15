@@ -13,45 +13,14 @@
 <body class="bg-gray-100 font-sans min-h-screen p-3 md:p-6">
     <div class="max-w-5xl mx-auto bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-gray-100">
 
-        <!-- TELA DE LOGIN DO VENDEDOR -->
-        <div id="telaLogin" class="max-w-md mx-auto mt-12 bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100">
-            <div class="text-center mb-6">
-                <h1 class="text-2xl font-extrabold text-gray-800 tracking-tight">Distribuidora Frazão</h1>
-                <p class="text-sm text-gray-500 mt-1">Acesse com sua conta de vendedor</p>
-            </div>
-            <form id="formLogin" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Selecione o Vendedor</label>
-                    <select id="loginVendedorSelect" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                        <option value="">Carregando vendedores...</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
-                    <input type="password" id="loginSenha" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Digite sua senha">
-                </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm">
-                    Entrar no Sistema
-                </button>
-            </form>
-            <div class="mt-6 border-t border-gray-200 pt-4">
-                <button onclick="mostrarCadastroVendedorModal()" class="w-full text-center text-sm text-blue-600 hover:underline font-medium">
-                    Primeiro acesso? Cadastrar Novo Vendedor
-                </button>
-            </div>
-        </div>
-
-        <!-- PAINEL PRINCIPAL (OCULTO ATÉ O LOGIN) -->
-        <div id="painelPrincipal" class="hidden">
+        <!-- PAINEL PRINCIPAL -->
+        <div id="painelPrincipal">
             <!-- Cabeçalho -->
             <header class="flex flex-col md:flex-row justify-between items-center mb-6 border-b border-gray-200 pb-4">
                 <div>
                     <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight">Distribuidora Frazão</h1>
-                    <p class="text-sm text-gray-500">Logado como: <strong id="usuarioLogadoNome" class="text-blue-600"></strong></p>
+                    <p class="text-sm text-gray-500">Painel de Gestão, Estoque e Vendas</p>
                 </div>
-                <button onclick="fazerLogout()" class="mt-3 md:mt-0 text-sm bg-red-50 text-red-600 hover:bg-red-100 font-semibold px-4 py-2 rounded-lg transition">
-                    Sair / Trocar Vendedor
-                </button>
             </header>
 
             <!-- Menu de Cartões Clicáveis -->
@@ -60,7 +29,7 @@
                     <div class="p-2.5 bg-indigo-100 text-indigo-600 rounded-full mb-1 group-hover:scale-110 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     </div>
-                    <span class="font-bold text-gray-700 text-xs md:text-sm group-hover:text-indigo-600">Meus Clientes</span>
+                    <span class="font-bold text-gray-700 text-xs md:text-sm group-hover:text-indigo-600">Clientes</span>
                 </button>
 
                 <button onclick="mudarAba('produto')" id="card-produto" class="card-btn flex flex-col items-center justify-center p-3 bg-gray-50 hover:bg-purple-50 border-2 border-gray-200 hover:border-purple-500 rounded-xl transition duration-200 cursor-pointer group">
@@ -81,7 +50,7 @@
                     <div class="p-2.5 bg-amber-100 text-amber-600 rounded-full mb-1 group-hover:scale-110 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                     </div>
-                    <span class="font-bold text-gray-700 text-xs md:text-sm group-hover:text-amber-600">Minhas Vendas</span>
+                    <span class="font-bold text-gray-700 text-xs md:text-sm group-hover:text-amber-600">Histórico</span>
                 </button>
             </div>
 
@@ -94,7 +63,7 @@
             <div id="secao-cliente" class="secao-conteudo">
                 <div class="bg-indigo-50 p-4 md:p-6 rounded-2xl border border-indigo-200 mb-6">
                     <h2 class="text-xl font-bold text-indigo-900 mb-1">Cadastrar Cliente</h2>
-                    <p class="text-xs text-indigo-700 mb-4">Este cliente ficará vinculado exclusivamente à sua conta de vendedor.</p>
+                    <p class="text-xs text-indigo-700 mb-4">Adicione novos clientes para registrar as vendas.</p>
                     <form id="formCliente" class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Nome / Razão Social</label>
@@ -121,7 +90,7 @@
                 </div>
 
                 <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-3">Meus Clientes Cadastrados</h3>
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">Clientes Cadastrados</h3>
                     <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
                         <table class="min-w-full divide-y divide-gray-200 text-sm">
                             <thead class="bg-gray-50">
@@ -157,14 +126,14 @@
                 <form id="formVenda" class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Meus Clientes Cadastrados</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
                             <select id="vendaCliente" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                                 <option value="">Carregando clientes...</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Vendedor Responsável</label>
-                            <input type="text" id="vendaVendedor" readonly class="w-full rounded-lg border border-gray-300 p-2.5 bg-gray-100 text-gray-700 font-medium focus:outline-none">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Vendedor / Responsável</label>
+                            <input type="text" id="vendaVendedor" value="Geral" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white text-gray-700 font-medium focus:outline-none">
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -172,82 +141,3 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">Produto</label>
                             <select id="selectProdutoCatalogo" required class="w-full rounded-lg border border-gray-300 p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                                 <option value="">Carregando produtos...</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Quantidade</label>
-                            <input type="number" id="vendaQtd" min="1" value="1" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Descrição / Detalhes dos Produtos</label>
-                        <input type="text" id="vendaProdutos" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Ex: 2x Caixa de Bombom Lacta">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Valor Total (R$)</label>
-                        <input type="number" step="0.01" id="vendaValor" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="0,00">
-                    </div>
-                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-sm">
-                        Finalizar e Registrar Venda
-                    </button>
-                </form>
-            </div>
-
-            <!-- 4. SEÇÃO HISTÓRICO DE VENDAS -->
-            <div id="secao-historico" class="secao-conteudo hidden">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">Minhas Vendas Realizadas</h2>
-                <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-                    <table class="min-w-full divide-y divide-gray-200 text-sm">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-3 text-left font-bold text-gray-600">Data</th>
-                                <th class="px-4 py-3 text-left font-bold text-gray-600">Cliente</th>
-                                <th class="px-4 py-3 text-left font-bold text-gray-600">Produtos</th>
-                                <th class="px-4 py-3 text-right font-bold text-gray-600">Valor (R$)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelaHistorico" class="divide-y divide-gray-200">
-                            <tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">Carregando histórico...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE CADASTRO DE VENDEDOR -->
-    <div id="modalCadastroVendedor" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white max-w-md w-full p-6 rounded-2xl shadow-xl">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Cadastrar Novo Vendedor</h2>
-            <form id="formCadastrarVendedor" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Vendedor</label>
-                    <input type="text" id="novoNomeVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Ex: Carlos Silva">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Senha de Acesso</label>
-                    <input type="password" id="novaSenhaVendedor" required class="w-full rounded-lg border border-gray-300 p-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Digite uma senha segura">
-                </div>
-                <div class="flex space-x-3 pt-2">
-                    <button type="button" onclick="fecharCadastroVendedorModal()" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-lg transition">Cancelar</button>
-                    <button type="submit" class="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition">Salvar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-<script>
-// CONFIGURAÇÃO DO FIREBASE
-const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
-    authDomain: "SEU_AUTH_DOMAIN",
-    projectId: "SEU_PROJECT_ID",
-    storageBucket: "SEU_STORAGE_BUCKET",
-    messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-    appId: "SEU_APP_ID"
-};
-
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const db

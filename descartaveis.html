@@ -13,33 +13,18 @@
         .loja-layout { display: flex; gap: 20px; flex-wrap: wrap; }
         .produtos-area { flex: 3; min-width: 300px; }
 
-        /* Carrinho e Cliente Lateral */
-        .carrinho-lateral { flex: 1; min-width: 300px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
+        .carrinho-lateral { flex: 1; min-width: 280px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
         .carrinho-lateral h2 { font-size: 18px; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333; }
-        
-        /* Bloco de Cadastro de Cliente Destacado */
-        .bloco-cliente { background: #e8f8f0; border: 2px solid #27ae60; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
-        .bloco-cliente h3 { margin: 0 0 10px 0; font-size: 15px; color: #27ae60; border-bottom: 1px solid #d4efdf; padding-bottom: 6px; }
-        .form-grupo { margin-bottom: 10px; }
-        .form-grupo label { display: block; font-weight: bold; margin-bottom: 3px; font-size: 13px; color: #333; }
-        .form-grupo input, .form-grupo textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; box-sizing: border-box; background: #fff; }
-        .btn-salvar-cliente { background: #27ae60; color: white; border: none; padding: 10px; width: 100%; border-radius: 4px; font-weight: bold; font-size: 13px; cursor: pointer; margin-top: 5px; }
-        .btn-salvar-cliente:hover { background: #219653; }
-        
-        .cliente-resumo { font-size: 13px; line-height: 1.5; color: #333; }
-        .btn-editar-cliente { background: #e67e22; color: white; border: none; padding: 6px; width: 100%; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer; margin-top: 8px; }
-        .btn-editar-cliente:hover { background: #d35400; }
-
         .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
         .item-carrinho .detalhes { flex: 1; margin-right: 10px; }
         .item-carrinho .controles { display: flex; align-items: center; gap: 5px; }
         .item-carrinho button { background: #e0e0e0; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .item-carrinho button:hover { background: #d0d0d0; }
         .carrinho-total { font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; color: #27ae60; }
 
         .btn-limpar { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; font-weight: bold; }
         .btn-limpar:hover { background: #c0392b; }
 
-        /* Grid de Produtos */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .card { background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
         .card img { width: 100%; height: 140px; object-fit: contain; border-radius: 4px; background: #fff; margin-bottom: 10px; }
@@ -51,6 +36,7 @@
 
         .card-controles { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; border: 1px solid #ddd; border-radius: 5px; padding: 4px; }
         .card-controles button { background: #3498db; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 14px; }
+        .card-controles button:hover { background: #2980b9; }
         .card-controles span { font-weight: bold; font-size: 15px; color: #333; }
 
         .pagination { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
@@ -70,55 +56,17 @@
 <body>
 
     <div class="container">
-        <a class="voltar" href="index.html">← Voltar ao catálogo principal</a>
+        <a class="voltar" href="index.html">← Voltar ao catálogo</a>
         <h1>Descartáveis</h1>
 
         <div class="loja-layout">
-            <!-- Área de Produtos -->
             <div class="produtos-area">
                 <div id="product-grid" class="grid"></div>
                 <div id="pagination" class="pagination"></div>
             </div>
 
-            <!-- Carrinho e Cadastro Lateral -->
             <div class="carrinho-lateral">
-                
-                <!-- Bloco de Identificação do Cliente -->
-                <div class="bloco-cliente">
-                    <h3>Identificação do Cliente</h3>
-                    
-                    <!-- Formulário de Cadastro (aparece se não estiver cadastrado ou ao clicar em editar) -->
-                    <form id="form-cliente" onsubmit="salvarCliente(event)">
-                        <div class="form-grupo">
-                            <label>Nome / Razão Social:</label>
-                            <input type="text" id="cli-nome" required placeholder="Nome completo">
-                        </div>
-                        <div class="form-grupo">
-                            <label>CPF ou CNPJ:</label>
-                            <input type="text" id="cli-documento" required placeholder="Somente números">
-                        </div>
-                        <div class="form-grupo">
-                            <label>Telefone / WhatsApp:</label>
-                            <input type="text" id="cli-telefone" required placeholder="(21) 99999-9999">
-                        </div>
-                        <div class="form-grupo">
-                            <label>Endereço de Entrega:</label>
-                            <textarea id="cli-endereco" rows="2" required placeholder="Rua, Nº, Bairro, Cidade"></textarea>
-                        </div>
-                        <button type="submit" class="btn-salvar-cliente">Salvar Cadastro</button>
-                    </form>
-
-                    <!-- Resumo do Cliente (aparece após cadastrado) -->
-                    <div id="resumo-cliente" class="cliente-resumo" style="display: none;">
-                        <p style="margin: 0 0 5px 0;"><strong>Nome:</strong> <span id="res-nome"></span></p>
-                        <p style="margin: 0 0 5px 0;"><strong>Doc:</strong> <span id="res-doc"></span></p>
-                        <p style="margin: 0 0 5px 0;"><strong>Tel:</strong> <span id="res-tel"></span></p>
-                        <p style="margin: 0 0 8px 0;"><strong>End:</strong> <span id="res-end"></span></p>
-                        <button type="button" class="btn-editar-cliente" onclick="editarCliente()">Alterar Dados</button>
-                    </div>
-                </div>
-
-                <h2>Seu Carrinho</h2>
+                <h2>Seu Carrinho Global</h2>
                 <div id="lista-carrinho">
                     <p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
                 </div>
@@ -133,11 +81,11 @@
         <a id="btn-cotar" href="#" target="_blank">Enviar Cotação WhatsApp</a>
     </div>
 
-    <script>
-        const numeroWhatsApp = "5521968659086";
-        let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
-        let cliente = JSON.parse(localStorage.getItem('cliente_distribuidora')) || {};
+    <!-- 1º: lógica do carrinho (compartilhada por todas as categorias) -->
+    <script src="carrinho.js"></script>
 
+    <!-- 2º: apenas os produtos desta página -->
+    <script>
         const produtos = [
             { id: "des_001", nome: "Canudo curto c/500", preco: 16.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGKVOWHhcSPRg2Q0COM5Y2NLWPF_db_2vwjAxWeuQGLQ&s=10" },
             { id: "des_002", nome: "Canudo longo c/500", preco: 19.90, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F25b4556b-d44e-4c93-9a40-808a2467fbad.jpg?alt=media" },
@@ -156,300 +104,4 @@
             { id: "des_015", nome: "Guardanapo estojo 14x14 1200f", preco: 13.40, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F7515c11f-db33-4034-b888-4f79d8843682.jpg?alt=media" },
             { id: "des_016", nome: "Palito redondo picolé c/100", preco: 5.75, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Ff0f35f60-68da-4248-b983-d4677e98849d.jpg?alt=media" },
             { id: "des_017", nome: "Papel alumínio 4m c/05", preco: 17.50, imagem: "https://images.tcdn.com.br/img/img_prod/987957/papel_aluminio_30cm_4m_mello_1702549_1_ed212fce5297f66d0073f6ce71cdd274.jpg" },
-            { id: "des_018", nome: "Prato desc. 21cm 5x10", preco: 22.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvykMDFVFs_-D8SZ8JHcbS6_QP7DeEJ2ElxrInU2uDNQ&s=10" },
-            { id: "des_019", nome: "Prato desc. 18cm 5x10", preco: 15.00, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F91331eea-6dbb-4a61-b3ce-e8f3ffa92159.jpg?alt=media" },
-            { id: "des_020", nome: "Prato desc. 15cm 5x10", preco: 12.50, imagem: "" },
-            { id: "des_021", nome: "Quentinha isopor c/100", preco: 47.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSaPndiu3PyY8BdOfQ3LzO4EFYn5vWMoE6JPBrykVwhw&s=10" },
-            { id: "des_022", nome: "Cumbuca isopor n. 15", preco: 17.90, imagem: "" },
-            { id: "des_023", nome: "Saco de sacolé 6x24 c/100", preco: 22.50, imagem: "" },
-            { id: "des_024", nome: "Saco de sacolé 5x24 c/100", preco: 17.50, imagem: "" },
-            { id: "des_025", nome: "Saco de doce 1/2 kg c/100", preco: 4.20, imagem: "" },
-            { id: "des_026", nome: "Saco de doce 1 kg c/100", preco: 4.80, imagem: "" },
-            { id: "des_027", nome: "Saco de doce 1/4 c/100", preco: 3.99, imagem: "" },
-            { id: "des_028", nome: "Saco de doce 2kg c/100", preco: 9.60, imagem: "" },
-            { id: "des_029", nome: "Saco de lixo 100l c/100", preco: 59.00, imagem: "" },
-            { id: "des_030", nome: "Saco de lixo 200l c/100", preco: 95.00, imagem: "" },
-            { id: "des_031", nome: "Saco de lixo 60l c/100", preco: 33.20, imagem: "" },
-            { id: "des_032", nome: "Saco de lixo 40l c/100", preco: 23.40, imagem: "" },
-            { id: "des_033", nome: "Sacola branca 25x35 c/1000", preco: 45.00, imagem: "" },
-            { id: "des_034", nome: "Sacola preta 25x35 c/1000", preco: 45.00, imagem: "" },
-            { id: "des_035", nome: "Sacola REF. 30x45 2kg", preco: 39.00, imagem: "" },
-            { id: "des_036", nome: "Sacola REF 40x50 3kg", preco: 59.00, imagem: "" }
-        ];
-
-        let paginaAtual = 1;
-        const itensPorPagina = 12;
-
-        function escaparHTML(texto) {
-            return String(texto).replace(/&/g, "&amp;").replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-        }
-
-        // Validação oficial de CPF
-        function validarCPF(cpf) {
-            cpf = cpf.replace(/[^\d]/g, '');
-            if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
-            let soma = 0, resto;
-            for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i-1, i)) * (11 - i);
-            resto = (soma * 10) % 11;
-            if ((resto === 10) || (resto === 11)) resto = 0;
-            if (resto !== parseInt(cpf.substring(9, 10))) return false;
-            soma = 0;
-            for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i-1, i)) * (12 - i);
-            resto = (soma * 10) % 11;
-            if ((resto === 10) || (resto === 11)) resto = 0;
-            return resto === parseInt(cpf.substring(10, 11));
-        }
-
-        // Validação oficial de CNPJ
-        function validarCNPJ(cnpj) {
-            cnpj = cnpj.replace(/[^\d]/g, '');
-            if (cnpj.length !== 14 || /^(\d)\1+$/.test(cnpj)) return false;
-            let tamanho = cnpj.length - 2;
-            let numeros = cnpj.substring(0, tamanho);
-            let digitos = cnpj.substring(tamanho);
-            let soma = 0, pos = tamanho - 7;
-            for (let i = tamanho; i >= 1; i--) {
-                soma += numeros.charAt(tamanho - i) * pos--;
-                if (pos < 2) pos = 9;
-            }
-            let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-            if (resultado !== parseInt(digitos.charAt(0))) return false;
-            tamanho = tamanho + 1;
-            numeros = cnpj.substring(0, tamanho);
-            soma = 0;
-            pos = tamanho - 7;
-            for (let i = tamanho; i >= 1; i--) {
-                soma += numeros.charAt(tamanho - i) * pos--;
-                if (pos < 2) pos = 9;
-            }
-            resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-            return resultado === parseInt(digitos.charAt(1));
-        }
-
-        function salvarCliente(event) {
-            event.preventDefault();
-            const docBruto = document.getElementById('cli-documento').value;
-            const docLimpo = docBruto.replace(/[^\d]/g, '');
-
-            let documentoValido = false;
-            if (docLimpo.length === 11) {
-                documentoValido = validarCPF(docLimpo);
-            } else if (docLimpo.length === 14) {
-                documentoValido = validarCNPJ(docLimpo);
-            }
-
-            if (!documentoValido) {
-                alert("CPF ou CNPJ inválido! Por favor, insira um documento real e correto para continuar.");
-                document.getElementById('cli-documento').focus();
-                return;
-            }
-
-            cliente = {
-                nome: document.getElementById('cli-nome').value.trim(),
-                documento: docBruto.trim(),
-                telefone: document.getElementById('cli-telefone').value.trim(),
-                endereco: document.getElementById('cli-endereco').value.trim()
-            };
-
-            localStorage.setItem('cliente_distribuidora', JSON.stringify(cliente));
-            atualizarInterfaceCliente();
-            alert("Cadastro salvo com sucesso!");
-        }
-
-        function atualizarInterfaceCliente() {
-            const form = document.getElementById('form-cliente');
-            const resumo = document.getElementById('resumo-cliente');
-
-            if (cliente && cliente.nome && cliente.documento) {
-                document.getElementById('res-nome').innerText = cliente.nome;
-                document.getElementById('res-doc').innerText = cliente.documento;
-                document.getElementById('res-tel').innerText = cliente.telefone;
-                document.getElementById('res-end').innerText = cliente.endereco;
-
-                form.style.display = 'none';
-                resumo.style.display = 'block';
-            } else {
-                form.style.display = 'block';
-                resumo.style.display = 'none';
-            }
-            atualizarCarrinhoUI();
-        }
-
-        function editarCliente() {
-            document.getElementById('cli-nome').value = cliente.nome || '';
-            document.getElementById('cli-documento').value = cliente.documento || '';
-            document.getElementById('cli-telefone').value = cliente.telefone || '';
-            document.getElementById('cli-endereco').value = cliente.endereco || '';
-
-            document.getElementById('form-cliente').style.display = 'block';
-            document.getElementById('resumo-cliente').style.display = 'none';
-        }
-
-        function renderizarProdutos() {
-            const grid = document.getElementById("product-grid");
-            grid.innerHTML = "";
-
-            const inicio = (paginaAtual - 1) * itensPorPagina;
-            const itensPagina = produtos.slice(inicio, inicio + itensPorPagina);
-
-            itensPagina.forEach(prod => {
-                const card = document.createElement("div");
-                card.className = "card";
-                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${escaparHTML(prod.nome)}">` : '';
-                const qtd = carrinho[prod.id] ? carrinho[prod.id].quantidade : 0;
-                const nomeJS = prod.nome.replace(/'/g, "\\'");
-
-                let acaoHTML;
-                if (qtd === 0) {
-                    acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, 1)">Adicionar</button>`;
-                } else {
-                    acaoHTML = `
-                        <div class="card-controles">
-                            <button onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, -1)">-</button>
-                            <span>${qtd}</span>
-                            <button onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, 1)">+</button>
-                        </div>`;
-                }
-
-                card.innerHTML = `
-                    ${imgTag}
-                    <h3>${escaparHTML(prod.nome)}</h3>
-                    <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
-                    ${acaoHTML}`;
-                grid.appendChild(card);
-            });
-
-            renderizarPaginacao();
-        }
-
-        function renderizarPaginacao() {
-            const paginacao = document.getElementById("pagination");
-            paginacao.innerHTML = "";
-            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
-
-            for (let i = 1; i <= totalPaginas; i++) {
-                const btn = document.createElement("button");
-                btn.innerText = i;
-                if (i === paginaAtual) btn.className = "active";
-                btn.onclick = () => {
-                    paginaAtual = i;
-                    renderizarProdutos();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                };
-                paginacao.appendChild(btn);
-            }
-        }
-
-        function alterarQuantidade(id, nome, preco, delta) {
-            if (!carrinho[id]) {
-                if (delta > 0) carrinho[id] = { nome, preco, quantidade: delta };
-            } else {
-                carrinho[id].quantidade += delta;
-                if (carrinho[id].quantidade <= 0) delete carrinho[id];
-            }
-            salvarESincronizar();
-        }
-
-        function limparCarrinho() {
-            carrinho = {};
-            salvarESincronizar();
-        }
-
-        function salvarESincronizar() {
-            localStorage.setItem('carrinho_distribuidora', JSON.stringify(carrinho));
-            renderizarProdutos();
-            atualizarCarrinhoUI();
-        }
-
-        function atualizarCarrinhoUI() {
-            const listaDiv = document.getElementById("lista-carrinho");
-            const totalDiv = document.getElementById("carrinho-total");
-            const btnLimpar = document.getElementById("btn-limpar-carrinho");
-            const footerTotal = document.getElementById("footer-total");
-
-            listaDiv.innerHTML = "";
-            let valorTotal = 0;
-            let temItens = false;
-
-            let mensagem = "*NOVO PEDIDO*\n\n";
-            let contador = 1;
-
-            for (let id in carrinho) {
-                temItens = true;
-                let item = carrinho[id];
-                let subtotal = item.preco * item.quantidade;
-                valorTotal += subtotal;
-
-                const itemDiv = document.createElement("div");
-                itemDiv.className = "item-carrinho";
-                itemDiv.innerHTML = `
-                    <div class="detalhes">
-                        <strong>${escaparHTML(item.nome)}</strong><br>
-                        <small>R$ ${item.preco.toFixed(2).replace('.', ',')} x ${item.quantidade}</small>
-                    </div>
-                    <div class="controles">
-                        <button onclick="alterarQuantidade('${id}', '${item.nome.replace(/'/g, "\\'")}', ${item.preco}, -1)">-</button>
-                        <span>${item.quantidade}</span>
-                        <button onclick="alterarQuantidade('${id}', '${item.nome.replace(/'/g, "\\'")}', ${item.preco}, 1)">+</button>
-                    </div>
-                `;
-                listaDiv.appendChild(itemDiv);
-
-                mensagem += `${contador}. ${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
-                contador++;
-            }
-
-            if (!temItens) {
-                listaDiv.innerHTML = '<p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>';
-                totalDiv.style.display = "none";
-                btnLimpar.style.display = "none";
-            } else {
-                totalDiv.style.display = "block";
-                btnLimpar.style.display = "block";
-                totalDiv.innerText = `Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
-            }
-
-            footerTotal.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
-            mensagem += `\n*Valor Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}*`;
-
-            mensagem += `\n\n*DADOS DO CLIENTE*\n`;
-            mensagem += `Nome: ${cliente.nome || "(não informado)"}\n`;
-            mensagem += `CPF/CNPJ: ${cliente.documento || "(não informado)"}\n`;
-            mensagem += `Telefone: ${cliente.telefone || "(não informado)"}\n`;
-            mensagem += `Endereço: ${cliente.endereco || "(não informado)"}`;
-
-            const btnCotar = document.getElementById("btn-cotar");
-            btnCotar.href = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
-            
-            btnCotar.onclick = function(e) {
-                if (!cliente.nome || !cliente.documento) {
-                    e.preventDefault();
-                    alert("Por favor, preencha e salve os dados do cliente (com CPF/CNPJ válido) antes de enviar a cotação.");
-                    document.getElementById('cli-nome').focus();
-                } else if (!temItens) {
-                    e.preventDefault();
-                    alert("Adicione pelo menos um produto ao carrinho antes de enviar.");
-                }
-            };
-        }
-
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'carrinho_distribuidora') {
-                carrinho = JSON.parse(e.newValue) || {};
-                renderizarProdutos();
-                atualizarCarrinhoUI();
-            }
-            if (e.key === 'cliente_distribuidora') {
-                cliente = JSON.parse(e.newValue) || {};
-                atualizarInterfaceCliente();
-            }
-        });
-
-        atualizarInterfaceCliente();
-        renderizarProdutos();
-        renderizarPaginacao();
-    </script>
-
-</body>
-</html>
+            { id:

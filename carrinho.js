@@ -34,6 +34,14 @@ function clienteCadastrado() {
     return cliente.nome && cliente.documento && cliente.telefone && cliente.endereco;
 }
 
+function trocarCliente() {
+    if (confirm("Deseja realmente trocar de cliente para este pedido? Os dados anteriores serão limpos para um novo cadastro.")) {
+        localStorage.removeItem('cliente_distribuidora');
+        cliente = {};
+        window.location.href = "clientes.html";
+    }
+}
+
 function mostrarResumoCliente() {
     let bloco = document.getElementById("dados-cliente");
     if (!bloco) {
@@ -46,7 +54,10 @@ function mostrarResumoCliente() {
     }
     if (clienteCadastrado()) {
         bloco.innerHTML = `<strong>Cliente:</strong> ${escaparHTML(cliente.nome)}<br>
-            <a href="clientes.html" style="color:#27ae60;">Editar meus dados</a>`;
+            <div style="margin-top:6px; display:flex; gap:12px; align-items:center;">
+                <a href="clientes.html" style="color:#27ae60; text-decoration:underline;">Editar dados</a>
+                <a href="#" onclick="trocarCliente(); return false;" style="color:#e67e22; font-weight:bold; text-decoration:underline;">Trocar cliente</a>
+            </div>`;
     } else {
         bloco.innerHTML = `<a href="clientes.html" style="color:#e74c3c;font-weight:bold;">
             ⚠ Cadastre-se para enviar seu pedido</a>`;

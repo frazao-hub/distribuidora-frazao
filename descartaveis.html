@@ -104,4 +104,72 @@
             { id: "des_015", nome: "Guardanapo estojo 14x14 1200f", preco: 13.40, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F7515c11f-db33-4034-b888-4f79d8843682.jpg?alt=media" },
             { id: "des_016", nome: "Palito redondo picolé c/100", preco: 5.75, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Ff0f35f60-68da-4248-b983-d4677e98849d.jpg?alt=media" },
             { id: "des_017", nome: "Papel alumínio 4m c/05", preco: 17.50, imagem: "https://images.tcdn.com.br/img/img_prod/987957/papel_aluminio_30cm_4m_mello_1702549_1_ed212fce5297f66d0073f6ce71cdd274.jpg" },
-            { id:
+            { id: "des_018", nome: "Prato raso descartável c/10", preco: 4.50, imagem: "" },
+            { id: "des_019", nome: "Prato fundo descartável c/10", preco: 4.80, imagem: "" },
+            { id: "des_020", nome: "Saco para lixo 50L c/100", preco: 29.90, imagem: "" },
+            { id: "des_021", nome: "Saco para lixo 100L c/100", preco: 45.50, imagem: "" }
+        ];
+
+        let paginaAtual = 1;
+        const itensPorPagina = 12;
+
+        function renderizarProdutos() {
+            const grid = document.getElementById("product-grid");
+            grid.innerHTML = "";
+
+            const inicio = (paginaAtual - 1) * itensPorPagina;
+            const itensPagina = produtos.slice(inicio, inicio + itensPorPagina);
+
+            itensPagina.forEach(prod => {
+                const card = document.createElement("div");
+                card.className = "card";
+                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${escaparHTML(prod.nome)}">` : '';
+                const qtd = carrinho[prod.id] ? carrinho[prod.id].quantidade : 0;
+                const nomeJS = prod.nome.replace(/'/g, "\\'");
+
+                let acaoHTML;
+                if (qtd === 0) {
+                    acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, 1)">Adicionar</button>`;
+                } else {
+                    acaoHTML = `
+                        <div class="card-controles">
+                            <button onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, -1)">-</button>
+                            <span>${qtd}</span>
+                            <button onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, 1)">+</button>
+                        </div>`;
+                }
+
+                card.innerHTML = `
+                    ${imgTag}
+                    <h3>${escaparHTML(prod.nome)}</h3>
+                    <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
+                    ${acaoHTML}`;
+                grid.appendChild(card);
+            });
+
+            renderizarPaginacao();
+        }
+
+        function renderizarPaginacao() {
+            const paginacao = document.getElementById("pagination");
+            paginacao.innerHTML = "";
+            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                const btn = document.createElement("button");
+                btn.innerText = i;
+                if (i === paginaAtual) btn.className = "active";
+                btn.onclick = () => {
+                    paginaAtual = i;
+                    renderizarProdutos();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                paginacao.appendChild(btn);
+            }
+        }
+
+        renderizarProdutos();
+    </script>
+
+</body>
+</html>

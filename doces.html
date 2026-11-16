@@ -88,7 +88,7 @@
     <!-- 1º: lógica do carrinho (compartilhada por todas as categorias) -->
     <script src="carrinho.js"></script>
 
-    <!-- 2º: produtos ordenados alfabeticamente -->
+    <!-- 2º: produtos ordenados alfabeticamente com proteção de erro -->
     <script>
         const produtos = [
             { id: "doc_001", nome: "Bananinha cremosa famoso c/24", preco: 36.10, imagem: "" },
@@ -120,4 +120,112 @@
             { id: "doc_027", nome: "Goma fini minhoca c/12", preco: 11.70, imagem: "" },
             { id: "doc_028", nome: "Goma fini morango c/12", preco: 9.80, imagem: "" },
             { id: "doc_029", nome: "Goma fini morango cítrico c/12", preco: 9.80, imagem: "" },
-            { id: "doc_0
+            { id: "doc_030", nome: "Goma fini pinta língua c/12", preco: 9.80, imagem: "" },
+            { id: "doc_031", nome: "Goma fini sortido c/12", preco: 9.80, imagem: "" },
+            { id: "doc_032", nome: "Goma fini tutti frutti c/12", preco: 9.80, imagem: "" },
+            { id: "doc_033", nome: "Goma fini twister c/12", preco: 9.80, imagem: "" },
+            { id: "doc_034", nome: "Goma fini twister ácido c/12", preco: 9.80, imagem: "" },
+            { id: "doc_035", nome: "Goma fini ursinho c/12", preco: 11.70, imagem: "" },
+            { id: "doc_036", nome: "Goma fini uva c/12", preco: 9.80, imagem: "" },
+            { id: "doc_037", nome: "Goma fini uva cítrico c/12", preco: 9.80, imagem: "" },
+            { id: "doc_038", nome: "Goma mini sortida c/24", preco: 14.40, imagem: "" },
+            { id: "doc_039", nome: "Goma tubo Dori c/30", preco: 22.50, imagem: "" },
+            { id: "doc_040", nome: "Grelhaditos c/30", preco: 20.90, imagem: "" },
+            { id: "doc_041", nome: "Mariola 2,5kg c/50", preco: 37.99, imagem: "" },
+            { id: "doc_042", nome: "Mariola 3,0kg c/50", preco: 43.49, imagem: "" },
+            { id: "doc_043", nome: "Mariola açucarada c/50", preco: 15.95, imagem: "" },
+            { id: "doc_044", nome: "Mariola lisa 800g c/50", preco: 14.80, imagem: "" },
+            { id: "doc_045", nome: "Mendorato c/30", preco: 20.90, imagem: "" },
+            { id: "doc_046", nome: "Nucita chocolate c/48", preco: 20.70, imagem: "" },
+            { id: "doc_047", nome: "Nucita morango c/48", preco: 20.70, imagem: "" },
+            { id: "doc_048", nome: "Nucita napolitano c/24", preco: 17.55, imagem: "" },
+            { id: "doc_049", nome: "Nucita sortida c/48", preco: 20.90, imagem: "" },
+            { id: "doc_050", nome: "Paçoca rolha santa helena c/100", preco: 38.35, imagem: "" },
+            { id: "doc_051", nome: "Paçocão c/20", preco: 20.90, imagem: "" },
+            { id: "doc_052", nome: "Pé de moça c/20", preco: 22.50, imagem: "" },
+            { id: "doc_053", nome: "Pezão crocante c/20", preco: 20.90, imagem: "" },
+            { id: "doc_054", nome: "Pingo de leite c/50", preco: 19.50, imagem: "" },
+            { id: "doc_055", nome: "Quebra queixão c/20", preco: 28.70, imagem: "" }
+        ];
+
+        let paginaAtual = 1;
+        const itensPorPagina = 12;
+
+        function escaparHTML(str) {
+            return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+        }
+
+        function renderizarProdutos() {
+            try {
+                const grid = document.getElementById("product-grid");
+                if (!grid) return;
+                grid.innerHTML = "";
+
+                const inicio = (paginaAtual - 1) * itensPorPagina;
+                const itensPagina = produtos.slice(inicio, inicio + itensPorPagina);
+
+                itensPagina.forEach(prod => {
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${escaparHTML(prod.nome)}">` : '';
+                    
+                    const carrinhoObj = (typeof carrinho !== 'undefined') ? carrinho : {};
+                    const qtd = (carrinhoObj[prod.id]) ? carrinhoObj[prod.id].quantidade : 0;
+                    const nomeJS = prod.nome.replace(/'/g, "\\'");
+
+                    let acaoHTML;
+                    if (qtd === 0) {
+                        acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, 1)">Adicionar</button>`;
+                    } else {
+                        acaoHTML = `
+                            <div class="card-controles">
+                                <button onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, -1)">-</button>
+                                <span>${qtd}</span>
+                                <button onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, 1)">+</button>
+                            </div>`;
+                    }
+
+                    card.innerHTML = `
+                        ${imgTag}
+                        <h3>${escaparHTML(prod.nome)}</h3>
+                        <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
+                        ${acaoHTML}`;
+                    grid.appendChild(card);
+                });
+
+                renderizarPaginacao();
+            } catch (erro) {
+                console.error("Erro ao renderizar produtos:", erro);
+            }
+        }
+
+        function renderizarPaginacao() {
+            const paginacao = document.getElementById("pagination");
+            if (!paginacao) return;
+            paginacao.innerHTML = "";
+            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                const btn = document.createElement("button");
+                btn.innerText = i;
+                if (i === paginaAtual) btn.className = "active";
+                btn.onclick = () => {
+                    paginaAtual = i;
+                    renderizarProdutos();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                paginacao.appendChild(btn);
+            }
+        }
+
+        // Executa ao carregar
+        window.onload = function() {
+            renderizarProdutos();
+            if (typeof atualizarCarrinho === 'function') {
+                atualizarCarrinho();
+            }
+        };
+    </script>
+
+</body>
+</html>

@@ -1,152 +1,123 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Catálogo - Doces | Distribuidora Frazão</title>
-<style>
-body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; padding-bottom: 120px; }
-h1 { text-align: center; color: #333; }
-.container { max-width: 1200px; margin: 0 auto; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo - Doces | Distribuidora Frazão</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; padding-bottom: 120px; }
+        h1 { text-align: center; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .voltar { display: inline-block; margin-bottom: 10px; color: #27ae60; text-decoration: none; font-weight: bold; }
 
-.loja-layout { display: flex; gap: 20px; flex-wrap: wrap; }
-.produtos-area { flex: 3; min-width: 300px; }
+        .loja-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+        .produtos-area { flex: 3; min-width: 300px; }
 
-/* Carrinho Lateral */
-.carrinho-lateral { flex: 1; min-width: 280px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
-.carrinho-lateral h2 { font-size: 18px; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333; }
-.item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
-.item-carrinho .detalhes { flex: 1; margin-right: 10px; }
-.item-carrinho .controles { display: flex; align-items: center; gap: 5px; }
-.item-carrinho button { background: #e0e0e0; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-weight: bold; }
-.item-carrinho button:hover { background: #d0d0d0; }
-.carrinho-total { font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; color: #27ae60; }
+        .carrinho-lateral { flex: 1; min-width: 280px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
+        .carrinho-lateral h2 { font-size: 18px; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333; }
+        .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
+        .item-carrinho .detalhes { flex: 1; margin-right: 10px; }
+        .item-carrinho .controles { display: flex; align-items: center; gap: 5px; }
+        .item-carrinho button { background: #e0e0e0; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .item-carrinho button:hover { background: #d0d0d0; }
+        .carrinho-total { font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; color: #27ae60; }
 
-.btn-limpar { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; font-weight: bold; }
-.btn-limpar:hover { background: #c0392b; }
+        .btn-limpar { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; font-weight: bold; }
+        .btn-limpar:hover { background: #c0392b; }
 
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
-.card { background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
-.card img { width: 100%; height: 140px; object-fit: contain; border-radius: 4px; background: #fff; margin-bottom: 10px; }
-.card h3 { font-size: 15px; margin: 0 0 8px 0; color: #444; }
-.card p { font-size: 16px; font-weight: bold; color: #27ae60; margin: 0 0 12px 0; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+        .card { background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
+        .card img { width: 100%; height: 140px; object-fit: contain; border-radius: 4px; background: #fff; margin-bottom: 10px; }
+        .card h3 { font-size: 15px; margin: 0 0 8px 0; color: #444; }
+        .card p { font-size: 16px; font-weight: bold; color: #27ae60; margin: 0 0 12px 0; }
 
-/* Botões do Card */
-.btn-add { background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.2s; }
-.btn-add:hover { background: #2980b9; }
+        .btn-add { background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.2s; }
+        .btn-add:hover { background: #2980b9; }
 
-.card-controles { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; border: 1px solid #ddd; border-radius: 5px; padding: 4px; }
-.card-controles button { background: #3498db; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 14px; }
-.card-controles button:hover { background: #2980b9; }
-.card-controles span { font-weight: bold; font-size: 15px; color: #333; }
+        .card-controles { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; border: 1px solid #ddd; border-radius: 5px; padding: 4px; }
+        .card-controles button { background: #3498db; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 14px; }
+        .card-controles button:hover { background: #2980b9; }
+        .card-controles span { font-weight: bold; font-size: 15px; color: #333; }
 
-/* Paginação */
-.pagination { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
-.pagination button { padding: 8px 12px; border: none; background: #ddd; cursor: pointer; border-radius: 4px; font-weight: bold; }
-.pagination button.active { background: #27ae60; color: white; }
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .pagination button { padding: 8px 12px; border: none; background: #ddd; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .pagination button.active { background: #27ae60; color: white; }
 
-/* Barra Fixa do WhatsApp */
-.whatsapp-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #25d366; color: white; text-align: center; padding: 12px; font-size: 16px; font-weight: bold; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 20px; box-sizing: border-box; }
-.whatsapp-bar a { background: white; color: #25d366; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; }
-.whatsapp-bar a:hover { background: #f0f0f0; }
+        .whatsapp-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #25d366; color: white; text-align: center; padding: 12px; font-size: 16px; font-weight: bold; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 20px; box-sizing: border-box; }
+        .whatsapp-bar a { background: white; color: #25d366; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+        .whatsapp-bar a:hover { background: #f0f0f0; }
 
-@media (max-width: 768px) {
-.loja-layout { flex-direction: column-reverse; }
-.carrinho-lateral { position: static; width: 100%; margin-bottom: 20px; }
-}
-</style>
+        @media (max-width: 1024px) {
+            .grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .loja-layout { flex-direction: column-reverse; }
+            .carrinho-lateral { position: static; width: 100%; margin-bottom: 20px; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-<h1>Doces</h1>
+    <div class="container">
+        <a class="voltar" href="index.html">← Voltar ao catálogo</a>
+        <h1>Doces</h1>
 
-<div class="loja-layout">
-<div class="produtos-area">
-<div id="product-grid" class="grid"></div>
-<div id="pagination" class="pagination"></div>
-</div>
+        <div class="loja-layout">
+            <div class="produtos-area">
+                <div id="product-grid" class="grid"></div>
+                <div id="pagination" class="pagination"></div>
+            </div>
 
-<div class="carrinho-lateral">
-<h2>Seu Carrinho Global</h2>
-<div id="lista-carrinho">
-<p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
-</div>
-<div id="carrinho-total" class="carrinho-total" style="display: none;">
-Total: R$ 0,00
-</div>
-<button class="btn-limpar" onclick="limparCarrinho()" id="btn-limpar-carrinho" style="display: none;">Esvaziar Carrinho</button>
-</div>
-</div>
-</div>
+            <div class="carrinho-lateral">
+                <h2>Seu Carrinho Global</h2>
+                <div id="lista-carrinho">
+                    <p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
+                </div>
+                <div id="carrinho-total" class="carrinho-total" style="display: none;">Total: R$ 0,00</div>
+                <button class="btn-limpar" onclick="limparCarrinho()" id="btn-limpar-carrinho" style="display: none;">Esvaziar Carrinho</button>
+            </div>
+        </div>
+    </div>
 
-<div class="whatsapp-bar">
-<span>Total: <span id="footer-total">R$ 0,00</span></span>
-<a id="btn-cotar" href="#" target="_blank">Enviar Cotação WhatsApp</a>
-</div>
+    <div class="whatsapp-bar">
+        <span>Total: <span id="footer-total">R$ 0,00</span></span>
+        <a id="btn-cotar" href="#" target="_blank">Enviar Cotação WhatsApp</a>
+    </div>
 
-<script>
-const produtos = [
-{ id: "doc_001", nome: "Doce de amendoim 1,5 kg c/50", preco: 29.90, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_620043-MLA99397118620_112025-F.webp" },
-{ id: "doc_002", nome: "Doce de amendoim 1,65 kg c/30", preco: 33.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoJZbqn0NpHkzfQmZfnZaJakpZqAnSpPtbf8Mmtz8crg&s=10" },
-{ id: "doc_003", nome: "Doce de amendoim liso Aurora c/20", preco: 20.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsN_l9rwPl-mrwoD1uY0_4gwJZZXoozKpjMMhGSlr-JA&s" },
-{ id: "doc_004", nome: "Doce de abóbora c/20", preco: 20.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCc5eqZJ0wP2wYiazY_36mClgYHsTZTWkbaj7BaC8DmQ&s" },
-{ id: "doc_005", nome: "Baton preto c/30", preco: 53.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbX-Gg_ZIU_fTC_jSCaPe5qE1KZyYn6fwS45PSXC5tNg&s=10" },
-{ id: "doc_006", nome: "Bombom serenata", preco: 53.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT40AlgV6O_5yyt4je5-aomEM0jf5Fesnj_NEAO48a2HQ&s=10" },
-{ id: "doc_007", nome: "Chup-chup biba c/50", preco: 34.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShprUFJXQw2YvRSDNbE5Mjzs8oXPI10WLUu8sX_3KtkQ&s" },
-{ id: "doc_008", nome: "Cocada Louveira c/20", preco: 28.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBF3_pSmBSoibUB0fXlIO4iO6ri9hShPkrzHRHCe0gTg&s=10" },
-{ id: "doc_009", nome: "Disqueti c/18", preco: 42.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBfn7BrqXhF9chtSnOgZxQMFkQ25XTvYAWB0VDcgvrWA&s=10" },
-{ id: "doc_010", nome: "Doce de leite c/20", preco: 19.90, imagem: "" },
-{ id: "doc_011", nome: "Doce de leite ninho c/40", preco: 23.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZr7u-LD0KbY2JIOoG1-Xn44P-jumwEtpOAPRqh4puBg&s=10" },
-{ id: "doc_012", nome: "Famoso beijinho de coco c/21", preco: 46.65, imagem: "" },
-{ id: "doc_013", nome: "Famoso beijinho goiabada c/21", preco: 46.65, imagem: "" },
-{ id: "doc_014", nome: "Famoso brigadeiro c/21", preco: 46.65, imagem: "" },
-{ id: "doc_015", nome: "Geladinho gel fruta c/40", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSocabffj326zTAa52OR3LgYxDvQrwyc7Dj2k2RYaoXMQ&s=10" },
-{ id: "doc_016", nome: "Geladão gel fruta c/20", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRW0wREiPyDWzZeMyqnJnqFfh90yMjzVa8cnIcVjeqBrg&s=10" },
-{ id: "doc_017", nome: "Goma fini morango c/12", preco: 9.80, imagem: "https://static.doceefesta.com.br/produto/347302-MAIN.png" },
-{ id: "doc_018", nome: "Goma fini morango cítrico c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAwsdKCD5yIaYX7E9kBN7MbWOan9Qgqf6A84ss4ZA_Xg&s=10" },
-{ id: "doc_019", nome: "Mariola lisa 800g c/50", preco: 14.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3nZlFMiMddb4Q377JuhObDNk_XXp5dl7PMC_xZ6-QpQ&s=10" },
-{ id: "doc_020", nome: "Nucita chocolate c/48", preco: 20.70, imagem: "" },
-{ id: "doc_021", nome: "Nucita morango c/48", preco: 20.70, imagem: "" },
-{ id: "doc_022", nome: "Nucita napolitano c/24", preco: 17.55, imagem: "" },
-{ id: "doc_023", nome: "Nucita sortida c/48", preco: 20.90, imagem: "" },
-{ id: "doc_024", nome: "Paçoca rolha santa helena c/100", preco: 38.35, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT64HApstpSQI1zGzC1Rp1QnbMGMTbJ5MyGQv_yOX9hoQ&s=10" },
-{ id: "doc_025", nome: "Pezão crocante c/20", preco: 20.90, imagem: "" },
-{ id: "doc_026", nome: "Pingo de leite c/50", preco: 19.50, imagem: "" },
-{ id: "doc_027", nome: "Cajuzinho c/20", preco: 20.90, imagem: "" },
-{ id: "doc_028", nome: "Crokissimo c/36", preco: 22.95, imagem: "" },
-{ id: "doc_029", nome: "Goma docile eucalipto c/24", preco: 14.40, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlhZLu8-3iYoc6ARfhLQZGBzAEr8KHNBDcng-iR0xCjg&s=10" },
-{ id: "doc_030", nome: "Goma fini angry c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7xBfRhMx5iJMXQ5OzngL6ccCOAWSTavtsmBguM7rKPg&s=10" },
-{ id: "doc_031", nome: "Goma fini pinta língua c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ3PAsOdT2S7EGxneImziigseJlZ2c7otliFl9i7OqNA&s=10" },
-{ id: "doc_032", nome: "Goma fini sortido c/12", preco: 9.80, imagem: "" },
-{ id: "doc_033", nome: "Goma mini sortida c/24", preco: 14.40, imagem: "" },
-{ id: "doc_034", nome: "Goma fini amora c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtERbdGc4ltk4AtBT-A3znCpMrueFh4amFR8Bp76qixQ&s=10" },
-{ id: "doc_035", nome: "Goma fini minhoca c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmyGdBVMUAbKcAFQAgdp1AAjAQGgEKSvGsaG46zzI0aw&s=10" },
-{ id: "doc_036", nome: "Goma fini uva c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmAsJJqJZo1zUJoQRqvSRFX48QAF9yBLct3qgD8apduw&s=10" },
-{ id: "doc_037", nome: "Goma fini tutti frutti c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTKmVWcQz8Gs82ACcg5aaTHhy1878o7DrZJsaP52XRRw&s=10" },
-{ id: "doc_038", nome: "Quebra queixão c/20", preco: 28.70, imagem: "" },
-            
-{ id: "doc_039", nome: "Goma fini twister c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9u9RjR6lYAws1Sy45HzxfcFHqbQENjavg8H1AMagacg&s=10" },
-{ id: "doc_040", nome: "Goma fini twister ácido c/12", preco: 9.80, imagem: "https://images.tcdn.com.br/img/img_prod/677323/tubes_com_12_unidades_de_17g_twister_acido_azedinho_fini_5225_1_c99efcf7bd783eaff7fc70a3e58261c2.png" },
-{ id: "doc_041", nome: "Goma fini dentadura c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqiT1HZwPwmW_1M2hIjRpGwjKveuNKfv6D0cxpopu2uA&s=10" },
-{ id: "doc_042", nome: "Mariola açucarada c/50", preco: 15.95, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYies9kXCCyF-yRSA1GmEwaKpgS6FfSr0nWdpJq8Exvw&s=10" },
-{ id: "doc_043", nome: "Goma fini beijinho c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2FXe4kHB8UWcQsWXEUFnPDcS88oTMnnr7MKgRyFuVRw&s=10" },
-{ id: "doc_044", nome: "Goma fini ursinho c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzsDW-UBFoLCpoMgEjW9cKr6N6b4YrlGJtbQUujRHLvA&s=10" },
-{ id: "doc_045", nome: "Goma fini uva cítrico c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLPJf9aVDz7JxzZLrYcG9gbLR57o0qGq16PzphdSYHnQ&s=10" },
-{ id: "doc_046", nome: "Goma fini banana c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSD-j3qp5_ZxYCLcre1nSfUMsVuMSoEq0Gqbr3BmnKQZQ&s=10" },
-{ id: "doc_047", nome: "Mariola 3,0kg c/50", preco: 43.49, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpDGda81cej9lmSH5FmZLKRbu7QEVyelZUdHvSWWO7yg&s=10" },
-{ id: "doc_048", nome: "Geleia Aurora c/20", preco: 20.90, imagem: "" },
-{ id: "doc_049", nome: "Mariola 2,5kg c/50", preco: 37.99, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSptK3KWViX6CE-kBD2dMyFprsQaqXwoB87EvKmjkw0A&s" },
-{ id: "doc_050", nome: "Mendorato c/30", preco: 20.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF9RHxNAIrtdhLP3CkAygJypidDXbzfem1Dkk_GzFEwvbqTuNq-vNpRy67&s=10" },
-{ id: "doc_051", nome: "Grelhaditos c/30", preco: 20.90, imagem: "https://images.tcdn.com.br/img/img_prod/987957/amendoim_grelhaditos_1_01kg_sem_pele_santa_helena_1726993_1_a7afe12a49f2d04a809e385a703f0a52.png" },
-{ id: "doc_052", nome: "Bananinha cremosa famoso c/24", preco: 36.10, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQL75P19TogxdJrS6lnhLFtFrV52uFhfhpfjKz3iMvLlw&s=10" },
-{ id: "doc_053", nome: "Paçocão c/20", preco: 20.90, imagem: "https://funchal.vtexassets.com/arquivos/ids/260769/capa_1_001.jpg?v=639219732579300000" },
-{ id: "doc_054", nome: "Goma tubo Dori c/30", preco: 22.50, imagem: "https://dori.com.br/wp-content/uploads/2022/08/9002902.png" },
-{ id: "doc_055", nome: "Pé de moça c/20", preco: 22.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7Vzikpmp8RRK1PewwkerEJiMTEbY6kQvEi9GxUcvtNw&s=10" }
-];
+    <!-- 1º: lógica do carrinho (compartilhada por todas as categorias) -->
+    <script src="carrinho.js"></script>
 
-let paginaAtual = 1;
-const itensPorPagina = 12;
-let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
-
-function renderizarProdutos() {
+    <!-- 2º: produtos ordenados alfabeticamente -->
+    <script>
+        const produtos = [
+            { id: "doc_001", nome: "Bananinha cremosa famoso c/24", preco: 36.10, imagem: "" },
+            { id: "doc_002", nome: "Baton preto c/30", preco: 53.90, imagem: "" },
+            { id: "doc_003", nome: "Bombom serenata", preco: 59.90, imagem: "" },
+            { id: "doc_004", nome: "Cajuzinho c/20", preco: 20.90, imagem: "" },
+            { id: "doc_005", nome: "Chup-chup biba c/50", preco: 34.90, imagem: "" },
+            { id: "doc_006", nome: "Cocada Aurora c/20", preco: 28.70, imagem: "" },
+            { id: "doc_007", nome: "Crokissimo c/36", preco: 22.95, imagem: "" },
+            { id: "doc_008", nome: "Disqueti c/18", preco: 41.90, imagem: "" },
+            { id: "doc_009", nome: "Doce de abóbora c/20", preco: 20.90, imagem: "" },
+            { id: "doc_010", nome: "Doce de amendoim 1,5 kg c/50", preco: 29.90, imagem: "" },
+            { id: "doc_011", nome: "Doce de amendoim 1,65 kg c/30", preco: 33.00, imagem: "" },
+            { id: "doc_012", nome: "Doce de amendoim liso Aurora c/20", preco: 20.90, imagem: "" },
+            { id: "doc_013", nome: "Doce de leite c/20", preco: 19.90, imagem: "" },
+            { id: "doc_014", nome: "Doce de leite ninho c/40", preco: 23.90, imagem: "" },
+            { id: "doc_015", nome: "Famoso beijinho de coco c/21", preco: 46.65, imagem: "" },
+            { id: "doc_016", nome: "Famoso beijinho goiabada c/21", preco: 46.65, imagem: "" },
+            { id: "doc_017", nome: "Famoso brigadeiro c/21", preco: 46.65, imagem: "" },
+            { id: "doc_018", nome: "Geladão gel fruta c/20", preco: 11.70, imagem: "" },
+            { id: "doc_019", nome: "Geladinho gel fruta c/40", preco: 11.70, imagem: "" },
+            { id: "doc_020", nome: "Geleia Aurora c/20", preco: 20.90, imagem: "" },
+            { id: "doc_021", nome: "Goma docile eucalipto c/24", preco: 14.40, imagem: "" },
+            { id: "doc_022", nome: "Goma fini amora c/12", preco: 11.70, imagem: "" },
+            { id: "doc_023", nome: "Goma fini angry c/12", preco: 9.80, imagem: "" },
+            { id: "doc_024", nome: "Goma fini banana c/12", preco: 11.70, imagem: "" },
+            { id: "doc_025", nome: "Goma fini beijinho c/12", preco: 11.70, imagem: "" },
+            { id: "doc_026", nome: "Goma fini dentadura c/12", preco: 11.70, imagem: "" },
+            { id: "doc_027", nome: "Goma fini minhoca c/12", preco: 11.70, imagem: "" },
+            { id: "doc_028", nome: "Goma fini morango c/12", preco: 9.80, imagem: "" },
+            { id: "doc_029", nome: "Goma fini morango cítrico c/12", preco: 9.80, imagem: "" },
+            { id: "doc_0

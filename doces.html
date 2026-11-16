@@ -12,9 +12,16 @@
         .loja-layout { display: flex; gap: 20px; flex-wrap: wrap; }
         .produtos-area { flex: 3; min-width: 300px; }
         
-        /* Carrinho Lateral */
+        /* Carrinho Lateral & Formulário */
         .carrinho-lateral { flex: 1; min-width: 280px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
         .carrinho-lateral h2 { font-size: 18px; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333; }
+        
+        /* Seção de Cadastro do Cliente */
+        .form-cliente { margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
+        .form-cliente label { display: block; font-size: 12px; font-weight: bold; color: #555; margin-bottom: 4px; margin-top: 8px; }
+        .form-cliente input, .form-cliente textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; box-sizing: border-box; }
+        .form-cliente textarea { resize: vertical; height: 50px; }
+
         .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
         .item-carrinho .detalhes { flex: 1; margin-right: 10px; }
         .item-carrinho .controles { display: flex; align-items: center; gap: 5px; }
@@ -69,6 +76,22 @@
 
             <div class="carrinho-lateral">
                 <h2>Seu Carrinho Global</h2>
+
+                <!-- Formulário de Identificação do Cliente -->
+                <div class="form-cliente">
+                    <label for="cliente-nome">Seu Nome / Empresa:*</label>
+                    <input type="text" id="cliente-nome" placeholder="Digite seu nome" oninput="salvarDadosCliente()">
+
+                    <label for="cliente-tel">Telefone / WhatsApp:*</label>
+                    <input type="text" id="cliente-tel" placeholder="(00) 00000-0000" oninput="salvarDadosCliente()">
+
+                    <label for="cliente-end">Endereço de Entrega:</label>
+                    <input type="text" id="cliente-end" placeholder="Rua, Número, Bairro, Cidade" oninput="salvarDadosCliente()">
+
+                    <label for="cliente-obs">Observações:</label>
+                    <textarea id="cliente-obs" placeholder="Ponto de referência, horário, etc." oninput="salvarDadosCliente()"></textarea>
+                </div>
+
                 <div id="lista-carrinho">
                     <p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
                 </div>
@@ -82,7 +105,7 @@
 
     <div class="whatsapp-bar">
         <span>Total: <span id="footer-total">R$ 0,00</span></span>
-        <a id="btn-cotar" href="#" target="_blank">Enviar Cotação WhatsApp</a>
+        <a id="btn-cotar" href="#" target="_blank" onclick="return validarEnvioWhatsApp()">Enviar Cotação WhatsApp</a>
     </div>
 
     <script>
@@ -124,174 +147,4 @@
             { id: "doc_035", nome: "Goma fini minhoca c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgydjdBbQLoerxlRlB6fM1QPWKCDCql-glsZhHV_jw3A&s=10" },
             { id: "doc_036", nome: "Goma fini uva c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmAsJJqJZo1zUJoQRqvSRFX48QAF9yBLct3qgD8apduw&s=10" },
             { id: "doc_037", nome: "Goma fini tutti frutti c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTKmVWcQz8Gs82ACcg5aaTHhy1878o7DrZJsaP52XRRw&s=10" },
-            { id: "doc_038", nome: "Quebra queixão c/20", preco: 28.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1-Y9lA25ScyzCK8a5Nei9ovuualS1vQ49iiZBlWLG7w&s" },
-            { id: "doc_039", nome: "Goma fini twister c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9u9RjR6lYAws1Sy45HzxfcFHqbQENjavg8H1AMagacg&s=10" },
-            { id: "doc_040", nome: "Goma fini twister ácido c/12", preco: 9.80, imagem: "https://images.tcdn.com.br/img/img_prod/677323/tubes_com_12_unidades_de_17g_twister_acido_azedinho_fini_5225_1_c99efcf7bd783eaff7fc70a3e58261c2.png" },
-            { id: "doc_041", nome: "Goma fini dentadura de bruxa c/12", preco: 11.70, imagem: "https://www.palaciodasfestas.com.br/pub/media/catalog/product/cache/6fb2a49fda90fa3bc27e8290a21c793e/7/9/7908228806004_a.jpg" },
-            { id: "doc_042", nome: "Mariola açucarada c/50", preco: 15.99, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYies9kXCCyF-yRSA1GmEwaKpgS6FfSr0nWdpJq8Exvw&s=10" },
-            { id: "doc_043", nome: "Goma fini beijinho c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2FXe4kHB8UWcQsWXEUFnPDcS88oTMnnr7MKgRyFuVRw&s=10" },
-            { id: "doc_044", nome: "Goma fini ursinho c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzsDW-UBFoLCpoMgEjW9cKr6N6b4YrlGJtbQUujRHLvA&s=10" },
-            { id: "doc_045", nome: "Goma fini uva cítrico c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLPJf9aVDz7JxzZLrYcG9gbLR57o0qGq16PzphdSYHnQ&s=10" },
-            { id: "doc_046", nome: "Goma fini banana c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSD-j3qp5_ZxYCLcre1nSfUMsVuMSoEq0Gqbr3BmnKQZQ&s=10" },
-            { id: "doc_047", nome: "Mariola 3,0kg c/50", preco: 43.49, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpDGda81cej9lmSH5FmZLKRbu7QEVyelZUdHvSWWO7yg&s=10" },
-            { id: "doc_048", nome: "Maria mole pote c/50", preco: 19.90, imagem:"https://algagel.com.br/uploads/images/2021/01/maria-mole-gb-9-0ff59.jpg"},
-            { id: "doc_049", nome: "Geleia Aurora c/20", preco: 20.90, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Ffa0a1a5f-6762-4974-b796-0d074f95fb89.jpg?alt=media" },
-            { id: "doc_050", nome: "Mariola 2,5kg c/50", preco: 37.99, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSptK3KWViX6CE-kBD2dMyFprsQaqXwoB87EvKmjkw0A&s" },
-            { id: "doc_051", nome: "Mendorato c/30", preco: 20.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF9RHxNAIrtdhLP3CkAygJypidDXbzfem1Dkk_GzFEwvbqTuNq-vNpRy67&s=10" },
-            { id: "doc_052", nome: "Grelhaditos c/30", preco: 20.90, imagem: "https://images.tcdn.com.br/img/img_prod/987957/amendoim_grelhaditos_1_01kg_sem_pele_santa_helena_1726993_1_a7afe12a49f2d04a809e385a703f0a52.png" },
-            { id: "doc_053", nome: "Bananinha cremosa famoso c/24", preco: 36.10, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQL75P19TogxdJrS6lnhLFtFrV52uFhfhpfjKz3iMvLlw&s=10" },
-            { id: "doc_054", nome: "Paçocão c/20", preco: 20.90, imagem: "https://funchal.vtexassets.com/arquivos/ids/260769/capa_1_001.jpg?v=639219732579300000" },
-            { id: "doc_055", nome: "Goma tubo Dori c/30", preco: 22.50, imagem: "https://dori.com.br/wp-content/uploads/2022/08/9002902.png" },
-            { id: "doc_056", nome: "Pé de moça c/20", preco: 22.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7Vzikpmp8RRK1PewwkerEJiMTEbY6kQvEi9GxUcvtNw&s=10" }
-        ];
-
-        let paginaAtual = 1;
-        const itensPorPagina = 12;
-        let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
-
-        function renderizarProdutos() {
-            const grid = document.getElementById("product-grid");
-            grid.innerHTML = "";
-
-            const inicio = (paginaAtual - 1) * itensPorPagina;
-            const fim = inicio + itensPorPagina;
-            const itensPagina = produtos.slice(inicio, fim);
-
-            itensPagina.forEach(prod => {
-                const card = document.createElement("div");
-                card.className = "card";
-                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${prod.nome}">` : '';
-                
-                const qtdNoCarrinho = carrinho[prod.id] ? carrinho[prod.id].quantidade : 0;
-                
-                let acaoHTML = "";
-                if (qtdNoCarrinho === 0) {
-                    acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">Adicionar</button>`;
-                } else {
-                    acaoHTML = `
-                        <div class="card-controles">
-                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, -1)">-</button>
-                            <span>${qtdNoCarrinho}</span>
-                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">+</button>
-                        </div>
-                    `;
-                }
-
-                card.innerHTML = `
-                    ${imgTag}
-                    <h3>${prod.nome}</h3>
-                    <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
-                    ${acaoHTML}
-                `;
-                grid.appendChild(card);
-            });
-
-            renderizarPaginacao();
-        }
-
-        function renderizarPaginacao() {
-            const paginacao = document.getElementById("pagination");
-            paginacao.innerHTML = "";
-
-            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
-
-            for (let i = 1; i <= totalPaginas; i++) {
-                const btn = document.createElement("button");
-                btn.innerText = i;
-                if (i === paginaAtual) btn.className = "active";
-                btn.onclick = () => {
-                    paginaAtual = i;
-                    renderizarProdutos();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                };
-                paginacao.appendChild(btn);
-            }
-        }
-
-        function alterarQuantidade(id, nome, preco, delta) {
-            if (!carrinho[id]) {
-                if (delta > 0) {
-                    carrinho[id] = { nome, preco, quantidade: delta };
-                }
-            } else {
-                carrinho[id].quantidade += delta;
-                if (carrinho[id].quantidade <= 0) {
-                    delete carrinho[id];
-                }
-            }
-            salvarESincronizar();
-        }
-
-        function limparCarrinho() {
-            carrinho = {};
-            salvarESincronizar();
-        }
-
-        function salvarESincronizar() {
-            localStorage.setItem('carrinho_distribuidora', JSON.stringify(carrinho));
-            renderizarProdutos();
-            atualizarCarrinhoUI();
-        }
-
-        function atualizarCarrinhoUI() {
-            const listaDiv = document.getElementById("lista-carrinho");
-            const totalDiv = document.getElementById("carrinho-total");
-            const btnLimpar = document.getElementById("btn-limpar-carrinho");
-            const footerTotal = document.getElementById("footer-total");
-            
-            listaDiv.innerHTML = "";
-            let valorTotal = 0;
-            let temItens = false;
-
-            const numeroWhatsApp = "5521968659086";
-            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes produtos:\n\n";
-            let contador = 1;
-
-            for (let id in carrinho) {
-                temItens = true;
-                let item = carrinho[id];
-                let subtotal = item.preco * item.quantidade;
-                valorTotal += subtotal;
-
-                const itemDiv = document.createElement("div");
-                itemDiv.className = "item-carrinho";
-                itemDiv.innerHTML = `
-                    <div class="detalhes">
-                        <strong>${item.nome}</strong><br>
-                        <small>R$ ${item.preco.toFixed(2).replace('.', ',')} x ${item.quantidade}</small>
-                    </div>
-                    <div class="controles">
-                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, -1)">-</button>
-                        <span>${item.quantidade}</span>
-                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, 1)">+</button>
-                    </div>
-                `;
-                listaDiv.appendChild(itemDiv);
-
-                mensagem += `${contador}. ${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
-                contador++;
-            }
-
-            if (!temItens) {
-                listaDiv.innerHTML = '<p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>';
-                totalDiv.style.display = "none";
-                btnLimpar.style.display = "none";
-            } else {
-                totalDiv.style.display = "block";
-                btnLimpar.style.display = "block";
-                totalDiv.innerText = `Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
-            }
-
-            footerTotal.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
-            mensagem += `\n*Valor Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}*`;
-
-            const linkEncoded = encodeURI(mensagem);
-            document.getElementById("btn-cotar").href = `https://wa.me/${numeroWhatsApp}?text=${linkEncoded}`;
-        }
-
-        renderizarProdutos();
-        atualizarCarrinhoUI();
-    </script>
-
-</body>
-</html>
+            { id: "doc_038", nome: "Quebra queixão c/20", preco: 28.70, imagem: "

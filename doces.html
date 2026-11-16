@@ -59,7 +59,7 @@ h1 { text-align: center; color: #333; }
 <body>
 
 <div class="container">
-<h1>Catálogo - Doces</h1>
+<h1>Doces</h1>
 
 <div class="loja-layout">
 <div class="produtos-area">
@@ -87,8 +87,8 @@ Total: R$ 0,00
 
 <script>
 const produtos = [
-{ id: "doc_001", nome: "Doce de amendoim 1,5 kg c/50", preco: 30.99, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_620043-MLA99397118620_112025-F.webp" },
-{ id: "doc_002", nome: "Doce de amendoim 1,65 kg c/30", preco: 33.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoJZbqn0NpHkzfQmZfnZaJakpZqAnSpPtbf8Mmtz8crg&s=10" },
+{ id: "doc_001", nome: "Doce de amendoim 1,5 kg c/50", preco: 29.90, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_620043-MLA99397118620_112025-F.webp" },
+{ id: "doc_002", nome: "Doce de amendoim 1,65 kg c/30", preco: 33.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoJZbqn0NpHkzfQmZfnZaJakpZqAnSpPtbf8Mmtz8crg&s=10" },
 { id: "doc_003", nome: "Doce de amendoim liso Aurora c/20", preco: 20.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsN_l9rwPl-mrwoD1uY0_4gwJZZXoozKpjMMhGSlr-JA&s" },
 { id: "doc_004", nome: "Doce de abóbora c/20", preco: 20.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCc5eqZJ0wP2wYiazY_36mClgYHsTZTWkbaj7BaC8DmQ&s" },
 { id: "doc_005", nome: "Baton preto c/30", preco: 53.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbX-Gg_ZIU_fTC_jSCaPe5qE1KZyYn6fwS45PSXC5tNg&s=10" },
@@ -112,18 +112,41 @@ const produtos = [
 { id: "doc_023", nome: "Nucita sortida c/48", preco: 20.90, imagem: "" },
 { id: "doc_024", nome: "Paçoca rolha santa helena c/100", preco: 38.35, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT64HApstpSQI1zGzC1Rp1QnbMGMTbJ5MyGQv_yOX9hoQ&s=10" },
 { id: "doc_025", nome: "Pezão crocante c/20", preco: 20.90, imagem: "" },
-{ id: "doc_026", nome: "Pingo de leite c/50", preco: 19.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Feda6c17d-6fe9-4f8b-ae28-d402f43063e9.jpg?alt=media" },
-{ id: "doc_027", nome: "Cajuzinho c/20", preco: 20.90, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F9b2f8689-7df4-4027-9c44-fe30385ab15b.jpg?alt=media" },
-{ id: "doc_028", nome: "Crokissimo c/36", preco: 22.95, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F212724a1-a3ae-4993-bc6d-97ada9152820.jpg?alt=media" },
+{ id: "doc_026", nome: "Pingo de leite c/50", preco: 19.50, imagem: "" },
+{ id: "doc_027", nome: "Cajuzinho c/20", preco: 20.90, imagem: "" },
+{ id: "doc_028", nome: "Crokissimo c/36", preco: 22.95, imagem: "" },
 { id: "doc_029", nome: "Goma docile eucalipto c/24", preco: 14.40, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlhZLu8-3iYoc6ARfhLQZGBzAEr8KHNBDcng-iR0xCjg&s=10" },
 { id: "doc_030", nome: "Goma fini angry c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7xBfRhMx5iJMXQ5OzngL6ccCOAWSTavtsmBguM7rKPg&s=10" },
 { id: "doc_031", nome: "Goma fini pinta língua c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ3PAsOdT2S7EGxneImziigseJlZ2c7otliFl9i7OqNA&s=10" },
-{ id: "doc_032", nome: "Goma fini sortido c/12", preco: 9.80, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F5123ed4b-f3e6-425b-9e94-4205c808ef54.jpg?alt=media" },
-{ id: "doc_033", nome: "Goma mini sortida c/24", preco: 14.40, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fb89f2e67-0c13-4251-b1de-f386bc666b16.jpg?alt=media" },
+{ id: "doc_032", nome: "Goma fini sortido c/12", preco: 9.80, imagem: "" },
+{ id: "doc_033", nome: "Goma mini sortida c/24", preco: 14.40, imagem: "" },
 { id: "doc_034", nome: "Goma fini amora c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtERbdGc4ltk4AtBT-A3znCpMrueFh4amFR8Bp76qixQ&s=10" },
-{ id: "doc_035", nome: "Goma fini minhoca c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgydjdBbQLoerxlRlB6fM1QPWKCDCql-glsZhHV_jw3A&s=10" },
+{ id: "doc_035", nome: "Goma fini minhoca c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmyGdBVMUAbKcAFQAgdp1AAjAQGgEKSvGsaG46zzI0aw&s=10" },
 { id: "doc_036", nome: "Goma fini uva c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmAsJJqJZo1zUJoQRqvSRFX48QAF9yBLct3qgD8apduw&s=10" },
 { id: "doc_037", nome: "Goma fini tutti frutti c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTKmVWcQz8Gs82ACcg5aaTHhy1878o7DrZJsaP52XRRw&s=10" },
-{ id: "doc_038", nome: "Quebra queixão c/20", preco: 28.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1-Y9lA25ScyzCK8a5Nei9ovuualS1vQ49iiZBlWLG7w&s" },
+{ id: "doc_038", nome: "Quebra queixão c/20", preco: 28.70, imagem: "" },
+            
 { id: "doc_039", nome: "Goma fini twister c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9u9RjR6lYAws1Sy45HzxfcFHqbQENjavg8H1AMagacg&s=10" },
-{ id: "doc_040", nome: "Goma fini twister ácido c/12", preco: 9.80, imagem: "
+{ id: "doc_040", nome: "Goma fini twister ácido c/12", preco: 9.80, imagem: "https://images.tcdn.com.br/img/img_prod/677323/tubes_com_12_unidades_de_17g_twister_acido_azedinho_fini_5225_1_c99efcf7bd783eaff7fc70a3e58261c2.png" },
+{ id: "doc_041", nome: "Goma fini dentadura c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqiT1HZwPwmW_1M2hIjRpGwjKveuNKfv6D0cxpopu2uA&s=10" },
+{ id: "doc_042", nome: "Mariola açucarada c/50", preco: 15.95, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYies9kXCCyF-yRSA1GmEwaKpgS6FfSr0nWdpJq8Exvw&s=10" },
+{ id: "doc_043", nome: "Goma fini beijinho c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2FXe4kHB8UWcQsWXEUFnPDcS88oTMnnr7MKgRyFuVRw&s=10" },
+{ id: "doc_044", nome: "Goma fini ursinho c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzsDW-UBFoLCpoMgEjW9cKr6N6b4YrlGJtbQUujRHLvA&s=10" },
+{ id: "doc_045", nome: "Goma fini uva cítrico c/12", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLPJf9aVDz7JxzZLrYcG9gbLR57o0qGq16PzphdSYHnQ&s=10" },
+{ id: "doc_046", nome: "Goma fini banana c/12", preco: 11.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSD-j3qp5_ZxYCLcre1nSfUMsVuMSoEq0Gqbr3BmnKQZQ&s=10" },
+{ id: "doc_047", nome: "Mariola 3,0kg c/50", preco: 43.49, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpDGda81cej9lmSH5FmZLKRbu7QEVyelZUdHvSWWO7yg&s=10" },
+{ id: "doc_048", nome: "Geleia Aurora c/20", preco: 20.90, imagem: "" },
+{ id: "doc_049", nome: "Mariola 2,5kg c/50", preco: 37.99, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSptK3KWViX6CE-kBD2dMyFprsQaqXwoB87EvKmjkw0A&s" },
+{ id: "doc_050", nome: "Mendorato c/30", preco: 20.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRF9RHxNAIrtdhLP3CkAygJypidDXbzfem1Dkk_GzFEwvbqTuNq-vNpRy67&s=10" },
+{ id: "doc_051", nome: "Grelhaditos c/30", preco: 20.90, imagem: "https://images.tcdn.com.br/img/img_prod/987957/amendoim_grelhaditos_1_01kg_sem_pele_santa_helena_1726993_1_a7afe12a49f2d04a809e385a703f0a52.png" },
+{ id: "doc_052", nome: "Bananinha cremosa famoso c/24", preco: 36.10, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQL75P19TogxdJrS6lnhLFtFrV52uFhfhpfjKz3iMvLlw&s=10" },
+{ id: "doc_053", nome: "Paçocão c/20", preco: 20.90, imagem: "https://funchal.vtexassets.com/arquivos/ids/260769/capa_1_001.jpg?v=639219732579300000" },
+{ id: "doc_054", nome: "Goma tubo Dori c/30", preco: 22.50, imagem: "https://dori.com.br/wp-content/uploads/2022/08/9002902.png" },
+{ id: "doc_055", nome: "Pé de moça c/20", preco: 22.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7Vzikpmp8RRK1PewwkerEJiMTEbY6kQvEi9GxUcvtNw&s=10" }
+];
+
+let paginaAtual = 1;
+const itensPorPagina = 12;
+let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
+
+function renderizarProdutos() {

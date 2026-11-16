@@ -9,19 +9,31 @@
         h1 { text-align: center; color: #333; }
         .container { max-width: 1200px; margin: 0 auto; }
         
-        .loja-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+        .loja-layout { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
         .produtos-area { flex: 3; min-width: 300px; }
         
-        /* Carrinho Lateral & Formulário */
-        .carrinho-lateral { flex: 1; min-width: 280px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
+        /* Carrinho Lateral & Formulário Organizado e Visível */
+        .carrinho-lateral { 
+            flex: 1; 
+            min-width: 280px; 
+            background: #fff; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+            position: sticky; 
+            top: 20px; 
+            max-height: 90vh; 
+            overflow-y: auto; 
+        }
         .carrinho-lateral h2 { font-size: 18px; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333; }
         
         /* Seção de Cadastro do Cliente */
         .form-cliente { margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
-        .form-cliente label { display: block; font-size: 12px; font-weight: bold; color: #555; margin-bottom: 4px; margin-top: 8px; }
+        .form-cliente label { display: block; font-size: 12px; font-weight: bold; color: #333; margin-bottom: 4px; margin-top: 8px; }
         .form-cliente input, .form-cliente textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; box-sizing: border-box; }
         .form-cliente textarea { resize: vertical; height: 50px; }
 
+        .lista-itens-scroll { max-height: 250px; overflow-y: auto; margin-bottom: 10px; padding-right: 5px; }
         .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
         .item-carrinho .detalhes { flex: 1; margin-right: 10px; }
         .item-carrinho .controles { display: flex; align-items: center; gap: 5px; }
@@ -59,7 +71,7 @@
 
         @media (max-width: 768px) {
             .loja-layout { flex-direction: column-reverse; }
-            .carrinho-lateral { position: static; width: 100%; margin-bottom: 20px; }
+            .carrinho-lateral { position: static; width: 100%; margin-bottom: 20px; max-height: none; }
         }
     </style>
 </head>
@@ -95,7 +107,7 @@
                     <textarea id="cliente-obs" placeholder="Ponto de referência, horário, etc." oninput="salvarDadosCliente()"></textarea>
                 </div>
 
-                <div id="lista-carrinho">
+                <div class="lista-itens-scroll" id="lista-carrinho">
                     <p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
                 </div>
                 <div id="carrinho-total" class="carrinho-total" style="display: none;">
@@ -244,13 +256,13 @@
                 
                 let acaoHTML = "";
                 if (qtdNoCarrinho === 0) {
-                    acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">Adicionar</button>`;
+                    acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${prod.nome}',${prod.preco}, 1)">Adicionar</button>`;
                 } else {
                     acaoHTML = `
                         <div class="card-controles">
-                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, -1)">-</button>
+                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}',${prod.preco}, -1)">-</button>
                             <span>${qtdNoCarrinho}</span>
-                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">+</button>
+                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}',${prod.preco}, 1)">+</button>
                         </div>
                     `;
                 }
@@ -258,8 +270,7 @@
                 card.innerHTML = `
                     ${imgTag}
                     <h3>${prod.nome}</h3>
-                    <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
-                    ${acaoHTML}
+                    <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>${acaoHTML}
                 `;
                 grid.appendChild(card);
             });
@@ -313,3 +324,16 @@
 
         function atualizarCarrinhoUI() {
             const listaDiv = document.getElementById("lista-carrinho");
+            const totalDiv = document.getElementById("carrinho-total");
+            const btnLimpar = document.getElementById("btn-limpar-carrinho");
+            const footerTotal = document.getElementById("footer-total");
+            
+            listaDiv.innerHTML = "";
+            let valorTotal = 0;
+            let temItens = false;
+
+            const numeroWhatsApp = "5521968659086";
+            let mensagem = `*NOVA COTAÇÃO - DISTRIBUIDORA FRAZÃO*\n\n`;
+            
+            // Dados do Cliente na Mensagem
+            mensagem += `👤 *Cliente:* ${cliente.nome \vert{}\vert{} 'Não informado'}\n`; mensagem += `🆔 *CPF:* ${cliente.cpf || '

@@ -78,7 +78,7 @@
                 <div id="lista-carrinho">
                     <p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
                 </div>
-                <a id="aviso-cadastro" class="aviso-cadastro" href="../clientes.html">⚠ Cadastre-se para enviar seu pedido</a>
+                <a id="aviso-cadastro" class="aviso-cadastro" href="https://frazao-hub.github.io/distribuidora-frazao/clientes.html">⚠ Cadastre-se para enviar seu pedido</a>
                 <div id="status-cliente" class="status-cliente" style="display: none;"></div>
                 <div id="carrinho-total" class="carrinho-total" style="display: none;">Total: R$ 0,00</div>
                 <button class="btn-limpar" onclick="limparCarrinho()" id="btn-limpar-carrinho" style="display: none;">Esvaziar Carrinho</button>
@@ -96,6 +96,9 @@
 
     <!-- 2º: produtos e renderização com proteção de erro -->
     <script>
+        const urlCadastro = "https://frazao-hub.github.io/distribuidora-frazao/clientes.html";
+        const numeroWhatsApp = "5521968659086";
+
         const produtos = [
             { id: "chc_001", nome: "Adams cx hortelã c/100", preco: 39.00, imagem: "https://http2.mlstatic.com/D_NQ_NP_707754-MLA99445335824_112025-O.webp" },
             { id: "chc_002", nome: "Adams cx Tutti c/100", preco: 41.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLX_Lya12pRbTNkPqhlkriLC4jxJvWk_wUBUhJayBFyQ&s=10" },
@@ -212,7 +215,12 @@
         function atualizarCadastroLocal() {
             const aviso = document.getElementById("aviso-cadastro");
             const statusCliente = document.getElementById("status-cliente");
+            const btnCotar = document.getElementById("btn-cotar");
             const clienteNome = obterClienteCadastradoLocal();
+
+            if (aviso) {
+                aviso.href = urlCadastro;
+            }
 
             if (clienteNome) {
                 if (aviso) aviso.style.display = "none";
@@ -220,9 +228,23 @@
                     statusCliente.style.display = "block";
                     statusCliente.innerText = `✓ Cliente: ${clienteNome}`;
                 }
+                if (btnCotar && (!btnCotar.href || btnCotar.href.includes("clientes.html"))) {
+                    btnCotar.href = `https://wa.me/${numeroWhatsApp}`;
+                    btnCotar.setAttribute("target", "_blank");
+                    btnCotar.onclick = null;
+                }
             } else {
                 if (aviso) aviso.style.display = "inline-block";
                 if (statusCliente) statusCliente.style.display = "none";
+                if (btnCotar) {
+                    btnCotar.href = urlCadastro;
+                    btnCotar.removeAttribute("target");
+                    btnCotar.onclick = function(e) {
+                        e.preventDefault();
+                        alert("Cadastre-se para enviar o pedido.");
+                        window.location.href = urlCadastro;
+                    };
+                }
             }
             return clienteNome;
         }

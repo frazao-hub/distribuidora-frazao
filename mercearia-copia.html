@@ -1,1 +1,386 @@
-mercearia-copia.html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo - Mercearia | Distribuidora Frazão</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; padding-bottom: 120px; }
+        h1 { text-align: center; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* Layout principal dividindo produtos e carrinho */
+        .loja-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+        .produtos-area { flex: 3; min-width: 300px; }
+        
+        /* Carrinho Lateral na Tela */
+        .carrinho-lateral { flex: 1; min-width: 280px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
+        .carrinho-lateral h2 { font-size: 18px; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333; }
+        .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
+        .item-carrinho .detalhes { flex: 1; margin-right: 10px; }
+        .item-carrinho .controles { display: flex; align-items: center; gap: 5px; }
+        .item-carrinho button { background: #e0e0e0; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .item-carrinho button:hover { background: #d0d0d0; }
+        .carrinho-total { font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; color: #27ae60; }
+        
+        /* Botão para limpar carrinho */
+        .btn-limpar { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; font-weight: bold; }
+        .btn-limpar:hover { background: #c0392b; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .card { background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
+        .card img { width: 100%; height: 140px; object-fit: contain; border-radius: 4px; background: #fff; margin-bottom: 10px; }
+        .card h3 { font-size: 15px; margin: 0 0 8px 0; color: #444; }
+        .card p { font-size: 16px; font-weight: bold; color: #27ae60; margin: 0 0 12px 0; }
+        .btn-add { background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+        .btn-add:hover { background: #2980b9; }
+        
+        /* Paginação */
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .pagination button { padding: 8px 12px; border: none; background: #ddd; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .pagination button.active { background: #27ae60; color: white; }
+
+        /* Barra Fixa do WhatsApp no Rodapé */
+        .whatsapp-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #25d366; color: white; text-align: center; padding: 12px; font-size: 16px; font-weight: bold; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 20px; box-sizing: border-box; }
+        .whatsapp-bar a { background: white; color: #25d366; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+        .whatsapp-bar a:hover { background: #f0f0f0; }
+
+        @media (max-width: 768px) {
+            .loja-layout { flex-direction: column-reverse; }
+            .carrinho-lateral { position: static; width: 100%; margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Mercearia</h1>
+        
+        <div class="loja-layout">
+            <!-- Área dos Produtos e Paginação -->
+            <div class="produtos-area">
+                <div id="product-grid" class="grid"></div>
+                <div id="pagination" class="pagination"></div>
+            </div>
+
+            <!-- Carrinho com botões de + e - -->
+            <div class="carrinho-lateral">
+                <h2>Seu Carrinho Global</h2>
+                <div id="lista-carrinho">
+                    <p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
+                </div>
+                <div id="carrinho-total" class="carrinho-total" style="display: none;">
+                    Total: R$ 0,00
+                </div>
+                <button class="btn-limpar" onclick="limparCarrinho()" id="btn-limpar-carrinho" style="display: none;">Esvaziar Carrinho</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra Fixa para WhatsApp -->
+    <div class="whatsapp-bar">
+        <span>Total: <span id="footer-total">R$ 0,00</span></span>
+        <a id="btn-cotar" href="#" target="_blank">Enviar Cotação WhatsApp</a>
+    </div>
+
+    <script>
+        const produtos = [
+            { id: "merc_001", nome: "Abridor de garrafa c/12", preco: 21.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F786e6f0a-ff5f-4f15-9c7d-ba5d0f1b3c7b.jpg?alt=media" },
+            { id: "merc_002", nome: "Abridor de lata c/12", preco: 21.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F97ae57d2-2b87-4816-ab4b-975efc825684.jpg?alt=media" },
+            { id: "merc_003", nome: "Adoçante assugrin c/04", preco: 15.38, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcV_-lqWLmcha9bilngGEEJwXR1TQ7EmCAqVxPj0cyRg&s=10" },
+            { id: "merc_004", nome: "Agulha de fogão c/50", preco: 9.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7iYoixehdAY-FNLh2eVldOK8YYDwyYc93WXazxyWbhw&s=10" },
+            { id: "merc_005", nome: "Agulha de máquina 11 c/10", preco: 11.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgUFO2TtgOKq-Xn69H_hQZ6KXnjMN0jatQK_SuuEekLg&s" },
+            { id: "merc_006", nome: "Agulha de máquina 14 c/10", preco: 11.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT84qe_I1sBIK6qVusQt1ap1WP1Wns34ip6gcDNiRhccA&s=10" },
+            { id: "merc_007", nome: "Agulha de máquina 16 c/10", preco: 11.50, imagem: "https://www.armarinhosaojose.com.br/octopus/design/images/94/products/b/agulha-maquina-singer-especial-2045-16-10und.jpg" },
+            { id: "merc_008", nome: "Agulha de mão 1 c/20", preco: 8.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRix-ZnHNYDR_jNjnlTIFFWFKURt3mUVmNopqQPrAjt0w&s=10" },
+            { id: "merc_009", nome: "Agulha de mão 2 c/20", preco: 10.50, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_867964-MLB97079149399_112025-F-agulha-de-mao-bordar-coats-darning-n20--500-agulhas.webp" },
+            { id: "merc_010", nome: "Agulha de mão 3 c/20", preco: 8.50, imagem: "https://www.armarinhosaojose.com.br/octopus/design/images/94/products/b/agulha-mao-darning-corrente-n-03.jpg" },
+            { id: "merc_011", nome: "Agulha de mão 5 c/20", preco: 6.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmrveto1lpcPvo5rKE6nKEnjtEmjxI6ccaatDTNgtuVA&s=10" },
+            { id: "merc_012", nome: "Agulha de mão 7 c/20", preco: 6.50, imagem: "https://www.armarinhosaojose.com.br/octopus/design/images/94/products/b/agulha-mao-darning-corrente-07.jpg" },
+            { id: "merc_013", nome: "Amido de milho c/06", preco: 22.30, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtTkgewOTW9p_3bfdfu8dtHPvXsOU6rUe7BNu6eu3cFQ&s=10" },
+            { id: "merc_014", nome: "Amolador de faca 3x1", preco: 11.30, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-VgTEUQUaqWqgmjfAMi3qB6myImOewCQ4dWcahPTqug&s=10" },
+            { id: "merc_015", nome: "Azeitona zille c/10", preco: 38.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2HJ4UzdO9OqM3f120nr1l38mLONXb_QMG8A90cy6DVw&s=10" },
+            { id: "merc_016", nome: "Barbante lyne 200m", preco: 10.20, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXT0mxDRTu3OklJc2D-_6Iyv4jw56G-L_M7NLiDVQ3vA&s" },
+            { id: "merc_017", nome: "Batata palha 100g c/05", preco: 17.99, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIAKQOxa5aD9f8haW8tpgexUoUjx6L6tSedOj6CfzrbQ&s" },
+            { id: "merc_018", nome: "Bateria Elgin 2032 c/05", preco: 9.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6oVyn7ariHkcuj0GM4x8zfVkHPAPFGkdHoMX0UN88zQ&s=10" },
+            { id: "merc_019", nome: "Bateria Elgin ag13/lr41 c/10", preco: 8.60, imagem: "https://acdn-us.mitiendanube.com/stores/002/971/910/products/fdaf1c684b4d884c0da79a07ff2eb4c1-4bae8dbbbe0a9fc01917214879678410-1024-1024.webp" },
+            { id: "merc_020", nome: "Bateria 626A c/10", preco: 8.60, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZ6MSNkzpWre5p1a1IDjOR8PxDUz7LEHWegudXZBJbvA&s=10" },
+            { id: "merc_021", nome: "Borracha panela Sil. 3/7l c/10", preco: 28.60, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_846729-MLB79030307649_092024-F-borracha-p-panela-de-pressao-silicone--7-litros--3-unid.webp" },
+            { id: "merc_022", nome: "Borracha panela 10l c/10", preco: 16.40, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8B17TB3hgfSyF8qTbG0pQF32TRcabmQIleWHxHTA_hQ&s" },
+            { id: "merc_023", nome: "Borracha panela 4/7l c/10", preco: 16.40, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8B17TB3hgfSyF8qTbG0pQF32TRcabmQIleWHxHTA_hQ&s" },
+            { id: "merc_154", nome: "Cadeado 32mm c/12", preco: 75.30, imagem: ""},
+            { id: "merc_155", nome: "Cadeado 38mm c/12", preco: 81.80, imagem: ""},
+            { id: "merc_024", nome: "Cadeado 20-25-32mm c/12", preco: 52.00, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_702226-MLB92359944431_092025-F-cartela-de-cadeado-diferentes-tamanhos-20-25-e-30mm-oferta.webp" },
+            { id: "merc_025", nome: "Café Pimpinela 100g c/05", preco: 33.95, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbzt3Hop5TRyBAD3D0Gx936JBo_lNSPT-StaECORGueg&s=10" },
+            { id: "merc_026", nome: "Caldo arisco 19g carne c/24", preco: 22.75, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5h4MvaEiMN_oZoF3TGbueCvkKyZo04xyh5Mtg2_m39FS6ThIpevs1YoM&s=10" },
+            { id: "merc_027", nome: "Caldo arisco 19g galinha c/24", preco: 22.75, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKnnFD7hBv_S_umaoVzEew84Yw1pXgf-jTY5SAIsr-dPr0xgE1qxxRSqXY&s=10" },
+            { id: "merc_028", nome: "Caldo Knorr 19g carne c/24", preco: 22.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRij9PaUHOeQZ0LsnC0OUgbMTRzXQktTMA4DthvvH0OoQ&s" },
+            { id: "merc_029", nome: "Caldo Knorr 19g galinha c/24", preco: 22.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrR_BhN8_y3uIFy_MWY03fDcp5UShGjMv-RXsUTHFvpTPWT9LgEci0G79-&s=10" },
+            { id: "merc_030", nome: "Canela pó pote c/12", preco: 28.55, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fd3d3826d-73dd-49d0-bc86-62c67dfdec6a.jpg?alt=media" },
+            { id: "merc_031", nome: "Catchup predileta 200g c/06", preco: 27.30, imagem: "https://gruposoares.vtexassets.com/arquivos/ids/170354-800-auto?v=637999703488030000&width=800&height=auto&aspect=true" },
+            { id: "merc_032", nome: "Chá 7 ervas c/05", preco: 17.49, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdtuHnnvZPD8HPEwKaHrcX-bbX159xfAc2IXATAeU6zQ&s" },
+            { id: "merc_033", nome: "Chá boldo c/05", preco: 17.49, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRS81YElIDB3LTbGI-pyzXnK417_KZ0CXyQ-OAmwbHM1g&s=10" },
+            { id: "merc_034", nome: "Chá camomila c/05", preco: 17.49, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqn1tWb3uxcpB7TJLfOxbXnDxQS-NC18QuGvbcgvWFsg&s=10" },
+            { id: "merc_035", nome: "Chá capim cidreira c/05", preco: 17.49, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqqLj7fooUm5fylnYyjBNkEYFait356uVQVvpUxEQ4Iw&s=10" },
+            { id: "merc_036", nome: "Chá erva doce c/05", preco: 17.49, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRxaIIMQ1H2JoCFVxk94LLUrbjWC2Wesu_HK3hlS580Q&s=10" },
+            { id: "merc_037", nome: "Chá hortelã c/05", preco: 17.49, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBFy8Ih3XsFKAImeTl4Q1vFmwh1T4FmQ-auo8KUaJ0lQ&s=10" },
+            { id: "merc_038", nome: "Chá maçã c/ canela c/05", preco: 17.49, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp46kEq_I7BkkbTKqChcaY2OgEjEMZrRMGD9z0Il2frQ&s=10" },
+            { id: "merc_039", nome: "Chá preto c/05", preco: 17.49, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLFXh3YZ594L7L4zlwDTMtUPmdPXH_iHPuDxDUnR03eA&s=10" },
+            { id: "merc_040", nome: "Coador de café nº 7 c/12", preco: 22.30, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_669963-MLB108322719837_032026-F.webp" },
+            { id: "merc_156", nome: "Coador de café nº 8 c/12", preco: 24.89, imagem: "https://www.bernardaoemcasa.com.br/media/catalog/product/cache/1/image/500x500/9df78eab33525d08d6e5fb8d27136e95/w/h/whatsapp_image_2022-01-18_at_12.54.33.jpeg"},
+            { id: "merc_041", nome: "Coco ralado 50g c/10", preco: 20.89, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHMwzwD7MuQv2Xe1KD7uJxfeK8lTuyLJf7nG8nnhGv_g&s=10" },
+            { id: "merc_042", nome: "Cola tek bonder 2g c/12", preco: 20.90, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_613583-MLA100067603585_122025-F.webp" },
+            { id: "merc_043", nome: "Cola tek bonder 793 c/05", preco: 42.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJJoDREAUX5npymgOjNImLrqjQxE73B8R_UOLybz4-LQ&s=10" },
+            { id: "merc_044", nome: "Colorau chinezinho 90g c/15", preco: 38.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrPza_6PviOjOBmefPkJ1yI2PUJM1fRyiQfUhuhwwRPQ&s" },
+            { id: "merc_045", nome: "Cond. bicabornato c/10", preco: 3.50, imagem: "" },
+            { id: "merc_046", nome: "Cond. canela casca c/10", preco: 5.45, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Ff43554da-afa3-451c-8394-21e2e0a111ee.jpg?alt=media" },
+            { id: "merc_047", nome: "Cond. canela pó c/10", preco: 3.50, imagem: "" },
+            { id: "merc_048", nome: "Cond. colorau c/10", preco: 3.50, imagem: "" },
+            { id: "merc_049", nome: "Cond. cominho c/10", preco: 3.50, imagem: "" },
+            { id: "merc_050", nome: "Cond. cravo c/10", preco: 7.99, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS064m3-Ic0ohYAv_r9UszuHv_yVKppTDn_F4qmREtrkw&s" },
+            { id: "merc_051", nome: "Cond. erva doce c/10", preco: 3.50, imagem: "" },
+            { id: "merc_052", nome: "Cond. louro folha c/10", preco: 3.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fa005aa51-15d5-426e-b303-604a24ef5e0b.jpg?alt=media" },
+            { id: "merc_053", nome: "Cond. louro pó c/10", preco: 3.50, imagem: "" },
+            { id: "merc_054", nome: "Cond. oregano c/10", preco: 3.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Ff56cb991-e039-4500-8d48-88e50b9182d6.jpg?alt=media" },
+            { id: "merc_055", nome: "Cond. pimenta pó c/10", preco: 3.50, imagem: "" },
+            { id: "merc_056", nome: "Cond. tempero misto c/10", preco: 3.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F20ee522c-1f4b-43ca-926f-7e48667b7f84.jpg?alt=media" },
+            { id: "merc_057", nome: "Copo americano c/24", preco: 33.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRO30hXij8stZqbaPlIQscNf6pxve3BStRliPStSUAO4Q&s=10" },
+            { id: "merc_058", nome: "Corda de varal nº 5 c/10", preco: 15.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu_gPKBN7hdka7J-n2Ug2GmNCtu-kH4MPEf5NBamHK1g&s=10" },
+            { id: "merc_059", nome: "Creme de leite piracanjuba c/06", preco: 18.65, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQogIyJonAJzAnHQ4vMw0LPFAHbtktBRcmvhauNt4wQLQ&s=10" },
+            { id: "merc_060", nome: "Durepoxi 100g c/06", preco: 59.75, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2dx3c5z0_oRa5kV8MbZ5mIy9Tnr1uiJPeTlTJlYXx5Q&s=10" },
+            { id: "merc_061", nome: "Durepoxi 50g c/06", preco: 35.49, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBuUOa1-p5NzaZjR0VBp3QUB-b5HsrbJsq_2-UBTP3dQ&s=10" },
+            { id: "merc_062", nome: "Ervilha pramesa c/06", preco: 21.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQS3nBSzGsp6j0PW1vsSO31kUJWpuwbBLfTW3FG8g3eWw&s=10" },
+            { id: "merc_063", nome: "Estalinhos panda c/40", preco: 24.70, imagem: "https://cdn.awsli.com.br/761/761999/produto/38893886/b34623625b.jpg" },
+            { id: "merc_064", nome: "Fermento Dona Benta c/06", preco: 27.25, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Ff4eeb913-0291-418b-a922-2fb0f4a9b343.jpg?alt=media" },
+            { id: "merc_065", nome: "Filtro 102 pimpinela c/05", preco: 22.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F6b8f47a5-9261-488b-a6a9-f9dbcf458f5a.jpg?alt=media" },
+            { id: "merc_066", nome: "Filtro 103 brigitta c/06", preco: 25.20, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fe8c3f5db-4e8a-4f95-b000-fb62c0770c18.jpg?alt=media" },
+            { id: "merc_067", nome: "Fita isolante 3m c/12", preco: 39.90, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_635149-MLA100076581473_122025-F.webp" },
+            { id: "merc_068", nome: "Fita vedaflon 12x10mm c/10", preco: 12.90, imagem: "" },
+            { id: "merc_069", nome: "Fosforo gaboardi c/05", preco: 17.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR23XYIxovgFqet2X8J_EJPGDNyEQs-TERXBq-dqDkWrQ&s=10" },
+            { id: "merc_070", nome: "Fresh abacaxi c/15", preco: 21.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Ff2a3e45c-90f0-4f67-9be1-6835907eca01.jpg?alt=media" },
+            { id: "merc_071", nome: "Fresh caju c/15", preco: 21.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F0632c400-9b4b-49fc-bb15-25fb42daeea6.jpg?alt=media" },
+            { id: "merc_072", nome: "Fresh guaraná c/15", preco: 21.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F48bd6bf5-f678-48a0-afb1-cd5083d5e546.jpg?alt=media" },
+            { id: "merc_073", nome: "Fresh laranja c/15", preco: 21.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F621d9866-ba46-4251-b9d9-054e9e7b9ee4.jpg?alt=media" },
+            { id: "merc_074", nome: "Fresh limão c/15", preco: 21.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F42201dea-6069-4f3b-9d31-ac93e106777b.jpg?alt=media" },
+            { id: "merc_075", nome: "Fresh manga c/15", preco: 21.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F0e86fffc-ecb3-4484-a98c-359131496b8f.jpg?alt=media" },
+            { id: "merc_076", nome: "Fresh maracujá c/15", preco: 21.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fe4a66c3c-b216-4cc6-ac0f-7560acab5288.jpg?alt=media" },
+            { id: "merc_077", nome: "Fresh morango c/15", preco: 21.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Ff5ffadbb-7f88-4d5f-a746-e268255cacfb.jpg?alt=media" },
+            { id: "merc_078", nome: "Fresh uva c/15", preco: 21.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F8fbf917d-52f5-45f8-8bda-2e4fba7b2eee.jpg?alt=media" },
+            { id: "merc_079", nome: "Goiabada predilecta c/06", preco: 23.99, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJDnMwhRQBf0vblBmlXcgtRDfh2VkIr3eVbOjBnErWJA&s=10" },
+            { id: "merc_080", nome: "Granulado art chocolate c/10", preco: 23.50, imagem: "" },
+            { id: "merc_081", nome: "Granulado art colorido c/10", preco: 23.50, imagem: "" },
+            { id: "merc_082", nome: "Isqueiro bic maxi c/12", preco: 59.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTC8sIfdUScZ3pOxNXbSrbKgZ6jrwH82Avd494k-70Zg&s=10" },
+            { id: "merc_083", nome: "Isqueiro bic mini c/12", preco: 46.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQG6avcEj6oRuLy6mGX6FJe8DLp8lIV9BBMyeCaNRvIGA&s=10" },
+            { id: "merc_084", nome: "Isqueiro cricket grande c/10", preco: 28.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIe_RUnlcVdAugYHcfSzYLIX5musER6TMYKz9b1QeVSA&s=10" },
+            { id: "merc_085", nome: "Isqueiro cricket mini c/10", preco: 27.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSN6tqrdHPzF5JpcNcXABUMEtfBRkIjr1AVA3Aqe3OWw&s" },
+            { id: "merc_086", nome: "Isqueiro eletrônico c/10", preco: 17.90, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fb1661d7d-ddff-4afc-8683-44740e2474b1.jpg?alt=media" },
+            { id: "merc_087", nome: "Lâmpada hal. 42w c/10", preco: 34.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fea039715-d904-492d-be59-bc56a559ef23.jpg?alt=media" },
+            { id: "merc_088", nome: "Lâmpada hal. 70w c/10", preco: 43.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEaEt6O7pFLFTVd6PdlciKXqkc9rSz1MtKzLAzVOAy1Q&s=10" },
+            { id: "merc_089", nome: "Lâmpada hal. 120w c/10", preco: 42.40, imagem: "https://gruposoares.vtexassets.com/arquivos/ids/169731-800-auto?v=637925311445600000&width=800&height=auto&aspect=true"},
+            { id: "merc_090", nome: "Lâmpada led 9w c/10", preco: 27.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIPo4MJYFXrBRe0bl87Ze0S3cBxFcVZMCJ_yEbLVzmHA&s=10" },
+            { id: "merc_091", nome: "Lâmpada led 12w c/10", preco: 42.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTucfaQMhrPnpGr1YMDzhg2n4YUb6h9cZRMCFq6xyWgzw&s=10" },
+            { id: "merc_092", nome: "Lâmpada led 15w c/10", preco: 43.40, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJWszr1uonBa8LZ304rUBnFg3qyNyZUr8Jg7Drqy9AfyL5C_7EgKyHQWs&s=10" },
+            { id: "merc_093", nome: "Lâmpada led 20w c/10", preco: 59.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGjyaFtEeA4SN6kqRwALOtIkzctfiYjj8VpvkiDxXY4g&s=10" },
+            { id: "merc_094", nome: "Lâmpada led 30w und", preco: 9.60, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoIILiSf0EOpPAeWTWHI4o9-P87PkX9qObv3-vwwZWCA&s=10" },
+            { id: "merc_095", nome: "Lâmpada led 40w und", preco: 12.75, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqSRVwaTqa_tCUausWX0ioJ7BkOA50yOmadicCSCBhpA&s" },
+            { id: "merc_096", nome: "Lâmpada led presença und", preco: 18.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc2tIiTtkxmhboIwhzmcVdil3KHiclc81IymbHCaM_QQ&s=10" },
+            { id: "merc_097", nome: "Leite cond. tp piracanjuba 270g c/06", preco: 33.00, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fb6f9dcf7-b133-4830-b8ff-cd27ab4c6ae9.jpg?alt=media" },
+            { id: "merc_098", nome: "Leite de coco menina vd c/06", preco: 22.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGl8b3n_4U1cTWYiFqR3cH65ozhol4S2ICFB2t05KjvQ&s=10" },
+            { id: "merc_099", nome: "Linha magna az. marinho c/10", preco: 15.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fba018317-ab84-4fed-ace0-bed637284956.jpg?alt=media" },
+            { id: "merc_100", nome: "Linha magna branca c/10", preco: 15.50, imagem: "https://reidoarmarinho.vtexassets.com/arquivos/ids/157519/710317-0000B_ampliada.jpg?v=637236423802700000" },
+            { id: "merc_101", nome: "Linha magna preta c/10", preco: 15.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUPCj-_5h7JVbSpjNGbU1mzU0VdCvdmLmkGnHcnJmLNg&s" },
+            { id: "merc_102", nome: "Linha magna sortida c/10", preco: 15.50, imagem: "https://atacadopintobandeira.com.br/wp-content/uploads/2015/10/Linha-Magna-Caixa-10un-_11-600x429.jpg" },
+            { id: "merc_103", nome: "Linha magna vermelha c/10", preco: 15.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fcb2664b8-c299-49be-ac6c-215a4b56337a.jpg?alt=media"},
+            { id: "merc_104", nome: "Luminária emergencia 30 led elgin", preco: 16.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F153ac3c8-db5a-41ca-a068-1a6f7e4d0c1a.jpg?alt=media" },
+            { id: "merc_105", nome: "Milho pipoca 500g c/05", preco: 19.30, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_-pm7OVCUvCmBNNoFMLLUGY-EmhDD6fgcfsjTKp5qgw&s=10" },
+            { id: "merc_106", nome: "Milho verde lt c/06", preco: 21.76, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fd9d36f03-9036-4e45-9061-0d0f739cef17.jpg?alt=media" },
+            { id: "merc_107", nome: "Molho de pimenta gota c/06", preco: 20.98, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fe840244d-badc-4d50-a479-8706d7f7b8fa.jpg?alt=media" },
+            { id: "merc_108", nome: "Molho tomate 300g c/06", preco: 10.95, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHp54920-8MSpGatHF6SYl_V3EUmyYf3fTFxIRF3pyjw&s" },
+            { id: "merc_109", nome: "Nissin miojo carne c/10", preco: 27.95, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHhi69v2EteN0kEYbyVyMlPk2CRwqA3Wzt04rhCqaPThbbYtETRIJjpJ4&s=10" },
+            { id: "merc_110", nome: "Nissin miojo galinha c/10", preco: 27.95, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlCyc9vYRHIoYSHHmX0ECICEWaNGNrG5PXaW5Ez6RB_w&s" },
+            { id: "merc_111", nome: "Palito churrasco c/05 30cm", preco: 16.25, imagem: "https://cdn.awsli.com.br/600x700/1896/1896128/produto/400251593/sem-t-tulo-1-1ljfb8poug.jpg" },
+            { id: "merc_112", nome: "Palito de madeira c/25", preco: 15.99, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F950ae8a2-ea1c-4096-9623-4179db385490.jpg?alt=media" },
+            { id: "merc_113", nome: "Pano de prato 40x65 c/10", preco: 31.20, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F61793a13-f693-4e98-a61e-0dc5e601445c.jpg?alt=media" },
+            { id: "merc_114", nome: "Pilha panasonic gd c/20", preco: 74.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F64a9d167-2dd5-4ad8-9257-cb4fd9a5f8a6.jpg?alt=media" },
+            { id: "merc_115", nome: "Pilha a23 alfacel c/05", preco: 9.90, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F2bf6f07f-8a14-4f18-bc8f-0dd387c0b2aa.jpg?alt=media"},
+            { id: "merc_116", nome: "Pilha alc. grande D Panasonic c/02", preco: 30.60, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZKK1pbzqHHDMbnw8KqpXLUwtAzaixCaTY7FoRe3MGJw&s=10" },
+            { id: "merc_117", nome: "Pilha alfacel aa c/60", preco: 48.55, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYSsOi2KGrpGCNqy8v1bKr-dNNAl2UC729tNz2PcAXOw&s=10" },
+            { id: "merc_118", nome: "Pilha alfacel aaa c/60", preco: 39.90, imagem: "https://cdn.awsli.com.br/2500x2500/922/922966/produto/1717291386e4d991041.jpg" },
+            { id: "merc_119", nome: "Pilha panasonic aa c/52", preco: 53.15, imagem: "https://images.tcdn.com.br/img/img_prod/739678/pilha_panasonic_zinco_pequena_original_alta_qualidade_aa_caixa_com_52_unidades_701_1_5f6575e9b18f51e97d991b9986d710a5.jpg" },
+            { id: "merc_120", nome: "Pilha panasonic aaa c/40", preco: 57.70, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6JiXFlXwRjMsMNj09w6tMKl7lwWS-1BFvLP6Zg7ZVxA&s=10" },
+            { id: "merc_121", nome: "Pilha rayovac aa c/48", preco: 47.99, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYyJMvwNtNGlFmD4vZqDc1yW0rIXC3jkw1fpjUSKYxgA&s=10" },
+            { id: "merc_122", nome: "Pilha rayovac aaa c/40", preco: 48.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3P5SySr38zn2q95S1F9dpMLdYVfnUsf4Vnd3YPLqGcA&s=10" },
+            { id: "merc_123", nome: "Pilha rayovac gd c/12", preco: 50.45, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTY6nLPJBlYnEwzOSyos7U2ymc0Q9HCy3rhJkjESYMPNg&s=10" },
+            { id: "merc_124", nome: "Pregador de roupa gd c/10", preco: 22.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F551f5c0c-83ae-4d1a-aa43-7a3d2d61add8.jpg?alt=media" },
+            { id: "merc_125", nome: "Pregador de roupa peq. c/10", preco: 15.00, imagem: "https://acdn-us.mitiendanube.com/stores/002/239/421/products/5f73f77306ebf5320baa010fe9d5959e-da1efd2ded6d76adab17315079419787-480-0.webp" },
+            { id: "merc_126", nome: "Queijo ralado selete c/05", preco: 15.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZRU4-0wVXrzT_KTywv9mvtCHFKs_StXZKyEuT3I6QnQ&s=10" },
+            { id: "merc_127", nome: "Ref. tandy laranja c/15", preco: 11.85, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVW4V7Dx8VluSLpBdD_WOqiDOcWMMklkWwGaLm3QDWYQ&s=10" },
+            { id: "merc_128", nome: "Ref. tandy maracujá c/15", preco: 11.85, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0JzJorrifAqkKB4KQxYpssaWvx7DLZ2NlHl68cQn96g&s" },
+            { id: "merc_129", nome: "Ref. tandy uva c/15", preco: 11.85, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOC4MsIKoqyB0gZK94WowAFBjREkh58KU48gTo_AjUuw&s=10" },
+            { id: "merc_130", nome: "Tang abacaxi c/18", preco: 23.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLv1xHrXn2HYuLndpiNSaDAaegJdQe84Tg-lrpiziUHiSv9kJ3vsmu9Mdi&s=10" },
+            { id: "merc_131", nome: "Tang goiaba c/18", preco: 23.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaPxbuKf-qa_KY5GRu9PF0Z0oeich_JYCrw74MiMCh2g&s=10" },
+            { id: "merc_132", nome: "Tang guarana c/18", preco: 23.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkhX6j8_NdQrixzftg1hPuBIro7Yo0oVXEr-7y3IeLTw&s=10" },
+            { id: "merc_133", nome: "Tang laranja c/18", preco: 23.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw23j6yVco8o7tS6dwkoz2uZPPUIMZ1hAV60lPx-m-3Q&s=10" },
+            { id: "merc_134", nome: "Tang limão c/18", preco: 23.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTVld1KU6_60OUHuu5Ksaw7kuTgw6bPSukgaxQE3tplw&s=10" },
+            { id: "merc_135", nome: "Tang manga c/18", preco: 23.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCRYdGG5Wu1g1AnpI8cjqyubfvC2ondUbE6CiN0gad7g&s=10" },
+            { id: "merc_136", nome: "Tang maracujá c/18", preco: 23.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjDmr7BzHjacDSHworE2KTLM_JoGT4b4wWqr3KStIwvVK8B-opb48Ffhia&s=10" },
+            { id: "merc_137", nome: "Tang morango c/18", preco: 23.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLS41JHfbRuKgMGJouVWVusWtA9nUSEYvfG47kTGawQQ&s=10" },
+            { id: "merc_138", nome: "Tang uva c/18", preco: 23.90, imagem: "https://storetheme.vtexassets.com/unsafe/800x800/center/middle/https%3A%2F%2Fsantaluzia.vtexassets.com%2Farquivos%2Fids%2F995585%2F653713.png%3Fv%3D638400579588500000" },
+            { id: "merc_139", nome: "Saca rolhas c/12", preco: 21.50, imagem: "" },
+            { id: "merc_140", nome: "Sal fino c/10", preco: 20.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2Aga48pX8gyQtRigkBT7XyhxfCGzQJhrhJ6nq3HW7LQ&s=10" },
+            { id: "merc_141", nome: "Sal grosso c/10", preco: 21.95, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCBwRd0mWdfL11siZ6guoiF5oV6vZJ1yN6uWGkXBEoCA&s=10" },
+            { id: "merc_142", nome: "salsicha anglo c/06", preco: 22.95, imagem: "https://images.tcdn.com.br/img/img_prod/1299377/salsicha_anglo_180g_621_1_5a85ff42247233ecb7c50c52f7de7eba.png"},
+            { id: "merc_143", nome: "Salsicha frisa c/06", preco: 22.95, imagem: "https://www.extrabom.com.br/media/produtos/350x350/84352_20180502142243_thumb_84352SalsichaFrisaLata180g.jpg_.jpeg" },
+            { id: "merc_144", nome: "Sardinha palmeira oleo c/05", preco: 22.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwKJlD3kDwlWuFz5cY4pSD3YX1W4VDudMP5lId8EzJSw&s=10" },
+            { id: "merc_145", nome: "Sardinha palmeira tomate c/05", preco: 22.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRtpW-UEnr44x0raVQ_HMhPbEYHxqXCa6EzoRLRRn0gQ&s=10" },
+            { id: "merc_146", nome: "Tempero sazon verm. c/06", preco: 39.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDQeCGgKRxgVrEZ-MZHD2IK87RLzQrnRc3dREoQjqaVQ&s=10" },
+            { id: "merc_147", nome: "Vela padroeira nº 4 c/05", preco: 29.95, imagem: "" },
+            { id: "merc_148", nome: "Vela padroeira nº 5 c/05", preco: 27.65, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fcde221a7-91a6-4be0-b8d0-c25b8bc5ab92.jpg?alt=media" },
+            { id: "merc_149", nome: "Vela nº 8 c/05", preco: 54.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F8a7df8a7-f680-4917-9888-2958df4d2c71.jpg?alt=media" },
+            { id: "merc_150", nome: "vela padroeira 7 dias fina c/06", preco: 42.10, imagem: "https://images.tcdn.com.br/img/img_prod/1367847/vela_votiva_nossa_senhora_aparecida_641_1_b779e14bdfb1972e45169ee32b90ca19.jpg"},
+            { id: "merc_151", nome: "Vinagre álcool 500ml c/12", preco: 21.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDslQFYmbo7DVWg_2UE5BgVgJ_T5dQ9d3YVA5ZVV6r0A&s=10" },
+            { id: "merc_152", nome: "macarrao espaguete 750g c/04", preco: 22.90, imagem: ""},
+            { id: "merc_153", nome: "macarrao espaguete 400g c/06", preco: 23.99, imagem: ""},   
+         
+        
+            
+       
+         
+
+          
+        ];
+
+        let paginaAtual = 1;
+        const itensPorPagina = 12;
+        let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
+
+        function renderizarProdutos() {
+            const grid = document.getElementById("product-grid");
+            grid.innerHTML = "";
+
+            const inicio = (paginaAtual - 1) * itensPorPagina;
+            const fim = inicio + itensPorPagina;
+            const itensPagina = produtos.slice(inicio, fim);
+
+            itensPagina.forEach(prod => {
+                const card = document.createElement("div");
+                card.className = "card";
+                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${prod.nome}">` : '';
+                
+                card.innerHTML = `
+                    ${imgTag}
+                    <h3>${prod.nome}</h3>
+                    <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
+                    <button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">Adicionar</button>
+                `;
+                grid.appendChild(card);
+            });
+
+            renderizarPaginacao();
+        }
+
+        function renderizarPaginacao() {
+            const paginacao = document.getElementById("pagination");
+            paginacao.innerHTML = "";
+
+            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                const btn = document.createElement("button");
+                btn.innerText = i;
+                if (i === paginaAtual) btn.className = "active";
+                btn.onclick = () => {
+                    paginaAtual = i;
+                    renderizarProdutos();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                paginacao.appendChild(btn);
+            }
+        }
+
+        function alterarQuantidade(id, nome, preco, delta) {
+            if (!carrinho[id]) {
+                if (delta > 0) {
+                    carrinho[id] = { nome, preco, quantidade: delta };
+                }
+            } else {
+                carrinho[id].quantidade += delta;
+                if (carrinho[id].quantidade <= 0) {
+                    delete carrinho[id];
+                }
+            }
+            salvarESincronizar();
+        }
+
+        function limparCarrinho() {
+            carrinho = {};
+            salvarESincronizar();
+        }
+
+        function salvarESincronizar() {
+            localStorage.setItem('carrinho_distribuidora', JSON.stringify(carrinho));
+            atualizarCarrinhoUI();
+        }
+
+        function atualizarCarrinhoUI() {
+            const listaDiv = document.getElementById("lista-carrinho");
+            const totalDiv = document.getElementById("carrinho-total");
+            const btnLimpar = document.getElementById("btn-limpar-carrinho");
+            const footerTotal = document.getElementById("footer-total");
+            
+            listaDiv.innerHTML = "";
+            let valorTotal = 0;
+            let temItens = false;
+
+            const numeroWhatsApp = "5521968659086";
+            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes produtos:\n\n";
+            let contador = 1;
+
+            for (let id in carrinho) {
+                temItens = true;
+                let item = carrinho[id];
+                let subtotal = item.preco * item.quantidade;
+                valorTotal += subtotal;
+
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "item-carrinho";
+                itemDiv.innerHTML = `
+                    <div class="detalhes">
+                        <strong>${item.nome}</strong><br>
+                        <small>R$ ${item.preco.toFixed(2).replace('.', ',')} x ${item.quantidade}</small>
+                    </div>
+                    <div class="controles">
+                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, -1)">-</button>
+                        <span>${item.quantidade}</span>
+                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, 1)">+</button>
+                    </div>
+                `;
+                listaDiv.appendChild(itemDiv);
+
+                mensagem += `${contador}. ${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+                contador++;
+            }
+
+            if (!temItens) {
+                listaDiv.innerHTML = '<p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>';
+                totalDiv.style.display = "none";
+                btnLimpar.style.display = "none";
+            } else {
+                totalDiv.style.display = "block";
+                btnLimpar.style.display = "block";
+                totalDiv.innerText = `Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+            }
+
+            footerTotal.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+            mensagem += `\n*Valor Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}*`;
+
+            const linkEncoded = encodeURI(mensagem);
+            document.getElementById("btn-cotar").href = `https://wa.me/${numeroWhatsApp}?text=${linkEncoded}`;
+        }
+
+        renderizarProdutos();
+        atualizarCarrinhoUI();
+    </script>
+
+</body>
+</html>

@@ -21,6 +21,10 @@
         .item-carrinho button { background: #e0e0e0; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-weight: bold; }
         .item-carrinho button:hover { background: #d0d0d0; }
         .carrinho-total { font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; color: #27ae60; }
+
+        .aviso-cadastro { display: inline-block; margin-top: 10px; color: #e74c3c; font-size: 14px; font-weight: bold; text-decoration: underline; cursor: pointer; }
+        .aviso-cadastro:hover { color: #c0392b; }
+        .status-cliente { margin-top: 10px; font-size: 13px; color: #27ae60; font-weight: bold; }
         
         .btn-limpar { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; font-weight: bold; }
         .btn-limpar:hover { background: #c0392b; }
@@ -72,6 +76,8 @@
                 <div id="lista-carrinho">
                     <p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
                 </div>
+                <a id="aviso-cadastro" class="aviso-cadastro" href="cadastro.html">⚠ Cadastre-se para enviar seu pedido</a>
+                <div id="status-cliente" class="status-cliente" style="display: none;"></div>
                 <div id="carrinho-total" class="carrinho-total" style="display: none;">
                     Total: R$ 0,00
                 </div>
@@ -180,26 +186,39 @@
 
         let paginaAtual = 1;
         const itensPorPagina = 12;
-        let carrinho = {};
+        let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
 
-        try {
-            carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
-        } catch (e) {
-            carrinho = {};
+        function obterClienteCadastrado() {
+            const dados = localStorage.getItem("cliente") || localStorage.getItem("clienteFrazao");
+            if (!dados) return null;
+            try {
+                const parsed = JSON.parse(dados);
+                if (typeof parsed === "object" && parsed !== null) {
+                    return parsed.nome || parsed.razaoSocial || parsed.empresa || "Cliente cadastrado";
+                }
+                return String(dados);
+            } catch (e) {
+                return String(dados);
+            }
         }
 
-        function escaparHTML(str) {
-            return String(str).replace(/[&<>'"]/g, tag => ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                "'": '&#39;',
-                '"': '&quot;'
-            }[tag] || tag));
-        }
+        function atualizarCadastroUI() {
+            const aviso = document.getElementById("aviso-cadastro");
+            const statusCliente = document.getElementById("status-cliente");
+            const clienteNome = obterClienteCadastrado();
 
-        function escaparJS(str) {
-            return String(str).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+            if (clienteNome) {
+                if (aviso) aviso.style.display = "none";
+                if (statusCliente) {
+                    statusCliente.style.display = "block";
+                    statusCliente.innerText = `✓ Cliente: ${clienteNome}`;
+                }
+            } else {
+                if (aviso) aviso.style.display = "inline-block";
+                if (statusCliente) statusCliente.style.display = "none";
+            }
+
+            return clienteNome;
         }
 
         function renderizarProdutos() {
@@ -213,28 +232,27 @@
             itensPagina.forEach(prod => {
                 const card = document.createElement("div");
                 card.className = "card";
-                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${escaparHTML(prod.nome)}">` : '';
+                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${prod.nome}">` : '';
                 
                 const qtdNoCarrinho = carrinho[prod.id] ? carrinho[prod.id].quantidade : 0;
-                const nomeJS = escaparJS(prod.nome);
                 
                 let acaoHTML = "";
                 if (qtdNoCarrinho === 0) {
-                    acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, 1)">Adicionar</button>`;
+                    acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">Adicionar</button>`;
                 } else {
                     acaoHTML = `
                         <div class="card-controles">
-                            <button onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, -1)">-</button>
+                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, -1)">-</button>
                             <span>${qtdNoCarrinho}</span>
-                            <button onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, 1)">+</button>
+                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">+</button>
                         </div>
                     `;
                 }
 
                 card.innerHTML = `
                     ${imgTag}
-                    <h3>${escaparHTML(prod.nome)}</h3>
-                    <p>R$ ${Number(prod.preco).toFixed(2).replace('.', ',')}</p>
+                    <h3>${prod.nome}</h3>
+                    <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
                     ${acaoHTML}
                 `;
                 grid.appendChild(card);
@@ -292,34 +310,38 @@
             const totalDiv = document.getElementById("carrinho-total");
             const btnLimpar = document.getElementById("btn-limpar-carrinho");
             const footerTotal = document.getElementById("footer-total");
+            const btnCotar = document.getElementById("btn-cotar");
             
             listaDiv.innerHTML = "";
             let valorTotal = 0;
             let temItens = false;
 
+            const clienteNome = atualizarCadastroUI();
             const numeroWhatsApp = "5521968659086";
-            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes produtos:\n\n";
+            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes produtos:\n";
+            if (clienteNome) {
+                mensagem += `Cliente: ${clienteNome}\n`;
+            }
+            mensagem += "\n";
             let contador = 1;
 
             for (let id in carrinho) {
-                if (!Object.prototype.hasOwnProperty.call(carrinho, id)) continue;
                 temItens = true;
                 let item = carrinho[id];
                 let subtotal = item.preco * item.quantidade;
                 valorTotal += subtotal;
-                const nomeJS = escaparJS(item.nome);
 
                 const itemDiv = document.createElement("div");
                 itemDiv.className = "item-carrinho";
                 itemDiv.innerHTML = `
                     <div class="detalhes">
-                        <strong>${escaparHTML(item.nome)}</strong><br>
-                        <small>R$ ${Number(item.preco).toFixed(2).replace('.', ',')} x ${item.quantidade}</small>
+                        <strong>${item.nome}</strong><br>
+                        <small>R$ ${item.preco.toFixed(2).replace('.', ',')} x ${item.quantidade}</small>
                     </div>
                     <div class="controles">
-                        <button onclick="alterarQuantidade('${id}', '${nomeJS}', ${item.preco}, -1)">-</button>
+                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, -1)">-</button>
                         <span>${item.quantidade}</span>
-                        <button onclick="alterarQuantidade('${id}', '${nomeJS}', ${item.preco}, 1)">+</button>
+                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, 1)">+</button>
                     </div>
                 `;
                 listaDiv.appendChild(itemDiv);
@@ -341,8 +363,21 @@
             footerTotal.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
             mensagem += `\n*Valor Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}*`;
 
-            const linkEncoded = encodeURIComponent(mensagem);
-            document.getElementById("btn-cotar").href = `https://wa.me/${numeroWhatsApp}?text=${linkEncoded}`;
+            const linkEncoded = encodeURI(mensagem);
+
+            if (!clienteNome) {
+                btnCotar.href = "cadastro.html";
+                btnCotar.removeAttribute("target");
+                btnCotar.onclick = function(e) {
+                    e.preventDefault();
+                    alert("Cadastre-se para enviar o pedido.");
+                    window.location.href = "cadastro.html";
+                };
+            } else {
+                btnCotar.href = `https://wa.me/${numeroWhatsApp}?text=${linkEncoded}`;
+                btnCotar.setAttribute("target", "_blank");
+                btnCotar.onclick = null;
+            }
         }
 
         renderizarProdutos();

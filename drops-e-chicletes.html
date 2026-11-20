@@ -8,11 +8,11 @@
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; padding-bottom: 120px; }
         h1 { text-align: center; color: #333; }
         .container { max-width: 1200px; margin: 0 auto; }
-        
+        .voltar { display: inline-block; margin-bottom: 10px; color: #27ae60; text-decoration: none; font-weight: bold; }
+
         .loja-layout { display: flex; gap: 20px; flex-wrap: wrap; }
         .produtos-area { flex: 3; min-width: 300px; }
-        
-        /* Carrinho Lateral */
+
         .carrinho-lateral { flex: 1; min-width: 280px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
         .carrinho-lateral h2 { font-size: 18px; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333; }
         .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
@@ -21,46 +21,52 @@
         .item-carrinho button { background: #e0e0e0; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-weight: bold; }
         .item-carrinho button:hover { background: #d0d0d0; }
         .carrinho-total { font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; color: #27ae60; }
-        
+
+        .aviso-cadastro { display: inline-block; margin-top: 10px; color: #e74c3c; font-size: 14px; font-weight: bold; text-decoration: underline; cursor: pointer; }
+        .aviso-cadastro:hover { color: #c0392b; }
+        .status-cliente { margin-top: 10px; font-size: 13px; color: #27ae60; font-weight: bold; }
+
         .btn-limpar { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; font-weight: bold; }
         .btn-limpar:hover { background: #c0392b; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
         .card { background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
         .card img { width: 100%; height: 140px; object-fit: contain; border-radius: 4px; background: #fff; margin-bottom: 10px; }
-        .card h3 { font-size: 15px; margin: 0 0 8px 0; color: #444; height: 38px; overflow: hidden; display: flex; align-items: center; }
+        .card h3 { font-size: 15px; margin: 0 0 8px 0; color: #444; }
         .card p { font-size: 16px; font-weight: bold; color: #27ae60; margin: 0 0 12px 0; }
-        
-        /* Botões do Card */
+
         .btn-add { background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.2s; }
         .btn-add:hover { background: #2980b9; }
-        
+
         .card-controles { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; border: 1px solid #ddd; border-radius: 5px; padding: 4px; }
         .card-controles button { background: #3498db; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 14px; }
         .card-controles button:hover { background: #2980b9; }
         .card-controles span { font-weight: bold; font-size: 15px; color: #333; }
 
-        /* Paginação */
         .pagination { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
         .pagination button { padding: 8px 12px; border: none; background: #ddd; cursor: pointer; border-radius: 4px; font-weight: bold; }
         .pagination button.active { background: #27ae60; color: white; }
 
-        /* Barra Fixa do WhatsApp */
         .whatsapp-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #25d366; color: white; text-align: center; padding: 12px; font-size: 16px; font-weight: bold; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 20px; box-sizing: border-box; }
         .whatsapp-bar a { background: white; color: #25d366; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; }
         .whatsapp-bar a:hover { background: #f0f0f0; }
 
+        @media (max-width: 1024px) {
+            .grid { grid-template-columns: repeat(2, 1fr); }
+        }
         @media (max-width: 768px) {
             .loja-layout { flex-direction: column-reverse; }
             .carrinho-lateral { position: static; width: 100%; margin-bottom: 20px; }
+            .grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <a class="voltar" href="../index.html">← Voltar ao catálogo</a>
         <h1>Chicletes e Drops</h1>
-        
+
         <div class="loja-layout">
             <div class="produtos-area">
                 <div id="product-grid" class="grid"></div>
@@ -72,9 +78,9 @@
                 <div id="lista-carrinho">
                     <p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
                 </div>
-                <div id="carrinho-total" class="carrinho-total" style="display: none;">
-                    Total: R$ 0,00
-                </div>
+                <a id="aviso-cadastro" class="aviso-cadastro" href="https://frazao-hub.github.io/distribuidora-frazao/clientes.html">⚠ Cadastre-se para enviar seu pedido</a>
+                <div id="status-cliente" class="status-cliente" style="display: none;"></div>
+                <div id="carrinho-total" class="carrinho-total" style="display: none;">Total: R$ 0,00</div>
                 <button class="btn-limpar" onclick="limparCarrinho()" id="btn-limpar-carrinho" style="display: none;">Esvaziar Carrinho</button>
             </div>
         </div>
@@ -85,7 +91,14 @@
         <a id="btn-cotar" href="#" target="_blank">Enviar Cotação WhatsApp</a>
     </div>
 
+    <!-- 1º: lógica do carrinho (compartilhada por todas as categorias) -->
+    <script src="../carrinho.js"></script>
+
+    <!-- 2º: produtos e renderização com proteção de erro -->
     <script>
+        const urlCadastro = "https://frazao-hub.github.io/distribuidora-frazao/clientes.html";
+        const numeroWhatsApp = "5521968659086";
+
         const produtos = [
             { id: "chc_001", nome: "Adams cx hortelã c/100", preco: 39.00, imagem: "https://http2.mlstatic.com/D_NQ_NP_707754-MLA99445335824_112025-O.webp" },
             { id: "chc_002", nome: "Adams cx Tutti c/100", preco: 41.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLX_Lya12pRbTNkPqhlkriLC4jxJvWk_wUBUhJayBFyQ&s=10" },
@@ -107,9 +120,9 @@
             { id: "chc_018", nome: "Ch. A metro Tutti c/12", preco: 22.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwLVgcsHPUVFKTTk0vWKYbKBqRHY1kedSS5H72n0RThQ&s=10" },
             { id: "chc_019", nome: "Ch. A metro uva c/12", preco: 22.00, imagem: "https://passodoce.com.br/cdn/shop/files/Yeb6tCrEKAbcFGNuEZVJ.jpg?v=1750465228" },
             { id: "chc_020", nome: "Ch. Big Big hortelã c/100", preco: 10.95, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbAdAzrgkSabBWfQIfl7E99x1q_lQW55x37DwEz0KH4A&s=10" },
-            { id: "chc_021", nome: "Ch. Big Big morango c/100", preco:10.95, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlp4PIsat_3pW1BoivfNdbl3uLpnaq_d5hkJegqI5Ihg&s=10" },
+            { id: "chc_021", nome: "Ch. Big Big morango c/100", preco: 10.95, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlp4PIsat_3pW1BoivfNdbl3uLpnaq_d5hkJegqI5Ihg&s=10" },
             { id: "chc_022", nome: "Ch. Big Big Tutti c/1000", preco: 9.95, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlVyqFM_kNZCvaHAgRhVigMyB3DJZloV50HtmxcZ7-dg&s=10" },
-            { id: "chc_023", nome: "Ch. Big Big uva c/100", preco:10.95, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7nVfJjMz-Bt6FsmQic2oc9F2do3TZfg6AJwO8lvzhYg&s=10" },
+            { id: "chc_023", nome: "Ch. Big Big uva c/100", preco: 10.95, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7nVfJjMz-Bt6FsmQic2oc9F2do3TZfg6AJwO8lvzhYg&s=10" },
             { id: "chc_024", nome: "Ch. Bubbaloo hortelã c/60", preco: 16.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRRa69SAjul1Irq0veeWpwtl_BwhHmTYEm-NcTNsnLBQ&s=10" },
             { id: "chc_025", nome: "Ch. Bubbaloo morango c/60", preco: 16.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZdz8PcOZxQW7MAgB60p9EFAnfHYYFLXhyBxi7W-oaLA&s=10" },
             { id: "chc_026", nome: "Ch. Bubbaloo Tutti c/60", preco: 16.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyfx-st20U7h6EJQy4SbGyR68LTusYFNnOVJ8diwbOGQ&s=10" },
@@ -174,58 +187,117 @@
             { id: "chc_085", nome: "ch. plutonita abraço cong. c/40", preco: 9.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScRwqqwCMhc5SeYh-matddXAP_6J-6y6cF2OoyZspThQ&s" },
             { id: "chc_086", nome: "ch. plutonita baba de bruxa c/40", preco: 9.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8Atf_nwwsDtkKxGyaahrLvn_M3IfeklcD0Rg2F_Ke2A&s" },
             { id: "chc_087", nome: "Ch. plutonita lingua ácida c/40", preco: 9.50, imagem: "https://tse1.mm.bing.net/th/id/OIP.BuCv_tyfeH9as94KQAJHSgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"},
-            { id: "chc_087", nome: "ch. plutonita cabeça abobora c/40", preco: 9.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgZBzuknWQPGui-VXlnCRN6gFABskkiIM3xyk-KUBw4A&s" },
-            { id: "chc_088", nome: "ch. plutonita zumbiss c/15", preco: 13.70, imagem: "https://images.tcdn.com.br/img/img_prod/1106817/chiclete_arcor_plutonita_zumbis_337g_8093_1_851209e6f9bae2ee901d4077a5e065e5.jpg" }
+            { id: "chc_088", nome: "ch. plutonita cabeça abobora c/40", preco: 9.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgZBzuknWQPGui-VXlnCRN6gFABskkiIM3xyk-KUBw4A&s" },
+            { id: "chc_089", nome: "ch. plutonita zumbiss c/15", preco: 13.70, imagem: "https://images.tcdn.com.br/img/img_prod/1106817/chiclete_arcor_plutonita_zumbis_337g_8093_1_851209e6f9bae2ee901d4077a5e065e5.jpg" }
         ];
 
         let paginaAtual = 1;
         const itensPorPagina = 12;
-        let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
+
+        function escaparHTML(str) {
+            return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+        }
+
+        function obterClienteCadastradoLocal() {
+            const dados = localStorage.getItem("cliente") || localStorage.getItem("clienteFrazao");
+            if (!dados) return null;
+            try {
+                const parsed = JSON.parse(dados);
+                if (typeof parsed === "object" && parsed !== null) {
+                    return parsed.nome || parsed.razaoSocial || parsed.empresa || "Cliente cadastrado";
+                }
+                return String(dados);
+            } catch (e) {
+                return String(dados);
+            }
+        }
+
+        function atualizarCadastroLocal() {
+            const aviso = document.getElementById("aviso-cadastro");
+            const statusCliente = document.getElementById("status-cliente");
+            const btnCotar = document.getElementById("btn-cotar");
+            const clienteNome = obterClienteCadastradoLocal();
+
+            if (aviso) {
+                aviso.href = urlCadastro;
+            }
+
+            if (clienteNome) {
+                if (aviso) aviso.style.display = "none";
+                if (statusCliente) {
+                    statusCliente.style.display = "block";
+                    statusCliente.innerText = `✓ Cliente: ${clienteNome}`;
+                }
+                if (btnCotar && (!btnCotar.href || btnCotar.href.includes("clientes.html"))) {
+                    btnCotar.href = `https://wa.me/${numeroWhatsApp}`;
+                    btnCotar.setAttribute("target", "_blank");
+                    btnCotar.onclick = null;
+                }
+            } else {
+                if (aviso) aviso.style.display = "inline-block";
+                if (statusCliente) statusCliente.style.display = "none";
+                if (btnCotar) {
+                    btnCotar.href = urlCadastro;
+                    btnCotar.removeAttribute("target");
+                    btnCotar.onclick = function(e) {
+                        e.preventDefault();
+                        alert("Cadastre-se para enviar o pedido.");
+                        window.location.href = urlCadastro;
+                    };
+                }
+            }
+            return clienteNome;
+        }
 
         function renderizarProdutos() {
-            const grid = document.getElementById("product-grid");
-            grid.innerHTML = "";
+            try {
+                const grid = document.getElementById("product-grid");
+                if (!grid) return;
+                grid.innerHTML = "";
 
-            const inicio = (paginaAtual - 1) * itensPorPagina;
-            const fim = inicio + itensPorPagina;
-            const itensPagina = produtos.slice(inicio, fim);
+                const inicio = (paginaAtual - 1) * itensPorPagina;
+                const fim = inicio + itensPorPagina;
+                const itensPagina = produtos.slice(inicio, fim);
 
-            itensPagina.forEach(prod => {
-                const card = document.createElement("div");
-                card.className = "card";
-                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${prod.nome}">` : '';
-                
-                const qtdNoCarrinho = carrinho[prod.id] ? carrinho[prod.id].quantidade : 0;
-                
-                let acaoHTML = "";
-                if (qtdNoCarrinho === 0) {
-                    acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">Adicionar</button>`;
-                } else {
-                    acaoHTML = `
-                        <div class="card-controles">
-                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, -1)">-</button>
-                            <span>${qtdNoCarrinho}</span>
-                            <button onclick="alterarQuantidade('${prod.id}', '${prod.nome}', ${prod.preco}, 1)">+</button>
-                        </div>
-                    `;
-                }
+                itensPagina.forEach(prod => {
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    const imgTag = prod.imagem ? `<img src="${escaparHTML(prod.imagem)}" alt="${escaparHTML(prod.nome)}">` : '';
 
-                card.innerHTML = `
-                    ${imgTag}
-                    <h3>${prod.nome}</h3>
-                    <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
-                    ${acaoHTML}
-                `;
-                grid.appendChild(card);
-            });
+                    const carrinhoObj = (typeof carrinho !== 'undefined') ? carrinho : {};
+                    const qtd = (carrinhoObj[prod.id]) ? carrinhoObj[prod.id].quantidade : 0;
+                    const nomeJS = prod.nome.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 
-            renderizarPaginacao();
+                    let acaoHTML;
+                    if (qtd === 0) {
+                        acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, 1)">Adicionar</button>`;
+                    } else {
+                        acaoHTML = `
+                            <div class="card-controles">
+                                <button onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, -1)">-</button>
+                                <span>${qtd}</span>
+                                <button onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, 1)">+</button>
+                            </div>`;
+                    }
+
+                    card.innerHTML = `
+                        ${imgTag}
+                        <h3>${escaparHTML(prod.nome)}</h3>
+                        <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
+                        ${acaoHTML}`;
+                    grid.appendChild(card);
+                });
+
+                renderizarPaginacao();
+            } catch (erro) {
+                console.error("Erro ao renderizar produtos:", erro);
+            }
         }
 
         function renderizarPaginacao() {
             const paginacao = document.getElementById("pagination");
+            if (!paginacao) return;
             paginacao.innerHTML = "";
-
             const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
 
             for (let i = 1; i <= totalPaginas; i++) {
@@ -241,91 +313,21 @@
             }
         }
 
-        function alterarQuantidade(id, nome, preco, delta) {
-            if (!carrinho[id]) {
-                if (delta > 0) {
-                    carrinho[id] = { nome, preco, quantidade: delta };
-                }
-            } else {
-                carrinho[id].quantidade += delta;
-                if (carrinho[id].quantidade <= 0) {
-                    delete carrinho[id];
-                }
-            }
-            salvarESincronizar();
-        }
-
-        function limparCarrinho() {
-            carrinho = {};
-            salvarESincronizar();
-        }
-
-        function salvarESincronizar() {
-            localStorage.setItem('carrinho_distribuidora', JSON.stringify(carrinho));
+        window.onload = function() {
             renderizarProdutos();
-            atualizarCarrinhoUI();
-        }
-
-        function atualizarCarrinhoUI() {
-            const listaDiv = document.getElementById("lista-carrinho");
-            const totalDiv = document.getElementById("carrinho-total");
-            const btnLimpar = document.getElementById("btn-limpar-carrinho");
-            const footerTotal = document.getElementById("footer-total");
-            
-            listaDiv.innerHTML = "";
-            let valorTotal = 0;
-            let temItens = false;
-
-            const numeroWhatsApp = "5521968659086";
-            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes produtos:\n\n";
-            let contador = 1;
-
-            for (let id in carrinho) {
-                temItens = true;
-                let item = carrinho[id];
-                let subtotal = item.preco * item.quantidade;
-                valorTotal += subtotal;
-
-                const itemDiv = document.createElement("div");
-                itemDiv.className = "item-carrinho";
-                itemDiv.innerHTML = `
-                    <div class="detalhes">
-                        <strong>${item.nome}</strong><br>
-                        <small>R$ ${item.preco.toFixed(2).replace('.', ',')} x ${item.quantidade}</small>
-                    </div>
-                    <div class="controles">
-                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, -1)">-</button>
-                        <span>${item.quantidade}</span>
-                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, 1)">+</button>
-                    </div>
-                `;
-                listaDiv.appendChild(itemDiv);
-
-                mensagem += `${contador}. ${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
-                contador++;
+            if (typeof atualizarCarrinho === 'function') {
+                atualizarCarrinho();
             }
-
-            if (!temItens) {
-                listaDiv.innerHTML = '<p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>';
-                totalDiv.style.display = "none";
-                btnLimpar.style.display = "none";
+            if (typeof atualizarCarrinhoUI === 'function') {
+                atualizarCarrinhoUI();
+            }
+            if (typeof atualizarCadastroUI === 'function') {
+                atualizarCadastroUI();
             } else {
-                totalDiv.style.display = "block";
-                btnLimpar.style.display = "block";
-                totalDiv.innerText = `Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+                atualizarCadastroLocal();
             }
-
-            footerTotal.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
-            mensagem += `\n*Valor Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}*`;
-
-            const linkEncoded = encodeURI(mensagem);
-            document.getElementById("btn-cotar").href = `https://wa.me/${numeroWhatsApp}?text=${linkEncoded}`;
-        }
-
-        renderizarProdutos();
-        atualizarCarrinhoUI();
+        };
     </script>
 
 </body>
 </html>
-

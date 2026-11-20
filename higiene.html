@@ -9,6 +9,7 @@
         h1 { text-align: center; color: #333; }
         .container { max-width: 1200px; margin: 0 auto; }
         .voltar { display: inline-block; margin-bottom: 10px; color: #27ae60; text-decoration: none; font-weight: bold; }
+        .voltar:hover { text-decoration: underline; }
 
         /* Layout principal dividindo produtos e carrinho */
         .loja-layout { display: flex; gap: 20px; flex-wrap: wrap; }
@@ -69,7 +70,7 @@
 <body>
 
     <div class="container">
-        <a class="voltar" href="../index.html">← Voltar ao catálogo</a>
+        <a id="link-voltar" class="voltar" href="https://frazao-hub.github.io/distribuidora-frazao/index.html">← Voltar ao catálogo</a>
         <h1>Itens de Higiene</h1>
 
         <div class="loja-layout">
@@ -102,6 +103,7 @@
     </div>
 
     <script>
+        const urlHome = "https://frazao-hub.github.io/distribuidora-frazao/index.html";
         const urlCadastro = "https://frazao-hub.github.io/distribuidora-frazao/clientes.html";
         const numeroWhatsApp = "5521968659086";
 
@@ -150,7 +152,7 @@
             { id: "hig_038", nome: "Sabonete Francis erva doce c/12", preco: 29.80, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-xsKD1OCWUO0vRbAYJUV9GVKZXpIHa5_XJtpjNZ_ngw&s=10" },
             { id: "hig_039", nome: "Sabonete Francis Jamim c/12", preco: 29.80, imagem: "https://m.media-amazon.com/images/I/51IvC4JZPTL._AC_SY300_SX300_QL70_ML2_.jpg" },
             { id: "hig_040", nome: "Sabonete lux c/12", preco: 32.90, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fcff34d5f-09b1-4ca5-be99-48755f41ae60.jpg?alt=media" },
-            { id: "hig_041", nome: "Espelho Lands n. 14 c/06", preco: 31.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F7c8127d5-bb34-48d9-a6c1-f7fdb2b178f8.jpg?alt=media" },
+            { id: "hig_041", nome: "Espelho Lands n. 14 c/06", preco: 31.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F7c8127d5-bb34-4d9-a6c1-f7fdb2b178f8.jpg?alt=media" },
             { id: "hig_042", nome: "Gel Bellus branco c/06", preco: 30.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKktm1vQOwogmdOugfQLb2_ChnJJ6VWLbrT8sPYhP1Hg&s=10" },
             { id: "hig_043", nome: "Grampo cabelo n. 5 c/05", preco: 30.90, imagem: "https://images.tcdn.com.br/img/img_prod/1147605/grampo_imperador_n5_preto_com_100_unidades_81926_1_67cc5fe3b81a7847d7bc74e456171a71.png" },
             { id: "hig_044", nome: "Shampoo Monange c/03", preco: 24.30, imagem: "https://assets.ibecom.com.br/ib.item.image.large/l-5592cd921a604de9b7e35641586517ba.jpeg" },
@@ -162,6 +164,10 @@
 
         // Carrega o carrinho salvo no navegador (funciona entre diferentes páginas do site)
         let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
+
+        function escaparJS(texto) {
+            return String(texto).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+        }
 
         function obterClienteCadastrado() {
             const dados = localStorage.getItem("cliente") || localStorage.getItem("clienteFrazao");
@@ -201,6 +207,9 @@
         }
 
         function renderizarProdutos() {
+            const linkVoltar = document.getElementById("link-voltar");
+            if (linkVoltar) linkVoltar.href = urlHome;
+
             const grid = document.getElementById("product-grid");
             grid.innerHTML = "";
 
@@ -213,7 +222,7 @@
                 card.className = "card";
                 const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${prod.nome}">` : '';
                 const qtdNoCarrinho = carrinho[prod.id] ? carrinho[prod.id].quantidade : 0;
-                const nomeJS = prod.nome.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+                const nomeJS = escaparJS(prod.nome);
 
                 let acaoHTML = "";
                 if (qtdNoCarrinho === 0) {
@@ -279,7 +288,6 @@
         }
 
         function salvarESincronizar() {
-            // Salva na memória do navegador para cruzar dados entre as pastas
             localStorage.setItem('carrinho_distribuidora', JSON.stringify(carrinho));
             renderizarProdutos();
             atualizarCarrinhoUI();
@@ -309,6 +317,7 @@
                 let item = carrinho[id];
                 let subtotal = item.preco * item.quantidade;
                 valorTotal += subtotal;
+                const nomeJS = escaparJS(item.nome);
 
                 const itemDiv = document.createElement("div");
                 itemDiv.className = "item-carrinho";
@@ -318,9 +327,9 @@
                         <small>R$ ${item.preco.toFixed(2).replace('.', ',')} x ${item.quantidade}</small>
                     </div>
                     <div class="controles">
-                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, -1)">-</button>
+                        <button onclick="alterarQuantidade('${id}', '${nomeJS}', ${item.preco}, -1)">-</button>
                         <span>${item.quantidade}</span>
-                        <button onclick="alterarQuantidade('${id}', '${item.nome}', ${item.preco}, 1)">+</button>
+                        <button onclick="alterarQuantidade('${id}', '${nomeJS}', ${item.preco}, 1)">+</button>
                     </div>
                 `;
                 listaDiv.appendChild(itemDiv);

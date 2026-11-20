@@ -1,1 +1,354 @@
-limpeza-copia.html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo - Limpeza | Distribuidora Frazão</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; padding-bottom: 120px; }
+        h1 { text-align: center; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .voltar { display: inline-block; margin-bottom: 10px; color: #27ae60; text-decoration: none; font-weight: bold; }
+        .voltar:hover { text-decoration: underline; }
+
+        .loja-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+        .produtos-area { flex: 3; min-width: 300px; }
+
+        /* Carrinho Lateral */
+        .carrinho-lateral { flex: 1; min-width: 280px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
+        .carrinho-lateral h2 { font-size: 18px; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333; }
+        .item-carrinho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
+        .item-carrinho .detalhes { flex: 1; margin-right: 10px; }
+        .item-carrinho .controles { display: flex; align-items: center; gap: 5px; }
+        .item-carrinho button { background: #e0e0e0; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .item-carrinho button:hover { background: #d0d0d0; }
+        .carrinho-total { font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; color: #27ae60; }
+
+        .aviso-cadastro { display: inline-block; margin-top: 10px; color: #e74c3c; font-size: 14px; font-weight: bold; text-decoration: underline; cursor: pointer; }
+        .aviso-cadastro:hover { color: #c0392b; }
+        .status-cliente { margin-top: 10px; font-size: 13px; color: #27ae60; font-weight: bold; }
+
+        .btn-limpar { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; width: 100%; font-weight: bold; }
+        .btn-limpar:hover { background: #c0392b; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .card { background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
+        .card img { width: 100%; height: 140px; object-fit: contain; border-radius: 4px; background: #fff; margin-bottom: 10px; }
+        .card h3 { font-size: 15px; margin: 0 0 8px 0; color: #444; }
+        .card p { font-size: 16px; font-weight: bold; color: #27ae60; margin: 0 0 12px 0; }
+
+        /* Botões do Card */
+        .btn-add { background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.2s; }
+        .btn-add:hover { background: #2980b9; }
+
+        .card-controles { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; border: 1px solid #ddd; border-radius: 5px; padding: 4px; }
+        .card-controles button { background: #3498db; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 14px; }
+        .card-controles button:hover { background: #2980b9; }
+        .card-controles span { font-weight: bold; font-size: 15px; color: #333; }
+
+        /* Paginação */
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .pagination button { padding: 8px 12px; border: none; background: #ddd; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .pagination button.active { background: #27ae60; color: white; }
+
+        /* Barra Fixa do WhatsApp */
+        .whatsapp-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #25d366; color: white; text-align: center; padding: 12px; font-size: 16px; font-weight: bold; box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 20px; box-sizing: border-box; }
+        .whatsapp-bar a { background: white; color: #25d366; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+        .whatsapp-bar a:hover { background: #f0f0f0; }
+
+        @media (max-width: 768px) {
+            .loja-layout { flex-direction: column-reverse; }
+            .carrinho-lateral { position: static; width: 100%; margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a id="link-voltar" class="voltar" href="https://frazao-hub.github.io/distribuidora-frazao/index.html">← Voltar ao catálogo</a>
+        <h1>Limpeza</h1>
+
+        <div class="loja-layout">
+            <div class="produtos-area">
+                <div id="product-grid" class="grid"></div>
+                <div id="pagination" class="pagination"></div>
+            </div>
+
+            <div class="carrinho-lateral">
+                <h2>Seu Carrinho Global</h2>
+                <div id="lista-carrinho">
+                    <p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>
+                </div>
+                <a id="aviso-cadastro" class="aviso-cadastro" href="https://frazao-hub.github.io/distribuidora-frazao/clientes.html">⚠ Cadastre-se para enviar seu pedido</a>
+                <div id="status-cliente" class="status-cliente" style="display: none;"></div>
+                <div id="carrinho-total" class="carrinho-total" style="display: none;">
+                    Total: R$ 0,00
+                </div>
+                <button class="btn-limpar" onclick="limparCarrinho()" id="btn-limpar-carrinho" style="display: none;">Esvaziar Carrinho</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="whatsapp-bar">
+        <span>Total: <span id="footer-total">R$ 0,00</span></span>
+        <a id="btn-cotar" href="#" target="_blank">Enviar Cotação WhatsApp</a>
+    </div>
+
+    <script>
+        const urlHome = "https://frazao-hub.github.io/distribuidora-frazao/index.html";
+        const urlCadastro = "https://frazao-hub.github.io/distribuidora-frazao/clientes.html";
+        const numeroWhatsApp = "5521968659086";
+
+        const produtos = [
+            { id: "lim_001", nome: "Agua sanitária cloral lt c/12", preco: 31.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSu_wKpsyv61x4K2mSEr3FonB1VJTtsqYcE8ajH15fxAQ&s" },
+            { id: "lim_002", nome: "Alcool Pring 92,8 litro c/06", preco: 67.25, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyIHUaevT9mJgfdESGWIE5huyQW8ADytkq-APHdw7v9w&s=10" },
+            { id: "lim_003", nome: "Alcool flops 92,8 500ml c/06", preco: 33.95, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F72750f84-3d9e-4a4a-94db-4b8f77a94632.jpg?alt=media" },
+            { id: "lim_004", nome: "Amaciante Ype azul 500ml c/06", preco: 23.40, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fb5711a48-e1dc-4383-996e-5b85f13ecdd1.jpg?alt=media" },
+            { id: "lim_005", nome: "Bacia 11l c/06", preco: 46.69, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fa11e95ec-8983-4536-8c2e-237a108876a8.jpg?alt=media" },
+            { id: "lim_006", nome: "Bacia 20l c/06", preco: 75.60, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F02c46cbd-2092-4a7a-b771-4b4d7d6c88d2.jpg?alt=media" },
+            { id: "lim_007", nome: "Balde azul 15l c/06", preco: 66.25, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F6c595040-5b71-4e98-8128-99dc4df0ac7a.jpg?alt=media" },
+            { id: "lim_008", nome: "Balde preto 8l c/ alça de ferro c/06", preco: 35.00, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fb18ec421-3d09-401b-b3e8-a8d5fef66301.jpg?alt=media" },
+            { id: "lim_009", nome: "Balde verde 8l c/ alça de ferro c/06", preco: 35.00, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F4788fb9c-f5a7-44b1-b022-b2e09e394bd3.jpg?alt=media" },
+            { id: "lim_010", nome: "Bombril c/20", preco: 39.90, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F05cdab05-7637-41e9-a95d-06290ce5adcc.jpg?alt=media" },
+            { id: "lim_011", nome: "Corante tecidos Tingecor marinho c/06", preco: 21.70, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fa56659c0-1631-44aa-a77c-f72cbc7445b0.jpg?alt=media" },
+            { id: "lim_012", nome: "Corante tecidos Tingecor preto c/06", preco: 21.70, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F4fa7b0a7-1acf-4531-9f5d-c593a3888473.jpg?alt=media" },
+            { id: "lim_013", nome: "Det. odd bicabornato c/06", preco: 15.60, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-zeZjjogyyM-m1u_mYMw313HtspiG-Ueuwy4aA6E6Vw&s=10" },
+            { id: "lim_038", nome: "Det. odd clear c/06", preco: 15.60, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F0b60039e-f050-44e9-9d49-31b6a8c19a5d.jpg?alt=media" },
+            { id: "lim_014", nome: "Det. odd neutro c/06", preco: 15.60, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fb96021e2-94b1-42dc-af6b-1a3a58121702.jpg?alt=media" },
+            { id: "lim_015", nome: "Det. odd original c/06", preco: 15.60, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVRAWFdES9M3i_nIsWqtXhp44b6tue91pr0OzCazzdEg&s=10" },
+            { id: "lim_016", nome: "Det. odd coco c/06", preco: 15.60, imagem: "https://assets.ibecom.com.br/ib.item.image.large/l-1766d5651dca4cbf977989175709d7ea.jpeg" },
+            { id: "lim_017", nome: "Escova de roupa condor c/12", preco: 35.00, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDLku6SmQOoO_w4xYR-QrCm07VlS6PAz4vgFyS7SP-Og&s=10" },
+            { id: "lim_018", nome: "Espiral detefon c/05", preco: 22.69, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fb0197399-b870-45c7-810f-764545e726bf.jpg?alt=media" },
+            { id: "lim_020", nome: "Esponja Wish Limpanno c/10", preco: 9.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fb13c60d3-ed75-4c13-a838-4b947c2daeb6.jpg?alt=media" },
+            { id: "lim_021", nome: "Flanela 28x38 c/12", preco: 23.60, imagem: "" },
+            { id: "lim_022", nome: "Inseticida Proinset aero 250ml und", preco: 5.90, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F96a0e64e-5dd5-45ca-a6f7-4a435b9ec0eb.jpg?alt=media" },
+            { id: "lim_023", nome: "Lustra moveis King 200ml c/06", preco: 40.20, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fd6fd2079-b40a-4ca5-8c09-ef8ceaaba711.jpg?alt=media" },
+            { id: "lim_024", nome: "Naftalina c/10", preco: 13.99, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F2ac444a4-318e-4bf3-a4a9-e1b3a9d6802a.jpg?alt=media" },
+            { id: "lim_025", nome: "Oleo de maquina King c/06", preco: 34.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F33611f6e-89dc-4ec4-b848-01f900c9651c.jpg?alt=media" },
+            { id: "lim_026", nome: "Pano de chão grande c/10", preco: 39.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnTLanETNd9qzW6jYwTT-GVwW2zK_vcqefpunUZBhMfw&s=10" },
+            { id: "lim_027", nome: "Pano de chão pequeno c/10", preco: 24.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsLqfZjjeCj-6lU6dUQjHwjwrYH71vs0sHnDv6GshN6w&s=10" },
+            { id: "lim_028", nome: "Pano multiuso 25m", preco: 22.31, imagem: "https://images.tcdn.com.br/img/img_prod/499963/pano_multiuso_50_unidades_25cm_x_30cm_60457_1_4f193487d3654363cfe75a161da49fa8.png" },
+            { id: "lim_029", nome: "Papel toalha Beli chef c/06", preco: 22.30, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Faa4adc84-f954-4a23-b73a-5c44b5fde01f.jpg?alt=media" },
+            { id: "lim_030", nome: "Pedra sanitária Qodor mista c/12", preco: 28.99, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F2a1589db-2e2c-473f-85e0-e3205159a3b6.jpg?alt=media" },
+            { id: "lim_031", nome: "Sabão barra amarelo c/05", preco: 10.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Feee0f413-9609-4dee-a4cf-1bb0b2bf1836.jpg?alt=media" },
+            { id: "lim_032", nome: "Sabão barra azul c/05", preco: 10.75, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F69a2012e-1e1e-47b9-a8ca-7d2abc325cb7.jpg?alt=media" },
+            { id: "lim_033", nome: "Sabão tixan primavera 400g c/06", preco: 38.95, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fe669e12a-5ab3-4ffd-9e53-b54d88558866.jpg?alt=media" },
+            { id: "lim_034", nome: "Sabão de coco Ruth 90g c/05", preco: 12.79, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLvi_m3RoIwbSby89GgQvprJG2QOgLDnNjNp79ynL28Q&s=10" },
+            { id: "lim_035", nome: "Sabão Bulnez 800g", preco: 5.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F8b6a5462-3f10-4166-bad5-048b740f80e2.jpg?alt=media" },
+            { id: "lim_036", nome: "Sabão Minuano glicerinado c/05", preco: 15.50, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2F47db1e3b-a9fb-4c6a-a242-aaef5f6a20e9.jpg?alt=media" },
+            { id: "lim_038", nome: "Vassoura Condor un", preco: 7.99, imagem: "https://images-cdn.kyte.site/v0/b/kyte-7c484.appspot.com/o/4HtJKIzLCPRXZ1GEInUkZC09uM73%2Fa72debf3-2523-4291-94ef-6f1b842a0c2b.jpg?alt=media" }
+        ];
+
+        let paginaAtual = 1;
+        const itensPorPagina = 12;
+        let carrinho = JSON.parse(localStorage.getItem('carrinho_distribuidora')) || {};
+
+        function escaparJS(texto) {
+            return String(texto).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+        }
+
+        function obterClienteCadastrado() {
+            const dados = localStorage.getItem("cliente") || localStorage.getItem("clienteFrazao");
+            if (!dados) return null;
+            try {
+                const parsed = JSON.parse(dados);
+                if (typeof parsed === "object" && parsed !== null) {
+                    return parsed.nome || parsed.razaoSocial || parsed.empresa || "Cliente cadastrado";
+                }
+                return String(dados);
+            } catch (e) {
+                return String(dados);
+            }
+        }
+
+        function atualizarCadastroUI() {
+            const aviso = document.getElementById("aviso-cadastro");
+            const statusCliente = document.getElementById("status-cliente");
+            const clienteNome = obterClienteCadastrado();
+
+            if (aviso) {
+                aviso.href = urlCadastro;
+            }
+
+            if (clienteNome) {
+                if (aviso) aviso.style.display = "none";
+                if (statusCliente) {
+                    statusCliente.style.display = "block";
+                    statusCliente.innerText = `✓ Cliente: ${clienteNome}`;
+                }
+            } else {
+                if (aviso) aviso.style.display = "inline-block";
+                if (statusCliente) statusCliente.style.display = "none";
+            }
+
+            return clienteNome;
+        }
+
+        function renderizarProdutos() {
+            const linkVoltar = document.getElementById("link-voltar");
+            if (linkVoltar) linkVoltar.href = urlHome;
+
+            const grid = document.getElementById("product-grid");
+            grid.innerHTML = "";
+
+            const inicio = (paginaAtual - 1) * itensPorPagina;
+            const fim = inicio + itensPorPagina;
+            const itensPagina = produtos.slice(inicio, fim);
+
+            itensPagina.forEach(prod => {
+                const card = document.createElement("div");
+                card.className = "card";
+                const imgTag = prod.imagem ? `<img src="${prod.imagem}" alt="${prod.nome}">` : '';
+                const qtdNoCarrinho = carrinho[prod.id] ? carrinho[prod.id].quantidade : 0;
+                const nomeJS = escaparJS(prod.nome);
+
+                let acaoHTML = "";
+                if (qtdNoCarrinho === 0) {
+                    acaoHTML = `<button class="btn-add" onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, 1)">Adicionar</button>`;
+                } else {
+                    acaoHTML = `
+                        <div class="card-controles">
+                            <button onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, -1)">-</button>
+                            <span>${qtdNoCarrinho}</span>
+                            <button onclick="alterarQuantidade('${prod.id}', '${nomeJS}', ${prod.preco}, 1)">+</button>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    ${imgTag}
+                    <h3>${prod.nome}</h3>
+                    <p>R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
+                    ${acaoHTML}
+                `;
+                grid.appendChild(card);
+            });
+
+            renderizarPaginacao();
+        }
+
+        function renderizarPaginacao() {
+            const paginacao = document.getElementById("pagination");
+            paginacao.innerHTML = "";
+
+            const totalPaginas = Math.ceil(produtos.length / itensPorPagina);
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                const btn = document.createElement("button");
+                btn.innerText = i;
+                if (i === paginaAtual) btn.className = "active";
+                btn.onclick = () => {
+                    paginaAtual = i;
+                    renderizarProdutos();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                paginacao.appendChild(btn);
+            }
+        }
+
+        function alterarQuantidade(id, nome, preco, delta) {
+            if (!carrinho[id]) {
+                if (delta > 0) {
+                    carrinho[id] = { nome, preco, quantidade: delta };
+                }
+            } else {
+                carrinho[id].quantidade += delta;
+                if (carrinho[id].quantidade <= 0) {
+                    delete carrinho[id];
+                }
+            }
+            salvarESincronizar();
+        }
+
+        function limparCarrinho() {
+            carrinho = {};
+            salvarESincronizar();
+        }
+
+        function salvarESincronizar() {
+            localStorage.setItem('carrinho_distribuidora', JSON.stringify(carrinho));
+            renderizarProdutos();
+            atualizarCarrinhoUI();
+        }
+
+        function atualizarCarrinhoUI() {
+            const listaDiv = document.getElementById("lista-carrinho");
+            const totalDiv = document.getElementById("carrinho-total");
+            const btnLimpar = document.getElementById("btn-limpar-carrinho");
+            const footerTotal = document.getElementById("footer-total");
+            const btnCotar = document.getElementById("btn-cotar");
+
+            listaDiv.innerHTML = "";
+            let valorTotal = 0;
+            let temItens = false;
+
+            const clienteNome = atualizarCadastroUI();
+            let mensagem = "Olá! Gostaria de fazer a cotação dos seguintes produtos:\n";
+            if (clienteNome) {
+                mensagem += `Cliente: ${clienteNome}\n`;
+            }
+            mensagem += "\n";
+            let contador = 1;
+
+            for (let id in carrinho) {
+                temItens = true;
+                let item = carrinho[id];
+                let subtotal = item.preco * item.quantidade;
+                valorTotal += subtotal;
+                const nomeJS = escaparJS(item.nome);
+
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "item-carrinho";
+                itemDiv.innerHTML = `
+                    <div class="detalhes">
+                        <strong>${item.nome}</strong><br>
+                        <small>R$ ${item.preco.toFixed(2).replace('.', ',')} x ${item.quantidade}</small>
+                    </div>
+                    <div class="controles">
+                        <button onclick="alterarQuantidade('${id}', '${nomeJS}', ${item.preco}, -1)">-</button>
+                        <span>${item.quantidade}</span>
+                        <button onclick="alterarQuantidade('${id}', '${nomeJS}', ${item.preco}, 1)">+</button>
+                    </div>
+                `;
+                listaDiv.appendChild(itemDiv);
+
+                mensagem += `${contador}. ${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+                contador++;
+            }
+
+            if (!temItens) {
+                listaDiv.innerHTML = '<p style="color: #888; font-size: 14px;">Nenhum produto adicionado.</p>';
+                totalDiv.style.display = "none";
+                btnLimpar.style.display = "none";
+            } else {
+                totalDiv.style.display = "block";
+                btnLimpar.style.display = "block";
+                totalDiv.innerText = `Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+            }
+
+            footerTotal.innerText = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+            mensagem += `\n*Valor Total: R$ ${valorTotal.toFixed(2).replace('.', ',')}*`;
+
+            const linkEncoded = encodeURI(mensagem);
+
+            if (!clienteNome) {
+                btnCotar.href = urlCadastro;
+                btnCotar.removeAttribute("target");
+                btnCotar.onclick = function(e) {
+                    e.preventDefault();
+                    alert("Cadastre-se para enviar o pedido.");
+                    window.location.href = urlCadastro;
+                };
+            } else {
+                btnCotar.href = `https://wa.me/${numeroWhatsApp}?text=${linkEncoded}`;
+                btnCotar.setAttribute("target", "_blank");
+                btnCotar.onclick = null;
+            }
+        }
+
+        renderizarProdutos();
+        atualizarCarrinhoUI();
+    </script>
+
+</body>
+</html>

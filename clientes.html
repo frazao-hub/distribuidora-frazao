@@ -13,12 +13,21 @@
         .container { max-width: 600px; margin: 30px auto; padding: 0 20px; flex: 1; width: 100%; }
         .card-secao { background: #fff; border-radius: 8px; padding: 25px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
         .card-secao h2 { color: #27ae60; margin-top: 0; font-size: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+        .box-agenda { background: #f8fdf9; border: 1px solid #b7e4c7; border-radius: 6px; padding: 14px; margin-bottom: 20px; }
+        .box-agenda label { display: block; font-weight: bold; font-size: 13px; color: #1e8449; margin-bottom: 6px; }
+        .box-agenda input, .box-agenda select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; margin-bottom: 8px; background: #fff; }
+        .box-agenda select:last-child { margin-bottom: 0; }
         .form-grupo { margin-bottom: 15px; }
         .form-grupo label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #444; }
         .form-grupo input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
         .form-grupo input:focus { outline: none; border-color: #27ae60; }
         .btn-enviar { background: #27ae60; color: white; border: none; width: 100%; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
         .btn-enviar:hover { background: #219653; }
+        .linha-acoes { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-secundario { flex: 1; background: #f4f4f9; color: #333; border: 1px solid #ccc; padding: 10px; font-size: 13px; border-radius: 6px; cursor: pointer; }
+        .btn-secundario:hover { background: #e9ecef; }
+        .btn-perigo { background: #fff5f5; color: #c0392b; border: 1px solid #e6b0aa; }
+        .btn-perigo:hover { background: #fadbd8; }
         footer { text-align: center; padding: 20px; color: #7f8c8d; font-size: 12px; margin-top: auto; }
     </style>
 </head>
@@ -32,6 +41,15 @@
     <div class="container">
         <div class="card-secao">
             <h2>Dados de Entrega</h2>
+
+            <div id="area-clientes-salvos" class="box-agenda" style="display: none;">
+                <label for="buscar-cliente">Clientes gravados neste aparelho (<span id="total-clientes">0</span>):</label>
+                <input type="text" id="buscar-cliente" placeholder="Digite o primeiro nome, CPF/CNPJ ou endereço..." oninput="filtrarSelectClientes()">
+                <select id="select-cliente" onchange="carregarClienteSelecionado()">
+                    <option value="">-- Selecione um cliente gravado --</option>
+                </select>
+            </div>
+
             <p>Preencha abaixo para agilizar o seu atendimento no pedido:</p>
 
             <form id="form-cliente" onsubmit="salvarDadosEProsseguir(event)">
@@ -56,6 +74,11 @@
                 </div>
 
                 <button type="submit" class="btn-enviar">Avançar para o Catálogo</button>
+
+                <div class="linha-acoes">
+                    <button type="button" class="btn-secundario" onclick="novoCliente()">+ Novo Cliente</button>
+                    <button type="button" id="btn-excluir" class="btn-secundario btn-perigo" onclick="excluirClienteAtual()" style="display: none;">Excluir da Lista</button>
+                </div>
             </form>
         </div>
     </div>
@@ -66,6 +89,7 @@
 
     <script>
         const CHAVE = 'cliente_distribuidora';
+        const CHAVE_LISTA = 'lista_clientes_distribuidora';
 
         // Validação oficial de CPF
         function validarCPF(cpf) {
@@ -109,6 +133,124 @@
             return resultado === parseInt(digitos.charAt(1));
         }
 
+        function obterListaClientes() {
+            try {
+                const raw = localStorage.getItem(CHAVE_LISTA);
+                const lista = raw ? JSON.parse(raw) : [];
+                return Array.isArray(lista) ? lista : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function salvarListaClientes(lista) {
+            localStorage.setItem(CHAVE_LISTA, JSON.stringify(lista));
+        }
+
+        function preencherCampos(c) {
+            document.getElementById('nome').value = c.nome || '';
+            document.getElementById('documento').value = c.documento || '';
+            document.getElementById('endereco').value = c.endereco || '';
+            document.getElementById('telefone').value = c.telefone || '';
+            document.getElementById('btn-excluir').style.display = c.documento ? 'block' : 'none';
+        }
+
+        function normalizarTexto(texto) {
+            return (texto || '')
+                .toString()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim();
+        }
+
+        function atualizarSelectClientes(filtro = '', docSelecionado = '') {
+            const lista = obterListaClientes();
+            const area = document.getElementById('area-clientes-salvos');
+            const select = document.getElementById('select-cliente');
+            const totalSpan = document.getElementById('total-clientes');
+
+            totalSpan.textContent = lista.length;
+
+            if (lista.length === 0) {
+                area.style.display = 'none';
+                return;
+            }
+
+            area.style.display = 'block';
+            const termo = normalizarTexto(filtro);
+            const termoDigitos = termo.replace(/[^\d]/g, '');
+
+            const filtrados = lista.filter(c => {
+                if (!termo) return true;
+                const nomeNorm = normalizarTexto(c.nome);
+                const docNorm = normalizarTexto(c.documento);
+                const docDigitos = (c.documento || '').replace(/[^\d]/g, '');
+                const endNorm = normalizarTexto(c.endereco);
+
+                return nomeNorm.includes(termo) ||
+                       docNorm.includes(termo) ||
+                       (termoDigitos.length > 0 && docDigitos.includes(termoDigitos)) ||
+                       endNorm.includes(termo);
+            });
+
+            select.innerHTML = '<option value="">-- Selecione um cliente gravado --</option>';
+
+            filtrados.forEach(c => {
+                const docLimpo = (c.documento || '').replace(/[^\d]/g, '');
+                const opt = document.createElement('option');
+                opt.value = docLimpo;
+                opt.textContent = `${c.nome} (${c.documento})`;
+                if (docSelecionado && docLimpo === docSelecionado) {
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
+            });
+
+            if (termo && filtrados.length === 1) {
+                const unico = filtrados[0];
+                const docUnico = (unico.documento || '').replace(/[^\d]/g, '');
+                select.value = docUnico;
+                preencherCampos(unico);
+            }
+        }
+
+        function filtrarSelectClientes() {
+            const termo = document.getElementById('buscar-cliente').value;
+            const docAtual = document.getElementById('documento').value.replace(/[^\d]/g, '');
+            atualizarSelectClientes(termo, docAtual);
+        }
+
+        function carregarClienteSelecionado() {
+            const docSelecionado = document.getElementById('select-cliente').value;
+            if (!docSelecionado) return;
+
+            const lista = obterListaClientes();
+            const encontrado = lista.find(c => (c.documento || '').replace(/[^\d]/g, '') === docSelecionado);
+            if (encontrado) {
+                preencherCampos(encontrado);
+            }
+        }
+
+        function novoCliente() {
+            document.getElementById('form-cliente').reset();
+            document.getElementById('buscar-cliente').value = '';
+            document.getElementById('select-cliente').value = '';
+            document.getElementById('btn-excluir').style.display = 'none';
+            atualizarSelectClientes('', '');
+            document.getElementById('nome').focus();
+        }
+
+        function excluirClienteAtual() {
+            const docLimpo = document.getElementById('documento').value.replace(/[^\d]/g, '');
+            if (!docLimpo) return;
+
+            const lista = obterListaClientes();
+            const novaLista = lista.filter(c => (c.documento || '').replace(/[^\d]/g, '') !== docLimpo);
+            salvarListaClientes(novaLista);
+            novoCliente();
+        }
+
         function salvarDadosEProsseguir(event) {
             event.preventDefault();
 
@@ -135,24 +277,45 @@
                 telefone: document.getElementById('telefone').value.trim()
             };
 
+            // Mantém o cliente atual do pedido na chave original
             localStorage.setItem(CHAVE, JSON.stringify(dadosCliente));
+
+            // Salva ou atualiza na agenda de vários clientes
+            let lista = obterListaClientes();
+            const indiceExistente = lista.findIndex(c => (c.documento || '').replace(/[^\d]/g, '') === docLimpo);
+
+            if (indiceExistente >= 0) {
+                lista[indiceExistente] = dadosCliente;
+            } else {
+                lista.unshift(dadosCliente);
+            }
+
+            salvarListaClientes(lista);
             window.location.href = 'index.html';
         }
 
         window.onload = function() {
-            // Aproveita cadastros antigos salvos na chave anterior
+            // Aproveita cadastros antigos salvos na chave anterior e migra para a lista
             const salvos = localStorage.getItem(CHAVE) || localStorage.getItem('dadosClienteFrazao');
+            let lista = obterListaClientes();
+
             if (salvos) {
                 try {
                     const c = JSON.parse(salvos);
-                    document.getElementById('nome').value = c.nome || '';
-                    document.getElementById('documento').value = c.documento || '';
-                    document.getElementById('endereco').value = c.endereco || '';
-                    document.getElementById('telefone').value = c.telefone || '';
+                    const docLimpo = (c.documento || '').replace(/[^\d]/g, '');
+                    if (c.nome && docLimpo && !lista.some(item => (item.documento || '').replace(/[^\d]/g, '') === docLimpo)) {
+                        lista.unshift(c);
+                        salvarListaClientes(lista);
+                    }
+                    preencherCampos(c);
+                    atualizarSelectClientes('', docLimpo);
+                    return;
                 } catch (e) {
                     console.error("Erro ao carregar dados salvos", e);
                 }
             }
+
+            atualizarSelectClientes('', '');
         };
     </script>
 </body>

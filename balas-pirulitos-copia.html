@@ -120,13 +120,7 @@
         <a id="btn-cotar" href="#" target="_blank">Enviar Cotação WhatsApp</a>
     </div>
 
-    <!-- 1º: lógica do carrinho -->
-    <script src="carrinho.js"></script>
-
-    <!-- 2º: lógica da lupa global -->
-    <script src="busca.js"></script>
-
-    <!-- 3º: produtos desta página -->
+    <!-- 1º: produtos e funções de grade desta página -->
     <script>
         const produtos = [
             { id: "bal_001", nome: "Bala 7 Belo 500g", preco: 12.99, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcbTKEYqnfZfkIsOhNjY_EbKEGPliYqSpHMME4QNi5IQ&s=10" },
@@ -154,14 +148,4 @@
             { id: "bal_023", nome: "Bala Milho Verde 500g", preco: 14.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-BsG5GN4pFpPLOrQ2Oz1xtRUhSBgs6m8Zb5lczjr8aA&s" },
             { id: "bal_024", nome: "Bala Moranguinho 600g", preco: 11.50, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuf9dKOnGm-9CzXwtK2GCHqA8Mgx2sED2JheGRieVF2Q&s" },
             { id: "bal_025", nome: "Bala Paçoquita 500g", preco: 14.90, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJ660NrCGEN6KKVKjZowACNw-JoOu2OqvZmeQvjGcUuA&s=10" },
-            { id: "bal_026", nome: "Bala Sortida Erlan 500g", preco: 9.90, imagem: "https://m.media-amazon.com/images/I/61gGUetGZoL._AC_SY300_SX300_QL70_ML2_.jpg" },
-            { id: "bal_027", nome: "Bala Tamarindo 500g", preco: 12.90, imagem: "https://http2.mlstatic.com/D_Q_NP_2X_935423-MLB113569316317_062026-P.webp" },
-            { id: "bal_028", nome: "Caramelo Embaré Meio", preco: 19.50, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_617364-MLA99904114001_112025-F.webp" },
-            { id: "bal_029", nome: "Gamadinho 420g", preco: 16.89, imagem: "https://http2.mlstatic.com/D_NQ_NP_2X_931291-MLA99844212233_112025-F.webp" },
-            { id: "pir_001", nome: "Pirulito Blong Azul c/24", preco: 16.20, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnrfq3BSsAS2gbo1gvPKoXi_Di-udRYbvKznk_lyqBbg&s=10" },
-            { id: "pir_002", nome: "Pirulito Blong Preto c/24", preco: 16.20, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUny2YpUnx80jBGea_Ea_tahB3T0jAHJtD08lENtGknQ&s" },
-            { id: "pir_003", nome: "Pirulito Blong Energy c/24", preco: 16.20, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN0H2kK0c0FUImfbfJIrJrJNdNnEpBLy8XJAm1vRWQmQ&s=10" },
-            { id: "pir_004", nome: "Pirulito Blong Melancia c/24", preco: 16.20, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT3XYxrZTs25LEgRwfbrNop2v31MtbSL3wcVCRum00MA&s" },
-            { id: "pir_005", nome: "Pirulito Blong Morango c/24", preco: 16.20, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9uofi3h42h1r7pZsCrQJjZg0ApIxGqPOad7ixynnhAA&s=10" },
-            { id: "pir_006", nome: "Pirulito Blong Tutti Frutti c/24", preco: 16.20, imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjvrO9JTHkZdKW-H9mDsI10F5AWKs8iv9yTFJxkiJjqg&s=10" },
-            { id: "pir_007", nome: "Pirulito Blong Uva c/24", preco: 16.20, imagem: "
+            { id: "bal_026", nome: "Bala Sortida Erlan 500g", preco: 9.90, imagem: "
